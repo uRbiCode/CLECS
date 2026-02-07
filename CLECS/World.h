@@ -21,18 +21,11 @@ public:
 	CLECS::ResultType Update(float DeltaTime);
 	
 	// Access to entity manager
-	EntityManager* GetEntityManager() { return Entities.get(); }
-
-	// System management
-	template<typename T, typename... Args>
-	void AddSystem(Args&&... Arguments)
-	{
-		Systems.push_back(std::make_unique<T>(std::forward<Args>(Arguments)...));
-	}
+	EntityManager* GetEntityManager() { return EntityManagerPtr.get(); }
 
 private:
 	CLECS::ResultType InitializeSystems();
 
-	std::unique_ptr<EntityManager> Entities;
+	std::unique_ptr<EntityManager> EntityManagerPtr;
 	std::vector<std::unique_ptr<System>> Systems;
 };

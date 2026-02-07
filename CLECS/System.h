@@ -7,5 +7,5 @@
 class System
 {
 public:
-	virtual void Update(float deltaTime) = 0;
+	virtual void Update(World& World, float deltaTime) = 0;
 };

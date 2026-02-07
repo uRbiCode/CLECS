@@ -24,9 +24,10 @@ CLECS::ResultType World::Update(float DeltaTime)
 	}
 
 	// Update systems
+	const auto UpdateContext = SystemUpdateContext{ *EntityManagerPtr.get()};
 	for (const auto& CurrentSystem : Systems)
 	{
-		CurrentSystem->Update(DeltaTime);
+		CurrentSystem->Update(UpdateContext, DeltaTime);
 	}
 
 	return CLECS::ResultType::Success;
@@ -34,7 +35,7 @@ CLECS::ResultType World::Update(float DeltaTime)
 
 CLECS::ResultType World::InitializeWorld()
 {
-	Entities = std::make_unique<EntityManager>();
+	EntityManagerPtr = std::make_unique<EntityManager>();
 
 	if (InitializeSystems() != CLECS::ResultType::Success)
 	{
