@@ -25,9 +25,6 @@
     <ClCompile Include="World.cpp">
       <Filter>Source\Core\World</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Source\Core\Entity</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source</Filter>
     </ClCompile>

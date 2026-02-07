@@ -13,12 +13,14 @@ namespace
 	}
 }
 
-void World::Update(float deltaTime)
+CLECS::ResultType World::Update(float DeltaTime)
 {
 	for (const auto& System : Systems)
 	{
-		System->Update(*this, deltaTime);
+		System->Update(DeltaTime);
 	}
+
+	return CLECS::ResultType::Success;
 }
 
 CLECS::ResultType World::InitializeWorld()
