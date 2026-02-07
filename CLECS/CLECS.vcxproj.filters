@@ -57,6 +57,8 @@
     <ClInclude Include="ComponentPool.h">
       <Filter>Source\Core\Component</Filter>
     </ClInclude>
-    <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="EntityManager.h">
+      <Filter>Source\Core\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

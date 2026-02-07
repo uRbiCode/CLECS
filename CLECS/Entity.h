@@ -32,9 +32,9 @@ struct Entity
 	static Entity Create(uint32_t Id, uint32_t Version)
 	{
 		Entity NewEntity;
-		const auto Id64 = static_cast<uint64_t>(Id & EntityMask);
-		const auto Version64 = static_cast<uint64_t>(Version & VersionMask);
-		NewEntity.Identifier = static_cast<uint32_t>((Id64 << EntityShift) | (Version64 << VersionShift));
+		const auto MaskedId = Id & EntityMask;
+		const auto MaskedVersion = Version & VersionMask;
+		NewEntity.Identifier = static_cast<uint32_t>((MaskedId << EntityShift) | (MaskedVersion << VersionShift));
 		return NewEntity;
 	}
 

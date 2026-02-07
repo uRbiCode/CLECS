@@ -15,13 +15,13 @@ class EntityManager
 {
 public:
 	EntityManager() = default;
+	EntityManager(const EntityManager&) = delete;
+	EntityManager& operator=(const EntityManager&) = delete;
 
-	// Entity lifecycle
 	Entity CreateEntity();
 	void DestroyEntity(const Entity& TargetEntity);
 	bool IsEntityValid(const Entity& TargetEntity) const;
 
-	// Component management (EnTT-style)
 	template<typename T, typename... Args>
 	T& AddComponent(const Entity& TargetEntity, Args&&... Arguments)
 	{
@@ -57,7 +57,7 @@ public:
 		Pool->Remove(TargetEntity);
 	}
 
-	// View pattern for efficient iteration (EnTT-inspired)
+	// View pattern for efficient iteration
 	template<typename T>
 	std::vector<Entity> View()
 	{
@@ -65,11 +65,7 @@ public:
 		return Pool != nullptr ? Pool->GetEntities() : std::vector<Entity>{};
 	}
 
-	// Clear all entities and components
 	void Clear();
-
-	EntityManager(const EntityManager&) = delete;
-	EntityManager& operator=(const EntityManager&) = delete;
 
 private:
 	template<typename T>
@@ -113,7 +109,7 @@ private:
 		return static_cast<const ComponentPool<T>*>(It->second.get());
 	}
 
-	// Entity management with versioning (EnTT approach)
+	// Entity management with versioning
 	std::vector<uint32_t> EntityVersions;
 	std::queue<uint32_t> FreeEntityIds;
 	uint32_t NextEntityId = 0;

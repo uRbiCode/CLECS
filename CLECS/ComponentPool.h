@@ -19,7 +19,7 @@ public:
 };
 
 /* Templated component pool using sparse set for O(1) lookups.
- * Sparse array maps entity IDs to dense array indices.
+ * Sparse array maps entity Ids to dense array indices.
  */
 template<ComponentType T>
 class ComponentPool : public IComponentPool
@@ -92,20 +92,11 @@ public:
 		return EntityId < Sparse.size() && Sparse[EntityId] != INVALID_ENTITY_IDENTIFIER;
 	}
 
-	std::vector<T>& GetComponents()
-	{
-		return Components;
-	}
+	std::vector<T>& GetComponents()	{ return Components; }
 
-	const std::vector<T>& GetComponents() const
-	{
-		return Components;
-	}
+	const std::vector<T>& GetComponents() const	{ return Components; }
 
-	const std::vector<Entity>& GetEntities() const
-	{
-		return Entities;
-	}
+	const std::vector<Entity>& GetEntities() const{ return Components; }
 
 	void Clear() override
 	{
@@ -114,10 +105,7 @@ public:
 		Entities.clear();
 	}
 
-	size_t Size() const
-	{
-		return Components.size();
-	}
+	size_t Size() const { return Components.size(); }
 
 private:
 	// Sparse set: entity ID -> dense index

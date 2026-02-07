@@ -14,6 +14,9 @@ class World
 {
 public:
 	World() = default;
+	World(const World&) = delete;
+	World& operator=(const World&) = delete;
+
 	CLECS::ResultType InitializeWorld();
 	CLECS::ResultType Update(float DeltaTime);
 	
@@ -26,9 +29,6 @@ public:
 	{
 		Systems.push_back(std::make_unique<T>(std::forward<Args>(Arguments)...));
 	}
-
-	World(const World&) = delete;
-	World& operator=(const World&) = delete;
 
 private:
 	CLECS::ResultType InitializeSystems();
