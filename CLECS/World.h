@@ -7,9 +7,8 @@
 #include <vector>
 #include <memory>
 
-/* World is the heart of CLECS architecture following EnTT principles.
+/* World is the heart of CLECS architecture.
  * It coordinates systems and provides access to entity management.
- * Entity and component management delegated to EntityManager for cleaner separation.
  */
 class World
 {
@@ -19,8 +18,7 @@ public:
 	CLECS::ResultType Update(float DeltaTime);
 	
 	// Access to entity manager
-	EntityManager& GetEntityManager() { return Entities; }
-	const EntityManager& GetEntityManager() const { return Entities; }
+	EntityManager* GetEntityManager() { return Entities.get(); }
 
 	// System management
 	template<typename T, typename... Args>
@@ -35,6 +33,6 @@ public:
 private:
 	CLECS::ResultType InitializeSystems();
 
-	EntityManager Entities;
+	std::unique_ptr<EntityManager> Entities;
 	std::vector<std::unique_ptr<System>> Systems;
 };

@@ -1,6 +1,4 @@
 #include "SDL3/SDL.h"
-#include <iostream>
-
 #include "World.h"
 
 int main(int argc, char* argv[])

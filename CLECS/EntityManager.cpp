@@ -7,14 +7,12 @@ Entity EntityManager::CreateEntity()
 
 	if (!FreeEntityIds.empty())
 	{
-		// Reuse freed entity ID
 		Id = FreeEntityIds.front();
 		FreeEntityIds.pop();
 		Version = EntityVersions[Id];
 	}
 	else
 	{
-		// Create new entity Id (start at 1, since 0 is invalid)
 		Id = ++NextEntityId;
 		EntityVersions.push_back(0);
 	}

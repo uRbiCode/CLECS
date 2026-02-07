@@ -9,8 +9,7 @@
 #include <queue>
 
 /* EntityManager handles entity lifecycle and component storage.
- * Separated from World to follow Single Responsibility Principle.
- * Uses sparse sets for O(1) component operations (EnTT approach).
+ * Uses sparse sets for O(1) component operations.
  */
 class EntityManager
 {

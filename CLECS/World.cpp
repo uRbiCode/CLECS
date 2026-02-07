@@ -25,6 +25,8 @@ CLECS::ResultType World::Update(float DeltaTime)
 
 CLECS::ResultType World::InitializeWorld()
 {
+	Entities = std::make_unique<EntityManager>();
+
 	if (InitializeSystems() != CLECS::ResultType::Success)
 	{
 		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to initialize systems");

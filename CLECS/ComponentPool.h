@@ -1,12 +1,15 @@
 #pragma once
 #include "Entity.h"
+#include "Component.h"
 #include <vector>
 #include <memory>
 #include <unordered_map>
-#include <typeindex>
+
+template<class T>
+concept ComponentType = std::derived_from<T, Component>;
 
 /* Base class for type-erased component storage.
- * EnTT uses this pattern to allow the World to manage different component types uniformly.
+ * Allows to manage different component types uniformly.
  */
 class IComponentPool
 {
@@ -18,7 +21,7 @@ public:
 };
 
 /* Templated component pool using sparse set for O(1) lookups.
- * EnTT's approach: sparse array maps entity IDs to dense array indices.
+ * Sparse array maps entity IDs to dense array indices.
  */
 template<typename T>
 class ComponentPool : public IComponentPool
@@ -49,7 +52,6 @@ public:
 		return Components.back();
 	}
 
-	// Get component for entity
 	T& Get(const Entity& TargetEntity)
 	{
 		const auto EntityId = TargetEntity.GetId();
@@ -62,7 +64,6 @@ public:
 		return Components[Sparse[EntityId]];
 	}
 
-	// Remove component from entity
 	void Remove(const Entity& TargetEntity) override
 	{
 		const auto EntityId = TargetEntity.GetId();
@@ -72,7 +73,6 @@ public:
 		const auto DenseIndex = Sparse[EntityId];
 		const auto LastIndex = static_cast<uint32_t>(Components.size() - 1);
 
-		// Swap with last element for O(1) removal
 		if (DenseIndex != LastIndex)
 		{
 			Components[DenseIndex] = std::move(Components[LastIndex]);
@@ -88,14 +88,12 @@ public:
 		Sparse[EntityId] = INVALID_ENTITY_IDENTIFIER;
 	}
 
-	// Check if entity has component
 	bool Has(const Entity& TargetEntity) const override
 	{
 		const auto EntityId = TargetEntity.GetId();
 		return EntityId < Sparse.size() && Sparse[EntityId] != INVALID_ENTITY_IDENTIFIER;
 	}
 
-	// Get all components for iteration
 	std::vector<T>& GetComponents()
 	{
 		return Components;
@@ -106,7 +104,6 @@ public:
 		return Components;
 	}
 
-	// Get all entities that have this component
 	const std::vector<Entity>& GetEntities() const
 	{
 		return Entities;
