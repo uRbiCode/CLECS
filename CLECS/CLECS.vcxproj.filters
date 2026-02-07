@@ -51,5 +51,6 @@
     <ClInclude Include="CoreTypes.h">
       <Filter>Source\Core</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentPool.h" />
   </ItemGroup>
 </Project>

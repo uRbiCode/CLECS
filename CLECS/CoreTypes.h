@@ -3,8 +3,6 @@
 #include <string>
 #include <optional>
 
-#define INVALID_ID -1
-
 namespace CLECS
 {
 	/* ResultType defines the possible outcomes of an operation in CLECS.
