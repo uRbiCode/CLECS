@@ -137,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="World.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="ComponentPool.h" />
     <ClInclude Include="CoreTypes.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityManager.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>

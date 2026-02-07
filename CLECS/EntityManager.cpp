@@ -1,0 +1,62 @@
+#include "EntityManager.h"
+
+Entity EntityManager::CreateEntity()
+{
+	uint32_t Id = 0;
+	uint32_t Version = 0;
+
+	if (!FreeEntityIds.empty())
+	{
+		// Reuse freed entity ID
+		Id = FreeEntityIds.front();
+		FreeEntityIds.pop();
+		Version = EntityVersions[Id];
+	}
+	else
+	{
+		// Create new entity Id (start at 1, since 0 is invalid)
+		Id = ++NextEntityId;
+		EntityVersions.push_back(0);
+	}
+
+	return Entity::Create(Id, Version);
+}
+
+void EntityManager::DestroyEntity(const Entity& TargetEntity)
+{
+	if (!IsEntityValid(TargetEntity))
+		return;
+
+	const auto EntityId = TargetEntity.GetId();
+
+	// Remove all components from this entity
+	for (auto& [TypeId, Pool] : ComponentPools)
+	{
+		Pool->Remove(TargetEntity);
+	}
+
+	// Increment version to invalidate old references
+	EntityVersions[EntityId]++;
+	FreeEntityIds.push(EntityId);
+}
+
+bool EntityManager::IsEntityValid(const Entity& TargetEntity) const
+{
+	if (!TargetEntity.IsValid())
+		return false;
+
+	const auto EntityId = TargetEntity.GetId();
+	if (EntityId >= EntityVersions.size())
+		return false;
+
+	return EntityVersions[EntityId] == TargetEntity.GetVersion();
+}
+
+void EntityManager::Clear()
+{
+	ComponentPools.clear();
+	EntityVersions.clear();
+	while (!FreeEntityIds.empty())
+		FreeEntityIds.pop();
+	NextEntityId = 0;
+}

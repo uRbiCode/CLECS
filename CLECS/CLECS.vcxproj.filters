@@ -34,6 +34,9 @@
     <ClCompile Include="Component.cpp">
       <Filter>Source\Core\Component</Filter>
     </ClCompile>
+    <ClCompile Include="EntityManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="World.h">
@@ -51,6 +54,9 @@
     <ClInclude Include="CoreTypes.h">
       <Filter>Source\Core</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentPool.h" />
+    <ClInclude Include="ComponentPool.h">
+      <Filter>Source\Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager.h" />
   </ItemGroup>
 </Project>
