@@ -1,18 +1,14 @@
 #pragma once
 #include "Entity.h"
-#include "Component.h"
 #include <vector>
-
-template<class T>
-concept ComponentType = std::derived_from<T, Component>;
 
 /* Base class for type-erased component storage.
  * Allows to manage different component types uniformly.
  */
-class IComponentPool
+class ComponentPoolBase
 {
 public:
-	virtual ~IComponentPool() = default;
+	virtual ~ComponentPoolBase() = default;
 	virtual void Remove(const Entity& TargetEntity) = 0;
 	virtual bool Has(const Entity& TargetEntity) const = 0;
 	virtual void Clear() = 0;
@@ -21,8 +17,8 @@ public:
 /* Templated component pool using sparse set for O(1) lookups.
  * Sparse array maps entity Ids to dense array indices.
  */
-template<ComponentType T>
-class ComponentPool : public IComponentPool
+template<typename T>
+class ComponentPool : public ComponentPoolBase
 {
 public:
 	// Add component to entity
@@ -96,7 +92,7 @@ public:
 
 	const std::vector<T>& GetComponents() const	{ return Components; }
 
-	const std::vector<Entity>& GetEntities() const{ return Components; }
+	const std::vector<Entity>& GetEntities() const{ return Entities; }
 
 	void Clear() override
 	{
@@ -108,7 +104,7 @@ public:
 	size_t Size() const { return Components.size(); }
 
 private:
-	// Sparse set: entity ID -> dense index
+	// Sparse set: entity Id -> dense index
 	std::vector<uint32_t> Sparse;
 	
 	// Dense arrays for cache-friendly iteration

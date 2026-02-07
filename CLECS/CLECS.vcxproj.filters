@@ -31,9 +31,6 @@
     <ClCompile Include="System.cpp">
       <Filter>Source\Core\System</Filter>
     </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>Source\Core\Component</Filter>
-    </ClCompile>
     <ClCompile Include="EntityManager.cpp">
       <Filter>Source\Core\Entity</Filter>
     </ClCompile>
@@ -47,9 +44,6 @@
     </ClInclude>
     <ClInclude Include="System.h">
       <Filter>Source\Core\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Source\Core\Component</Filter>
     </ClInclude>
     <ClInclude Include="CoreTypes.h">
       <Filter>Source\Core</Filter>

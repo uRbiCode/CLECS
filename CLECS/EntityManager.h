@@ -115,5 +115,5 @@ private:
 	uint32_t NextEntityId = 0;
 
 	// Type-erased component pools
-	std::unordered_map<std::type_index, std::unique_ptr<IComponentPool>> ComponentPools;
+	std::unordered_map<std::type_index, std::unique_ptr<ComponentPoolBase>> ComponentPools;
 };
