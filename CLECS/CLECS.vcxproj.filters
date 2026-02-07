@@ -54,5 +54,8 @@
     <ClInclude Include="EntityManager.h">
       <Filter>Source\Core\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="SystemUpdateContext.h">
+      <Filter>Source\Core\System</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

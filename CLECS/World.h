@@ -20,12 +20,19 @@ public:
 	CLECS::ResultType InitializeWorld();
 	CLECS::ResultType Update(float DeltaTime);
 	
+	template<SystemType T>
+	void AddSystem();
+	
 	// Access to entity manager
 	EntityManager* GetEntityManager() { return EntityManagerPtr.get(); }
 
 private:
-	CLECS::ResultType InitializeSystems();
-
 	std::unique_ptr<EntityManager> EntityManagerPtr;
 	std::vector<std::unique_ptr<System>> Systems;
 };
+
+template<SystemType T>
+inline void World::AddSystem()
+{
+	Systems.push_back(std::make_unique<T>());
+}

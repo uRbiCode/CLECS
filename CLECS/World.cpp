@@ -1,17 +1,6 @@
 #include "World.h"
 #include "SDL3/SDL.h"
-
-namespace
-{
-	template<class T>
-	concept SystemType = std::derived_from<T, System>;
-
-	template<SystemType T>
-	std::unique_ptr<T> CreateSystem()
-	{
-		return std::make_unique<T>();
-	}
-}
+#include "SystemUpdateContext.h"
 
 CLECS::ResultType World::Update(float DeltaTime)
 {
@@ -23,8 +12,7 @@ CLECS::ResultType World::Update(float DeltaTime)
 			return CLECS::ResultType::Quit;
 	}
 
-	// Update systems
-	const auto UpdateContext = SystemUpdateContext{ *EntityManagerPtr.get()};
+	const auto UpdateContext = SystemUpdateContext{ *EntityManagerPtr };
 	for (const auto& CurrentSystem : Systems)
 	{
 		CurrentSystem->Update(UpdateContext, DeltaTime);
@@ -36,18 +24,5 @@ CLECS::ResultType World::Update(float DeltaTime)
 CLECS::ResultType World::InitializeWorld()
 {
 	EntityManagerPtr = std::make_unique<EntityManager>();
-
-	if (InitializeSystems() != CLECS::ResultType::Success)
-	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to initialize systems");
-		return CLECS::ResultType::Failure;
-	}
-
-	return CLECS::ResultType::Success;
-}
-
-CLECS::ResultType World::InitializeSystems()
-{
-	// Systems.push_back(CreateSystem<System>());
 	return CLECS::ResultType::Success;
 }
