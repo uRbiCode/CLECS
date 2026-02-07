@@ -2,8 +2,6 @@
 #include "Entity.h"
 #include "Component.h"
 #include <vector>
-#include <memory>
-#include <unordered_map>
 
 template<class T>
 concept ComponentType = std::derived_from<T, Component>;
@@ -23,7 +21,7 @@ public:
 /* Templated component pool using sparse set for O(1) lookups.
  * Sparse array maps entity IDs to dense array indices.
  */
-template<typename T>
+template<ComponentType T>
 class ComponentPool : public IComponentPool
 {
 public:

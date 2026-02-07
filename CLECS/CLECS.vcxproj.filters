@@ -35,7 +35,7 @@
       <Filter>Source\Core\Component</Filter>
     </ClCompile>
     <ClCompile Include="EntityManager.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Core\Entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
