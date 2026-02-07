@@ -1,5 +1,7 @@
 #pragma once
-#include "World.h"
+#include <memory>
+
+class World;
 
 /* Game is the main entrypoint for CLECS applications.
  * Inherit from this class to define your game's initialization logic and configuration.

@@ -1,7 +1,6 @@
 #pragma once
 #include "CoreTypes.h"
 #include "System.h"
-#include "Entity.h"
 #include "EntityManager.h"
 
 #include <vector>
