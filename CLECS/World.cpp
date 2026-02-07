@@ -15,6 +15,15 @@ namespace
 
 CLECS::ResultType World::Update(float DeltaTime)
 {
+	// Process SDL events
+	SDL_Event Event;
+	while (SDL_PollEvent(&Event))
+	{
+		if (Event.type == SDL_EVENT_QUIT)
+			return CLECS::ResultType::Quit;
+	}
+
+	// Update systems
 	for (const auto& CurrentSystem : Systems)
 	{
 		CurrentSystem->Update(DeltaTime);

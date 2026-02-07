@@ -1,11 +1,46 @@
 #include "SDL3/SDL.h"
+#include "SDL3/SDL_main.h"
 #include "World.h"
 
 namespace
 {
 	constexpr float MILLISECONDS_TO_SECONDS = 1000.0f;
+	constexpr int WINDOW_WIDTH = 1280;
+	constexpr int WINDOW_HEIGHT = 720;
 
-	bool InitializeApplication(World& GameWorld)
+	bool InitializeSDL()
+	{
+		if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
+		{
+			SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "SDL initialization failed: %s", SDL_GetError());
+			return false;
+		}
+		return true;
+	}
+
+	void ShutdownSDL()
+	{
+		SDL_Quit();
+	}
+
+	SDL_Window* CreateGameWindow()
+	{
+		SDL_Window* Window = SDL_CreateWindow(
+			"CLECS",
+			WINDOW_WIDTH,
+			WINDOW_HEIGHT,
+			SDL_WINDOW_RESIZABLE
+		);
+
+		if (!Window)
+		{
+			SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Window creation failed: %s", SDL_GetError());
+		}
+
+		return Window;
+	}
+
+	bool InitializeWorld(World& GameWorld)
 	{
 		const CLECS::ResultType Result = GameWorld.InitializeWorld();
 		if (Result != CLECS::ResultType::Success)
@@ -54,10 +89,29 @@ namespace
 
 int main(int argc, char* argv[])
 {
-	World GameWorld;
-
-	if (!InitializeApplication(GameWorld))
+	if (!InitializeSDL())
 		return 1;
 
-	return RunGameLoop(GameWorld);
+	const auto Window = CreateGameWindow();
+	if (Window == nullptr)
+	{
+		ShutdownSDL();
+		return 1;
+	}
+
+	World GameWorld;
+
+	if (!InitializeWorld(GameWorld))
+	{
+		SDL_DestroyWindow(Window);
+		ShutdownSDL();
+		return 1;
+	}
+
+	const auto ExitCode = RunGameLoop(GameWorld);
+	
+	SDL_DestroyWindow(Window);
+	ShutdownSDL();
+	
+	return ExitCode;
 }
