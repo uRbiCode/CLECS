@@ -20,6 +20,12 @@
     <Filter Include="Source\Core\System">
       <UniqueIdentifier>{111fc1d2-7d7f-4504-973d-2b3642548977}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\GameEntry">
+      <UniqueIdentifier>{4e97584b-5072-461e-9a5d-43bcf8cad817}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ExampleGame">
+      <UniqueIdentifier>{0ad24943-a866-491f-abf2-afe0416e87ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -33,6 +39,12 @@
     </ClCompile>
     <ClCompile Include="EntityManager.cpp">
       <Filter>Source\Core\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="GameRunner.cpp">
+      <Filter>Source\GameEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="ExampleGame.cpp">
+      <Filter>Source\ExampleGame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -56,6 +68,12 @@
     </ClInclude>
     <ClInclude Include="SystemUpdateContext.h">
       <Filter>Source\Core\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Source\GameEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="GameRunner.h">
+      <Filter>Source\GameEntry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -137,6 +137,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EntityManager.cpp" />
+    <ClCompile Include="ExampleGame.cpp" />
+    <ClCompile Include="GameRunner.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="World.cpp" />
@@ -146,6 +148,8 @@
     <ClInclude Include="CoreTypes.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameRunner.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemUpdateContext.h" />
     <ClInclude Include="World.h" />
