@@ -1,17 +1,64 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Source\Core">
+      <UniqueIdentifier>{4be624d2-7fb2-4702-8d4f-70907cf284a9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Source\Core\World">
+      <UniqueIdentifier>{46fd85a4-e0d3-4178-9d4e-4b858bf2217d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\Entity">
+      <UniqueIdentifier>{47638869-5596-4c4c-b37e-c5b9770af968}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\Component">
+      <UniqueIdentifier>{7fc618e9-7b51-4c7d-9030-33854143dd29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\System">
+      <UniqueIdentifier>{111fc1d2-7d7f-4504-973d-2b3642548977}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="World.cpp">
+      <Filter>Source\Core\World</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="System.cpp">
+      <Filter>Source\Core\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Source\Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager.cpp">
+      <Filter>Source\Core\Entity</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="World.h">
+      <Filter>Source\Core\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Source\Core\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>Source\Core\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Source\Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreTypes.h">
+      <Filter>Source\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentPool.h">
+      <Filter>Source\Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager.h">
+      <Filter>Source\Core\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
