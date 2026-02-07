@@ -80,7 +80,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)SDL\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -96,7 +96,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)SDL\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -110,7 +110,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)SDL\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -126,7 +126,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)SDL\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -136,19 +136,22 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Component.cpp" />
     <ClCompile Include="EntityManager.cpp" />
+    <ClCompile Include="ExampleGame.cpp" />
+    <ClCompile Include="GameRunner.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentPool.h" />
     <ClInclude Include="CoreTypes.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameRunner.h" />
     <ClInclude Include="System.h" />
+    <ClInclude Include="SystemUpdateContext.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

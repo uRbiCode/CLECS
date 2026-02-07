@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <typeindex>
 #include <queue>
+#include <algorithm>
 
 /* EntityManager handles entity lifecycle and component storage.
  * Uses sparse sets for O(1) component operations.
@@ -65,6 +66,125 @@ public:
 		return Pool != nullptr ? Pool->GetEntities() : std::vector<Entity>{};
 	}
 
+	// Group pattern for efficient multi-component iteration
+	template<typename... Components>
+	class Group
+	{
+	public:
+		Group(EntityManager* Manager) : Manager(Manager)
+		{
+			CacheMatchingEntities();
+		}
+
+		// Iterator support for range-based for loops
+		class Iterator
+		{
+		public:
+			Iterator(const std::vector<Entity>* Entities, size_t Index)
+				: Entities(Entities), Index(Index) {}
+
+			Entity operator*() const { return (*Entities)[Index]; }
+			
+			Iterator& operator++()
+			{
+				++Index;
+				return *this;
+			}
+
+			bool operator!=(const Iterator& Other) const
+			{
+				return Index != Other.Index;
+			}
+
+		private:
+			const std::vector<Entity>* Entities;
+			size_t Index;
+		};
+
+		Iterator begin() const { return Iterator(&CachedEntities, 0); }
+		Iterator end() const { return Iterator(&CachedEntities, CachedEntities.size()); }
+
+		size_t Size() const { return CachedEntities.size(); }
+		bool Empty() const { return CachedEntities.empty(); }
+
+		// Get all components for an entity
+		template<typename T>
+		T& Get(const Entity& TargetEntity)
+		{
+			return Manager->GetComponent<T>(TargetEntity);
+		}
+
+		template<typename T>
+		const T& Get(const Entity& TargetEntity) const
+		{
+			return Manager->GetComponent<T>(TargetEntity);
+		}
+
+		// Utility to iterate with components directly
+		template<typename Func>
+		void ForEach(Func&& Function)
+		{
+			for (const auto& TargetEntity : CachedEntities)
+			{
+				Function(TargetEntity, Manager->GetComponent<Components>(TargetEntity)...);
+			}
+		}
+
+	private:
+		void CacheMatchingEntities()
+		{
+			// Find the smallest pool to minimize intersection checks
+			const auto* SmallestPool = FindSmallestPool();
+			if (SmallestPool == nullptr)
+				return;
+
+			// Check which entities have all required components
+			for (const auto& TargetEntity : *SmallestPool)
+			{
+				if (HasAllComponents(TargetEntity))
+				{
+					CachedEntities.push_back(TargetEntity);
+				}
+			}
+		}
+
+		const std::vector<Entity>* FindSmallestPool() const
+		{
+			const std::vector<Entity>* SmallestPool = nullptr;
+			size_t SmallestSize = SIZE_MAX;
+
+			((FindSmaller<Components>(SmallestPool, SmallestSize)), ...);
+
+			return SmallestPool;
+		}
+
+		template<typename T>
+		void FindSmaller(const std::vector<Entity>*& SmallestPool, size_t& SmallestSize) const
+		{
+			const auto* Pool = Manager->GetPool<T>();
+			if (Pool != nullptr && Pool->Size() < SmallestSize)
+			{
+				SmallestSize = Pool->Size();
+				SmallestPool = &Pool->GetEntities();
+			}
+		}
+
+		bool HasAllComponents(const Entity& TargetEntity) const
+		{
+			return (Manager->HasComponent<Components>(TargetEntity) && ...);
+		}
+
+		EntityManager* Manager;
+		std::vector<Entity> CachedEntities;
+	};
+
+	// Create a group for entities with all specified components
+	template<typename... Components>
+	Group<Components...> GetGroup()
+	{
+		return Group<Components...>(this);
+	}
+
 	void Clear();
 
 private:
@@ -115,5 +235,5 @@ private:
 	uint32_t NextEntityId = 0;
 
 	// Type-erased component pools
-	std::unordered_map<std::type_index, std::unique_ptr<IComponentPool>> ComponentPools;
+	std::unordered_map<std::type_index, std::unique_ptr<ComponentPoolBase>> ComponentPools;
 };

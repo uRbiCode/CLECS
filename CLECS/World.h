@@ -1,7 +1,6 @@
 #pragma once
 #include "CoreTypes.h"
 #include "System.h"
-#include "Entity.h"
 #include "EntityManager.h"
 
 #include <vector>
@@ -20,19 +19,19 @@ public:
 	CLECS::ResultType InitializeWorld();
 	CLECS::ResultType Update(float DeltaTime);
 	
+	template<SystemType T>
+	void AddSystem();
+	
 	// Access to entity manager
-	EntityManager* GetEntityManager() { return Entities.get(); }
-
-	// System management
-	template<typename T, typename... Args>
-	void AddSystem(Args&&... Arguments)
-	{
-		Systems.push_back(std::make_unique<T>(std::forward<Args>(Arguments)...));
-	}
+	EntityManager* GetEntityManager() { return EntityManagerPtr.get(); }
 
 private:
-	CLECS::ResultType InitializeSystems();
-
-	std::unique_ptr<EntityManager> Entities;
+	std::unique_ptr<EntityManager> EntityManagerPtr;
 	std::vector<std::unique_ptr<System>> Systems;
 };
+
+template<SystemType T>
+inline void World::AddSystem()
+{
+	Systems.push_back(std::make_unique<T>());
+}
