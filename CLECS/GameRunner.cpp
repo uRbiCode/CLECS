@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "World.h"
 #include "SDL3/SDL.h"
+#include "WorldInitializationData.h"
 
 namespace
 {
@@ -35,16 +36,8 @@ int GameRunner::Run(std::unique_ptr<Game> GameInstance)
 		return 1;
 	}
 
-	World GameWorld;
-
-	if (!InitializeWorld(GameWorld))
-	{
-		SDL_DestroyWindow(Window);
-		ShutdownSDL();
-		return 1;
-	}
-
-	if (!GameInstance->Initialize(GameWorld))
+	auto WorldInitializationData = WorldInitializationData::Create();
+	if (!GameInstance->Initialize(WorldInitializationData))
 	{
 		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Game initialization failed");
 		SDL_DestroyWindow(Window);
@@ -52,9 +45,18 @@ int GameRunner::Run(std::unique_ptr<Game> GameInstance)
 		return 1;
 	}
 
+	World GameWorld;
+
+	if (!InitializeWorld(GameWorld, WorldInitializationData))
+	{
+		SDL_DestroyWindow(Window);
+		ShutdownSDL();
+		return 1;
+	}
+
 	const int ExitCode = RunGameLoop(GameWorld);
 
-	GameInstance->Shutdown(GameWorld);
+	GameInstance->Shutdown();
 	SDL_DestroyWindow(Window);
 	ShutdownSDL();
 
@@ -93,9 +95,9 @@ SDL_Window* GameRunner::CreateGameWindow(const Game& GameInstance)
 	return Window;
 }
 
-bool GameRunner::InitializeWorld(World& GameWorld)
+bool GameRunner::InitializeWorld(World& GameWorld, WorldInitializationData& Data)
 {
-	const CLECS::ResultType Result = GameWorld.InitializeWorld();
+	const CLECS::ResultType Result = GameWorld.InitializeWorld(Data);
 	if (Result != CLECS::ResultType::Success)
 	{
 		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World failed to initialize");

@@ -1,6 +1,14 @@
 #include "World.h"
 #include "SDL3/SDL.h"
 #include "SystemUpdateContext.h"
+#include "WorldInitializationData.h"
+
+CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
+{
+	EntityManagerPtr = std::move(Data.EntityManagerPtr);
+	Systems = std::move(Data.Systems);
+	return CLECS::ResultType::Success;
+}
 
 CLECS::ResultType World::Update(float DeltaTime)
 {
@@ -12,17 +20,11 @@ CLECS::ResultType World::Update(float DeltaTime)
 			return CLECS::ResultType::Quit;
 	}
 
-	const auto UpdateContext = SystemUpdateContext{ *EntityManagerPtr };
+	const auto UpdateContext = SystemUpdateContext{ *EntityManagerPtr, DeltaTime };
 	for (const auto& CurrentSystem : Systems)
 	{
-		CurrentSystem->Update(UpdateContext, DeltaTime);
+		CurrentSystem->Update(UpdateContext);
 	}
 
-	return CLECS::ResultType::Success;
-}
-
-CLECS::ResultType World::InitializeWorld()
-{
-	EntityManagerPtr = std::make_unique<EntityManager>();
 	return CLECS::ResultType::Success;
 }

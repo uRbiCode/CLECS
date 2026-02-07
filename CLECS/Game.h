@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-class World;
+class WorldInitializationData;
 
 /* Game is the main entrypoint for CLECS applications.
  * Inherit from this class to define your game's initialization logic and configuration.
@@ -15,12 +15,12 @@ public:
 	 * Use this to register systems, create initial entities, and set up game state.
 	 * Return false to abort game initialization.
 	 */
-	virtual bool Initialize(World& GameWorld) = 0;
+	virtual bool Initialize(WorldInitializationData& Data) = 0;
 
 	/* Called once during game shutdown.
 	 * Use this to clean up any game-specific resources.
 	 */
-	virtual void Shutdown(World& GameWorld) {}
+	virtual void Shutdown() {}
 
 	/* Returns the title that will be displayed in the window.
 	 */
