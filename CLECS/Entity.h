@@ -1,5 +1,6 @@
 #pragma once
-#include "CoreTypes.h"
+#include <cstdint>
+#include <functional>
 
 constexpr uint32_t EntityMask = 0xFFFFF;   
 constexpr uint32_t VersionMask = 0xFFF;

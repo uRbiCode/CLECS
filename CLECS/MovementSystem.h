@@ -1,8 +1,7 @@
 #pragma once
 #include "System.h"
 
-// RenderSystem renders all entities with Transform and Shape components
-class RenderSystem : public System
+class MovementSystem : public System
 {
 public:
 	void Update(const SystemUpdateContext& UpdateContext, float DeltaTime) override;

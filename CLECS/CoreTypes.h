@@ -1,8 +1,5 @@
 #pragma once
 
-#include <string>
-#include <optional>
-
 namespace CLECS
 {
 	/* ResultType defines the possible outcomes of an operation in CLECS.

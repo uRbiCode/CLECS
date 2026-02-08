@@ -2,6 +2,7 @@
 #include "CoreTypes.h"
 #include "System.h"
 #include "EntityManager.h"
+#include "InputState.h"
 
 #include <vector>
 #include <memory>
@@ -35,6 +36,7 @@ private:
 
 	std::unique_ptr<EntityManager> EntityManagerPtr;
 	SystemCollection Systems;
+	InputState Input;
 	SDL_Window* Window = nullptr;
 	SDL_Renderer* Renderer = nullptr;
 };

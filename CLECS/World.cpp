@@ -1,5 +1,4 @@
 #include "World.h"
-#include "SDL3/SDL.h"
 #include "SystemUpdateContext.h"
 #include "WorldInitializationData.h"
 
@@ -30,18 +29,23 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 
 CLECS::ResultType World::Update(float DeltaTime)
 {
-	// Process SDL events
+	// Clear per-frame input state (preserves held keys/buttons)
+	Input.BeginFrame();
+
+	// Process SDL events and update input state
 	SDL_Event Event;
 	while (SDL_PollEvent(&Event))
 	{
 		if (Event.type == SDL_EVENT_QUIT)
 			return CLECS::ResultType::Quit;
+
+		Input.ProcessEvent(Event);
 	}
 
-	const auto UpdateContext = SystemUpdateContext{ *EntityManagerPtr, *Window, *Renderer, DeltaTime };
+	const auto UpdateContext = SystemUpdateContext{ *EntityManagerPtr, *Window, *Renderer, Input };
 	for (const auto& CurrentSystem : Systems)
 	{
-		CurrentSystem->Update(UpdateContext);
+		CurrentSystem->Update(UpdateContext, DeltaTime);
 	}
 
 	return CLECS::ResultType::Success;
