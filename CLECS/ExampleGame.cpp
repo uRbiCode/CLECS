@@ -4,11 +4,17 @@
 #include "RenderSystem.h"
 #include "WorldInitializationData.h"
 #include "EntityManager.h"
-#include "Components.h"
+#include "TransformComponent.h"
+#include "ShapeComponent.h"
+#include "PlayerControllerComponent.h"
+#include "VelocityComponent.h"
+#include "CollisionComponent.h"
+#include "CollisionSystem.h"
 
 bool ExampleGame::Initialize(WorldInitializationData& Data)
 {
 	Data.AddSystem<PlayerInputSystem>();
+	Data.AddSystem<CollisionSystem>();
 	Data.AddSystem<MovementSystem>();
 	Data.AddSystem<RenderSystem>();
 
@@ -17,7 +23,14 @@ bool ExampleGame::Initialize(WorldInitializationData& Data)
 	EntityManager.AddComponent<TransformComponent>(Entity, Vector2D<float>{ 640.f, 360.f });
 	EntityManager.AddComponent<ShapeComponent>(Entity, ShapeComponent::ShapeType::Circle, SDL_FRect{ -50.f, -50.f, 100.f, 100.f }, SDL_FColor{ 1.f, 0.f, 0.f, 1.f }, true, true);
 	EntityManager.AddComponent<VelocityComponent>(Entity);
+	auto& PlayerCollisionComponent = EntityManager.AddComponent<CollisionComponent>(Entity, CollisionChannel::Player);
+	PlayerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Static)] = CollisionResponse::Block;
 	EntityManager.AddComponent<PlayerControllerComponent>(Entity);
+
+	auto StaticEntity = EntityManager.CreateEntity();
+	EntityManager.AddComponent<TransformComponent>(StaticEntity, Vector2D<float>{ 640.f, 500.f });
+	EntityManager.AddComponent<ShapeComponent>(StaticEntity, ShapeComponent::ShapeType::Rectangle, SDL_FRect{ -100.f, -20.f, 200.f, 40.f }, SDL_FColor{ 0.f, 1.f, 0.f, 1.f }, true, true);
+	EntityManager.AddComponent<CollisionComponent>(StaticEntity, CollisionChannel::Static);
 
 	return true;
 }

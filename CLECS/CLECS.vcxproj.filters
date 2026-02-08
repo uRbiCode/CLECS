@@ -44,6 +44,12 @@
     <Filter Include="Source\Core\System\Systems\PlayerInputSystem">
       <UniqueIdentifier>{ee56a87b-e225-4614-80f9-a4df6a6e4b67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\Component\Components">
+      <UniqueIdentifier>{660b6f0a-8afc-459e-8fa4-687828ba7286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\System\Systems\CollisionSystem">
+      <UniqueIdentifier>{0b29d4c0-d82c-4f24-8bea-2f5d91fc3d71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -79,6 +85,9 @@
     <ClCompile Include="PlayerInputSystem.cpp">
       <Filter>Source\Core\System\Systems\PlayerInputSystem</Filter>
     </ClCompile>
+    <ClCompile Include="CollisionSystem.cpp">
+      <Filter>Source\Core\System\Systems\CollisionSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="World.h">
@@ -108,9 +117,6 @@
     <ClInclude Include="GameRunner.h">
       <Filter>Source\GameEntry</Filter>
     </ClInclude>
-    <ClInclude Include="Components.h">
-      <Filter>Source\Core\Component</Filter>
-    </ClInclude>
     <ClInclude Include="WorldInitializationData.h">
       <Filter>Source\Core\World</Filter>
     </ClInclude>
@@ -134,6 +140,24 @@
     </ClInclude>
     <ClInclude Include="PlayerInputSystem.h">
       <Filter>Source\Core\System\Systems\PlayerInputSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformComponent.h">
+      <Filter>Source\Core\Component\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionComponent.h">
+      <Filter>Source\Core\Component\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapeComponent.h">
+      <Filter>Source\Core\Component\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="VelocityComponent.h">
+      <Filter>Source\Core\Component\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerControllerComponent.h">
+      <Filter>Source\Core\Component\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionSystem.h">
+      <Filter>Source\Core\System\Systems\CollisionSystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
