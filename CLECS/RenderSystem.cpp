@@ -16,7 +16,7 @@ namespace
 		if (Filled) 
 		{
 			// Draw filled circle using triangles from center
-			for (int i = 0; i < Segments; i++) 
+			for (int i = 0; i < Segments; ++i) 
 			{
 				const float Angle1 = i * AngleStep;
 				const float Angle2 = (i + 1) * AngleStep;
@@ -32,7 +32,7 @@ namespace
 		else 
 		{
 			// Draw circle outline using line segments
-			for (int i = 0; i <= Segments; i++) 
+			for (int i = 0; i <= Segments; ++i) 
 			{
 				const float Angle1 = i * AngleStep;
 				const float Angle2 = (i + 1) * AngleStep;
