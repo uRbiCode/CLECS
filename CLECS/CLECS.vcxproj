@@ -142,6 +142,7 @@
     <ClCompile Include="InputState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovementSystem.cpp" />
+    <ClCompile Include="PlayerInputSystem.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="World.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="InputState.h" />
     <ClInclude Include="MathTypes.h" />
     <ClInclude Include="MovementSystem.h" />
+    <ClInclude Include="PlayerInputSystem.h" />
     <ClInclude Include="RendererInitializationData.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="System.h" />

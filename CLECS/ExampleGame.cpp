@@ -1,12 +1,14 @@
 #include "ExampleGame.h"
-#include "RenderSystem.h"
+#include "PlayerInputSystem.h"
 #include "MovementSystem.h"
+#include "RenderSystem.h"
 #include "WorldInitializationData.h"
 #include "EntityManager.h"
 #include "Components.h"
 
 bool ExampleGame::Initialize(WorldInitializationData& Data)
 {
+	Data.AddSystem<PlayerInputSystem>();
 	Data.AddSystem<MovementSystem>();
 	Data.AddSystem<RenderSystem>();
 

@@ -35,6 +35,15 @@
     <Filter Include="Source\Core\World\InputState">
       <UniqueIdentifier>{5d0bc376-5b17-4e3a-9fc1-d6ce94603068}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\System\Systems\RenderSystem">
+      <UniqueIdentifier>{9a105a4c-f7af-4151-8a39-f7f6dd8f5275}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\System\Systems\MovementSystem">
+      <UniqueIdentifier>{72f07912-013f-4e3e-9a3c-4e3560483617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\System\Systems\PlayerInputSystem">
+      <UniqueIdentifier>{ee56a87b-e225-4614-80f9-a4df6a6e4b67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -58,14 +67,17 @@
     <ClCompile Include="WorldInitializationData.cpp">
       <Filter>Source\Core\World</Filter>
     </ClCompile>
-    <ClCompile Include="RenderSystem.cpp">
-      <Filter>Source\Core\System\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="InputState.cpp">
       <Filter>Source\Core\World\InputState</Filter>
     </ClCompile>
+    <ClCompile Include="RenderSystem.cpp">
+      <Filter>Source\Core\System\Systems\RenderSystem</Filter>
+    </ClCompile>
     <ClCompile Include="MovementSystem.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Core\System\Systems\MovementSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerInputSystem.cpp">
+      <Filter>Source\Core\System\Systems\PlayerInputSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -108,15 +120,20 @@
     <ClInclude Include="RendererInitializationData.h">
       <Filter>Source\GameEntry</Filter>
     </ClInclude>
-    <ClInclude Include="RenderSystem.h">
-      <Filter>Source\Core\System\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="MathTypes.h">
       <Filter>Source\Core\Utils</Filter>
     </ClInclude>
     <ClInclude Include="InputState.h">
       <Filter>Source\Core\World\InputState</Filter>
     </ClInclude>
-    <ClInclude Include="MovementSystem.h" />
+    <ClInclude Include="RenderSystem.h">
+      <Filter>Source\Core\System\Systems\RenderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="MovementSystem.h">
+      <Filter>Source\Core\System\Systems\MovementSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerInputSystem.h">
+      <Filter>Source\Core\System\Systems\PlayerInputSystem</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
