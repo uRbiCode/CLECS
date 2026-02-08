@@ -77,7 +77,7 @@ void CollisionSystem::Update(const SystemUpdateContext& UpdateContext, float Del
 		}
 	}
 
-	// Phase 2: Validate velocities against static obstacles (prevents rotation/movement into walls)
+	// Phase 2: Prevent velocity from causing NEW collisions or INCREASING penetration
 	for (size_t i = 0; i < CollisionGroup.Size(); ++i)
 	{
 		const Entity EntityA = CollisionGroup[i];
@@ -112,12 +112,17 @@ void CollisionSystem::Update(const SystemUpdateContext& UpdateContext, float Del
 			const auto& TransformB = Manager.GetComponent<TransformComponent>(EntityB);
 			const auto& ShapeB = Manager.GetComponent<ShapeComponent>(EntityB);
 
+			// Check if currently colliding
+			const bool CurrentlyColliding = CheckCollision(TransformA, ShapeA, TransformB, ShapeB);
+
 			// Check angular velocity (rotation) first
 			if (VelocityA.AngularVelocity != 0.f)
 			{
-				if (WouldCollideAfterRotation(TransformA, ShapeA, VelocityA.AngularVelocity, DeltaTime, TransformB, ShapeB))
+				const bool WouldCollideAfterRotation = this->WouldCollideAfterRotation(TransformA, ShapeA, VelocityA.AngularVelocity, DeltaTime, TransformB, ShapeB);
+				
+				// Only block rotation if it would cause a NEW collision (not already colliding)
+				if (!CurrentlyColliding && WouldCollideAfterRotation)
 				{
-					// Block rotation by zeroing angular velocity
 					VelocityA.AngularVelocity = 0.f;
 				}
 			}
@@ -125,7 +130,10 @@ void CollisionSystem::Update(const SystemUpdateContext& UpdateContext, float Del
 			// Check linear velocity (movement)
 			if (VelocityA.Velocity.X != 0.f || VelocityA.Velocity.Y != 0.f)
 			{
-				if (WouldCollideAfterMovement(TransformA, ShapeA, VelocityA.Velocity, DeltaTime, TransformB, ShapeB))
+				const bool WouldCollideAfterMovement = this->WouldCollideAfterMovement(TransformA, ShapeA, VelocityA.Velocity, DeltaTime, TransformB, ShapeB);
+				
+				// Only block movement if it would cause a NEW collision (not already colliding)
+				if (!CurrentlyColliding && WouldCollideAfterMovement)
 				{
 					// Zero velocity to prevent penetration
 					VelocityA.Velocity = { 0.f, 0.f };
