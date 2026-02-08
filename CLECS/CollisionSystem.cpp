@@ -145,7 +145,7 @@ namespace
 		else
 		{
 			const float Dists[4] = { Local.X + HalfW, HalfW - Local.X, Local.Y + HalfH, HalfH - Local.Y };
-			const size_t MinIdx = static_cast<size_t>(std::min_element(Dists, Dists + 4) - Dists);
+			const auto MinIdx = static_cast<size_t>(std::min_element(Dists, Dists + 4) - Dists);
 			
 			if (MinIdx == 0)
 			{
@@ -316,7 +316,7 @@ void CollisionSystem::Update(const SystemUpdateContext& UpdateContext, float Del
 		}
 	}
 
-	// Phase 2: Prevent new collisions from velocity
+	// Phase 2: Prevent new collisions from velocity with sliding
 	for (size_t i = 0; i < CollisionGroup.Size(); ++i)
 	{
 		const Entity EntityA = CollisionGroup[i];
@@ -363,9 +363,34 @@ void CollisionSystem::Update(const SystemUpdateContext& UpdateContext, float Del
 				{
 					const Vector2D<float> VelDelta = { VelocityA.Velocity.X * DeltaTime, VelocityA.Velocity.Y * DeltaTime };
 					const CollisionShape PredictedA = A.Predict(VelDelta, 0.f);
-					if (CheckAndResolve(PredictedA, B).Collides)
+					const auto PredictedResult = CheckAndResolve(PredictedA, B);
+					
+					if (PredictedResult.Collides)
 					{
-						VelocityA.Velocity = { 0.f, 0.f };
+						// Instead of zeroing velocity, project it along the collision normal to allow sliding
+						const float SepMag = std::sqrtf(PredictedResult.Separation.X * PredictedResult.Separation.X + 
+						                                 PredictedResult.Separation.Y * PredictedResult.Separation.Y);
+						
+						if (SepMag > 0.001f)
+						{
+							// Normalize the separation vector to get collision normal
+							const Vector2D<float> Normal = { PredictedResult.Separation.X / SepMag, PredictedResult.Separation.Y / SepMag };
+							
+							// Remove the velocity component pointing into the obstacle (dot product with normal)
+							const float VelDot = VelocityA.Velocity.X * Normal.X + VelocityA.Velocity.Y * Normal.Y;
+							
+							if (VelDot < 0.f)
+							{
+								// Subtract the normal component, keeping the tangential (sliding) component
+								VelocityA.Velocity.X -= VelDot * Normal.X;
+								VelocityA.Velocity.Y -= VelDot * Normal.Y;
+							}
+						}
+						else
+						{
+							// If we can't determine direction, stop completely
+							VelocityA.Velocity = { 0.f, 0.f };
+						}
 					}
 				}
 			}
