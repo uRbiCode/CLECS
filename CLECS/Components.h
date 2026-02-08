@@ -20,3 +20,15 @@ struct ShapeComponent
     bool Filled = true;
     bool Visible = true;
 };
+
+// Velocity component for movement
+struct VelocityComponent
+{
+    Vector2D<float> Velocity = {0.f, 0.f};
+};
+
+// Player controller component to mark entities as player-controlled
+struct PlayerControllerComponent
+{
+    float MoveSpeed = 300.f; // Units per second
+};

@@ -16,13 +16,15 @@ public:
 	void BeginFrame();
 
 	// Keyboard input
-	bool IsKeyPressed(SDL_Keycode Key) const;
+	bool IsKeyHeld(SDL_Keycode Key) const;
 	bool IsKeyJustPressed(SDL_Keycode Key) const;
+	bool IsKeyDown(SDL_Keycode Key) const;
 	bool IsKeyJustReleased(SDL_Keycode Key) const;
 
 	// Mouse input
-	bool IsMouseButtonPressed(Uint8 Button) const;
+	bool IsMouseButtonHeld(Uint8 Button) const;
 	bool IsMouseButtonJustPressed(Uint8 Button) const;
+	bool IsMouseButtonDown(Uint8 Button) const;
 	bool IsMouseButtonJustReleased(Uint8 Button) const;
 
 	Vector2D<float> GetMousePosition() const { return MousePosition; }

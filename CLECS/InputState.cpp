@@ -56,7 +56,7 @@ void InputState::BeginFrame()
 	MouseDelta.Y = 0.f;
 }
 
-bool InputState::IsKeyPressed(SDL_Keycode Key) const
+bool InputState::IsKeyHeld(SDL_Keycode Key) const
 {
 	return HeldKeys.contains(Key);
 }
@@ -66,12 +66,17 @@ bool InputState::IsKeyJustPressed(SDL_Keycode Key) const
 	return JustPressedKeys.contains(Key);
 }
 
+bool InputState::IsKeyDown(SDL_Keycode Key) const
+{
+	return IsKeyHeld(Key) || IsKeyJustPressed(Key);
+}
+
 bool InputState::IsKeyJustReleased(SDL_Keycode Key) const
 {
 	return JustReleasedKeys.contains(Key);
 }
 
-bool InputState::IsMouseButtonPressed(Uint8 Button) const
+bool InputState::IsMouseButtonHeld(Uint8 Button) const
 {
 	return HeldMouseButtons.contains(Button);
 }
@@ -79,6 +84,11 @@ bool InputState::IsMouseButtonPressed(Uint8 Button) const
 bool InputState::IsMouseButtonJustPressed(Uint8 Button) const
 {
 	return JustPressedMouseButtons.contains(Button);
+}
+
+bool InputState::IsMouseButtonDown(Uint8 Button) const
+{
+	return IsMouseButtonHeld(Button) || IsMouseButtonJustPressed(Button);
 }
 
 bool InputState::IsMouseButtonJustReleased(Uint8 Button) const

@@ -61,54 +61,54 @@ void RenderSystem::Update(const SystemUpdateContext& UpdateContext, float DeltaT
 
 	// Use ForEach for efficient iteration - components are passed directly with no lookups
 	Group.ForEach([&Renderer](Entity CurrentEntity, TransformComponent& Transform, ShapeComponent& Shape)
+	{
+		if (!Shape.Visible)
+			return;
+
+		// Set render draw color from shape color
+		SDL_SetRenderDrawColorFloat(&Renderer, Shape.Color.r, Shape.Color.g, Shape.Color.b, Shape.Color.a);
+
+		// Build destination rectangle with transform applied
+		SDL_FRect RenderRect{};
+		RenderRect.x = Transform.Position.X + Shape.Rect.x * Transform.Scale.X;
+		RenderRect.y = Transform.Position.Y + Shape.Rect.y * Transform.Scale.Y;
+		RenderRect.w = Shape.Rect.w * Transform.Scale.X;
+		RenderRect.h = Shape.Rect.h * Transform.Scale.Y;
+
+		switch (Shape.Type)
 		{
-			if (!Shape.Visible)
-				return;
-
-			// Set render draw color from shape color
-			SDL_SetRenderDrawColorFloat(&Renderer, Shape.Color.r, Shape.Color.g, Shape.Color.b, Shape.Color.a);
-
-			// Build destination rectangle with transform applied
-			SDL_FRect RenderRect{};
-			RenderRect.x = Transform.Position.X + Shape.Rect.x * Transform.Scale.X;
-			RenderRect.y = Transform.Position.Y + Shape.Rect.y * Transform.Scale.Y;
-			RenderRect.w = Shape.Rect.w * Transform.Scale.X;
-			RenderRect.h = Shape.Rect.h * Transform.Scale.Y;
-
-			switch (Shape.Type)
+		case ShapeComponent::ShapeType::Rectangle:
+			if (Shape.Filled)
 			{
-			case ShapeComponent::ShapeType::Rectangle:
-				if (Shape.Filled)
-				{
-					SDL_RenderFillRect(&Renderer, &RenderRect);
-				}
-				else
-				{
-					SDL_RenderRect(&Renderer, &RenderRect);
-				}
-				break;
-
-			case ShapeComponent::ShapeType::Circle:
+				SDL_RenderFillRect(&Renderer, &RenderRect);
+			}
+			else
 			{
-				const Vector2D<float> Center { RenderRect.x + RenderRect.w * 0.5f, RenderRect.y + RenderRect.h * 0.5f };
-				const float Radius = (RenderRect.w > RenderRect.h ? RenderRect.w : RenderRect.h) * 0.5f;
-
-				RenderCircle(&Renderer, Center, Radius, Shape.Filled, Shape.Color);
-				break;
+				SDL_RenderRect(&Renderer, &RenderRect);
 			}
+			break;
 
-			case ShapeComponent::ShapeType::Line:
-			{
-				const float X1 = Transform.Position.X + Shape.Rect.x * Transform.Scale.X;
-				const float Y1 = Transform.Position.Y + Shape.Rect.y * Transform.Scale.Y;
-				const float X2 = X1 + Shape.Rect.w * Transform.Scale.X;
-				const float Y2 = Y1 + Shape.Rect.h * Transform.Scale.Y;
+		case ShapeComponent::ShapeType::Circle:
+		{
+			const Vector2D<float> Center { RenderRect.x + RenderRect.w * 0.5f, RenderRect.y + RenderRect.h * 0.5f };
+			const float Radius = (RenderRect.w > RenderRect.h ? RenderRect.w : RenderRect.h) * 0.5f;
 
-				SDL_RenderLine(&Renderer, X1, Y1, X2, Y2);
-				break;
-			}
-			}
-		});
+			RenderCircle(&Renderer, Center, Radius, Shape.Filled, Shape.Color);
+			break;
+		}
+
+		case ShapeComponent::ShapeType::Line:
+		{
+			const float X1 = Transform.Position.X + Shape.Rect.x * Transform.Scale.X;
+			const float Y1 = Transform.Position.Y + Shape.Rect.y * Transform.Scale.Y;
+			const float X2 = X1 + Shape.Rect.w * Transform.Scale.X;
+			const float Y2 = Y1 + Shape.Rect.h * Transform.Scale.Y;
+
+			SDL_RenderLine(&Renderer, X1, Y1, X2, Y2);
+			break;
+		}
+		}
+	});
 
 	// Present the rendered frame
 	SDL_RenderPresent(&Renderer);
