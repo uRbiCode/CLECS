@@ -26,11 +26,11 @@
     <Filter Include="Source\ExampleGame">
       <UniqueIdentifier>{0ad24943-a866-491f-abf2-afe0416e87ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Utils">
-      <UniqueIdentifier>{d41bbb5c-b4d0-4762-bc40-fb7cfdd69908}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Core\System\Systems">
       <UniqueIdentifier>{245c3a13-4777-40d7-bcc4-4f7c5a5a6497}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\Utils">
+      <UniqueIdentifier>{d41bbb5c-b4d0-4762-bc40-fb7cfdd69908}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +101,9 @@
     </ClInclude>
     <ClInclude Include="RenderSystem.h">
       <Filter>Source\Core\System\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="MathTypes.h">
+      <Filter>Source\Core\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

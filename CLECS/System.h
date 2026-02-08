@@ -1,7 +1,7 @@
 #pragma once
 #include "CoreTypes.h"
 
-class SystemUpdateContext;
+struct SystemUpdateContext;
 
 /* System is a fundamental concept in CLECS architecture. 
  * It represents a piece of logic that operates on entities that have specific components attached to them.

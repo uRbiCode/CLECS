@@ -6,7 +6,7 @@
 
 namespace
 {
-	constexpr float MILLISECONDS_TO_SECONDS = 1000.0f;
+	constexpr float MILLISECONDS_TO_SECONDS = 1000.f;
 
 
 	float CalculateDeltaTime(Uint64& LastTime)

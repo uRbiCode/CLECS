@@ -6,11 +6,11 @@
 
 namespace
 {
-	void RenderCircle(SDL_Renderer* Renderer, const float CenterX, const float CenterY, const float Radius, const bool Filled, const SDL_FColor& Color)
+	void RenderCircle(SDL_Renderer* Renderer, const Vector2D<float>& Center, const float Radius, const bool Filled, const SDL_FColor& Color)
 	{
 		// Number of line segments to approximate circle
 		constexpr int Segments = 32;  
-		constexpr float AngleStep = (2.0f * SDL_PI_F) / Segments;
+		constexpr float AngleStep = (2.f * SDL_PI_F) / Segments;
 		
 		if (Filled) 
 		{
@@ -21,9 +21,9 @@ namespace
 				const float Angle2 = (i + 1) * AngleStep;
 				
 				const SDL_Vertex Vertices[3] = {
-					{ { CenterX, CenterY }, { Color.r, Color.g, Color.b, Color.a }, { 0, 0 } },  // Center
-					{ { CenterX + SDL_cosf(Angle1) * Radius, CenterY + SDL_sinf(Angle1) * Radius }, { Color.r, Color.g, Color.b, Color.a }, { 0, 0 } },
-					{ { CenterX + SDL_cosf(Angle2) * Radius, CenterY + SDL_sinf(Angle2) * Radius }, { Color.r, Color.g, Color.b, Color.a }, { 0, 0 } }
+					{ { Center.X, Center.Y }, { Color.r, Color.g, Color.b, Color.a }, { 0, 0 } },  // Center
+					{ { Center.X + SDL_cosf(Angle1) * Radius, Center.Y + SDL_sinf(Angle1) * Radius }, { Color.r, Color.g, Color.b, Color.a }, { 0, 0 } },
+					{ { Center.X + SDL_cosf(Angle2) * Radius, Center.Y + SDL_sinf(Angle2) * Radius }, { Color.r, Color.g, Color.b, Color.a }, { 0, 0 } }
 				};
 				SDL_RenderGeometry(Renderer, nullptr, Vertices, 3, nullptr, 0);
 			}
@@ -36,10 +36,10 @@ namespace
 				const float Angle1 = i * AngleStep;
 				const float Angle2 = (i + 1) * AngleStep;
 				
-				const float X1 = CenterX + SDL_cosf(Angle1) * Radius;
-				const float Y1 = CenterY + SDL_sinf(Angle1) * Radius;
-				const float X2 = CenterX + SDL_cosf(Angle2) * Radius;
-				const float Y2 = CenterY + SDL_sinf(Angle2) * Radius;
+				const float X1 = Center.X + SDL_cosf(Angle1) * Radius;
+				const float Y1 = Center.Y + SDL_sinf(Angle1) * Radius;
+				const float X2 = Center.X + SDL_cosf(Angle2) * Radius;
+				const float Y2 = Center.Y + SDL_sinf(Angle2) * Radius;
 				
 				SDL_RenderLine(Renderer, X1, Y1, X2, Y2);
 			}
@@ -62,23 +62,23 @@ void RenderSystem::Update(const SystemUpdateContext& UpdateContext)
 	// Use ForEach for efficient iteration - components are passed directly with no lookups
 	Group.ForEach([&Renderer](Entity CurrentEntity, TransformComponent& Transform, ShapeComponent& Shape)
 		{
-			if (!Shape.visible)
+			if (!Shape.Visible)
 				return;
 
 			// Set render draw color from shape color
-			SDL_SetRenderDrawColorFloat(&Renderer, Shape.color.r, Shape.color.g, Shape.color.b, Shape.color.a);
+			SDL_SetRenderDrawColorFloat(&Renderer, Shape.Color.r, Shape.Color.g, Shape.Color.b, Shape.Color.a);
 
 			// Build destination rectangle with transform applied
 			SDL_FRect RenderRect{};
-			RenderRect.x = Transform.x + Shape.rect.x * Transform.scaleX;
-			RenderRect.y = Transform.y + Shape.rect.y * Transform.scaleY;
-			RenderRect.w = Shape.rect.w * Transform.scaleX;
-			RenderRect.h = Shape.rect.h * Transform.scaleY;
+			RenderRect.x = Transform.Position.X + Shape.Rect.x * Transform.Scale.X;
+			RenderRect.y = Transform.Position.Y + Shape.Rect.y * Transform.Scale.Y;
+			RenderRect.w = Shape.Rect.w * Transform.Scale.X;
+			RenderRect.h = Shape.Rect.h * Transform.Scale.Y;
 
-			switch (Shape.type)
+			switch (Shape.Type)
 			{
 			case ShapeComponent::ShapeType::Rectangle:
-				if (Shape.filled)
+				if (Shape.Filled)
 				{
 					SDL_RenderFillRect(&Renderer, &RenderRect);
 				}
@@ -90,20 +90,19 @@ void RenderSystem::Update(const SystemUpdateContext& UpdateContext)
 
 			case ShapeComponent::ShapeType::Circle:
 			{
-				const float CenterX = RenderRect.x + RenderRect.w * 0.5f;
-				const float CenterY = RenderRect.y + RenderRect.h * 0.5f;
+				const Vector2D<float> Center { RenderRect.x + RenderRect.w * 0.5f, RenderRect.y + RenderRect.h * 0.5f };
 				const float Radius = (RenderRect.w > RenderRect.h ? RenderRect.w : RenderRect.h) * 0.5f;
 
-				RenderCircle(&Renderer, CenterX, CenterY, Radius, Shape.filled, Shape.color);
+				RenderCircle(&Renderer, Center, Radius, Shape.Filled, Shape.Color);
 				break;
 			}
 
 			case ShapeComponent::ShapeType::Line:
 			{
-				const float X1 = Transform.x + Shape.rect.x * Transform.scaleX;
-				const float Y1 = Transform.y + Shape.rect.y * Transform.scaleY;
-				const float X2 = X1 + Shape.rect.w * Transform.scaleX;
-				const float Y2 = Y1 + Shape.rect.h * Transform.scaleY;
+				const float X1 = Transform.Position.X + Shape.Rect.x * Transform.Scale.X;
+				const float Y1 = Transform.Position.Y + Shape.Rect.y * Transform.Scale.Y;
+				const float X2 = X1 + Shape.Rect.w * Transform.Scale.X;
+				const float Y2 = Y1 + Shape.Rect.h * Transform.Scale.Y;
 
 				SDL_RenderLine(&Renderer, X1, Y1, X2, Y2);
 				break;
