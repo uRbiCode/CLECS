@@ -136,12 +136,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CollisionSystem.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="ExampleGame.cpp" />
     <ClCompile Include="GameRunner.cpp" />
     <ClCompile Include="InputState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovementSystem.cpp" />
+    <ClCompile Include="MovementUtils.cpp" />
     <ClCompile Include="PlayerInputSystem.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="System.cpp" />
@@ -149,8 +151,13 @@
     <ClCompile Include="WorldInitializationData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionComponent.h" />
+    <ClInclude Include="CollisionSystem.h" />
     <ClInclude Include="ComponentPool.h" />
-    <ClInclude Include="Components.h" />
+    <ClInclude Include="MovementUtils.h" />
+    <ClInclude Include="PlayerControllerComponent.h" />
+    <ClInclude Include="ShapeComponent.h" />
+    <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="CoreTypes.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />
@@ -165,6 +172,7 @@
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemUpdateContext.h" />
+    <ClInclude Include="VelocityComponent.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="WorldInitializationData.h" />
   </ItemGroup>

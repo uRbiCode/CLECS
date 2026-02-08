@@ -107,6 +107,11 @@ public:
 		size_t Size() const { return CachedEntities.size(); }
 		bool Empty() const { return CachedEntities.empty(); }
 
+		Entity operator[](size_t Index) const
+		{
+			return CachedEntities[Index];
+		}
+
 		// Get all components for an entity
 		template<typename T>
 		T& Access(const Entity& TargetEntity)
