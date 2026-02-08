@@ -139,6 +139,7 @@
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="ExampleGame.cpp" />
     <ClCompile Include="GameRunner.cpp" />
+    <ClCompile Include="InputState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="System.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="ExampleGame.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameRunner.h" />
+    <ClInclude Include="InputState.h" />
     <ClInclude Include="MathTypes.h" />
     <ClInclude Include="RendererInitializationData.h" />
     <ClInclude Include="RenderSystem.h" />

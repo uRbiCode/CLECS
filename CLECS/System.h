@@ -11,7 +11,7 @@ class System
 public:
 	virtual ~System() = default;
 
-	virtual void Update(const SystemUpdateContext& UpdateContext) = 0;
+	virtual void Update(const SystemUpdateContext& UpdateContext, float DeltaTime) = 0;
 };
 
 template<class T>

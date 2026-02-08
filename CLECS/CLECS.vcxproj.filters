@@ -58,6 +58,9 @@
     <ClCompile Include="RenderSystem.cpp">
       <Filter>Source\Core\System\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="InputState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="World.h">
@@ -105,5 +108,6 @@
     <ClInclude Include="MathTypes.h">
       <Filter>Source\Core\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="InputState.h" />
   </ItemGroup>
 </Project>

@@ -5,5 +5,5 @@
 class RenderSystem : public System
 {
 public:
-	void Update(const SystemUpdateContext& UpdateContext) override;
+	void Update(const SystemUpdateContext& UpdateContext, float DeltaTime) override;
 };
