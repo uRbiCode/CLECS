@@ -1,6 +1,8 @@
 #pragma once
 #include "Game.h"
 
+struct RendererInitializationData;
+
 /* Macro for game programmers to define their game entry point.
  * Usage in your own .cpp file:
  *
@@ -18,11 +20,7 @@ public:
 
 	void Shutdown() override {}
 
-	const char* GetWindowTitle() const override	{ return "CLECS Example Game"; }
-
-	int GetWindowWidth() const override	{ return 1280; }
-
-	int GetWindowHeight() const override { return 720; }
+	RendererInitializationData GetRendererConfig() const override;
 };
 
 CLECS_DEFINE_GAME_ENTRY(ExampleGame)

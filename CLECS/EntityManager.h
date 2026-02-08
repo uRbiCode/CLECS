@@ -30,9 +30,9 @@ public:
 	}
 
 	template<typename T>
-	T& GetComponent(const Entity& TargetEntity)
+	T& AccessComponent(const Entity& TargetEntity)
 	{
-		return GetPool<T>()->Get(TargetEntity);
+		return GetPool<T>()->Access(TargetEntity);
 	}
 
 	template<typename T>
@@ -109,7 +109,7 @@ public:
 
 		// Get all components for an entity
 		template<typename T>
-		T& Get(const Entity& TargetEntity)
+		T& Access(const Entity& TargetEntity)
 		{
 			return Manager->GetComponent<T>(TargetEntity);
 		}

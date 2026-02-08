@@ -2,6 +2,7 @@
 #include <memory>
 
 class WorldInitializationData;
+struct RendererInitializationData;
 
 /* Game is the main entrypoint for CLECS applications.
  * Inherit from this class to define your game's initialization logic and configuration.
@@ -20,19 +21,9 @@ public:
 	/* Called once during game shutdown.
 	 * Use this to clean up any game-specific resources.
 	 */
-	virtual void Shutdown() {}
+	virtual void Shutdown() = 0;
 
-	/* Returns the title that will be displayed in the window.
-	 */
-	virtual const char* GetWindowTitle() const { return "CLECS Game"; }
-
-	/* Returns the initial window width.
-	 */
-	virtual int GetWindowWidth() const { return 1280; }
-
-	/* Returns the initial window height.
-	 */
-	virtual int GetWindowHeight() const { return 720; }
+	virtual RendererInitializationData GetRendererConfig() const = 0;
 };
 
 std::unique_ptr<Game> CreateGame();

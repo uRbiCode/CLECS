@@ -47,7 +47,7 @@
       <Filter>Source\ExampleGame</Filter>
     </ClCompile>
     <ClCompile Include="WorldInitializationData.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Core\World</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,6 +86,9 @@
     </ClInclude>
     <ClInclude Include="ExampleGame.h">
       <Filter>Source\ExampleGame</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererInitializationData.h">
+      <Filter>Source\GameEntry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

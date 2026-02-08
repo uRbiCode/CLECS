@@ -29,19 +29,13 @@ int GameRunner::Run(std::unique_ptr<Game> GameInstance)
 	if (!InitializeSDL())
 		return 1;
 
-	SDL_Window* Window = CreateGameWindow(*GameInstance);
-	if (Window == nullptr)
-	{
-		ShutdownSDL();
-		return 1;
-	}
-
 	auto WorldInitializationData = WorldInitializationData::Create();
+	WorldInitializationData.SetRendererConfig(GameInstance->GetRendererConfig());
+
 	if (!GameInstance->Initialize(WorldInitializationData))
 	{
 		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Game initialization failed");
-		SDL_DestroyWindow(Window);
-		ShutdownSDL();
+		SDL_Quit();
 		return 1;
 	}
 
@@ -49,16 +43,13 @@ int GameRunner::Run(std::unique_ptr<Game> GameInstance)
 
 	if (!InitializeWorld(GameWorld, WorldInitializationData))
 	{
-		SDL_DestroyWindow(Window);
-		ShutdownSDL();
+		Shutdown(*GameInstance,GameWorld);
 		return 1;
 	}
 
 	const int ExitCode = RunGameLoop(GameWorld);
 
-	GameInstance->Shutdown();
-	SDL_DestroyWindow(Window);
-	ShutdownSDL();
+	Shutdown(*GameInstance,GameWorld);
 
 	return ExitCode;
 }
@@ -72,29 +63,6 @@ bool GameRunner::InitializeSDL()
 	}
 	return true;
 }
-
-void GameRunner::ShutdownSDL()
-{
-	SDL_Quit();
-}
-
-SDL_Window* GameRunner::CreateGameWindow(const Game& GameInstance)
-{
-	SDL_Window* Window = SDL_CreateWindow(
-		GameInstance.GetWindowTitle(),
-		GameInstance.GetWindowWidth(),
-		GameInstance.GetWindowHeight(),
-		SDL_WINDOW_RESIZABLE
-	);
-
-	if (Window == nullptr)
-	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Window creation failed: %s", SDL_GetError());
-	}
-
-	return Window;
-}
-
 bool GameRunner::InitializeWorld(World& GameWorld, WorldInitializationData& Data)
 {
 	const CLECS::ResultType Result = GameWorld.InitializeWorld(Data);
@@ -104,6 +72,13 @@ bool GameRunner::InitializeWorld(World& GameWorld, WorldInitializationData& Data
 		return false;
 	}
 	return true;
+}
+
+void GameRunner::Shutdown(Game& GameInstance, World& GameWorld)
+{
+	GameInstance.Shutdown();
+	GameWorld.Shutdown();
+	SDL_Quit();
 }
 
 int GameRunner::RunGameLoop(World& GameWorld)
@@ -125,7 +100,7 @@ int GameRunner::RunGameLoop(World& GameWorld)
 
 		if (UpdateResult == CLECS::ResultType::Failure)
 		{
-			SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "World update failed");
+			SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World update failed");
 			return 1;
 		}
 	}

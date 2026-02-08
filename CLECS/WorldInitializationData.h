@@ -1,5 +1,6 @@
 #pragma once
 #include "System.h"
+#include "RendererInitializationData.h"
 #include <vector>
 #include <memory>
 
@@ -16,12 +17,16 @@ public:
 	void AddSystem();
 	
 	// More explicit API for entity creation during initialization
-	EntityManager& GetEntityManager() { return *EntityManagerPtr; }
+	EntityManager& AccessEntityManager() { return *EntityManagerPtr; }
+
+	// Renderer configuration access
+	void SetRendererConfig(RendererInitializationData&& Config) { RendererConfig = std::move(Config); }
 	
 private:
 	WorldInitializationData() = default;
 	std::unique_ptr<EntityManager> EntityManagerPtr;
 	SystemCollection Systems;
+	RendererInitializationData RendererConfig;
 
 	friend class World;
 };

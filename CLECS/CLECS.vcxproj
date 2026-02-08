@@ -153,6 +153,7 @@
     <ClInclude Include="ExampleGame.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameRunner.h" />
+    <ClInclude Include="RendererInitializationData.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemUpdateContext.h" />
     <ClInclude Include="World.h" />

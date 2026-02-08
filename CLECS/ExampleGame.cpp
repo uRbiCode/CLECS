@@ -1,4 +1,5 @@
 #include "ExampleGame.h"
+#include "RendererInitializationData.h"
 
 bool ExampleGame::Initialize(WorldInitializationData& Data)
 {
@@ -12,3 +13,11 @@ bool ExampleGame::Initialize(WorldInitializationData& Data)
 	return true;
 }
 
+RendererInitializationData ExampleGame::GetRendererConfig() const
+{
+	RendererInitializationData RendererConfig;
+	RendererConfig.WindowTitle = "CLECS Example Game";
+	RendererConfig.WindowWidth = 1280;
+	RendererConfig.WindowHeight = 720;
+	return RendererConfig;
+}

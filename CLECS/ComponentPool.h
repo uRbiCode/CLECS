@@ -46,7 +46,7 @@ public:
 		return Components.back();
 	}
 
-	T& Get(const Entity& TargetEntity)
+	T& Access(const Entity& TargetEntity)
 	{
 		const auto EntityId = TargetEntity.GetId();
 		return Components[Sparse[EntityId]];
@@ -88,7 +88,7 @@ public:
 		return EntityId < Sparse.size() && Sparse[EntityId] != INVALID_ENTITY_IDENTIFIER;
 	}
 
-	std::vector<T>& GetComponents()	{ return Components; }
+	std::vector<T>& AccessComponents()	{ return Components; }
 
 	const std::vector<T>& GetComponents() const	{ return Components; }
 
