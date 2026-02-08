@@ -4,9 +4,9 @@
 #include "CollisionComponent.h"
 #include "TransformComponent.h"
 #include "ShapeComponent.h"
+#include "VelocityComponent.h"
 #include <cmath>
 #include <algorithm>
-#include "VelocityComponent.h"
 
 void CollisionSystem::Update(const SystemUpdateContext& UpdateContext, float DeltaTime)
 {
@@ -15,7 +15,7 @@ void CollisionSystem::Update(const SystemUpdateContext& UpdateContext, float Del
 	// Get all entities with collision components
 	auto CollisionGroup = Manager.GetGroup<TransformComponent, ShapeComponent, CollisionComponent>();
 
-	// Check all pairs for collision
+	// Phase 1: Resolve existing overlaps (push objects apart if already penetrating)
 	for (size_t i = 0; i < CollisionGroup.Size(); ++i)
 	{
 		const Entity EntityA = CollisionGroup[i];
@@ -48,9 +48,122 @@ void CollisionSystem::Update(const SystemUpdateContext& UpdateContext, float Del
 				const Vector2D<float> Separation = CalculateSeparation(TransformA, ShapeA, TransformB, ShapeB);
 				TransformA.Position.X += Separation.X;
 				TransformA.Position.Y += Separation.Y;
+
+				// If A has velocity, also zero velocity components pointing into the obstacle
+				if (Manager.HasComponent<VelocityComponent>(EntityA))
+				{
+					const bool BIsStatic = !Manager.HasComponent<VelocityComponent>(EntityB);
+					if (BIsStatic)
+					{
+						auto& VelocityA = Manager.AccessComponent<VelocityComponent>(EntityA);
+						
+						// Zero out velocity components that would push back into the obstacle
+						const float SeparationMagnitude = std::sqrtf(Separation.X * Separation.X + Separation.Y * Separation.Y);
+						if (SeparationMagnitude > 0.001f)
+						{
+							const Vector2D<float> SeparationDir = { Separation.X / SeparationMagnitude, Separation.Y / SeparationMagnitude };
+							const float VelocityDot = VelocityA.Velocity.X * SeparationDir.X + VelocityA.Velocity.Y * SeparationDir.Y;
+							
+							// If velocity is pointing back into the obstacle, remove that component
+							if (VelocityDot < 0.f)
+							{
+								VelocityA.Velocity.X -= VelocityDot * SeparationDir.X;
+								VelocityA.Velocity.Y -= VelocityDot * SeparationDir.Y;
+							}
+						}
+					}
+				}
 			}
 		}
 	}
+
+	// Phase 2: Validate velocities against static obstacles (prevents rotation/movement into walls)
+	for (size_t i = 0; i < CollisionGroup.Size(); ++i)
+	{
+		const Entity EntityA = CollisionGroup[i];
+		const auto& CollisionA = Manager.GetComponent<CollisionComponent>(EntityA);
+		const auto& TransformA = Manager.GetComponent<TransformComponent>(EntityA);
+		const auto& ShapeA = Manager.GetComponent<ShapeComponent>(EntityA);
+
+		// Only check entities that have velocity
+		if (!Manager.HasComponent<VelocityComponent>(EntityA))
+			continue;
+
+		auto& VelocityA = Manager.AccessComponent<VelocityComponent>(EntityA);
+
+		for (size_t j = 0; j < CollisionGroup.Size(); ++j)
+		{
+			if (i == j)
+				continue;
+
+			const Entity EntityB = CollisionGroup[j];
+			const auto& CollisionB = Manager.GetComponent<CollisionComponent>(EntityB);
+
+			// Check if A should block against B
+			const auto ResponseA = CollisionA.ResponseTable[ChannelToIndex(CollisionB.Channel)];
+			if (ResponseA != CollisionResponse::Block)
+				continue;
+
+			// Check if B is "static" (no velocity component = immovable)
+			const bool BIsStatic = !Manager.HasComponent<VelocityComponent>(EntityB);
+			if (!BIsStatic)
+				continue; // Skip dynamic-vs-dynamic for this phase
+
+			const auto& TransformB = Manager.GetComponent<TransformComponent>(EntityB);
+			const auto& ShapeB = Manager.GetComponent<ShapeComponent>(EntityB);
+
+			// Check angular velocity (rotation) first
+			if (VelocityA.AngularVelocity != 0.f)
+			{
+				if (WouldCollideAfterRotation(TransformA, ShapeA, VelocityA.AngularVelocity, DeltaTime, TransformB, ShapeB))
+				{
+					// Block rotation by zeroing angular velocity
+					VelocityA.AngularVelocity = 0.f;
+				}
+			}
+
+			// Check linear velocity (movement)
+			if (VelocityA.Velocity.X != 0.f || VelocityA.Velocity.Y != 0.f)
+			{
+				if (WouldCollideAfterMovement(TransformA, ShapeA, VelocityA.Velocity, DeltaTime, TransformB, ShapeB))
+				{
+					// Zero velocity to prevent penetration
+					VelocityA.Velocity = { 0.f, 0.f };
+				}
+			}
+		}
+	}
+}
+
+bool CollisionSystem::WouldCollideAfterRotation(
+	const TransformComponent& Transform,
+	const ShapeComponent& Shape,
+	float AngularVelocity,
+	float DeltaTime,
+	const TransformComponent& ObstacleTransform,
+	const ShapeComponent& ObstacleShape) const
+{
+	// Create predicted transform after rotation
+	TransformComponent PredictedTransform = Transform;
+	PredictedTransform.Rotation += AngularVelocity * DeltaTime;
+
+	return CheckCollision(PredictedTransform, Shape, ObstacleTransform, ObstacleShape);
+}
+
+bool CollisionSystem::WouldCollideAfterMovement(
+	const TransformComponent& Transform,
+	const ShapeComponent& Shape,
+	const Vector2D<float>& Velocity,
+	float DeltaTime,
+	const TransformComponent& ObstacleTransform,
+	const ShapeComponent& ObstacleShape) const
+{
+	// Create predicted transform after movement
+	TransformComponent PredictedTransform = Transform;
+	PredictedTransform.Position.X += Velocity.X * DeltaTime;
+	PredictedTransform.Position.Y += Velocity.Y * DeltaTime;
+
+	return CheckCollision(PredictedTransform, Shape, ObstacleTransform, ObstacleShape);
 }
 
 Vector2D<float> CollisionSystem::CalculateSeparation(
@@ -68,18 +181,162 @@ Vector2D<float> CollisionSystem::CalculateSeparation(
 	}
 	else if (!AIsCircle && !BIsCircle)
 	{
-		return CalculateAABBSeparation(TransformA, ShapeA, TransformB, ShapeB);
+		// Check if either has rotation - if so, use OBB separation
+		const bool AUsesRotation = (TransformA.Rotation != 0.f);
+		const bool BUsesRotation = (TransformB.Rotation != 0.f);
+
+		if (AUsesRotation || BUsesRotation)
+		{
+			return CalculateOBBSeparation(TransformA, ShapeA, TransformB, ShapeB);
+		}
+		else
+		{
+			return CalculateAABBSeparation(TransformA, ShapeA, TransformB, ShapeB);
+		}
 	}
 	else if (AIsCircle)
 	{
-		return CalculateCircleRectSeparation(TransformA.Position, ShapeA.Rect.w * 0.5f, TransformB, ShapeB);
+		const bool BUsesRotation = (TransformB.Rotation != 0.f);
+		if (BUsesRotation)
+		{
+			return CalculateCircleOBBSeparation(TransformA.Position, ShapeA.Rect.w * 0.5f, TransformB, ShapeB);
+		}
+		else
+		{
+			return CalculateCircleRectSeparation(TransformA.Position, ShapeA.Rect.w * 0.5f, TransformB, ShapeB);
+		}
 	}
 	else
 	{
 		// Rectangle vs Circle - flip the separation
-		const Vector2D<float> Sep = CalculateCircleRectSeparation(TransformB.Position, ShapeB.Rect.w * 0.5f, TransformA, ShapeA);
-		return { -Sep.X, -Sep.Y };
+		const bool AUsesRotation = (TransformA.Rotation != 0.f);
+		if (AUsesRotation)
+		{
+			const Vector2D<float> Sep = CalculateCircleOBBSeparation(TransformB.Position, ShapeB.Rect.w * 0.5f, TransformA, ShapeA);
+			return { -Sep.X, -Sep.Y };
+		}
+		else
+		{
+			const Vector2D<float> Sep = CalculateCircleRectSeparation(TransformB.Position, ShapeB.Rect.w * 0.5f, TransformA, ShapeA);
+			return { -Sep.X, -Sep.Y };
+		}
 	}
+}
+
+Vector2D<float> CollisionSystem::CalculateOBBSeparation(
+	const TransformComponent& TransformA,
+	const ShapeComponent& ShapeA,
+	const TransformComponent& TransformB,
+	const ShapeComponent& ShapeB) const
+{
+	const auto CornersA = GetOBBCorners(TransformA, ShapeA);
+	const auto CornersB = GetOBBCorners(TransformB, ShapeB);
+
+	const auto AxesA = GetOBBAxes(CornersA);
+	const auto AxesB = GetOBBAxes(CornersB);
+
+	// Find the axis with minimum overlap (MTV - Minimum Translation Vector)
+	float MinOverlap = std::numeric_limits<float>::max();
+	Vector2D<float> MinAxis = { 0.f, 0.f };
+
+	// Test all 4 axes
+	std::array<Vector2D<float>, 4> AllAxes = { AxesA[0], AxesA[1], AxesB[0], AxesB[1] };
+
+	for (const auto& Axis : AllAxes)
+	{
+		const auto [MinA, MaxA] = ProjectOBBOntoAxis(CornersA, Axis);
+		const auto [MinB, MaxB] = ProjectOBBOntoAxis(CornersB, Axis);
+
+		const float Overlap1 = MaxA - MinB;
+		const float Overlap2 = MaxB - MinA;
+		const float Overlap = std::min(Overlap1, Overlap2);
+
+		if (Overlap < MinOverlap)
+		{
+			MinOverlap = Overlap;
+			MinAxis = Axis;
+
+			// Determine direction - push A away from B
+			const float CenterA = (MinA + MaxA) * 0.5f;
+			const float CenterB = (MinB + MaxB) * 0.5f;
+			if (CenterA < CenterB)
+			{
+				MinAxis.X = -MinAxis.X;
+				MinAxis.Y = -MinAxis.Y;
+			}
+		}
+	}
+
+	return { MinAxis.X * MinOverlap, MinAxis.Y * MinOverlap };
+}
+
+Vector2D<float> CollisionSystem::CalculateCircleOBBSeparation(
+	const Vector2D<float>& CirclePos,
+	const float Radius,
+	const TransformComponent& RectTransform,
+	const ShapeComponent& RectShape) const
+{
+	// Transform circle to OBB's local space
+	const float CosTheta = std::cosf(-RectTransform.Rotation);
+	const float SinTheta = std::sinf(-RectTransform.Rotation);
+	
+	const Vector2D<float> Relative = { CirclePos.X - RectTransform.Position.X, CirclePos.Y - RectTransform.Position.Y };
+	
+	const Vector2D<float> Local = {
+		Relative.X * CosTheta - Relative.Y * SinTheta,
+		Relative.X * SinTheta + Relative.Y * CosTheta
+	};
+
+	const float HalfW = RectShape.Rect.w * 0.5f;
+	const float HalfH = RectShape.Rect.h * 0.5f;
+
+	// Find closest point on rect to circle center (in local space)
+	const Vector2D<float> Closest = {
+		std::clamp(Local.X, -HalfW, HalfW),
+		std::clamp(Local.Y, -HalfH, HalfH)
+	};
+
+	const Vector2D<float> Delta = { Local.X - Closest.X, Local.Y - Closest.Y };
+	const float DistanceSquared = Delta.X * Delta.X + Delta.Y * Delta.Y;
+
+	if (DistanceSquared < Radius * Radius)
+	{
+		Vector2D<float> LocalSeparation;
+
+		if (DistanceSquared > 0.001f)
+		{
+			// Circle is outside but overlapping
+			const float Distance = std::sqrtf(DistanceSquared);
+			const float Penetration = Radius - Distance;
+			LocalSeparation = { (Delta.X / Distance) * Penetration, (Delta.Y / Distance) * Penetration };
+		}
+		else
+		{
+			// Circle center is inside - push to nearest edge
+			const float DistLeft = Local.X + HalfW;
+			const float DistRight = HalfW - Local.X;
+			const float DistTop = Local.Y + HalfH;
+			const float DistBottom = HalfH - Local.Y;
+
+			const float MinDist = std::min({ DistLeft, DistRight, DistTop, DistBottom });
+
+			if (MinDist == DistLeft)
+				LocalSeparation = { -(Radius + HalfW - Local.X), 0.f };
+			else if (MinDist == DistRight)
+				LocalSeparation = { Radius + HalfW + Local.X, 0.f };
+			else if (MinDist == DistTop)
+				LocalSeparation = { 0.f, -(Radius + HalfH - Local.Y) };
+			else
+				LocalSeparation = { 0.f, Radius + HalfH + Local.Y };
+		}
+
+		// Transform separation back to world space
+		const float WorldX = LocalSeparation.X * CosTheta + LocalSeparation.Y * SinTheta;
+		const float WorldY = -LocalSeparation.X * SinTheta + LocalSeparation.Y * CosTheta;
+		return { WorldX, WorldY };
+	}
+
+	return { 0.f, 0.f };
 }
 
 Vector2D<float> CollisionSystem::CalculateCircleCircleSeparation(
