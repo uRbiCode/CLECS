@@ -143,7 +143,6 @@
     <ClCompile Include="InputState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovementSystem.cpp" />
-    <ClCompile Include="MovementUtils.cpp" />
     <ClCompile Include="PlayerInputSystem.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="System.cpp" />
@@ -154,7 +153,6 @@
     <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="CollisionSystem.h" />
     <ClInclude Include="ComponentPool.h" />
-    <ClInclude Include="MovementUtils.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="ShapeComponent.h" />
     <ClInclude Include="TransformComponent.h" />

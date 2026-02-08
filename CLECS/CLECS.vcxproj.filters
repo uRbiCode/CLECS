@@ -88,9 +88,6 @@
     <ClCompile Include="CollisionSystem.cpp">
       <Filter>Source\Core\System\Systems\CollisionSystem</Filter>
     </ClCompile>
-    <ClCompile Include="MovementUtils.cpp">
-      <Filter>Source\Core\System\Systems\MovementSystem</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="World.h">
@@ -161,9 +158,6 @@
     </ClInclude>
     <ClInclude Include="CollisionSystem.h">
       <Filter>Source\Core\System\Systems\CollisionSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="MovementUtils.h">
-      <Filter>Source\Core\System\Systems\MovementSystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
