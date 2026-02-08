@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include <vector>
+#include <limits>
 
 /* Base class for type-erased component storage.
  * Allows to manage different component types uniformly.
@@ -13,6 +14,9 @@ public:
 	virtual bool Has(const Entity& TargetEntity) const = 0;
 	virtual void Clear() = 0;
 };
+
+// Sentinel value indicating no component at this sparse index
+constexpr uint32_t INVALID_DENSE_INDEX = std::numeric_limits<uint32_t>::max();
 
 /* Templated component pool using sparse set for O(1) lookups.
  * Sparse array maps entity Ids to dense array indices.
@@ -30,11 +34,11 @@ public:
 		// Ensure sparse array is large enough
 		if (EntityId >= Sparse.size())
 		{
-			Sparse.resize(EntityId + 1, INVALID_ENTITY_IDENTIFIER);
+			Sparse.resize(EntityId + 1, INVALID_DENSE_INDEX);
 		}
 
 		// Check if entity already has this component
-		if (Sparse[EntityId] != INVALID_ENTITY_IDENTIFIER)
+		if (Sparse[EntityId] != INVALID_DENSE_INDEX)
 			return Components[Sparse[EntityId]];
 
 		// Add new component
@@ -46,7 +50,7 @@ public:
 		return Components.back();
 	}
 
-	T& Get(const Entity& TargetEntity)
+	T& Access(const Entity& TargetEntity)
 	{
 		const auto EntityId = TargetEntity.GetId();
 		return Components[Sparse[EntityId]];
@@ -61,7 +65,7 @@ public:
 	void Remove(const Entity& TargetEntity) override
 	{
 		const auto EntityId = TargetEntity.GetId();
-		if (EntityId >= Sparse.size() || Sparse[EntityId] == INVALID_ENTITY_IDENTIFIER)
+		if (EntityId >= Sparse.size() || Sparse[EntityId] == INVALID_DENSE_INDEX)
 			return;
 
 		const auto DenseIndex = Sparse[EntityId];
@@ -79,16 +83,23 @@ public:
 
 		Components.pop_back();
 		Entities.pop_back();
-		Sparse[EntityId] = INVALID_ENTITY_IDENTIFIER;
+		Sparse[EntityId] = INVALID_DENSE_INDEX;
 	}
 
 	bool Has(const Entity& TargetEntity) const override
 	{
 		const auto EntityId = TargetEntity.GetId();
-		return EntityId < Sparse.size() && Sparse[EntityId] != INVALID_ENTITY_IDENTIFIER;
+		if (EntityId >= Sparse.size())
+			return false;
+
+		const auto DenseIndex = Sparse[EntityId];
+		if (DenseIndex == INVALID_DENSE_INDEX)
+			return false;
+
+		return Entities[DenseIndex] == TargetEntity;
 	}
 
-	std::vector<T>& GetComponents()	{ return Components; }
+	std::vector<T>& AccessComponents()	{ return Components; }
 
 	const std::vector<T>& GetComponents() const	{ return Components; }
 

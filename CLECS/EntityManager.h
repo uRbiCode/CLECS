@@ -30,9 +30,9 @@ public:
 	}
 
 	template<typename T>
-	T& GetComponent(const Entity& TargetEntity)
+	T& AccessComponent(const Entity& TargetEntity)
 	{
-		return GetPool<T>()->Get(TargetEntity);
+		return GetPool<T>()->Access(TargetEntity);
 	}
 
 	template<typename T>
@@ -109,9 +109,9 @@ public:
 
 		// Get all components for an entity
 		template<typename T>
-		T& Get(const Entity& TargetEntity)
+		T& Access(const Entity& TargetEntity)
 		{
-			return Manager->GetComponent<T>(TargetEntity);
+			return Manager->AccessComponent<T>(TargetEntity);
 		}
 
 		template<typename T>
@@ -126,7 +126,7 @@ public:
 		{
 			for (const auto& TargetEntity : CachedEntities)
 			{
-				Function(TargetEntity, Manager->GetComponent<Components>(TargetEntity)...);
+				Function(TargetEntity, Manager->AccessComponent<Components>(TargetEntity)...);
 			}
 		}
 
@@ -196,8 +196,8 @@ private:
 		const auto It = ComponentPools.find(TypeId);
 		if (It == ComponentPools.end())
 		{
-			const auto Pool = std::make_unique<ComponentPool<T>>();
-			const auto* PoolPtr = Pool.get();
+			auto Pool = std::make_unique<ComponentPool<T>>();
+			auto* PoolPtr = Pool.get();
 			ComponentPools[TypeId] = std::move(Pool);
 			return PoolPtr;
 		}

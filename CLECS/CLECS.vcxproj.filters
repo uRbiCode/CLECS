@@ -26,6 +26,12 @@
     <Filter Include="Source\ExampleGame">
       <UniqueIdentifier>{0ad24943-a866-491f-abf2-afe0416e87ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\System\Systems">
+      <UniqueIdentifier>{245c3a13-4777-40d7-bcc4-4f7c5a5a6497}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\Utils">
+      <UniqueIdentifier>{d41bbb5c-b4d0-4762-bc40-fb7cfdd69908}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -45,6 +51,12 @@
     </ClCompile>
     <ClCompile Include="ExampleGame.cpp">
       <Filter>Source\ExampleGame</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldInitializationData.cpp">
+      <Filter>Source\Core\World</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderSystem.cpp">
+      <Filter>Source\Core\System\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +86,24 @@
     </ClInclude>
     <ClInclude Include="GameRunner.h">
       <Filter>Source\GameEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="Components.h">
+      <Filter>Source\Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldInitializationData.h">
+      <Filter>Source\Core\World</Filter>
+    </ClInclude>
+    <ClInclude Include="ExampleGame.h">
+      <Filter>Source\ExampleGame</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererInitializationData.h">
+      <Filter>Source\GameEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderSystem.h">
+      <Filter>Source\Core\System\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="MathTypes.h">
+      <Filter>Source\Core\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

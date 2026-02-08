@@ -6,32 +6,35 @@
 #include <vector>
 #include <memory>
 
+class WorldInitializationData;
+struct SDL_Window;
+struct SDL_Renderer;
+struct RendererInitializationData;
+
+using SystemCollection = std::vector<std::unique_ptr<System>>;
+
 /* World is the heart of CLECS architecture.
  * It coordinates systems and provides access to entity management.
+ * It owns the SDL window and renderer resources.
  */
 class World
 {
 public:
 	World() = default;
+	~World();
 	World(const World&) = delete;
 	World& operator=(const World&) = delete;
 
-	CLECS::ResultType InitializeWorld();
+	CLECS::ResultType InitializeWorld(WorldInitializationData& Data);
 	CLECS::ResultType Update(float DeltaTime);
-	
-	template<SystemType T>
-	void AddSystem();
-	
-	// Access to entity manager
-	EntityManager* GetEntityManager() { return EntityManagerPtr.get(); }
+	void Shutdown();
 
 private:
-	std::unique_ptr<EntityManager> EntityManagerPtr;
-	std::vector<std::unique_ptr<System>> Systems;
-};
+	bool CreateWindow(const RendererInitializationData& Data);
+	bool CreateRenderer();
 
-template<SystemType T>
-inline void World::AddSystem()
-{
-	Systems.push_back(std::make_unique<T>());
-}
+	std::unique_ptr<EntityManager> EntityManagerPtr;
+	SystemCollection Systems;
+	SDL_Window* Window = nullptr;
+	SDL_Renderer* Renderer = nullptr;
+};

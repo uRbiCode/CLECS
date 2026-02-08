@@ -140,19 +140,27 @@
     <ClCompile Include="ExampleGame.cpp" />
     <ClCompile Include="GameRunner.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="World.cpp" />
+    <ClCompile Include="WorldInitializationData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ComponentPool.h" />
+    <ClInclude Include="Components.h" />
     <ClInclude Include="CoreTypes.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="ExampleGame.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameRunner.h" />
+    <ClInclude Include="MathTypes.h" />
+    <ClInclude Include="RendererInitializationData.h" />
+    <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemUpdateContext.h" />
     <ClInclude Include="World.h" />
+    <ClInclude Include="WorldInitializationData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
