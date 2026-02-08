@@ -140,6 +140,7 @@
     <ClCompile Include="ExampleGame.cpp" />
     <ClCompile Include="GameRunner.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldInitializationData.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameRunner.h" />
     <ClInclude Include="RendererInitializationData.h" />
+    <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemUpdateContext.h" />
     <ClInclude Include="World.h" />

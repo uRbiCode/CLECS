@@ -11,16 +11,6 @@ struct TransformComponent
     float scaleY = 1.0f;
 };
 
-// Sprite component for rendering textures
-struct SpriteComponent
-{
-    SDL_Texture* texture = nullptr;
-    SDL_Rect sourceRect = {0, 0, 0, 0};
-    SDL_FColor colorMod = {1.0f, 1.0f, 1.0f, 1.0f};
-    int zOrder = 0;  // For render ordering
-    bool visible = true;
-};
-
 // Primitive shape component
 struct ShapeComponent
 {

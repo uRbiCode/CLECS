@@ -38,7 +38,7 @@ CLECS::ResultType World::Update(float DeltaTime)
 			return CLECS::ResultType::Quit;
 	}
 
-	const auto UpdateContext = SystemUpdateContext{ *EntityManagerPtr, DeltaTime };
+	const auto UpdateContext = SystemUpdateContext{ *EntityManagerPtr, *Window, *Renderer, DeltaTime };
 	for (const auto& CurrentSystem : Systems)
 	{
 		CurrentSystem->Update(UpdateContext);
