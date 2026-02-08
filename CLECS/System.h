@@ -1,5 +1,5 @@
 #pragma once
-#include "CoreTypes.h"
+#include <concepts>
 
 struct SystemUpdateContext;
 

@@ -1,5 +1,4 @@
 #include "World.h"
-#include "SDL3/SDL.h"
 #include "SystemUpdateContext.h"
 #include "WorldInitializationData.h"
 

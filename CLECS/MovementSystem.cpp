@@ -2,7 +2,6 @@
 #include "SystemUpdateContext.h"
 #include "EntityManager.h"
 #include "Components.h"
-#include "InputState.h"
 #include <SDL3/SDL.h>
 
 void MovementSystem::Update(const SystemUpdateContext& UpdateContext, float DeltaTime)
