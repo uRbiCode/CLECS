@@ -5,7 +5,7 @@
 struct TransformComponent;
 struct ShapeComponent;
 
-class CollisionSystem : public System
+class CollisionDetectionSystem : public System
 {
 public:
 	void Update(const SystemContext& Context, float DeltaTime) const override;

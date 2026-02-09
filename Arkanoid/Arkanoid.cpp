@@ -9,57 +9,49 @@
 #include "PlayerControllerComponent.h"
 #include "VelocityComponent.h"
 #include "CollisionComponent.h"
-#include "CollisionSystem.h"
+#include "CollisionDetectionSystem.h"
+#include "CollisionResolverSystem.h"
+
+namespace
+{
+	constexpr float WallThickness = 20.f;
+	constexpr float ScreenWidth = 1280.f;
+	constexpr float ScreenHeight = 720.f;
+
+	void CreateWall(EntityAdmin& Admin, const Vector2D<float>& Position, const Vector2D<float>& Size)
+	{
+		auto Wall = Admin.CreateEntity();
+		Admin.AddComponent<TransformComponent>(Wall, Position);
+		Admin.AddComponent<ShapeComponent>(Wall, ShapeComponent::ShapeType::Rectangle,
+			SDL_FRect{ -Size.X * 0.5f, -Size.Y * 0.5f, Size.X, Size.Y },
+			SDL_FColor{ 0.3f, 0.3f, 0.3f, 1.f }, true, true);
+		Admin.AddComponent<CollisionComponent>(Wall, CollisionChannel::Static);
+	}
+}
 
 bool Arkanoid::Initialize(WorldInitializationData& Data)
 {
 	Data.AddSystem<PlayerInputSystem>();
-	Data.AddSystem<CollisionSystem>();
+	Data.AddSystem<CollisionDetectionSystem>();
+	Data.AddSystem<CollisionResolverSystem>();
 	Data.AddSystem<MovementSystem>();
 	Data.AddSystem<RenderSystem>();
 
 	auto& EntityAdmin = Data.AccessEntityAdmin();
 
-	// Wall dimensions
-	constexpr float WallThickness = 20.f;
-	constexpr float ScreenWidth = 1280.f;
-	constexpr float ScreenHeight = 720.f;
+	CreateWall(EntityAdmin, Vector2D<float>{ ScreenWidth * 0.5f, WallThickness * 0.5f }, Vector2D<float>{ ScreenWidth, WallThickness });
+	CreateWall(EntityAdmin, Vector2D<float>{ WallThickness * 0.5f, ScreenHeight * 0.5f }, Vector2D<float>{ WallThickness, ScreenHeight });
+	CreateWall(EntityAdmin, Vector2D<float>{ ScreenWidth - WallThickness * 0.5f, ScreenHeight * 0.5f }, Vector2D<float>{ WallThickness, ScreenHeight });
 
-	// Top Wall
-	auto TopWall = EntityAdmin.CreateEntity();
-	EntityAdmin.AddComponent<TransformComponent>(TopWall, Vector2D<float>{ ScreenWidth * 0.5f, WallThickness * 0.5f });
-	EntityAdmin.AddComponent<ShapeComponent>(TopWall, ShapeComponent::ShapeType::Rectangle, 
-		SDL_FRect{ -ScreenWidth * 0.5f, -WallThickness * 0.5f, ScreenWidth, WallThickness }, 
-		SDL_FColor{ 0.5f, 0.5f, 0.5f, 1.f }, true, true);
-	EntityAdmin.AddComponent<CollisionComponent>(TopWall, CollisionChannel::Static);
-
-	// Left Wall
-	auto LeftWall = EntityAdmin.CreateEntity();
-	EntityAdmin.AddComponent<TransformComponent>(LeftWall, Vector2D<float>{ WallThickness * 0.5f, ScreenHeight * 0.5f });
-	EntityAdmin.AddComponent<ShapeComponent>(LeftWall, ShapeComponent::ShapeType::Rectangle, 
-		SDL_FRect{ -WallThickness * 0.5f, -ScreenHeight * 0.5f, WallThickness, ScreenHeight }, 
-		SDL_FColor{ 0.5f, 0.5f, 0.5f, 1.f }, true, true);
-	EntityAdmin.AddComponent<CollisionComponent>(LeftWall, CollisionChannel::Static);
-
-	// Right Wall
-	auto RightWall = EntityAdmin.CreateEntity();
-	EntityAdmin.AddComponent<TransformComponent>(RightWall, Vector2D<float>{ ScreenWidth - WallThickness * 0.5f, ScreenHeight * 0.5f });
-	EntityAdmin.AddComponent<ShapeComponent>(RightWall, ShapeComponent::ShapeType::Rectangle, 
-		SDL_FRect{ -WallThickness * 0.5f, -ScreenHeight * 0.5f, WallThickness, ScreenHeight }, 
-		SDL_FColor{ 0.5f, 0.5f, 0.5f, 1.f }, true, true);
-	EntityAdmin.AddComponent<CollisionComponent>(RightWall, CollisionChannel::Static);
-
-	// Player Paddle
 	auto PlayerEntity = EntityAdmin.CreateEntity();
 	EntityAdmin.AddComponent<TransformComponent>(PlayerEntity, Vector2D<float>{ 640.f, 650.f });
 	EntityAdmin.AddComponent<ShapeComponent>(PlayerEntity, ShapeComponent::ShapeType::Rectangle, 
 		SDL_FRect{ -60.f, -10.f, 120.f, 20.f }, 
-		SDL_FColor{ 1.f, 0.f, 0.f, 1.f }, true, true);
+		SDL_FColor{ 0.7f, 0.7f, 0.7f, 1.f }, true, true);
 	EntityAdmin.AddComponent<VelocityComponent>(PlayerEntity);
 	auto& PlayerCollisionComponent = EntityAdmin.AddComponent<CollisionComponent>(PlayerEntity, CollisionChannel::Player);
 	EntityAdmin.AddComponent<PlayerControllerComponent>(PlayerEntity);
 
-	// Ball
 	auto BallEntity = EntityAdmin.CreateEntity();
 	EntityAdmin.AddComponent<TransformComponent>(BallEntity, Vector2D<float>{ 640.f, 500.f });
 	EntityAdmin.AddComponent<ShapeComponent>(BallEntity, ShapeComponent::ShapeType::Circle, 
@@ -99,7 +91,7 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 			EntityAdmin.AddComponent<ShapeComponent>(Brick, ShapeComponent::ShapeType::Rectangle, 
 				SDL_FRect{ -BrickWidth * 0.5f, -BrickHeight * 0.5f, BrickWidth, BrickHeight }, 
 				BrickColors[Row], true, true);
-			EntityAdmin.AddComponent<CollisionComponent>(Brick, CollisionChannel::Static);
+			EntityAdmin.AddComponent<CollisionComponent>(Brick, CollisionChannel::Brick);
 		}
 	}
 
@@ -110,7 +102,7 @@ RendererInitializationData Arkanoid::GetRendererConfig() const
 {
 	RendererInitializationData RendererConfig;
 	RendererConfig.WindowTitle = "Arkanoid";
-	RendererConfig.WindowWidth = 1280;
-	RendererConfig.WindowHeight = 720;
+	RendererConfig.WindowWidth = static_cast<int>(ScreenWidth);
+	RendererConfig.WindowHeight = static_cast<int>(ScreenHeight);
 	return RendererConfig;
 }

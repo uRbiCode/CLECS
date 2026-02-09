@@ -27,7 +27,7 @@ public:
 		const auto TypeId = std::type_index(typeid(EventType));
 		const auto Wrapper = [Callback](const SystemContext& Context, const void* EventData)
 		{
-			Callback(*static_cast<const EventType*>(EventData), Context);
+			Callback(Context, *static_cast<const EventType*>(EventData));
 		};
 		Subscribers[TypeId].push_back({ Subscriber, Wrapper });
 	}
@@ -64,7 +64,7 @@ public:
 
 		for (const auto& Entry : CallbacksCopy)
 		{
-			Entry.Callback(&Event, Context);
+			Entry.Callback(Context, &Event);
 		}
 	}
 

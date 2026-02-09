@@ -9,9 +9,6 @@ World::~World()
 
 CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 {
-	EntityAdminPtr = std::move(Data.EntityAdminPtr);
-	Systems = std::move(Data.Systems);
-
 	if (!CreateWindow(Data.RendererConfig))
 	{
 		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create window");
@@ -35,6 +32,15 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 		return CLECS::ResultType::Failure;
 	}
 
+	EntityAdminPtr = std::move(Data.EntityAdminPtr);
+	Systems = std::move(Data.Systems);
+
+	const auto Context = MakeSystemContext();
+	for (const auto& System : Systems)
+	{
+		System->Initialize(Context);
+	}
+
 	return CLECS::ResultType::Success;
 }
 
@@ -51,7 +57,7 @@ CLECS::ResultType World::Update(float DeltaTime)
 		Input.ProcessEvent(Event);
 	}
 
-	const auto Context = SystemContext{ *EntityAdminPtr, *Window, *Renderer, Input, EventBus };
+	const auto Context = MakeSystemContext();
 	for (const auto& CurrentSystem : Systems)
 	{
 		CurrentSystem->Update(Context, DeltaTime);
@@ -104,4 +110,9 @@ bool World::CreateRenderer()
 	}
 
 	return true;
+}
+
+SystemContext World::MakeSystemContext()
+{
+	return SystemContext{ *EntityAdminPtr, *Window, *Renderer, Input, EventBus };
 }

@@ -149,16 +149,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CollisionSystem.cpp" />
+    <ClCompile Include="CollisionDetectionSystem.cpp" />
     <ClCompile Include="Arkanoid.cpp" />
+    <ClCompile Include="CollisionResolverSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovementSystem.cpp" />
     <ClCompile Include="PlayerInputSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionComponent.h" />
-    <ClInclude Include="CollisionSystem.h" />
+    <ClInclude Include="CollisionDetectionSystem.h" />
     <ClInclude Include="Arkanoid.h" />
+    <ClInclude Include="CollisionEvent.h" />
+    <ClInclude Include="CollisionResolverSystem.h" />
     <ClInclude Include="MovementSystem.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PlayerInputSystem.h" />

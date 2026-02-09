@@ -12,7 +12,7 @@ public:
 	virtual ~System() = default;
 
 	virtual void Initialize(const SystemContext& Context) const {}
-	virtual void Update(const SystemContext& Context, float DeltaTime) const = 0;
+	virtual void Update(const SystemContext& Context, float DeltaTime) const {}
 };
 
 template<class T>
