@@ -1,5 +1,5 @@
 #include "World.h"
-#include "SystemUpdateContext.h"
+#include "SystemContext.h"
 #include "WorldInitializationData.h"
 
 World::~World()
@@ -29,10 +29,8 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 
 CLECS::ResultType World::Update(float DeltaTime)
 {
-	// Clear per-frame input state (preserves held keys/buttons)
 	Input.BeginFrame();
 
-	// Process SDL events and update input state
 	SDL_Event Event;
 	while (SDL_PollEvent(&Event))
 	{
@@ -42,10 +40,10 @@ CLECS::ResultType World::Update(float DeltaTime)
 		Input.ProcessEvent(Event);
 	}
 
-	const auto UpdateContext = SystemUpdateContext{ *EntityManagerPtr, *Window, *Renderer, Input };
+	const auto Context = SystemContext{ *EntityManagerPtr, *Window, *Renderer, Input, EventBus };
 	for (const auto& CurrentSystem : Systems)
 	{
-		CurrentSystem->Update(UpdateContext, DeltaTime);
+		CurrentSystem->Update(Context, DeltaTime);
 	}
 
 	return CLECS::ResultType::Success;

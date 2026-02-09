@@ -1,15 +1,15 @@
 #include "PlayerInputSystem.h"
-#include "SystemUpdateContext.h"
+#include "SystemContext.h"
 #include "EntityManager.h"
 #include "InputState.h"
 #include <SDL3/SDL.h>
 #include "PlayerControllerComponent.h"
 #include "VelocityComponent.h"
 
-void PlayerInputSystem::Update(const SystemUpdateContext& UpdateContext, float DeltaTime)
+void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
-	auto& Manager = UpdateContext.EntityManager;
-	const auto& Input = UpdateContext.Input;
+	auto& Manager = Context.EntityManager;
+	const auto& Input = Context.Input;
 
 	// Handle player-controlled entities
 	auto PlayerGroup = Manager.GetGroup<VelocityComponent, PlayerControllerComponent>();

@@ -3,6 +3,7 @@
 #include "System.h"
 #include "EntityManager.h"
 #include "InputState.h"
+#include "EventBus.h"
 
 #include <vector>
 #include <memory>
@@ -37,6 +38,7 @@ private:
 	std::unique_ptr<EntityManager> EntityManagerPtr;
 	SystemCollection Systems;
 	InputState Input;
+	EventBus EventBus;
 	SDL_Window* Window = nullptr;
 	SDL_Renderer* Renderer = nullptr;
 };

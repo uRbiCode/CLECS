@@ -1,5 +1,5 @@
 #include "RenderSystem.h"
-#include "SystemUpdateContext.h"
+#include "SystemContext.h"
 #include "EntityManager.h"
 #include "SDL3/SDL.h"
 #include "ShapeComponent.h"
@@ -61,10 +61,10 @@ namespace
 	}
 }
 
-void RenderSystem::Update(const SystemUpdateContext& UpdateContext, float DeltaTime)
+void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
-	auto& Renderer = UpdateContext.Renderer;
-	auto& Manager = UpdateContext.EntityManager;
+	auto& Renderer = Context.Renderer;
+	auto& Manager = Context.EntityManager;
 
 	// Clear the screen with a dark gray background
 	SDL_SetRenderDrawColor(&Renderer, 30, 30, 30, 255);

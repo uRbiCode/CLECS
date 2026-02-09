@@ -1,13 +1,13 @@
 #include "MovementSystem.h"
-#include "SystemUpdateContext.h"
+#include "SystemContext.h"
 #include "EntityManager.h"
 #include <SDL3/SDL.h>
 #include "VelocityComponent.h"
 #include "TransformComponent.h"
 
-void MovementSystem::Update(const SystemUpdateContext& UpdateContext, float DeltaTime)
+void MovementSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
-	auto& Manager = UpdateContext.EntityManager;
+	auto& Manager = Context.EntityManager;
 
 	// Apply velocity to all entities with Transform and Velocity
 	auto MovementGroup = Manager.GetGroup<TransformComponent, VelocityComponent>();

@@ -153,6 +153,7 @@
     <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="CollisionSystem.h" />
     <ClInclude Include="ComponentPool.h" />
+    <ClInclude Include="EventBus.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="ShapeComponent.h" />
     <ClInclude Include="TransformComponent.h" />
@@ -169,7 +170,7 @@
     <ClInclude Include="RendererInitializationData.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="System.h" />
-    <ClInclude Include="SystemUpdateContext.h" />
+    <ClInclude Include="SystemContext.h" />
     <ClInclude Include="VelocityComponent.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="WorldInitializationData.h" />
