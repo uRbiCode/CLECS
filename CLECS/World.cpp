@@ -24,6 +24,17 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 		return CLECS::ResultType::Failure;
 	}
 
+	if (!SDL_SetRenderLogicalPresentation(
+		Renderer,
+		Data.RendererConfig.WindowWidth,
+		Data.RendererConfig.WindowHeight,
+		SDL_LOGICAL_PRESENTATION_LETTERBOX
+	))
+	{
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to set logical presentation: %s", SDL_GetError());
+		return CLECS::ResultType::Failure;
+	}
+
 	return CLECS::ResultType::Success;
 }
 
