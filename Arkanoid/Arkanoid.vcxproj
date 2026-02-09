@@ -149,20 +149,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\CLECS\CollisionSystem.cpp" />
-    <ClCompile Include="..\CLECS\Arkanoid.cpp" />
-    <ClCompile Include="..\CLECS\main.cpp" />
-    <ClCompile Include="..\CLECS\MovementSystem.cpp" />
-    <ClCompile Include="..\CLECS\PlayerInputSystem.cpp" />
+    <ClCompile Include="CollisionSystem.cpp" />
+    <ClCompile Include="Arkanoid.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MovementSystem.cpp" />
+    <ClCompile Include="PlayerInputSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\CLECS\CollisionComponent.h" />
-    <ClInclude Include="..\CLECS\CollisionSystem.h" />
-    <ClInclude Include="..\CLECS\Arkanoid.h" />
-    <ClInclude Include="..\CLECS\MovementSystem.h" />
-    <ClInclude Include="..\CLECS\PlayerControllerComponent.h" />
-    <ClInclude Include="..\CLECS\PlayerInputSystem.h" />
-    <ClInclude Include="..\CLECS\VelocityComponent.h" />
+    <ClInclude Include="CollisionComponent.h" />
+    <ClInclude Include="CollisionSystem.h" />
+    <ClInclude Include="Arkanoid.h" />
+    <ClInclude Include="MovementSystem.h" />
+    <ClInclude Include="PlayerControllerComponent.h" />
+    <ClInclude Include="PlayerInputSystem.h" />
+    <ClInclude Include="VelocityComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -25,42 +25,42 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\CLECS\Arkanoid.cpp">
+    <ClCompile Include="Arkanoid.cpp">
       <Filter>Source\GameEntry</Filter>
     </ClCompile>
-    <ClCompile Include="..\CLECS\CollisionSystem.cpp">
+    <ClCompile Include="CollisionSystem.cpp">
       <Filter>Source\Systems\CollisionSystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\CLECS\MovementSystem.cpp">
+    <ClCompile Include="MovementSystem.cpp">
       <Filter>Source\Systems\MovementSystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\CLECS\PlayerInputSystem.cpp">
+    <ClCompile Include="PlayerInputSystem.cpp">
       <Filter>Source\Systems\PlayerInputSystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\CLECS\main.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\CLECS\Arkanoid.h">
+    <ClInclude Include="Arkanoid.h">
       <Filter>Source\GameEntry</Filter>
     </ClInclude>
-    <ClInclude Include="..\CLECS\CollisionComponent.h">
+    <ClInclude Include="CollisionComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\CLECS\PlayerControllerComponent.h">
+    <ClInclude Include="PlayerControllerComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\CLECS\VelocityComponent.h">
+    <ClInclude Include="VelocityComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\CLECS\CollisionSystem.h">
+    <ClInclude Include="CollisionSystem.h">
       <Filter>Source\Systems\CollisionSystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\CLECS\MovementSystem.h">
+    <ClInclude Include="MovementSystem.h">
       <Filter>Source\Systems\MovementSystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\CLECS\PlayerInputSystem.h">
+    <ClInclude Include="PlayerInputSystem.h">
       <Filter>Source\Systems\PlayerInputSystem</Filter>
     </ClInclude>
   </ItemGroup>
