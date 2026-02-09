@@ -5,6 +5,7 @@
 struct TransformComponent;
 struct ShapeComponent;
 
+// Detects whether two entities with CollisionComponents are colliding and publishes CollisionEvents
 class CollisionDetectionSystem : public System
 {
 public:

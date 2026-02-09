@@ -85,12 +85,12 @@ void CollisionResolverSystem::Initialize(const SystemContext& Context) const
 	auto& EventBus = Context.EventBus;
 	EventBus.Subscribe<CollisionEvent>(this, [this](const SystemContext& Context, const CollisionEvent& Event)
 	{
-		ResolveCollision(Context, Event);
+		OnCollision(Context, Event);
 		return;
 	});
 }
 
-void CollisionResolverSystem::ResolveCollision(const SystemContext& Context, const CollisionEvent& Event) const
+void CollisionResolverSystem::OnCollision(const SystemContext& Context, const CollisionEvent& Event) const
 {
 	auto& Admin = Context.EntityAdmin;
 	assert(Admin.HasComponent<CollisionComponent>(Event.EntityA) && "EntityA must have a CollisionComponent");

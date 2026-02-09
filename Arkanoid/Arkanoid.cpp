@@ -11,6 +11,8 @@
 #include "CollisionComponent.h"
 #include "CollisionDetectionSystem.h"
 #include "CollisionResolverSystem.h"
+#include "HealthSystem.h"
+#include "HealthComponent.h"
 
 namespace
 {
@@ -34,6 +36,7 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	Data.AddSystem<PlayerInputSystem>();
 	Data.AddSystem<CollisionDetectionSystem>();
 	Data.AddSystem<CollisionResolverSystem>();
+	Data.AddSystem<HealthSystem>();
 	Data.AddSystem<MovementSystem>();
 	Data.AddSystem<RenderSystem>();
 
@@ -92,6 +95,7 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 				SDL_FRect{ -BrickWidth * 0.5f, -BrickHeight * 0.5f, BrickWidth, BrickHeight }, 
 				BrickColors[Row], true, true);
 			EntityAdmin.AddComponent<CollisionComponent>(Brick, CollisionChannel::Brick);
+			EntityAdmin.AddComponent<HealthComponent>(Brick, 1);
 		}
 	}
 

@@ -3,11 +3,12 @@
 
 struct CollisionEvent;
 
-// Resolves CollisionEvents in a kinematic sense, so adjusts velocities and positions
-class CollisionResolverSystem : public System
+// Manages HealthComponents
+class HealthSystem : public System
 {
 public:
 	void Initialize(const SystemContext& Context) const override;
+	void Update(const SystemContext& Context, float DeltaTime) const override;
 
 private:
 	void OnCollision(const SystemContext& Context, const CollisionEvent& Event) const;

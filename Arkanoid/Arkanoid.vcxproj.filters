@@ -29,6 +29,9 @@
     <Filter Include="Source\Events">
       <UniqueIdentifier>{07925d12-fe8e-45f6-8e56-4e1b81495f42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\HealthSystem">
+      <UniqueIdentifier>{2dcc9ca3-0eb4-4e43-949e-def6b4720387}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -48,6 +51,9 @@
     </ClCompile>
     <ClCompile Include="CollisionResolverSystem.cpp">
       <Filter>Source\Systems\CollisionResolverSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthSystem.cpp">
+      <Filter>Source\Systems\HealthSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -77,6 +83,12 @@
     </ClInclude>
     <ClInclude Include="CollisionResolverSystem.h">
       <Filter>Source\Systems\CollisionResolverSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthSystem.h">
+      <Filter>Source\Systems\HealthSystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

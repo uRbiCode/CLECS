@@ -152,6 +152,7 @@
     <ClCompile Include="CollisionDetectionSystem.cpp" />
     <ClCompile Include="Arkanoid.cpp" />
     <ClCompile Include="CollisionResolverSystem.cpp" />
+    <ClCompile Include="HealthSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovementSystem.cpp" />
     <ClCompile Include="PlayerInputSystem.cpp" />
@@ -162,6 +163,8 @@
     <ClInclude Include="Arkanoid.h" />
     <ClInclude Include="CollisionEvent.h" />
     <ClInclude Include="CollisionResolverSystem.h" />
+    <ClInclude Include="HealthComponent.h" />
+    <ClInclude Include="HealthSystem.h" />
     <ClInclude Include="MovementSystem.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PlayerInputSystem.h" />
