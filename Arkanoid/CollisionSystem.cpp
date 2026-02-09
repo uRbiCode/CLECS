@@ -21,20 +21,37 @@ namespace
 	{
 		Vector2D<float> Position;
 		float Rotation;
+		Vector2D<float> Scale;
 		const ShapeComponent* Shape;
 		
 		bool IsCircle() const { return Shape->Type == ShapeComponent::ShapeType::Circle; }
 		bool IsRotated() const { return !IsCircle() && Rotation != 0.f; }
-		float GetRadius() const { return Shape->Rect.w * 0.5f; }
+		
+		float GetRadius() const 
+		{ 
+			const float ScaledW = Shape->Rect.w * Scale.X;
+			const float ScaledH = Shape->Rect.h * Scale.Y;
+			return (ScaledW > ScaledH ? ScaledW : ScaledH) * 0.5f;
+		}
+		
+		Vector2D<float> GetCenter() const
+		{
+			const float OffsetX = Shape->Rect.x * Scale.X;
+			const float OffsetY = Shape->Rect.y * Scale.Y;
+			const float HalfW = Shape->Rect.w * Scale.X * 0.5f;
+			const float HalfH = Shape->Rect.h * Scale.Y * 0.5f;
+			
+			return { Position.X + OffsetX + HalfW, Position.Y + OffsetY + HalfH };
+		}
 		
 		static CollisionShape From(const TransformComponent& Transform, const ShapeComponent& Shape)
 		{
-			return { Transform.Position, Transform.Rotation, &Shape };
+			return { Transform.Position, Transform.Rotation, Transform.Scale, &Shape };
 		}
 		
 		CollisionShape Predict(const Vector2D<float>& VelDelta, float RotDelta) const
 		{
-			return { { Position.X + VelDelta.X, Position.Y + VelDelta.Y }, Rotation + RotDelta, Shape };
+			return { { Position.X + VelDelta.X, Position.Y + VelDelta.Y }, Rotation + RotDelta, Scale, Shape };
 		}
 	};
 
@@ -45,10 +62,12 @@ namespace
 		
 		static OBBGeometry Compute(const CollisionShape& Shape)
 		{
-			const float HalfW = Shape.Shape->Rect.w * 0.5f;
-			const float HalfH = Shape.Shape->Rect.h * 0.5f;
+			const float HalfW = (Shape.Shape->Rect.w * Shape.Scale.X) * 0.5f;
+			const float HalfH = (Shape.Shape->Rect.h * Shape.Scale.Y) * 0.5f;
 			const float CosTheta = std::cosf(Shape.Rotation);
 			const float SinTheta = std::sinf(Shape.Rotation);
+			
+			const Vector2D<float> Center = Shape.GetCenter();
 			
 			OBBGeometry Result;
 			const Vector2D<float> LocalCorners[4] = { {-HalfW, -HalfH}, {HalfW, -HalfH}, {HalfW, HalfH}, {-HalfW, HalfH} };
@@ -57,7 +76,7 @@ namespace
 			{
 				const float RotX = LocalCorners[i].X * CosTheta - LocalCorners[i].Y * SinTheta;
 				const float RotY = LocalCorners[i].X * SinTheta + LocalCorners[i].Y * CosTheta;
-				Result.Corners[i] = { Shape.Position.X + RotX, Shape.Position.Y + RotY };
+				Result.Corners[i] = { Center.X + RotX, Center.Y + RotY };
 			}
 			
 			for (int i = 0; i < 2; ++i)
@@ -90,11 +109,11 @@ namespace
 		}
 	};
 
-	Vector2D<float> ToLocalSpace(const Vector2D<float>& WorldPos, const CollisionShape& LocalFrame)
+	Vector2D<float> ToLocalSpace(const Vector2D<float>& WorldPos, const Vector2D<float>& Center, float Rotation)
 	{
-		const Vector2D<float> Relative = { WorldPos.X - LocalFrame.Position.X, WorldPos.Y - LocalFrame.Position.Y };
-		const float CosTheta = std::cosf(-LocalFrame.Rotation);
-		const float SinTheta = std::sinf(-LocalFrame.Rotation);
+		const Vector2D<float> Relative = { WorldPos.X - Center.X, WorldPos.Y - Center.Y };
+		const float CosTheta = std::cosf(-Rotation);
+		const float SinTheta = std::sinf(-Rotation);
 		return { Relative.X * CosTheta - Relative.Y * SinTheta, Relative.X * SinTheta + Relative.Y * CosTheta };
 	}
 
@@ -107,7 +126,9 @@ namespace
 
 	CollisionResult CircleVsCircle(const CollisionShape& A, const CollisionShape& B)
 	{
-		const Vector2D<float> Delta = { A.Position.X - B.Position.X, A.Position.Y - B.Position.Y };
+		const Vector2D<float> CenterA = A.GetCenter();
+		const Vector2D<float> CenterB = B.GetCenter();
+		const Vector2D<float> Delta = { CenterA.X - CenterB.X, CenterA.Y - CenterB.Y };
 		const float DistSq = Delta.X * Delta.X + Delta.Y * Delta.Y;
 		const float RadiusSum = A.GetRadius() + B.GetRadius();
 		
@@ -121,11 +142,15 @@ namespace
 
 	CollisionResult CircleVsRect(const CollisionShape& Circle, const CollisionShape& Rect)
 	{
-		const Vector2D<float> Local = Rect.IsRotated() ? ToLocalSpace(Circle.Position, Rect) : 
-		                               Vector2D<float>{ Circle.Position.X - Rect.Position.X, Circle.Position.Y - Rect.Position.Y };
+		const Vector2D<float> CircleCenter = Circle.GetCenter();
+		const Vector2D<float> RectCenter = Rect.GetCenter();
 		
-		const float HalfW = Rect.Shape->Rect.w * 0.5f;
-		const float HalfH = Rect.Shape->Rect.h * 0.5f;
+		const Vector2D<float> Local = Rect.IsRotated() ? ToLocalSpace(CircleCenter, RectCenter, Rect.Rotation) : 
+		                               Vector2D<float>{ CircleCenter.X - RectCenter.X, CircleCenter.Y - RectCenter.Y };
+		
+		// Apply scale to dimensions
+		const float HalfW = (Rect.Shape->Rect.w * Rect.Scale.X) * 0.5f;
+		const float HalfH = (Rect.Shape->Rect.h * Rect.Scale.Y) * 0.5f;
 		const Vector2D<float> Closest = { std::clamp(Local.X, -HalfW, HalfW), std::clamp(Local.Y, -HalfH, HalfH) };
 		const Vector2D<float> Delta = { Local.X - Closest.X, Local.Y - Closest.Y };
 		const float DistSq = Delta.X * Delta.X + Delta.Y * Delta.Y;
@@ -171,15 +196,15 @@ namespace
 
 	CollisionResult AABBVsAABB(const CollisionShape& A, const CollisionShape& B)
 	{
-		const float LeftA = A.Position.X + A.Shape->Rect.x;
-		const float TopA = A.Position.Y + A.Shape->Rect.y;
-		const float RightA = LeftA + A.Shape->Rect.w;
-		const float BottomA = TopA + A.Shape->Rect.h;
+		const float LeftA = A.Position.X + (A.Shape->Rect.x * A.Scale.X);
+		const float TopA = A.Position.Y + (A.Shape->Rect.y * A.Scale.Y);
+		const float RightA = LeftA + (A.Shape->Rect.w * A.Scale.X);
+		const float BottomA = TopA + (A.Shape->Rect.h * A.Scale.Y);
 		
-		const float LeftB = B.Position.X + B.Shape->Rect.x;
-		const float TopB = B.Position.Y + B.Shape->Rect.y;
-		const float RightB = LeftB + B.Shape->Rect.w;
-		const float BottomB = TopB + B.Shape->Rect.h;
+		const float LeftB = B.Position.X + (B.Shape->Rect.x * B.Scale.X);
+		const float TopB = B.Position.Y + (B.Shape->Rect.y * B.Scale.Y);
+		const float RightB = LeftB + (B.Shape->Rect.w * B.Scale.X);
+		const float BottomB = TopB + (B.Shape->Rect.h * B.Scale.Y);
 		
 		if (RightA < LeftB || RightB < LeftA || BottomA < TopB || BottomB < TopA)
 			return { false, {0.f, 0.f} };
