@@ -114,6 +114,7 @@ void CollisionResolverSystem::OnCollision(const SystemContext& Context, const Co
 		if (IsBallPlayerCollision && ThisCollisionChannel == CollisionChannel::Ball)
 		{
 			ResolveCollisionWithDirection(Admin, ThisEntity, OtherEntity, Separation);
+			return;
 		}
 	
 		ResolveRegularCollision(Admin, ThisEntity, Separation);
