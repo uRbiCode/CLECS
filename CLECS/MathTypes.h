@@ -21,6 +21,11 @@ struct Vector2D
         return Vector2D(X - other.X, Y - other.Y);
     }
 
+    constexpr Vector2D operator-() const
+    {
+        return Vector2D(-X, -Y);
+    }
+
     constexpr Vector2D operator*(T scalar) const
     {
         return Vector2D(X * scalar, Y * scalar);

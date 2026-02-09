@@ -15,8 +15,8 @@ constexpr size_t MAX_COLLISION_CHANNELS = static_cast<size_t>(CollisionChannel::
 
 enum class CollisionResponse : uint8_t
 {
-	Ignore,
-	Block
+	Block,
+	Ignore
 };
 
 constexpr size_t ChannelToIndex(CollisionChannel Channel)
@@ -28,6 +28,6 @@ struct CollisionComponent
 {
 	CollisionChannel Channel = CollisionChannel::Default;
 	
-	// Response to each channel type (default: ignore all)
+	// Response to each channel type (default: block all)
 	CollisionResponse ResponseTable[MAX_COLLISION_CHANNELS] = {};
 };

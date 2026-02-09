@@ -47,6 +47,27 @@ namespace
 			return { 0.f, (OverlapTop < OverlapBottom) ? -MinOverlapY : MinOverlapY };
 		}
 	}
+
+	void ResolveCollision(EntityAdmin& Admin, Entity EntityToMove, const Vector2D<float>& Separation)
+	{
+		if (Admin.HasComponent<VelocityComponent>(EntityToMove))
+		{
+			auto& Transform = Admin.AccessComponent<TransformComponent>(EntityToMove);
+			Transform.Position.X += Separation.X;
+			Transform.Position.Y += Separation.Y;
+
+			auto& Velocity = Admin.AccessComponent<VelocityComponent>(EntityToMove);
+			
+			if (Separation.X != 0.f)
+			{
+				Velocity.Velocity.X = -Velocity.Velocity.X;
+			}
+			if (Separation.Y != 0.f)
+			{
+				Velocity.Velocity.Y = -Velocity.Velocity.Y;
+			}
+		}
+	}
 }
 
 void CollisionSystem::Update(const SystemContext& Context, float DeltaTime) const
@@ -58,7 +79,7 @@ void CollisionSystem::Update(const SystemContext& Context, float DeltaTime) cons
 	{
 		const Entity EntityA = CollisionGroup[i];
 		const auto& CollisionA = Admin.GetComponent<CollisionComponent>(EntityA);
-		auto& TransformA = Admin.AccessComponent<TransformComponent>(EntityA);
+		const auto& TransformA = Admin.GetComponent<TransformComponent>(EntityA);
 		const auto& ShapeA = Admin.GetComponent<ShapeComponent>(EntityA);
 		const SDL_FRect BoundsA = GetWorldAABB(TransformA, ShapeA);
 
@@ -81,24 +102,15 @@ void CollisionSystem::Update(const SystemContext& Context, float DeltaTime) cons
 				continue;
 
 			const Vector2D<float> Separation = GetSeparation(BoundsA, BoundsB);
+			
 			if (ResponseA == CollisionResponse::Block)
 			{
-				TransformA.Position.X += Separation.X;
-				TransformA.Position.Y += Separation.Y;
-
-				if (Admin.HasComponent<VelocityComponent>(EntityA))
-				{
-					auto& VelocityA = Admin.AccessComponent<VelocityComponent>(EntityA);
-					
-					if (Separation.X != 0.f)
-					{
-						VelocityA.Velocity.X = -VelocityA.Velocity.X;
-					}
-					if (Separation.Y != 0.f)
-					{
-						VelocityA.Velocity.Y = -VelocityA.Velocity.Y;
-					}
-				}
+				ResolveCollision(Admin, EntityA, Separation);
+			}
+			
+			if (ResponseB == CollisionResponse::Block)
+			{
+				ResolveCollision(Admin, EntityB, -Separation);
 			}
 		}
 	}
