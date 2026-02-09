@@ -1,5 +1,6 @@
 #pragma once
 #include <type_traits>
+#include <cmath>
 
 template<typename T>
 requires std::is_arithmetic_v<T>
@@ -19,6 +20,11 @@ struct Vector2D
     constexpr Vector2D operator-(const Vector2D& other) const
     {
         return Vector2D(X - other.X, Y - other.Y);
+    }
+
+    constexpr Vector2D operator-() const
+    {
+        return Vector2D(-X, -Y);
     }
 
     constexpr Vector2D operator*(T scalar) const
@@ -67,5 +73,28 @@ struct Vector2D
     constexpr bool operator!=(const Vector2D& other) const
     {
         return !(*this == other);
+    }
+
+    // Get length/magnitude of vector
+    T Length() const
+    {
+        return std::sqrt(X * X + Y * Y);
+    }
+
+    // Get squared length (faster, no sqrt)
+    constexpr T LengthSquared() const
+    {
+        return X * X + Y * Y;
+    }
+
+    // Get normalized vector (unit length)
+    Vector2D Normalized() const
+    {
+        T len = Length();
+        if (len > T{})
+        {
+            return Vector2D(X / len, Y / len);
+        }
+        return Vector2D{};
     }
 };

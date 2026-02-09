@@ -15,7 +15,6 @@ void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime) co
 	PlayerGroup.ForEach([&Input](Entity CurrentEntity, VelocityComponent& Velocity, const PlayerControllerComponent& Controller)
 	{
 		Velocity.Velocity = { 0.f, 0.f };
-		Velocity.AngularVelocity = 0.f;
 
 		if (Input.IsKeyDown(SDLK_W))
 		{
@@ -32,14 +31,6 @@ void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime) co
 		if (Input.IsKeyDown(SDLK_D))
 		{
 			Velocity.Velocity.X += Controller.MoveSpeed;
-		}
-		if (Input.IsKeyDown(SDLK_L))
-		{
-			Velocity.AngularVelocity += Controller.RotationSpeed;
-		}
-		if (Input.IsKeyDown(SDLK_J))
-		{
-			Velocity.AngularVelocity -= Controller.RotationSpeed;
 		}
 
 		// Normalize diagonal movement

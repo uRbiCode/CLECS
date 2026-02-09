@@ -14,6 +14,5 @@ void MovementSystem::Update(const SystemContext& Context, float DeltaTime) const
 	{
 		Transform.Position.X += Velocity.Velocity.X * DeltaTime;
 		Transform.Position.Y += Velocity.Velocity.Y * DeltaTime;
-		Transform.Rotation += Velocity.AngularVelocity * DeltaTime;
 	});
 }
