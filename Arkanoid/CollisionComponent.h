@@ -3,8 +3,7 @@
 
 enum class CollisionChannel : uint8_t
 {
-	Default = 0,
-	Static,
+	Static = 0,
 	Player,
 	Ball,
 	Brick,
@@ -26,8 +25,8 @@ constexpr size_t ChannelToIndex(CollisionChannel Channel)
 
 struct CollisionComponent
 {
-	CollisionChannel Channel = CollisionChannel::Default;
+	CollisionChannel Channel = CollisionChannel::Static;
 	
-	// Response to each channel type (default: block all)
+	// Block all by default
 	CollisionResponse ResponseTable[MAX_COLLISION_CHANNELS] = {};
 };

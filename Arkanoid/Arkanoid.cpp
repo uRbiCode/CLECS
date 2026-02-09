@@ -22,7 +22,7 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 
 	auto PlayerEntity = EntityAdmin.CreateEntity();
 	EntityAdmin.AddComponent<TransformComponent>(PlayerEntity, Vector2D<float>{ 640.f, 360.f });
-	EntityAdmin.AddComponent<ShapeComponent>(PlayerEntity, ShapeComponent::ShapeType::Rectangle, SDL_FRect{ -50.f, -50.f, 75.f, 50.f }, SDL_FColor{ 1.f, 0.f, 0.f, 1.f }, true, true);
+	EntityAdmin.AddComponent<ShapeComponent>(PlayerEntity, ShapeComponent::ShapeType::Rectangle, SDL_FRect{ -50.f, -50.f, 100.f, 10.f }, SDL_FColor{ 1.f, 0.f, 0.f, 1.f }, true, true);
 	EntityAdmin.AddComponent<VelocityComponent>(PlayerEntity);
 
 	auto& PlayerCollisionComponent = EntityAdmin.AddComponent<CollisionComponent>(PlayerEntity, CollisionChannel::Player);
@@ -39,10 +39,10 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	EntityAdmin.AddComponent<CollisionComponent>(StaticEntity2, CollisionChannel::Static);
 
 	auto BallEntity = EntityAdmin.CreateEntity();
-	EntityAdmin.AddComponent<TransformComponent>(BallEntity, Vector2D<float>{ 640.f, 360.f });
+	EntityAdmin.AddComponent<TransformComponent>(BallEntity, Vector2D<float>{ 640.f, 400.f });
 	EntityAdmin.AddComponent<ShapeComponent>(BallEntity, ShapeComponent::ShapeType::Circle, SDL_FRect{ -25.f, -25.f, 50.f, 50.f }, SDL_FColor{ 0.f, 0.f, 1.f, 1.f }, true, true);
 	auto& BallVelocityComponent = EntityAdmin.AddComponent<VelocityComponent>(BallEntity);
-	BallVelocityComponent.Velocity = { 50.f, -50.f };
+	BallVelocityComponent.Velocity = { 0.f, -50.f };
 	auto& BallCollisionComponent = EntityAdmin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
 
 	return true;
