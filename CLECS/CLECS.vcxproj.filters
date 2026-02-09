@@ -64,7 +64,7 @@
     <ClCompile Include="System.cpp">
       <Filter>Source\Core\System</Filter>
     </ClCompile>
-    <ClCompile Include="EntityManager.cpp">
+    <ClCompile Include="EntityAdmin.cpp">
       <Filter>Source\Core\Entity</Filter>
     </ClCompile>
     <ClCompile Include="GameRunner.cpp">
@@ -91,9 +91,6 @@
     <ClCompile Include="CollisionSystem.cpp">
       <Filter>Source\Core\System\Systems\CollisionSystem</Filter>
     </ClCompile>
-    <ClCompile Include="EventBus.cpp">
-      <Filter>Source\Core\World\EventBus</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="World.h">
@@ -111,7 +108,7 @@
     <ClInclude Include="ComponentPool.h">
       <Filter>Source\Core\Component</Filter>
     </ClInclude>
-    <ClInclude Include="EntityManager.h">
+    <ClInclude Include="EntityAdmin.h">
       <Filter>Source\Core\Entity</Filter>
     </ClInclude>
     <ClInclude Include="SystemContext.h">

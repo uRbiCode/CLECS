@@ -1,9 +1,9 @@
 #include "WorldInitializationData.h"
-#include "EntityManager.h"
+#include "EntityAdmin.h"
 
 WorldInitializationData WorldInitializationData::Create()
 {
 	WorldInitializationData Data;
-	Data.EntityManagerPtr = std::make_unique<EntityManager>();
+	Data.EntityAdminPtr = std::make_unique<EntityAdmin>();
 	return Data;
 }

@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 
-class EntityManager;
+class EntityAdmin;
 
 using SystemCollection = std::vector<std::unique_ptr<System>>;
 
@@ -16,13 +16,13 @@ public:
 	template<SystemType T>
 	void AddSystem();
 	
-	EntityManager& AccessEntityManager() { return *EntityManagerPtr; }
+	EntityAdmin& AccessEntityAdmin() { return *EntityAdminPtr; }
 
 	void SetRendererConfig(RendererInitializationData&& Config) { RendererConfig = std::move(Config); }
 	
 private:
 	WorldInitializationData() = default;
-	std::unique_ptr<EntityManager> EntityManagerPtr;
+	std::unique_ptr<EntityAdmin> EntityAdminPtr;
 	SystemCollection Systems;
 	RendererInitializationData RendererConfig;
 

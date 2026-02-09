@@ -9,15 +9,15 @@
 #include <queue>
 #include <algorithm>
 
-/* EntityManager handles entity lifecycle and component storage.
+/* EntityAdmin handles entity lifecycle and component storage.
  * Uses sparse sets for O(1) component operations.
  */
-class EntityManager
+class EntityAdmin
 {
 public:
-	EntityManager() = default;
-	EntityManager(const EntityManager&) = delete;
-	EntityManager& operator=(const EntityManager&) = delete;
+	EntityAdmin() = default;
+	EntityAdmin(const EntityAdmin&) = delete;
+	EntityAdmin& operator=(const EntityAdmin&) = delete;
 
 	Entity CreateEntity();
 	void DestroyEntity(const Entity& TargetEntity);
@@ -62,7 +62,7 @@ public:
 	class Group
 	{
 	public:
-		Group(EntityManager* Manager) : Manager(Manager)
+		Group(EntityAdmin* Admin) : Admin(Admin)
 		{
 			CacheMatchingEntities();
 		}
@@ -106,13 +106,13 @@ public:
 		template<typename T>
 		T& Access(const Entity& TargetEntity)
 		{
-			return Manager->AccessComponent<T>(TargetEntity);
+			return Admin->AccessComponent<T>(TargetEntity);
 		}
 
 		template<typename T>
 		const T& Get(const Entity& TargetEntity) const
 		{
-			return Manager->GetComponent<T>(TargetEntity);
+			return Admin->GetComponent<T>(TargetEntity);
 		}
 
 		template<typename Func>
@@ -120,7 +120,7 @@ public:
 		{
 			for (const auto& TargetEntity : CachedEntities)
 			{
-				Function(TargetEntity, Manager->AccessComponent<Components>(TargetEntity)...);
+				Function(TargetEntity, Admin->AccessComponent<Components>(TargetEntity)...);
 			}
 		}
 
@@ -153,7 +153,7 @@ public:
 		template<typename T>
 		void FindSmaller(const std::vector<Entity>*& SmallestPool, size_t& SmallestSize) const
 		{
-			const auto* Pool = Manager->GetPool<T>();
+			const auto* Pool = Admin->GetPool<T>();
 			if (Pool != nullptr && Pool->Size() < SmallestSize)
 			{
 				SmallestSize = Pool->Size();
@@ -163,10 +163,10 @@ public:
 
 		bool HasAllComponents(const Entity& TargetEntity) const
 		{
-			return (Manager->HasComponent<Components>(TargetEntity) && ...);
+			return (Admin->HasComponent<Components>(TargetEntity) && ...);
 		}
 
-		EntityManager* Manager;
+		EntityAdmin* Admin;
 		std::vector<Entity> CachedEntities;
 	};
 

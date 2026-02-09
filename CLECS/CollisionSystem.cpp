@@ -1,6 +1,6 @@
 #include "CollisionSystem.h"
 #include "SystemContext.h"
-#include "EntityManager.h"
+#include "EntityAdmin.h"
 #include "CollisionComponent.h"
 #include "TransformComponent.h"
 #include "ShapeComponent.h"
@@ -266,29 +266,29 @@ namespace
 
 void CollisionSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
-	auto& Manager = Context.EntityManager;
-	auto CollisionGroup = Manager.GetGroup<TransformComponent, ShapeComponent, CollisionComponent>();
+	auto& Admin = Context.EntityAdmin;
+	auto CollisionGroup = Admin.GetGroup<TransformComponent, ShapeComponent, CollisionComponent>();
 
 	// Phase 1: Resolve existing overlaps
 	for (size_t i = 0; i < CollisionGroup.Size(); ++i)
 	{
 		const Entity EntityA = CollisionGroup[i];
-		const auto& CollisionA = Manager.GetComponent<CollisionComponent>(EntityA);
-		auto& TransformA = Manager.AccessComponent<TransformComponent>(EntityA);
-		const auto& ShapeA = Manager.GetComponent<ShapeComponent>(EntityA);
+		const auto& CollisionA = Admin.GetComponent<CollisionComponent>(EntityA);
+		auto& TransformA = Admin.AccessComponent<TransformComponent>(EntityA);
+		const auto& ShapeA = Admin.GetComponent<ShapeComponent>(EntityA);
 		const CollisionShape A = CollisionShape::From(TransformA, ShapeA);
 
 		for (size_t j = i + 1; j < CollisionGroup.Size(); ++j)
 		{
 			const Entity EntityB = CollisionGroup[j];
-			const auto& CollisionB = Manager.GetComponent<CollisionComponent>(EntityB);
+			const auto& CollisionB = Admin.GetComponent<CollisionComponent>(EntityB);
 			const auto ResponseA = CollisionA.ResponseTable[ChannelToIndex(CollisionB.Channel)];
 			
 			if (ResponseA != CollisionResponse::Block)
 				continue;
 
-			const auto& TransformB = Manager.GetComponent<TransformComponent>(EntityB);
-			const auto& ShapeB = Manager.GetComponent<ShapeComponent>(EntityB);
+			const auto& TransformB = Admin.GetComponent<TransformComponent>(EntityB);
+			const auto& ShapeB = Admin.GetComponent<ShapeComponent>(EntityB);
 			const CollisionShape B = CollisionShape::From(TransformB, ShapeB);
 
 			const auto Result = CheckAndResolve(A, B);
@@ -297,9 +297,9 @@ void CollisionSystem::Update(const SystemContext& Context, float DeltaTime) cons
 				TransformA.Position.X += Result.Separation.X;
 				TransformA.Position.Y += Result.Separation.Y;
 
-				if (Manager.HasComponent<VelocityComponent>(EntityA) && !Manager.HasComponent<VelocityComponent>(EntityB))
+				if (Admin.HasComponent<VelocityComponent>(EntityA) && !Admin.HasComponent<VelocityComponent>(EntityB))
 				{
-					auto& VelocityA = Manager.AccessComponent<VelocityComponent>(EntityA);
+					auto& VelocityA = Admin.AccessComponent<VelocityComponent>(EntityA);
 					const float SepMag = std::sqrtf(Result.Separation.X * Result.Separation.X + Result.Separation.Y * Result.Separation.Y);
 					if (SepMag > 0.001f)
 					{
@@ -320,13 +320,13 @@ void CollisionSystem::Update(const SystemContext& Context, float DeltaTime) cons
 	for (size_t i = 0; i < CollisionGroup.Size(); ++i)
 	{
 		const Entity EntityA = CollisionGroup[i];
-		if (!Manager.HasComponent<VelocityComponent>(EntityA))
+		if (!Admin.HasComponent<VelocityComponent>(EntityA))
 			continue;
 
-		const auto& CollisionA = Manager.GetComponent<CollisionComponent>(EntityA);
-		const auto& TransformA = Manager.GetComponent<TransformComponent>(EntityA);
-		const auto& ShapeA = Manager.GetComponent<ShapeComponent>(EntityA);
-		auto& VelocityA = Manager.AccessComponent<VelocityComponent>(EntityA);
+		const auto& CollisionA = Admin.GetComponent<CollisionComponent>(EntityA);
+		const auto& TransformA = Admin.GetComponent<TransformComponent>(EntityA);
+		const auto& ShapeA = Admin.GetComponent<ShapeComponent>(EntityA);
+		auto& VelocityA = Admin.AccessComponent<VelocityComponent>(EntityA);
 		const CollisionShape A = CollisionShape::From(TransformA, ShapeA);
 
 		for (size_t j = 0; j < CollisionGroup.Size(); ++j)
@@ -335,15 +335,15 @@ void CollisionSystem::Update(const SystemContext& Context, float DeltaTime) cons
 				continue;
 
 			const Entity EntityB = CollisionGroup[j];
-			if (Manager.HasComponent<VelocityComponent>(EntityB))
+			if (Admin.HasComponent<VelocityComponent>(EntityB))
 				continue;
 
-			const auto& CollisionB = Manager.GetComponent<CollisionComponent>(EntityB);
+			const auto& CollisionB = Admin.GetComponent<CollisionComponent>(EntityB);
 			if (CollisionA.ResponseTable[ChannelToIndex(CollisionB.Channel)] != CollisionResponse::Block)
 				continue;
 
-			const auto& TransformB = Manager.GetComponent<TransformComponent>(EntityB);
-			const auto& ShapeB = Manager.GetComponent<ShapeComponent>(EntityB);
+			const auto& TransformB = Admin.GetComponent<TransformComponent>(EntityB);
+			const auto& ShapeB = Admin.GetComponent<ShapeComponent>(EntityB);
 			const CollisionShape B = CollisionShape::From(TransformB, ShapeB);
 
 			const bool CurrentlyColliding = CheckAndResolve(A, B).Collides;

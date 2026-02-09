@@ -1,6 +1,6 @@
 #include "RenderSystem.h"
 #include "SystemContext.h"
-#include "EntityManager.h"
+#include "EntityAdmin.h"
 #include "SDL3/SDL.h"
 #include "ShapeComponent.h"
 #include "TransformComponent.h"
@@ -63,12 +63,12 @@ namespace
 void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
 	auto& Renderer = Context.Renderer;
-	auto& Manager = Context.EntityManager;
+	auto& Admin = Context.EntityAdmin;
 
 	SDL_SetRenderDrawColor(&Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(&Renderer);
 
-	auto Group = Manager.GetGroup<TransformComponent, ShapeComponent>();
+	auto Group = Admin.GetGroup<TransformComponent, ShapeComponent>();
 
 	Group.ForEach([&Renderer](Entity CurrentEntity, const TransformComponent& Transform, const ShapeComponent& Shape)
 	{
