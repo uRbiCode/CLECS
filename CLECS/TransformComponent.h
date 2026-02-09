@@ -1,7 +1,6 @@
 #pragma once
 #include "MathTypes.h"
 
-// Transform component for position, rotation, scale
 struct TransformComponent
 {
     Vector2D<float> Position = {0.f, 0.f};

@@ -46,8 +46,6 @@ void InputState::ProcessEvent(const SDL_Event& Event)
 
 void InputState::BeginFrame()
 {
-	// Clear only per-frame state
-	// HeldKeys and HeldMouseButtons persist across frames
 	JustPressedKeys.clear();
 	JustReleasedKeys.clear();
 	JustPressedMouseButtons.clear();

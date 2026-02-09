@@ -14,13 +14,11 @@ struct Entity
 {
 	Entity() = default;
 
-	// Extract entity ID from the identifier
 	[[nodiscard]] uint32_t GetId() const
 	{
 		return (Identifier >> EntityShift) & EntityMask;
 	}
 
-	// Extract version from the identifier
 	[[nodiscard]] uint32_t GetVersion() const
 	{
 		return (Identifier >> VersionShift) & VersionMask;
@@ -44,7 +42,6 @@ struct Entity
 private:
 	uint32_t Identifier = 0;
 
-	// Create entity from Id and version
 	static Entity Create(uint32_t Id, uint32_t Version)
 	{
 		Entity NewEntity;

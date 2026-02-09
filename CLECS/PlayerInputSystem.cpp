@@ -11,7 +11,6 @@ void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime) co
 	auto& Manager = Context.EntityManager;
 	const auto& Input = Context.Input;
 
-	// Handle player-controlled entities
 	auto PlayerGroup = Manager.GetGroup<VelocityComponent, PlayerControllerComponent>();
 	PlayerGroup.ForEach([&Input](Entity CurrentEntity, VelocityComponent& Velocity, const PlayerControllerComponent& Controller)
 	{

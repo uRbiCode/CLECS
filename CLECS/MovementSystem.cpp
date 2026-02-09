@@ -9,7 +9,6 @@ void MovementSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
 	auto& Manager = Context.EntityManager;
 
-	// Apply velocity to all entities with Transform and Velocity
 	auto MovementGroup = Manager.GetGroup<TransformComponent, VelocityComponent>();
 	MovementGroup.ForEach([DeltaTime](Entity CurrentEntity, TransformComponent& Transform, const VelocityComponent& Velocity)
 	{

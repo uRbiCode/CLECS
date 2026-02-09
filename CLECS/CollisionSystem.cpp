@@ -388,7 +388,6 @@ void CollisionSystem::Update(const SystemContext& Context, float DeltaTime) cons
 						}
 						else
 						{
-							// If we can't determine direction, stop completely
 							VelocityA.Velocity = { 0.f, 0.f };
 						}
 					}

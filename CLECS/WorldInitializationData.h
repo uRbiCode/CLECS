@@ -16,10 +16,8 @@ public:
 	template<SystemType T>
 	void AddSystem();
 	
-	// More explicit API for entity creation during initialization
 	EntityManager& AccessEntityManager() { return *EntityManagerPtr; }
 
-	// Renderer configuration access
 	void SetRendererConfig(RendererInitializationData&& Config) { RendererConfig = std::move(Config); }
 	
 private:

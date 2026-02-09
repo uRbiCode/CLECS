@@ -5,12 +5,12 @@
 enum class CollisionChannel : uint8_t
 {
 	Default = 0,
-	Static,          // Static world geometry
-	Dynamic,         // Moving objects
-	Player,          // Player entities
-	Enemy,           // Enemy entities
-	Projectile,      // Bullets, projectiles
-	Trigger,         // Trigger volumes
+	Static,          
+	Dynamic,        
+	Player,        
+	Enemy,        
+	Projectile,  
+	Trigger,    
 	Custom1,
 	Custom2,
 	Custom3,
@@ -31,7 +31,6 @@ constexpr size_t ChannelToIndex(CollisionChannel Channel)
 	return static_cast<size_t>(Channel);
 }
 
-// Collision component stores channel and interaction rules
 struct CollisionComponent
 {
 	CollisionChannel Channel = CollisionChannel::Default;

@@ -58,15 +58,6 @@ public:
 		Pool->Remove(TargetEntity);
 	}
 
-	// View pattern for efficient iteration
-	template<typename T>
-	std::vector<Entity> View()
-	{
-		const auto* Pool = GetPool<T>();
-		return Pool != nullptr ? Pool->GetEntities() : std::vector<Entity>{};
-	}
-
-	// Group pattern for efficient multi-component iteration
 	template<typename... Components>
 	class Group
 	{
@@ -112,7 +103,6 @@ public:
 			return CachedEntities[Index];
 		}
 
-		// Get all components for an entity
 		template<typename T>
 		T& Access(const Entity& TargetEntity)
 		{
@@ -125,7 +115,6 @@ public:
 			return Manager->GetComponent<T>(TargetEntity);
 		}
 
-		// Utility to iterate with components directly
 		template<typename Func>
 		void ForEach(Func&& Function)
 		{
@@ -138,12 +127,10 @@ public:
 	private:
 		void CacheMatchingEntities()
 		{
-			// Find the smallest pool to minimize intersection checks
 			const auto* SmallestPool = FindSmallestPool();
 			if (SmallestPool == nullptr)
 				return;
 
-			// Check which entities have all required components
 			for (const auto& TargetEntity : *SmallestPool)
 			{
 				if (HasAllComponents(TargetEntity))
@@ -183,7 +170,6 @@ public:
 		std::vector<Entity> CachedEntities;
 	};
 
-	// Create a group for entities with all specified components
 	template<typename... Components>
 	Group<Components...> GetGroup()
 	{
@@ -239,6 +225,5 @@ private:
 	std::queue<uint32_t> FreeEntityIds;
 	uint32_t NextEntityId = 0;
 
-	// Type-erased component pools
 	std::unordered_map<std::type_index, std::unique_ptr<ComponentPoolBase>> ComponentPools;
 };

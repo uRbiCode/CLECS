@@ -8,11 +8,9 @@ struct Vector2D
     T X;
     T Y;
 
-    // Constructors
     constexpr Vector2D() : X(T{}), Y(T{}) {}
     constexpr Vector2D(T x, T y) : X(x), Y(y) {}
 
-    // Basic arithmetic operators
     constexpr Vector2D operator+(const Vector2D& other) const
     {
         return Vector2D(X + other.X, Y + other.Y);
@@ -33,7 +31,6 @@ struct Vector2D
         return Vector2D(X / scalar, Y / scalar);
     }
 
-    // Compound assignment operators
     constexpr Vector2D& operator+=(const Vector2D& other)
     {
         X += other.X;
@@ -62,7 +59,6 @@ struct Vector2D
         return *this;
     }
 
-    // Comparison operators
     constexpr bool operator==(const Vector2D& other) const
     {
         return X == other.X && Y == other.Y;

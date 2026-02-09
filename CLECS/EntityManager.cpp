@@ -27,7 +27,6 @@ void EntityManager::DestroyEntity(const Entity& TargetEntity)
 
 	const auto EntityId = TargetEntity.GetId();
 
-	// Remove all components from this entity
 	for (auto& [TypeId, Pool] : ComponentPools)
 	{
 		Pool->Remove(TargetEntity);
