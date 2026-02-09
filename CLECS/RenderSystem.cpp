@@ -1,6 +1,6 @@
 #include "RenderSystem.h"
 #include "SystemContext.h"
-#include "EntityManager.h"
+#include "EntityAdmin.h"
 #include "SDL3/SDL.h"
 #include "ShapeComponent.h"
 #include "TransformComponent.h"
@@ -9,7 +9,6 @@ namespace
 {
 	void RenderCircle(SDL_Renderer* Renderer, const Vector2D<float>& Center, float Radius, bool Filled, const SDL_FColor& Color)
 	{
-		// Number of line segments to approximate circle
 		constexpr int Segments = 32;  
 		constexpr float AngleStep = (2.f * SDL_PI_F) / Segments;
 		
@@ -64,14 +63,12 @@ namespace
 void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
 	auto& Renderer = Context.Renderer;
-	auto& Manager = Context.EntityManager;
+	auto& Admin = Context.EntityAdmin;
 
-	// Clear the screen with a dark gray background
-	SDL_SetRenderDrawColor(&Renderer, 30, 30, 30, 255);
+	SDL_SetRenderDrawColor(&Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(&Renderer);
 
-	// Get all entities with both Transform and Shape components
-	auto Group = Manager.GetGroup<TransformComponent, ShapeComponent>();
+	auto Group = Admin.GetGroup<TransformComponent, ShapeComponent>();
 
 	Group.ForEach([&Renderer](Entity CurrentEntity, const TransformComponent& Transform, const ShapeComponent& Shape)
 	{
@@ -81,7 +78,6 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 		// Set render draw color from shape color
 		SDL_SetRenderDrawColorFloat(&Renderer, Shape.Color.r, Shape.Color.g, Shape.Color.b, Shape.Color.a);
 
-		// Build destination rectangle with transform applied
 		const SDL_FRect RenderRect{
 			Transform.Position.X + Shape.Rect.x * Transform.Scale.X,
 			Transform.Position.Y + Shape.Rect.y * Transform.Scale.Y,
@@ -93,16 +89,13 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 		{
 		case ShapeComponent::ShapeType::Rectangle:
 		{
-			// Check if rotation is needed
 			if (Transform.Rotation != 0.f)
 			{
-				// Calculate center of the rectangle
 				const Vector2D<float> Center = {
 					RenderRect.x + RenderRect.w * 0.5f,
 					RenderRect.y + RenderRect.h * 0.5f
 				};
 
-				// Define and rotate rectangle corners
 				const Vector2D<float> Corner1 = RotatePoint({ RenderRect.x, RenderRect.y }, Center, Transform.Rotation);
 				const Vector2D<float> Corner2 = RotatePoint({ RenderRect.x + RenderRect.w, RenderRect.y }, Center, Transform.Rotation);
 				const Vector2D<float> Corner3 = RotatePoint({ RenderRect.x + RenderRect.w, RenderRect.y + RenderRect.h }, Center, Transform.Rotation);
@@ -124,7 +117,6 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 				}
 				else
 				{
-					// Render outline using lines
 					SDL_RenderLine(&Renderer, Corner1.X, Corner1.Y, Corner2.X, Corner2.Y);
 					SDL_RenderLine(&Renderer, Corner2.X, Corner2.Y, Corner3.X, Corner3.Y);
 					SDL_RenderLine(&Renderer, Corner3.X, Corner3.Y, Corner4.X, Corner4.Y);
@@ -133,7 +125,6 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 			}
 			else
 			{
-				// No rotation - use faster rectangle rendering
 				if (Shape.Filled)
 				{
 					SDL_RenderFillRect(&Renderer, &RenderRect);
@@ -166,7 +157,6 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 				Point1.Y + Shape.Rect.h * Transform.Scale.Y
 			};
 
-			// Apply rotation to line endpoints if rotation is set
 			if (Transform.Rotation != 0.f)
 			{
 				Point1 = RotatePoint(Point1, Transform.Position, Transform.Rotation);
@@ -179,6 +169,5 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 		}
 	});
 
-	// Present the rendered frame
 	SDL_RenderPresent(&Renderer);
 }

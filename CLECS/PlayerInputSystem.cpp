@@ -1,6 +1,6 @@
 #include "PlayerInputSystem.h"
 #include "SystemContext.h"
-#include "EntityManager.h"
+#include "EntityAdmin.h"
 #include "InputState.h"
 #include <SDL3/SDL.h>
 #include "PlayerControllerComponent.h"
@@ -8,11 +8,10 @@
 
 void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
-	auto& Manager = Context.EntityManager;
+	auto& Admin = Context.EntityAdmin;
 	const auto& Input = Context.Input;
 
-	// Handle player-controlled entities
-	auto PlayerGroup = Manager.GetGroup<VelocityComponent, PlayerControllerComponent>();
+	auto PlayerGroup = Admin.GetGroup<VelocityComponent, PlayerControllerComponent>();
 	PlayerGroup.ForEach([&Input](Entity CurrentEntity, VelocityComponent& Velocity, const PlayerControllerComponent& Controller)
 	{
 		Velocity.Velocity = { 0.f, 0.f };

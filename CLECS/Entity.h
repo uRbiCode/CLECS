@@ -7,20 +7,18 @@ constexpr uint32_t VersionMask = 0xFFF;
 constexpr uint32_t EntityShift = 0;
 constexpr uint32_t VersionShift = 20;
 
-/* Entity is a lightweight identifier with version control for safe reuse.
- * Combines entity Id and version in a single value.
+/* Entity is a fundmanetal concept in CLECS architecture.
+ * Represents a unique instance in a world that we can attach components to.
  */
 struct Entity
 {
 	Entity() = default;
 
-	// Extract entity ID from the identifier
 	[[nodiscard]] uint32_t GetId() const
 	{
 		return (Identifier >> EntityShift) & EntityMask;
 	}
 
-	// Extract version from the identifier
 	[[nodiscard]] uint32_t GetVersion() const
 	{
 		return (Identifier >> VersionShift) & VersionMask;
@@ -44,7 +42,6 @@ struct Entity
 private:
 	uint32_t Identifier = 0;
 
-	// Create entity from Id and version
 	static Entity Create(uint32_t Id, uint32_t Version)
 	{
 		Entity NewEntity;
@@ -54,7 +51,7 @@ private:
 		return NewEntity;
 	}
 
-	friend class EntityManager;
+	friend class EntityAdmin;
 	friend struct std::hash<Entity>;
 };
 

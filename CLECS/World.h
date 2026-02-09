@@ -1,7 +1,7 @@
 #pragma once
 #include "CoreTypes.h"
 #include "System.h"
-#include "EntityManager.h"
+#include "EntityAdmin.h"
 #include "InputState.h"
 #include "EventBus.h"
 
@@ -35,7 +35,7 @@ private:
 	bool CreateWindow(const RendererInitializationData& Data);
 	bool CreateRenderer();
 
-	std::unique_ptr<EntityManager> EntityManagerPtr;
+	std::unique_ptr<EntityAdmin> EntityAdminPtr;
 	SystemCollection Systems;
 	InputState Input;
 	EventBus EventBus;

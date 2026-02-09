@@ -1,6 +1,6 @@
-#include "EntityManager.h"
+#include "EntityAdmin.h"
 
-Entity EntityManager::CreateEntity()
+Entity EntityAdmin::CreateEntity()
 {
 	uint32_t Id = 0;
 	uint32_t Version = 0;
@@ -20,14 +20,13 @@ Entity EntityManager::CreateEntity()
 	return Entity::Create(Id, Version);
 }
 
-void EntityManager::DestroyEntity(const Entity& TargetEntity)
+void EntityAdmin::DestroyEntity(const Entity& TargetEntity)
 {
 	if (!IsEntityValid(TargetEntity))
 		return;
 
 	const auto EntityId = TargetEntity.GetId();
 
-	// Remove all components from this entity
 	for (auto& [TypeId, Pool] : ComponentPools)
 	{
 		Pool->Remove(TargetEntity);
@@ -38,7 +37,7 @@ void EntityManager::DestroyEntity(const Entity& TargetEntity)
 	FreeEntityIds.push(EntityId);
 }
 
-bool EntityManager::IsEntityValid(const Entity& TargetEntity) const
+bool EntityAdmin::IsEntityValid(const Entity& TargetEntity) const
 {
 	if (!TargetEntity.IsValid())
 		return false;
@@ -50,7 +49,7 @@ bool EntityManager::IsEntityValid(const Entity& TargetEntity) const
 	return EntityVersions[EntityId] == TargetEntity.GetVersion();
 }
 
-void EntityManager::Clear()
+void EntityAdmin::Clear()
 {
 	ComponentPools.clear();
 	EntityVersions.clear();

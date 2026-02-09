@@ -3,9 +3,6 @@
 #include <vector>
 #include <limits>
 
-/* Base class for type-erased component storage.
- * Allows to manage different component types uniformly.
- */
 class ComponentPoolBase
 {
 public:
@@ -15,7 +12,6 @@ public:
 	virtual void Clear() = 0;
 };
 
-// Sentinel value indicating no component at this sparse index
 constexpr uint32_t INVALID_DENSE_INDEX = std::numeric_limits<uint32_t>::max();
 
 /* Templated component pool using sparse set for O(1) lookups.
@@ -25,23 +21,19 @@ template<typename T>
 class ComponentPool : public ComponentPoolBase
 {
 public:
-	// Add component to entity
 	template<typename... Args>
 	T& Emplace(const Entity& TargetEntity, Args&&... Arguments)
 	{
 		const auto EntityId = TargetEntity.GetId();
 		
-		// Ensure sparse array is large enough
 		if (EntityId >= Sparse.size())
 		{
 			Sparse.resize(EntityId + 1, INVALID_DENSE_INDEX);
 		}
 
-		// Check if entity already has this component
 		if (Sparse[EntityId] != INVALID_DENSE_INDEX)
 			return Components[Sparse[EntityId]];
 
-		// Add new component
 		const auto DenseIndex = static_cast<uint32_t>(Components.size());
 		Sparse[EntityId] = DenseIndex;
 		Entities.push_back(TargetEntity);
@@ -76,7 +68,6 @@ public:
 			Components[DenseIndex] = std::move(Components[LastIndex]);
 			Entities[DenseIndex] = Entities[LastIndex];
 			
-			// Update sparse index for swapped entity
 			const auto SwappedEntityId = Entities[DenseIndex].GetId();
 			Sparse[SwappedEntityId] = DenseIndex;
 		}

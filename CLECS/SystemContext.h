@@ -1,6 +1,6 @@
 #pragma once
 
-class EntityManager;
+class EntityAdmin;
 class InputState;
 class EventBus;
 struct SDL_Window;
@@ -8,7 +8,7 @@ struct SDL_Renderer;
 
 struct SystemContext
 {
-	EntityManager& EntityManager;
+	EntityAdmin& EntityAdmin;
 	SDL_Window& Window;
 	SDL_Renderer& Renderer;
 	const InputState& Input;

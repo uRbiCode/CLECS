@@ -9,7 +9,7 @@ World::~World()
 
 CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 {
-	EntityManagerPtr = std::move(Data.EntityManagerPtr);
+	EntityAdminPtr = std::move(Data.EntityAdminPtr);
 	Systems = std::move(Data.Systems);
 
 	if (!CreateWindow(Data.RendererConfig))
@@ -40,7 +40,7 @@ CLECS::ResultType World::Update(float DeltaTime)
 		Input.ProcessEvent(Event);
 	}
 
-	const auto Context = SystemContext{ *EntityManagerPtr, *Window, *Renderer, Input, EventBus };
+	const auto Context = SystemContext{ *EntityAdminPtr, *Window, *Renderer, Input, EventBus };
 	for (const auto& CurrentSystem : Systems)
 	{
 		CurrentSystem->Update(Context, DeltaTime);

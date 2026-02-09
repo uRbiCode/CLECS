@@ -137,7 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CollisionSystem.cpp" />
-    <ClCompile Include="EntityManager.cpp" />
+    <ClCompile Include="EntityAdmin.cpp" />
     <ClCompile Include="ExampleGame.cpp" />
     <ClCompile Include="GameRunner.cpp" />
     <ClCompile Include="InputState.cpp" />
@@ -159,7 +159,7 @@
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="CoreTypes.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="EntityAdmin.h" />
     <ClInclude Include="ExampleGame.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameRunner.h" />
