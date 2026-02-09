@@ -11,9 +11,6 @@ class WorldInitializationData;
 class GameRunner
 {
 public:
-	/* Runs the specified game.
-	 * Returns the exit code (0 for success, non-zero for errors).
-	 */
 	static int Run(std::unique_ptr<Game> GameInstance);
 
 private:
