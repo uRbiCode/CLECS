@@ -14,22 +14,28 @@
     <Filter Include="Source\Systems">
       <UniqueIdentifier>{9f0dfc0e-e142-49aa-b044-e12c720a44e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\CollisionSystem">
-      <UniqueIdentifier>{abdff57a-6b04-43eb-9f7d-f60b98384039}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Systems\MovementSystem">
       <UniqueIdentifier>{59b0305b-6b0d-4df5-9b22-804a500a68c6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Systems\PlayerInputSystem">
       <UniqueIdentifier>{12e763f4-8188-424f-b635-31a16fee4479}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\CollisionResolverSystem">
+      <UniqueIdentifier>{2e950d7b-bdc5-48cf-9b4e-4f68adc9c8d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\CollisionDetectionSystem">
+      <UniqueIdentifier>{abdff57a-6b04-43eb-9f7d-f60b98384039}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Events">
+      <UniqueIdentifier>{07925d12-fe8e-45f6-8e56-4e1b81495f42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\HealthSystem">
+      <UniqueIdentifier>{2dcc9ca3-0eb4-4e43-949e-def6b4720387}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
       <Filter>Source\GameEntry</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionSystem.cpp">
-      <Filter>Source\Systems\CollisionSystem</Filter>
     </ClCompile>
     <ClCompile Include="MovementSystem.cpp">
       <Filter>Source\Systems\MovementSystem</Filter>
@@ -39,6 +45,15 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionDetectionSystem.cpp">
+      <Filter>Source\Systems\CollisionDetectionSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionResolverSystem.cpp">
+      <Filter>Source\Systems\CollisionResolverSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthSystem.cpp">
+      <Filter>Source\Systems\HealthSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -54,14 +69,26 @@
     <ClInclude Include="VelocityComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionSystem.h">
-      <Filter>Source\Systems\CollisionSystem</Filter>
-    </ClInclude>
     <ClInclude Include="MovementSystem.h">
       <Filter>Source\Systems\MovementSystem</Filter>
     </ClInclude>
     <ClInclude Include="PlayerInputSystem.h">
       <Filter>Source\Systems\PlayerInputSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionDetectionSystem.h">
+      <Filter>Source\Systems\CollisionDetectionSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionEvent.h">
+      <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionResolverSystem.h">
+      <Filter>Source\Systems\CollisionResolverSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthSystem.h">
+      <Filter>Source\Systems\HealthSystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

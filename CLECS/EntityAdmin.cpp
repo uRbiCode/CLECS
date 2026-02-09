@@ -13,8 +13,9 @@ Entity EntityAdmin::CreateEntity()
 	}
 	else
 	{
-		Id = ++NextEntityId;
+		Id = NextEntityId++;
 		EntityVersions.push_back(0);
+		Version = 0;
 	}
 
 	return Entity::Create(Id, Version);
