@@ -1,4 +1,4 @@
-#include "ExampleGame.h"
+#include "Arkanoid.h"
 #include "PlayerInputSystem.h"
 #include "MovementSystem.h"
 #include "RenderSystem.h"
@@ -11,7 +11,7 @@
 #include "CollisionComponent.h"
 #include "CollisionSystem.h"
 
-bool ExampleGame::Initialize(WorldInitializationData& Data)
+bool Arkanoid::Initialize(WorldInitializationData& Data)
 {
 	Data.AddSystem<PlayerInputSystem>();
 	Data.AddSystem<CollisionSystem>();
@@ -35,10 +35,10 @@ bool ExampleGame::Initialize(WorldInitializationData& Data)
 	return true;
 }
 
-RendererInitializationData ExampleGame::GetRendererConfig() const
+RendererInitializationData Arkanoid::GetRendererConfig() const
 {
 	RendererInitializationData RendererConfig;
-	RendererConfig.WindowTitle = "CLECS Example Game";
+	RendererConfig.WindowTitle = "Arkanoid";
 	RendererConfig.WindowWidth = 1280;
 	RendererConfig.WindowHeight = 720;
 	return RendererConfig;
