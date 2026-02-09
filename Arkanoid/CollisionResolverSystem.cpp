@@ -60,22 +60,22 @@ namespace
 
 	void ResolveRegularCollision(EntityAdmin& Admin, const Entity& EntityToMove, const Vector2D<float>& Separation)
 	{
-		if (Admin.HasComponent<VelocityComponent>(EntityToMove))
-		{
-			auto& Transform = Admin.AccessComponent<TransformComponent>(EntityToMove);
-			Transform.Position.X += Separation.X;
-			Transform.Position.Y += Separation.Y;
+		if (!Admin.HasComponent<VelocityComponent>(EntityToMove))
+			return;
 
-			auto& Velocity = Admin.AccessComponent<VelocityComponent>(EntityToMove);
-			
-			if (Separation.X != 0.f)
-			{
-				Velocity.Velocity.X = -Velocity.Velocity.X;
-			}
-			if (Separation.Y != 0.f)
-			{
-				Velocity.Velocity.Y = -Velocity.Velocity.Y;
-			}
+		auto& Transform = Admin.AccessComponent<TransformComponent>(EntityToMove);
+		Transform.Position.X += Separation.X;
+		Transform.Position.Y += Separation.Y;
+
+		auto& Velocity = Admin.AccessComponent<VelocityComponent>(EntityToMove);
+		
+		if (std::abs(Separation.X) > FLT_EPSILON)
+		{
+			Velocity.Velocity.X = -Velocity.Velocity.X;
+		}
+		if (std::abs(Separation.Y) > FLT_EPSILON)
+		{
+			Velocity.Velocity.Y = -Velocity.Velocity.Y;
 		}
 	}
 }
@@ -108,17 +108,15 @@ void CollisionResolverSystem::OnCollision(const SystemContext& Context, const Co
 
 	const auto DecideCollisionResponse = [&Admin](bool IsBallPlayerCollision, CollisionResponse Response, const Entity& ThisEntity, CollisionChannel ThisCollisionChannel, const Entity& OtherEntity, const Vector2D<float>& Separation)
 	{
-		if (Response == CollisionResponse::Block)
+		if (Response != CollisionResponse::Block)
+			return;
+
+		if (IsBallPlayerCollision && ThisCollisionChannel == CollisionChannel::Ball)
 		{
-			if (IsBallPlayerCollision && ThisCollisionChannel == CollisionChannel::Ball)
-			{
-				ResolveCollisionWithDirection(Admin, ThisEntity, OtherEntity, Separation);
-			}
-			else
-			{
-				ResolveRegularCollision(Admin, ThisEntity, Separation);
-			}
+			ResolveCollisionWithDirection(Admin, ThisEntity, OtherEntity, Separation);
 		}
+	
+		ResolveRegularCollision(Admin, ThisEntity, Separation);
 	};
 	
 	DecideCollisionResponse(IsBallPlayerCollision, ResponseA, Event.EntityA, CollisionA.Channel, Event.EntityB, Event.Separation);
