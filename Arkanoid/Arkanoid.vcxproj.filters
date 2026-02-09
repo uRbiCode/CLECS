@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source\Components">
+      <UniqueIdentifier>{9cc8f5f6-6a74-4ca4-b219-a4a6192b8c0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\GameEntry">
+      <UniqueIdentifier>{8b4bc680-6ae2-4b52-9cc9-b17fafebd2f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems">
+      <UniqueIdentifier>{9f0dfc0e-e142-49aa-b044-e12c720a44e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\CollisionSystem">
+      <UniqueIdentifier>{abdff57a-6b04-43eb-9f7d-f60b98384039}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\MovementSystem">
+      <UniqueIdentifier>{59b0305b-6b0d-4df5-9b22-804a500a68c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\PlayerInputSystem">
+      <UniqueIdentifier>{12e763f4-8188-424f-b635-31a16fee4479}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\CLECS\Arkanoid.cpp">
+      <Filter>Source\GameEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CLECS\CollisionSystem.cpp">
+      <Filter>Source\Systems\CollisionSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CLECS\MovementSystem.cpp">
+      <Filter>Source\Systems\MovementSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CLECS\PlayerInputSystem.cpp">
+      <Filter>Source\Systems\PlayerInputSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CLECS\main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\CLECS\Arkanoid.h">
+      <Filter>Source\GameEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLECS\CollisionComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLECS\PlayerControllerComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLECS\VelocityComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLECS\CollisionSystem.h">
+      <Filter>Source\Systems\CollisionSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLECS\MovementSystem.h">
+      <Filter>Source\Systems\MovementSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CLECS\PlayerInputSystem.h">
+      <Filter>Source\Systems\PlayerInputSystem</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

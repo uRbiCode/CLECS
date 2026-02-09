@@ -23,43 +23,28 @@
     <Filter Include="Source\GameEntry">
       <UniqueIdentifier>{4e97584b-5072-461e-9a5d-43bcf8cad817}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\ExampleGame">
-      <UniqueIdentifier>{0ad24943-a866-491f-abf2-afe0416e87ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Core\System\Systems">
-      <UniqueIdentifier>{245c3a13-4777-40d7-bcc4-4f7c5a5a6497}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Core\Utils">
       <UniqueIdentifier>{d41bbb5c-b4d0-4762-bc40-fb7cfdd69908}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Core\World\InputState">
       <UniqueIdentifier>{5d0bc376-5b17-4e3a-9fc1-d6ce94603068}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Core\System\Systems\RenderSystem">
-      <UniqueIdentifier>{9a105a4c-f7af-4151-8a39-f7f6dd8f5275}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Core\System\Systems\MovementSystem">
-      <UniqueIdentifier>{72f07912-013f-4e3e-9a3c-4e3560483617}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Core\System\Systems\PlayerInputSystem">
-      <UniqueIdentifier>{ee56a87b-e225-4614-80f9-a4df6a6e4b67}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Core\Component\Components">
-      <UniqueIdentifier>{660b6f0a-8afc-459e-8fa4-687828ba7286}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Core\System\Systems\CollisionSystem">
-      <UniqueIdentifier>{0b29d4c0-d82c-4f24-8bea-2f5d91fc3d71}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Core\World\EventBus">
       <UniqueIdentifier>{c4632161-5607-48b3-8dfb-8232a51ee304}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\Component\Components">
+      <UniqueIdentifier>{23d54fd1-235e-4ad3-99e6-303dddd1ad0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\System\Systems">
+      <UniqueIdentifier>{6c3f2428-bdaa-4571-970a-d714f09f0d2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\System\Systems\RenderSystem">
+      <UniqueIdentifier>{8570a26a-e9ec-4f6d-8402-ea9240f96d92}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
       <Filter>Source\Core\World</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="System.cpp">
       <Filter>Source\Core\System</Filter>
@@ -70,9 +55,6 @@
     <ClCompile Include="GameRunner.cpp">
       <Filter>Source\GameEntry</Filter>
     </ClCompile>
-    <ClCompile Include="ExampleGame.cpp">
-      <Filter>Source\ExampleGame</Filter>
-    </ClCompile>
     <ClCompile Include="WorldInitializationData.cpp">
       <Filter>Source\Core\World</Filter>
     </ClCompile>
@@ -81,15 +63,6 @@
     </ClCompile>
     <ClCompile Include="RenderSystem.cpp">
       <Filter>Source\Core\System\Systems\RenderSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="MovementSystem.cpp">
-      <Filter>Source\Core\System\Systems\MovementSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerInputSystem.cpp">
-      <Filter>Source\Core\System\Systems\PlayerInputSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionSystem.cpp">
-      <Filter>Source\Core\System\Systems\CollisionSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -123,9 +96,6 @@
     <ClInclude Include="WorldInitializationData.h">
       <Filter>Source\Core\World</Filter>
     </ClInclude>
-    <ClInclude Include="ExampleGame.h">
-      <Filter>Source\ExampleGame</Filter>
-    </ClInclude>
     <ClInclude Include="RendererInitializationData.h">
       <Filter>Source\GameEntry</Filter>
     </ClInclude>
@@ -135,35 +105,17 @@
     <ClInclude Include="InputState.h">
       <Filter>Source\Core\World\InputState</Filter>
     </ClInclude>
-    <ClInclude Include="RenderSystem.h">
-      <Filter>Source\Core\System\Systems\RenderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="MovementSystem.h">
-      <Filter>Source\Core\System\Systems\MovementSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerInputSystem.h">
-      <Filter>Source\Core\System\Systems\PlayerInputSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformComponent.h">
-      <Filter>Source\Core\Component\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionComponent.h">
-      <Filter>Source\Core\Component\Components</Filter>
+    <ClInclude Include="EventBus.h">
+      <Filter>Source\Core\World\EventBus</Filter>
     </ClInclude>
     <ClInclude Include="ShapeComponent.h">
       <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
-    <ClInclude Include="VelocityComponent.h">
+    <ClInclude Include="TransformComponent.h">
       <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerControllerComponent.h">
-      <Filter>Source\Core\Component\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionSystem.h">
-      <Filter>Source\Core\System\Systems\CollisionSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="EventBus.h">
-      <Filter>Source\Core\World\EventBus</Filter>
+    <ClInclude Include="RenderSystem.h">
+      <Filter>Source\Core\System\Systems\RenderSystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
