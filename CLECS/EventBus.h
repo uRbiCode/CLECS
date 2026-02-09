@@ -11,7 +11,7 @@ struct SystemContext;
 /* Responsible for managing event subscriptions and notifications in CLECS.
  * Systems may subscribe to events by type , and the EventBus will notify them when events of that type are emitted.
  * The notifications are synchronous and happend immediately.
- * This means that sending an event as a reponse to another event will result in the new event being processed before the original event's processing is complete.
+ * This means that an event sent in reponse to another will be processed first.
  */
 class EventBus
 {
@@ -22,7 +22,7 @@ public:
 	EventBus& operator=(const EventBus&) = delete;
 
 	template<typename EventType>
-	void Subscribe(const void* Subscriber, std::function<void(const SystemContext&, const EventType&)> Callback)
+	void Subscribe(const System* Subscriber, std::function<void(const SystemContext&, const EventType&)> Callback)
 	{
 		const auto TypeId = std::type_index(typeid(EventType));
 		const auto Wrapper = [Callback](const SystemContext& Context, const void* EventData)
@@ -33,7 +33,7 @@ public:
 	}
 
 	template<typename EventType>
-	void Unsubscribe(const void* Subscriber)
+	void Unsubscribe(const System* Subscriber)
 	{
 		const auto TypeId = std::type_index(typeid(EventType));
 		const auto It = Subscribers.find(TypeId);
@@ -55,11 +55,14 @@ public:
 	void Notify(const SystemContext& Context, const EventType& Event) const
 	{
 		const auto TypeId = std::type_index(typeid(EventType));
-		const auto It = Subscribers.find(TypeId);
+		auto It = Subscribers.find(TypeId);
 		if (It == Subscribers.end())
 			return;
 
-		for (const auto& Entry : It->second)
+		// Prevent invalidating iterators if someone unsubscribes in response
+		std::vector<SubscriptionEntry> CallbacksCopy = It->second;
+
+		for (const auto& Entry : CallbacksCopy)
 		{
 			Entry.Callback(&Event, Context);
 		}
@@ -70,7 +73,7 @@ private:
 	
 	struct SubscriptionEntry
 	{
-		const void* Subscriber;
+		const System* Subscriber;
 		EventCallback Callback;
 	};
 
