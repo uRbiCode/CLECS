@@ -1,5 +1,5 @@
 #include "CollisionSystem.h"
-#include "SystemUpdateContext.h"
+#include "SystemContext.h"
 #include "EntityManager.h"
 #include "CollisionComponent.h"
 #include "TransformComponent.h"
@@ -264,9 +264,9 @@ namespace
 	}
 }
 
-void CollisionSystem::Update(const SystemUpdateContext& UpdateContext, float DeltaTime)
+void CollisionSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
-	auto& Manager = UpdateContext.EntityManager;
+	auto& Manager = Context.EntityManager;
 	auto CollisionGroup = Manager.GetGroup<TransformComponent, ShapeComponent, CollisionComponent>();
 
 	// Phase 1: Resolve existing overlaps

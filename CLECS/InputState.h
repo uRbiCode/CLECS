@@ -5,7 +5,7 @@
 
 /* InputState manages keyboard and mouse input states.
  * It tracks pressed keys, mouse buttons, and mouse position.
- * Updated by World and made available to Systems via SystemUpdateContext.
+ * Updated by World and made available to Systems via SystemContext.
  */
 class InputState
 {

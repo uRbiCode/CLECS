@@ -1,0 +1,78 @@
+#pragma once
+#include <functional>
+#include <unordered_map>
+#include <vector>
+#include <typeindex>
+#include <memory>
+#include <algorithm>
+
+struct SystemContext;
+
+/* Responsible for managing event subscriptions and notifications in CLECS.
+ * Systems may subscribe to events by type , and the EventBus will notify them when events of that type are emitted.
+ * The notifications are synchronous and happend immediately.
+ * This means that sending an event as a reponse to another event will result in the new event being processed before the original event's processing is complete.
+ */
+class EventBus
+{
+public:
+	EventBus() = default;
+	~EventBus() = default;
+	EventBus(const EventBus&) = delete;
+	EventBus& operator=(const EventBus&) = delete;
+
+	template<typename EventType>
+	void Subscribe(const void* Subscriber, std::function<void(const SystemContext&, const EventType&)> Callback)
+	{
+		const auto TypeId = std::type_index(typeid(EventType));
+		const auto Wrapper = [Callback](const SystemContext& Context, const void* EventData)
+		{
+			Callback(*static_cast<const EventType*>(EventData), Context);
+		};
+		Subscribers[TypeId].push_back({ Subscriber, Wrapper });
+	}
+
+	template<typename EventType>
+	void Unsubscribe(const void* Subscriber)
+	{
+		const auto TypeId = std::type_index(typeid(EventType));
+		const auto It = Subscribers.find(TypeId);
+		if (It == Subscribers.end())
+			return;
+
+		const auto& Callbacks = It->second;
+		Callbacks.erase(
+			std::remove_if(Callbacks.begin(), Callbacks.end(),
+				[Subscriber](const SubscriptionEntry& Entry)
+				{
+					return Entry.Subscriber == Subscriber;
+				}),
+			Callbacks.end()
+		);
+	}
+
+	template<typename EventType>
+	void Notify(const SystemContext& Context, const EventType& Event) const
+	{
+		const auto TypeId = std::type_index(typeid(EventType));
+		const auto It = Subscribers.find(TypeId);
+		if (It == Subscribers.end())
+			return;
+
+		for (const auto& Entry : It->second)
+		{
+			Entry.Callback(&Event, Context);
+		}
+	}
+
+private:
+	using EventCallback = std::function<void(const SystemContext&, const void*)>;
+	
+	struct SubscriptionEntry
+	{
+		const void* Subscriber;
+		EventCallback Callback;
+	};
+
+	std::unordered_map<std::type_index, std::vector<SubscriptionEntry>> Subscribers;
+};

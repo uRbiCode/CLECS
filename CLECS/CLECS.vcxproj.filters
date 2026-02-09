@@ -50,6 +50,9 @@
     <Filter Include="Source\Core\System\Systems\CollisionSystem">
       <UniqueIdentifier>{0b29d4c0-d82c-4f24-8bea-2f5d91fc3d71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\World\EventBus">
+      <UniqueIdentifier>{c4632161-5607-48b3-8dfb-8232a51ee304}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -88,6 +91,9 @@
     <ClCompile Include="CollisionSystem.cpp">
       <Filter>Source\Core\System\Systems\CollisionSystem</Filter>
     </ClCompile>
+    <ClCompile Include="EventBus.cpp">
+      <Filter>Source\Core\World\EventBus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="World.h">
@@ -108,7 +114,7 @@
     <ClInclude Include="EntityManager.h">
       <Filter>Source\Core\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="SystemUpdateContext.h">
+    <ClInclude Include="SystemContext.h">
       <Filter>Source\Core\System</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
@@ -158,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="CollisionSystem.h">
       <Filter>Source\Core\System\Systems\CollisionSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventBus.h">
+      <Filter>Source\Core\World\EventBus</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
