@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CLECS", "CLECS\CLECS.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDL3", "SDL\VisualC\SDL\SDL.vcxproj", "{81CE8DAF-EBB2-4761-8E45-B71ABCCA8C68}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Arkanoid", "ExampleGame\ExampleGame.vcxproj", "{5177ECE5-123D-4B96-A5F4-927273FCA0C3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Arkanoid", "Arkanoid\Arkanoid.vcxproj", "{5177ECE5-123D-4B96-A5F4-927273FCA0C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
