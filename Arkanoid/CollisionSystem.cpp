@@ -292,25 +292,25 @@ void CollisionSystem::Update(const SystemContext& Context, float DeltaTime) cons
 			const CollisionShape B = CollisionShape::From(TransformB, ShapeB);
 
 			const auto Result = CheckAndResolve(A, B);
-			if (Result.Collides)
-			{
-				TransformA.Position.X += Result.Separation.X;
-				TransformA.Position.Y += Result.Separation.Y;
+			if (!Result.Collides)
+				continue;
 
-				if (Admin.HasComponent<VelocityComponent>(EntityA) && !Admin.HasComponent<VelocityComponent>(EntityB))
+			TransformA.Position.X += Result.Separation.X;
+			TransformA.Position.Y += Result.Separation.Y;
+
+			if (Admin.HasComponent<VelocityComponent>(EntityA) && !Admin.HasComponent<VelocityComponent>(EntityB))
+			{
+				auto& VelocityA = Admin.AccessComponent<VelocityComponent>(EntityA);
+				const float SepMag = std::sqrtf(Result.Separation.X * Result.Separation.X + Result.Separation.Y * Result.Separation.Y);
+				if (SepMag > 0.001f)
 				{
-					auto& VelocityA = Admin.AccessComponent<VelocityComponent>(EntityA);
-					const float SepMag = std::sqrtf(Result.Separation.X * Result.Separation.X + Result.Separation.Y * Result.Separation.Y);
-					if (SepMag > 0.001f)
-					{
-						const Vector2D<float> SepDir = { Result.Separation.X / SepMag, Result.Separation.Y / SepMag };
-						const float VelDot = VelocityA.Velocity.X * SepDir.X + VelocityA.Velocity.Y * SepDir.Y;
-						if (VelDot < 0.f)
-						{
-							VelocityA.Velocity.X -= VelDot * SepDir.X;
-							VelocityA.Velocity.Y -= VelDot * SepDir.Y;
-						}
-					}
+					const Vector2D<float> SepDir = { Result.Separation.X / SepMag, Result.Separation.Y / SepMag };
+					const float VelDot = VelocityA.Velocity.X * SepDir.X + VelocityA.Velocity.Y * SepDir.Y;
+					if (VelDot >= 0.f)
+						continue;
+
+					VelocityA.Velocity.X -= VelDot * SepDir.X;
+					VelocityA.Velocity.Y -= VelDot * SepDir.Y;
 				}
 			}
 		}
@@ -348,49 +348,48 @@ void CollisionSystem::Update(const SystemContext& Context, float DeltaTime) cons
 
 			const bool CurrentlyColliding = CheckAndResolve(A, B).Collides;
 
-			if (!CurrentlyColliding)
-			{
-				if (VelocityA.AngularVelocity != 0.f)
-				{
-					const CollisionShape PredictedA = A.Predict({0.f, 0.f}, VelocityA.AngularVelocity * DeltaTime);
-					if (CheckAndResolve(PredictedA, B).Collides)
-					{
-						VelocityA.AngularVelocity = 0.f;
-					}
-				}
+			if (CurrentlyColliding)
+				continue;
 
-				if (VelocityA.Velocity.X != 0.f || VelocityA.Velocity.Y != 0.f)
+			if (VelocityA.AngularVelocity != 0.f)
+			{
+				const CollisionShape PredictedA = A.Predict({0.f, 0.f}, VelocityA.AngularVelocity * DeltaTime);
+				if (CheckAndResolve(PredictedA, B).Collides)
 				{
-					const Vector2D<float> VelDelta = { VelocityA.Velocity.X * DeltaTime, VelocityA.Velocity.Y * DeltaTime };
-					const CollisionShape PredictedA = A.Predict(VelDelta, 0.f);
-					const auto PredictedResult = CheckAndResolve(PredictedA, B);
+					VelocityA.AngularVelocity = 0.f;
+				}
+			}
+
+			if (VelocityA.Velocity.X != 0.f || VelocityA.Velocity.Y != 0.f)
+			{
+				const Vector2D<float> VelDelta = { VelocityA.Velocity.X * DeltaTime, VelocityA.Velocity.Y * DeltaTime };
+				const CollisionShape PredictedA = A.Predict(VelDelta, 0.f);
+				const auto PredictedResult = CheckAndResolve(PredictedA, B);
+				
+				if (!PredictedResult.Collides)
+					continue;
+
+				// Instead of zeroing velocity, project it along the collision normal to allow sliding
+				const float SepMag = std::sqrtf(PredictedResult.Separation.X * PredictedResult.Separation.X + 
+												 PredictedResult.Separation.Y * PredictedResult.Separation.Y);
+				
+				if (SepMag > 0.001f)
+				{
+					const Vector2D<float> Normal = { PredictedResult.Separation.X / SepMag, PredictedResult.Separation.Y / SepMag };
 					
-					if (PredictedResult.Collides)
-					{
-						// Instead of zeroing velocity, project it along the collision normal to allow sliding
-						const float SepMag = std::sqrtf(PredictedResult.Separation.X * PredictedResult.Separation.X + 
-						                                 PredictedResult.Separation.Y * PredictedResult.Separation.Y);
-						
-						if (SepMag > 0.001f)
-						{
-							// Normalize the separation vector to get collision normal
-							const Vector2D<float> Normal = { PredictedResult.Separation.X / SepMag, PredictedResult.Separation.Y / SepMag };
-							
-							// Remove the velocity component pointing into the obstacle (dot product with normal)
-							const float VelDot = VelocityA.Velocity.X * Normal.X + VelocityA.Velocity.Y * Normal.Y;
-							
-							if (VelDot < 0.f)
-							{
-								// Subtract the normal component, keeping the tangential (sliding) component
-								VelocityA.Velocity.X -= VelDot * Normal.X;
-								VelocityA.Velocity.Y -= VelDot * Normal.Y;
-							}
-						}
-						else
-						{
-							VelocityA.Velocity = { 0.f, 0.f };
-						}
-					}
+					// Remove the velocity component pointing into the obstacle (dot product with normal)
+					const float VelDot = VelocityA.Velocity.X * Normal.X + VelocityA.Velocity.Y * Normal.Y;
+					
+					if (VelDot >= 0.f)
+						continue;
+
+					// Subtract the normal component, keeping the tangential (sliding) component
+					VelocityA.Velocity.X -= VelDot * Normal.X;
+					VelocityA.Velocity.Y -= VelDot * Normal.Y;
+				}
+				else
+				{
+					VelocityA.Velocity = { 0.f, 0.f };
 				}
 			}
 		}
