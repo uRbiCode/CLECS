@@ -100,7 +100,7 @@ namespace
 		if (Texture == nullptr)
 			return;
 
-		Admin.AddComponent<TextureComponent>(BackgroundEntity, TextureComponent{ Texture, {32.f, 20.f, 31.f, 25.f} });
+		Admin.AddComponent<TextureComponent>(BackgroundEntity, TextureComponent{ Texture, {34.f, 13.f, 60.f, 42.f} });
 	}
 
 	void AddPlayer(const SystemContext& Context, const StageData& StageData)
