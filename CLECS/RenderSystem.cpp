@@ -74,7 +74,7 @@ namespace
 		}
 		else
 		{
-			SDL_SetRenderDrawColor(&Renderer, 255, 255, 255, 255);
+			SDL_SetRenderDrawColor(&Renderer, 255, 255, 255, 0);
 		}
 	}
 
@@ -119,6 +119,53 @@ namespace
 		};
 	}
 
+	void RenderTiledTexture(SDL_Renderer* Renderer, SDL_Texture* Texture, 
+						   const SDL_FRect& SourceRect, const SDL_FRect& DestRect)
+	{
+		if (Texture == nullptr)
+			return;
+
+		if (SourceRect.w == 0.f || SourceRect.h == 0.f)
+		{
+			SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "RenderTiledTexture -> SourceRect has zero width or height.");
+			return;
+		}
+
+		const int TilesX = static_cast<int>(std::ceil(DestRect.w / SourceRect.w));
+		const int TilesY = static_cast<int>(std::ceil(DestRect.h / SourceRect.h));
+
+		for (int y = 0; y < TilesY; ++y)
+		{
+			for (int x = 0; x < TilesX; ++x)
+			{
+				SDL_FRect TileDest = {
+					DestRect.x + x * SourceRect.w,
+					DestRect.y + y * SourceRect.h,
+					SourceRect.w,
+					SourceRect.h
+				};
+
+				auto TileSource = SourceRect;
+
+				if (TileDest.x + TileDest.w > DestRect.x + DestRect.w)
+				{
+					const float Overflow = (TileDest.x + TileDest.w) - (DestRect.x + DestRect.w);
+					TileDest.w -= Overflow;
+					TileSource.w *= (TileDest.w / SourceRect.w);
+				}
+
+				if (TileDest.y + TileDest.h > DestRect.y + DestRect.h)
+				{
+					const float Overflow = (TileDest.y + TileDest.h) - (DestRect.y + DestRect.h);
+					TileDest.h -= Overflow;
+					TileSource.h *= (TileDest.h / SourceRect.h);
+				}
+
+				SDL_RenderTexture(Renderer, Texture, &TileSource, &TileDest);
+			}
+		}
+	}
+
 	void RenderTexture(const SystemContext& Context, const Entity& Entity, const RenderData& RenderData)
 	{
 		auto& Admin = Context.EntityAdmin;
@@ -132,29 +179,43 @@ namespace
 
 		const auto& [Transform, Render] = RenderData;
 		const auto& TexComponent = Admin.GetComponent<TextureComponent>(Entity);
-		if (TexComponent.Texture)
-		{
-			if (TexComponent.SourceRect.w == 0.f || TexComponent.SourceRect.h == 0.f)
-			{
-				SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "RenderSystem::RenderTexture -> TextureComponent for Entity %u has zero width or height in SourceRect.", Entity.GetId());
-				return;
-			}
-			
-			const auto& RectComp = Admin.GetComponent<RectComponent>(Entity);
-			const auto RenderRect = CalcRenderRect(Transform, RectComp);
 		
-			if (Admin.HasComponent<ColorComponent>(Entity))
-			{
-				const auto& Color = Admin.GetComponent<ColorComponent>(Entity);
-				SDL_SetTextureColorModFloat(TexComponent.Texture, Color.Color.r, Color.Color.g, Color.Color.b);
-				SDL_SetTextureAlphaModFloat(TexComponent.Texture, Color.Color.a);
-			}
-			
+		if (!TexComponent.Texture)
+		{
+			SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "RenderSystem::RenderTexture -> Entity %u has null texture.", Entity.GetId());
+			return;
+		}
+
+		const auto& RectComp = Admin.GetComponent<RectComponent>(Entity);
+		const auto RenderRect = CalcRenderRect(Transform, RectComp);
+
+		if (Admin.HasComponent<ColorComponent>(Entity))
+		{
+			const auto& Color = Admin.GetComponent<ColorComponent>(Entity);
+			SDL_SetTextureColorModFloat(TexComponent.Texture, Color.Color.r, Color.Color.g, Color.Color.b);
+			SDL_SetTextureAlphaModFloat(TexComponent.Texture, Color.Color.a);
+		}
+
+		if (TexComponent.SourceRect.w == 0.f || TexComponent.SourceRect.h == 0.f)
+		{
+			SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "RenderSystem::RenderTexture -> Entity %u has SourceRect with zero width or height.", Entity.GetId());
+			return;
+		}
+
+		// Render tiled or normal
+		if (TexComponent.Tiled)
+		{
+			// Tiled rendering
+			RenderTiledTexture(&Renderer, TexComponent.Texture, TexComponent.SourceRect, RenderRect);
+		}
+		else
+		{
+			// Normal rendering (stretched)
 			if (Transform.Rotation != 0.f)
 			{
 				const SDL_FPoint Center = {RenderRect.w * 0.5f, RenderRect.h * 0.5f};
 				SDL_RenderTextureRotated(&Renderer, TexComponent.Texture, &TexComponent.SourceRect, &RenderRect, 
-										 Transform.Rotation * (180.0 / SDL_PI_D), &Center, SDL_FLIP_NONE);
+									 Transform.Rotation * (180.0 / SDL_PI_D), &Center, SDL_FLIP_NONE);
 			}
 			else
 			{
@@ -182,6 +243,7 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 		if (Admin.HasComponent<TextureComponent>(Entity))
 		{
 			RenderTexture(Context, Entity, RenderData);
+			continue;
 		}
 
 		if (Admin.HasComponent<RectComponent>(Entity))

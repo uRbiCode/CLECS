@@ -39,6 +39,7 @@ SDL_Texture* TextureManager::LoadTexture(const std::string& FilePath)
     }
 
     TextureCache[FilePath] = NewTexture;
+    SDL_SetTextureScaleMode(NewTexture, SDL_SCALEMODE_PIXELART);
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Loaded texture: %s", FilePath.c_str());
 
     return NewTexture;

@@ -18,6 +18,7 @@
 #include "RunStateComponent.h"
 #include "RunControllerSystem.h"
 #include "StageDataComponent.h"
+#include <TextureComponent.h>
 
 namespace
 {
