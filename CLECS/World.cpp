@@ -32,8 +32,7 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 		return CLECS::ResultType::Failure;
 	}
 
-	TextureManagerPtr = std::make_unique<TextureManager>();
-	TextureManagerPtr->Initialize(*Renderer);
+	InitializeTextureManager();
 
 	EntityAdminPtr = std::move(Data.EntityAdminPtr);
 	Systems = std::move(Data.Systems);
@@ -82,6 +81,12 @@ void World::Shutdown()
 		SDL_DestroyWindow(Window);
 		Window = nullptr;
 	}
+
+	if (TextureManagerPtr != nullptr)
+	{
+		TextureManagerPtr->UnloadAll();
+		TextureManagerPtr = nullptr;
+	}
 }
 
 bool World::CreateWindow(const RendererInitializationData& Data)
@@ -113,6 +118,12 @@ bool World::CreateRenderer()
 	}
 
 	return true;
+}
+
+void World::InitializeTextureManager()
+{
+	TextureManagerPtr = std::make_unique<TextureManager>();
+	TextureManagerPtr->Initialize(*Renderer);
 }
 
 SystemContext World::MakeSystemContext()

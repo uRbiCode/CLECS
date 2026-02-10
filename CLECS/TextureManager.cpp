@@ -1,5 +1,11 @@
 #include "TextureManager.h"
 #include "SDL3_image/SDL_image.h"
+#include <filesystem>
+
+namespace
+{
+	constexpr const char* TexturesDirectory = "../Assets/Textures/";
+}
 
 TextureManager::~TextureManager()
 {
@@ -9,6 +15,7 @@ TextureManager::~TextureManager()
 void TextureManager::Initialize(SDL_Renderer& InRenderer)
 {
     Renderer = &InRenderer;
+	LoadTexturesFromAssetsDirectory();
 }
 
 SDL_Texture* TextureManager::LoadTexture(const std::string& FilePath)
@@ -69,4 +76,35 @@ void TextureManager::UnloadAll()
         SDL_DestroyTexture(Texture);
     }
     TextureCache.clear();
+}
+
+void TextureManager::LoadTexturesFromAssetsDirectory()
+{
+    auto current_dir = std::filesystem::current_path();
+    if (!Renderer)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager: Renderer not initialized");
+        return;
+    }
+
+    if (!std::filesystem::exists(TexturesDirectory))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Directory does not exist: %s", TexturesDirectory);
+        return;
+    }
+
+    if (!std::filesystem::is_directory(TexturesDirectory))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Path is not a directory: %s", TexturesDirectory);
+        return;
+    }
+
+	for (const auto& Entry : std::filesystem::directory_iterator(TexturesDirectory))
+	{
+		if (!Entry.is_regular_file())
+			continue;
+
+		const std::string FilePath = Entry.path().string();
+		LoadTexture(FilePath);
+	}
 }

@@ -35,6 +35,7 @@ public:
 private:
 	bool CreateWindow(const RendererInitializationData& Data);
 	bool CreateRenderer();
+	void InitializeTextureManager();
 	SystemContext MakeSystemContext();
 
 	std::unique_ptr<EntityAdmin> EntityAdminPtr;

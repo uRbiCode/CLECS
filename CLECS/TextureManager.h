@@ -28,6 +28,8 @@ public:
     void UnloadAll();
 
 private:
+    void LoadTexturesFromAssetsDirectory();
+
     SDL_Renderer* Renderer = nullptr;
     std::unordered_map<std::string, SDL_Texture*> TextureCache;
 };
