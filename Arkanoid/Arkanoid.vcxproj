@@ -179,9 +179,6 @@
     <ClInclude Include="StageUtils.h" />
     <ClInclude Include="VelocityComponent.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\SDL_image\VisualC\SDL_image.vcxproj" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
