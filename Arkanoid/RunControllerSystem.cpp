@@ -25,7 +25,6 @@ namespace
 		Admin.AddComponent<ColorComponent>(Wall, SDL_FColor{ 0.3f, 0.3f, 0.3f, 1.f });
 		Admin.AddComponent<RenderComponent>(Wall);
 		
-		// Add texture if provided
 		if (!WallData.TexturePath.empty())
 		{
 			SDL_Texture* Texture = TexManager.GetTexture(WallData.TexturePath);
@@ -33,7 +32,7 @@ namespace
 			{
 				Admin.AddComponent<TextureComponent>(Wall, TextureComponent{
 					Texture,
-					{0.f, 0.f, 0.f, 0.f},
+					WallData.TextureSourceRect
 				});
 			}
 		}
@@ -58,10 +57,8 @@ namespace
 		auto BrickEntity = Admin.CreateEntity();
 		Admin.AddComponent<TransformComponent>(BrickEntity, BrickData.Position);
 		Admin.AddComponent<RectComponent>(BrickEntity, SDL_FRect{ -BrickData.Size.X * 0.5f, -BrickData.Size.Y * 0.5f, BrickData.Size.X, BrickData.Size.Y });
-		Admin.AddComponent<ColorComponent>(BrickEntity, BrickData.Color);
 		Admin.AddComponent<RenderComponent>(BrickEntity);
 		
-		// Add texture if provided
 		if (!BrickData.TexturePath.empty())
 		{
 			SDL_Texture* Texture = TexManager.GetTexture(BrickData.TexturePath);
@@ -69,9 +66,13 @@ namespace
 			{
 				Admin.AddComponent<TextureComponent>(BrickEntity, TextureComponent{
 					Texture,
-					{0.f, 0.f, 0.f, 0.f},
+					BrickData.TextureSourceRect
 				});
 			}
+		}
+		else
+		{
+			Admin.AddComponent<ColorComponent>(BrickEntity, BrickData.Color);
 		}
 		
 		auto& BrickCollisionComponent = Admin.AddComponent<CollisionComponent>(BrickEntity, CollisionChannel::Brick);
@@ -83,7 +84,6 @@ namespace
 	{
 		auto& Admin = Context.EntityAdmin;
 		
-		// Get window size
 		int WindowWidth, WindowHeight;
 		SDL_GetWindowSize(&Context.Window, &WindowWidth, &WindowHeight);
 
@@ -97,12 +97,11 @@ namespace
 		});
 		Admin.AddComponent<RenderComponent>(BackgroundEntity, -1);
 		
-		// Load and add texture
 		auto Texture = Context.TextureManager.LoadTexture("../Assets/Textures/Background_Tiles.png");
 		if (Texture == nullptr)
 			return;
 
-		Admin.AddComponent<TextureComponent>(BackgroundEntity, TextureComponent{ Texture, {32.f, 20.f, 31.f, 0.f} });
+		Admin.AddComponent<TextureComponent>(BackgroundEntity, TextureComponent{ Texture, {32.f, 20.f, 31.f, 25.f} });
 	}
 }
 

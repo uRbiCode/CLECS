@@ -23,19 +23,19 @@
 namespace
 {
 	constexpr float WallThickness = 20.f;
-	constexpr float ScreenWidth = 1280.f;
-	constexpr float ScreenHeight = 720.f;
+	constexpr float ScreenWidth = 640.f;
+	constexpr float ScreenHeight = 480.f;
+	constexpr int StagesCount = 3;
 
-	constexpr Vector2D<float> BallInitialPosition = { ScreenWidth * 0.5f, 300.f };
-	constexpr Vector2D<float> BallInitialVelocity = { 0.f, 300.f };
-	constexpr Vector2D<float> PlayerInitialPosition = { ScreenWidth * 0.5f, 650.f };
+	constexpr Vector2D<float> BallInitialPosition = { ScreenWidth * 0.5f, ScreenHeight * 0.5f };
+	constexpr Vector2D<float> BallInitialVelocity = { 0.f, 250.f };
+	constexpr Vector2D<float> PlayerInitialPosition = { ScreenWidth * 0.5f, ScreenHeight * 0.9f };
 
 	void AddPlayer(EntityAdmin& Admin)
 	{
 		auto PlayerEntity = Admin.CreateEntity();
 		Admin.AddComponent<TransformComponent>(PlayerEntity, PlayerInitialPosition);
-		Admin.AddComponent<RectComponent>(PlayerEntity, SDL_FRect{ -60.f, -10.f, 120.f, 20.f });
-		Admin.AddComponent<ColorComponent>(PlayerEntity, SDL_FColor{ 0.7f, 0.7f, 0.7f, 1.f });
+		Admin.AddComponent<RectComponent>(PlayerEntity, SDL_FRect{ -60.f, -10.f, 80.f, 20.f });
 		Admin.AddComponent<RenderComponent>(PlayerEntity);
 		Admin.AddComponent<VelocityComponent>(PlayerEntity);
 		auto& PlayerCollisionComponent = Admin.AddComponent<CollisionComponent>(PlayerEntity, CollisionChannel::Player);
@@ -71,26 +71,18 @@ namespace
 	void AddStageDataComponents(EntityAdmin& Admin)
 	{
 		// Create brick grid
-		constexpr int BrickRows = 1;
-		constexpr int BrickColumns = 1;
-		constexpr float BrickWidth = 300.f;
-		constexpr float BrickHeight = 30.f;
-		constexpr float BrickSpacing = 5.f;
+		constexpr int BrickRows = 5;
+		constexpr int BrickColumns = 5;
+		constexpr float BrickWidth = 64.f;
+		constexpr float BrickHeight = 32.f;
+		constexpr float BrickSpacing = 8.f;
 		constexpr float GridStartX = (ScreenWidth - (BrickColumns * (BrickWidth + BrickSpacing))) * 0.5f;
-		constexpr float GridStartY = 100.f;
-
-		SDL_FColor BrickColors[] = {
-			{ 1.f, 0.f, 0.f, 1.f },     // Red
-			{ 1.f, 0.5f, 0.f, 1.f },    // Orange
-			{ 1.f, 1.f, 0.f, 1.f },     // Yellow
-			{ 0.f, 1.f, 0.f, 1.f },     // Green
-			{ 0.f, 0.5f, 1.f, 1.f }     // Blue
-		};
+		constexpr float GridStartY = WallThickness + BrickSpacing;
 
 		auto StageDataEntity = Admin.CreateEntity();
 		auto& StageDataEntityComponent = Admin.AddComponent<StageDataComponent>(StageDataEntity);
 
-		for (int i = 0; i < 3; ++i)
+		for (int i = 0; i < StagesCount; ++i)
 		{
 			StageData NewStageData;
 			NewStageData.PlayerSpawnPosition = PlayerInitialPosition;
@@ -110,8 +102,9 @@ namespace
 					BrickData NewBrick;
 					NewBrick.Position = Vector2D<float>{ GridStartX + Col * (BrickWidth + BrickSpacing) + BrickWidth * 0.5f, GridStartY + Row * (BrickHeight + BrickSpacing) + BrickHeight * 0.5f };
 					NewBrick.Size = Vector2D<float>{ BrickWidth, BrickHeight };
-					NewBrick.Color = BrickColors[(Row + i) % std::size(BrickColors)];
 					NewBrick.Health = 1;
+					NewBrick.TexturePath = "../Assets/Textures/bricks.png";
+					NewBrick.TextureSourceRect = SDL_FRect{ 0.f, 23.f + static_cast<float>(16.f * Row), 32.f, 8.f};
 					NewStageData.Bricks.push_back(NewBrick);
 				}
 			}

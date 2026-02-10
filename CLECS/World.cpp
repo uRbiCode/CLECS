@@ -95,7 +95,7 @@ bool World::CreateWindow(const RendererInitializationData& Data)
 		Data.WindowTitle,
 		Data.WindowWidth,
 		Data.WindowHeight,
-		SDL_WINDOW_RESIZABLE
+		SDL_WINDOW_FULLSCREEN
 	);
 
 	if (Window == nullptr)
