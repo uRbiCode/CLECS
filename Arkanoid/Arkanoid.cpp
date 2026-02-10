@@ -45,8 +45,6 @@ namespace
 		Admin.AddComponent<TransformComponent>(TriggerEntity, Position);
 		Admin.AddComponent<RectComponent>(TriggerEntity, SDL_FRect{ -Size.X * 0.5f, -Size.Y * 0.5f, Size.X, Size.Y });
 		Admin.AddComponent<HealthComponent>(TriggerEntity, 3);
-		Admin.AddComponent<ColorComponent>(TriggerEntity, SDL_FColor{ 1.f, 0.f, 0.f, 0.5f });
-		Admin.AddComponent<RenderComponent>(TriggerEntity, 1);
 		auto& TriggerCollisionComponent = Admin.AddComponent<CollisionComponent>(TriggerEntity, CollisionChannel::Trigger);
 		TriggerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Static)] = CollisionResponse::Ignore;
 	}
@@ -73,8 +71,9 @@ namespace
 		Admin.AddComponent<ColorComponent>(BallEntity, SDL_FColor{ 0.f, 0.f, 1.f, 1.f });
 		Admin.AddComponent<RenderComponent>(BallEntity);
 		auto& BallVelocityComponent = Admin.AddComponent<VelocityComponent>(BallEntity);
-		BallVelocityComponent.Velocity = { 0.f, 300.f };
+		BallVelocityComponent.Velocity = BallInitialVelocity;
 		auto& BallCollisionComponent = Admin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
+		BallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
 	}
 
 	void AddBrick(EntityAdmin& Admin, const Vector2D<float>& Position, const Vector2D<float>& Size, const SDL_FColor& Color)
