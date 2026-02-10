@@ -127,11 +127,12 @@ namespace
 		auto BallEntity = Admin.CreateEntity();
 		Admin.AddComponent<TransformComponent>(BallEntity, BallData.Position);
 		Admin.AddComponent<CircleComponent>(BallEntity, 10.f);
-		Admin.AddComponent<ColorComponent>(BallEntity, SDL_FColor{ 0.f, 0.f, 1.f, 1.f });
 		Admin.AddComponent<RenderComponent>(BallEntity);
 		Admin.AddComponent<VelocityComponent>(BallEntity, BallData.Velocity);
 		auto& BallCollisionComponent = Admin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
 		BallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
+
+		TryAddTexture(Context, BallEntity, BallData.TextureData);
 	}
 }
 

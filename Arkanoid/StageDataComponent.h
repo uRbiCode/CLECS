@@ -21,6 +21,7 @@ struct BallData
 {
     Vector2D<float> Position;
     Vector2D<float> Velocity;
+    TextureData TextureData;
 };
 
 struct WallData
