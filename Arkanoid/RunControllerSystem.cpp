@@ -117,14 +117,14 @@ namespace
 		Admin.AddComponent<PlayerControllerComponent>(PlayerEntity);
 	}
 
-	void AddBall(EntityAdmin& Admin, const StageData& StageData)
+	void AddBall(EntityAdmin& Admin, const BallData& BallData)
 	{
 		auto BallEntity = Admin.CreateEntity();
-		Admin.AddComponent<TransformComponent>(BallEntity, StageData.BallSpawnPosition);
+		Admin.AddComponent<TransformComponent>(BallEntity, BallData.Position);
 		Admin.AddComponent<CircleComponent>(BallEntity, 10.f);
 		Admin.AddComponent<ColorComponent>(BallEntity, SDL_FColor{ 0.f, 0.f, 1.f, 1.f });
 		Admin.AddComponent<RenderComponent>(BallEntity);
-		Admin.AddComponent<VelocityComponent>(BallEntity, StageData.BallInitialVelocity);
+		Admin.AddComponent<VelocityComponent>(BallEntity, BallData.Velocity);
 		auto& BallCollisionComponent = Admin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
 		BallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
 	}
@@ -238,25 +238,6 @@ void RunControllerSystem::SpawnStageEntities(const SystemContext& Context, const
 	auto& Admin = Context.EntityAdmin;
 	auto& TexManager = Context.TextureManager;
 	
-	Admin.GetGroup<CollisionComponent>().ForEach([&StageData, &Admin](const Entity& Entity, const CollisionComponent& Collision)
-	{
-		if (Collision.Channel == CollisionChannel::Player)
-		{
-			auto& Transform = Admin.AccessComponent<TransformComponent>(Entity);
-			Transform.Position = StageData.PlayerSpawnPosition;
-		}
-	});
-	
-	Admin.GetGroup<CollisionComponent, VelocityComponent>().ForEach([&StageData, &Admin](const Entity& Entity, const CollisionComponent& Collision, VelocityComponent& Velocity)
-	{
-		if (Collision.Channel == CollisionChannel::Ball)
-		{
-			auto& Transform = Admin.AccessComponent<TransformComponent>(Entity);
-			Transform.Position = StageData.BallSpawnPosition;
-			Velocity.Velocity = StageData.BallInitialVelocity;
-		}
-	});
-	
 	for (const auto& WallData : StageData.Walls)
 	{
 		AddWall(Admin, TexManager, WallData);
@@ -269,7 +250,7 @@ void RunControllerSystem::SpawnStageEntities(const SystemContext& Context, const
 	
 	AddTrigger(Admin, StageData.Trigger);
 	AddPlayer(Admin, StageData);
-	AddBall(Admin, StageData);
+	AddBall(Admin, StageData.BallData);
 }
 
 void RunControllerSystem::CleanupCurrentStage(const SystemContext& Context) const

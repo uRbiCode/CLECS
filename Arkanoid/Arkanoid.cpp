@@ -61,8 +61,8 @@ namespace
 		{
 			StageData NewStageData;
 			NewStageData.PlayerSpawnPosition = PlayerInitialPosition;
-			NewStageData.BallSpawnPosition = BallInitialPosition;
-			NewStageData.BallInitialVelocity = BallInitialVelocity;
+			NewStageData.BallData.Position = BallInitialPosition;
+			NewStageData.BallData.Velocity = BallInitialVelocity;
 
 			NewStageData.Walls.push_back(WallData{ Vector2D<float>{ ScreenWidth * 0.5f, WallThickness * 0.5f }, Vector2D<float>{ ScreenWidth, WallThickness } });
 			NewStageData.Walls.push_back(WallData{ Vector2D<float>{ WallThickness * 0.5f, ScreenHeight * 0.5f }, Vector2D<float>{ WallThickness, ScreenHeight } });

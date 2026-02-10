@@ -4,6 +4,12 @@
 #include "MathTypes.h"
 #include <SDL3/SDL.h>
 
+struct BallData
+{
+    Vector2D<float> Position;
+    Vector2D<float> Velocity;
+};
+
 struct WallData
 {
     Vector2D<float> Position;
@@ -34,9 +40,8 @@ struct BrickData
 struct StageData
 {
     Vector2D<float> PlayerSpawnPosition;
-    Vector2D<float> BallSpawnPosition;
-    Vector2D<float> BallInitialVelocity;
-    
+
+	BallData BallData;
     TriggerData Trigger;
 	std::vector<WallData> Walls;
     std::vector<BrickData> Bricks;
