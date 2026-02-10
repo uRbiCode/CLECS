@@ -108,7 +108,7 @@
     <ClInclude Include="EventBus.h">
       <Filter>Source\Core\World\EventBus</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeComponent.h">
+    <ClInclude Include="ShapeComponents.h">
       <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
     <ClInclude Include="TransformComponent.h">
@@ -116,6 +116,9 @@
     </ClInclude>
     <ClInclude Include="RenderSystem.h">
       <Filter>Source\Core\System\Systems\RenderSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderComponent.h">
+      <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

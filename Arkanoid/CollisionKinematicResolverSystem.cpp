@@ -1,9 +1,9 @@
-#include "CollisionResolverSystem.h"
+#include "CollisionKinematicResolverSystem.h"
 #include "SystemContext.h"
 #include "EventBus.h"
 #include "CollisionEvent.h"
-#include <TransformComponent.h>
-#include <ShapeComponent.h>
+#include "TransformComponent.h"
+#include "ShapeComponents.h"
 #include "VelocityComponent.h"
 #include "EntityAdmin.h"
 #include "CollisionComponent.h"
@@ -11,12 +11,34 @@
 
 namespace
 {
-	Vector2D<float> GetCenter(const TransformComponent& Transform, const ShapeComponent& Shape)
+	Vector2D<float> GetRectCenter(const TransformComponent& Transform, const RectComponent& Rect)
 	{
 		return {
-			Transform.Position.X + Shape.Rect.x + Shape.Rect.w * 0.5f,
-			Transform.Position.Y + Shape.Rect.y + Shape.Rect.h * 0.5f
+			Transform.Position.X + Rect.Rect.x + Rect.Rect.w * 0.5f,
+			Transform.Position.Y + Rect.Rect.y + Rect.Rect.h * 0.5f
 		};
+	}
+
+	Vector2D<float> GetCircleCenter(const TransformComponent& Transform)
+	{
+		return Transform.Position;
+	}
+
+	Vector2D<float> GetEntityCenter(EntityAdmin& Admin, const Entity& Entity)
+	{
+		const auto& Transform = Admin.GetComponent<TransformComponent>(Entity);
+		
+		if (Admin.HasComponent<CircleComponent>(Entity))
+		{
+			return GetCircleCenter(Transform);
+		}
+		else if (Admin.HasComponent<RectComponent>(Entity))
+		{
+			const auto& Rect = Admin.GetComponent<RectComponent>(Entity);
+			return GetRectCenter(Transform, Rect);
+		}
+		
+		return Transform.Position;
 	}
 
 	Vector2D<float> GetDirection(const Vector2D<float>& From, const Vector2D<float>& To)
@@ -42,13 +64,8 @@ namespace
 
 		auto& Velocity = Admin.AccessComponent<VelocityComponent>(Ball);
 
-		const auto& PlayerTransform = Admin.GetComponent<TransformComponent>(Player);
-		const auto& PlayerShape = Admin.GetComponent<ShapeComponent>(Player);
-		const auto& BallShape = Admin.GetComponent<ShapeComponent>(Ball);
-		
-		const Vector2D<float> PlayerCenter = GetCenter(PlayerTransform, PlayerShape);
-		const Vector2D<float> BallCenter = GetCenter(BallTransform, BallShape);
-
+		const Vector2D<float> PlayerCenter = GetEntityCenter(Admin, Player);
+		const Vector2D<float> BallCenter = GetEntityCenter(Admin, Ball);
 		const Vector2D<float> NewDirection = GetDirection(PlayerCenter, BallCenter);
 
 		const float CurrentSpeed = std::sqrt(Velocity.Velocity.X * Velocity.Velocity.X + 
@@ -80,7 +97,7 @@ namespace
 	}
 }
 
-void CollisionResolverSystem::Initialize(const SystemContext& Context) const
+void CollisionKinematicResolverSystem::Initialize(const SystemContext& Context) const
 {
 	auto& EventBus = Context.EventBus;
 	EventBus.Subscribe<CollisionEvent>(this, [this](const SystemContext& Context, const CollisionEvent& Event)
@@ -90,7 +107,7 @@ void CollisionResolverSystem::Initialize(const SystemContext& Context) const
 	});
 }
 
-void CollisionResolverSystem::OnCollision(const SystemContext& Context, const CollisionEvent& Event) const
+void CollisionKinematicResolverSystem::OnCollision(const SystemContext& Context, const CollisionEvent& Event) const
 {
 	auto& Admin = Context.EntityAdmin;
 	assert(Admin.HasComponent<CollisionComponent>(Event.EntityA) && "EntityA must have a CollisionComponent");

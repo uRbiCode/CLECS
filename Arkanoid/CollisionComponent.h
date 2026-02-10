@@ -7,6 +7,7 @@ enum class CollisionChannel : uint8_t
 	Player,
 	Ball,
 	Brick,
+	Trigger,
 	COUNT
 };
 
