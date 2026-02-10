@@ -64,6 +64,9 @@
     <ClCompile Include="RenderSystem.cpp">
       <Filter>Source\Core\System\Systems\RenderSystem</Filter>
     </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="World.h">
@@ -120,5 +123,9 @@
     <ClInclude Include="RenderComponent.h">
       <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
+    <ClInclude Include="TextureComponent.h">
+      <Filter>Source\Core\Component\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h" />
   </ItemGroup>
 </Project>

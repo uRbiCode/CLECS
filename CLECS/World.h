@@ -4,6 +4,7 @@
 #include "EntityAdmin.h"
 #include "InputState.h"
 #include "EventBus.h"
+#include "TextureManager.h"
 
 #include <vector>
 #include <memory>
@@ -34,12 +35,15 @@ public:
 private:
 	bool CreateWindow(const RendererInitializationData& Data);
 	bool CreateRenderer();
+	void InitializeTextureManager();
+
 	SystemContext MakeSystemContext();
 
 	std::unique_ptr<EntityAdmin> EntityAdminPtr;
 	SystemCollection Systems;
 	InputState Input;
 	EventBus EventBus;
+	std::unique_ptr<TextureManager> TextureManagerPtr;
 	SDL_Window* Window = nullptr;
 	SDL_Renderer* Renderer = nullptr;
 };

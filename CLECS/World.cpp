@@ -32,6 +32,8 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 		return CLECS::ResultType::Failure;
 	}
 
+	InitializeTextureManager();
+
 	EntityAdminPtr = std::move(Data.EntityAdminPtr);
 	Systems = std::move(Data.Systems);
 
@@ -79,6 +81,12 @@ void World::Shutdown()
 		SDL_DestroyWindow(Window);
 		Window = nullptr;
 	}
+
+	if (TextureManagerPtr != nullptr)
+	{
+		TextureManagerPtr->UnloadAll();
+		TextureManagerPtr = nullptr;
+	}
 }
 
 bool World::CreateWindow(const RendererInitializationData& Data)
@@ -87,7 +95,7 @@ bool World::CreateWindow(const RendererInitializationData& Data)
 		Data.WindowTitle,
 		Data.WindowWidth,
 		Data.WindowHeight,
-		SDL_WINDOW_RESIZABLE
+		SDL_WINDOW_FULLSCREEN
 	);
 
 	if (Window == nullptr)
@@ -112,7 +120,13 @@ bool World::CreateRenderer()
 	return true;
 }
 
+void World::InitializeTextureManager()
+{
+	TextureManagerPtr = std::make_unique<TextureManager>();
+	TextureManagerPtr->Initialize(*Renderer);
+}
+
 SystemContext World::MakeSystemContext()
 {
-	return SystemContext{ *EntityAdminPtr, *Window, *Renderer, Input, EventBus };
+	return SystemContext{ *EntityAdminPtr, *Window, *Renderer, Input, EventBus, *TextureManagerPtr };
 }

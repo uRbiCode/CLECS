@@ -72,16 +72,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)CLECS;$(SolutionDir)SDL\include</IncludePath>
+    <IncludePath>$(SolutionDir)CLECS</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)CLECS;$(SolutionDir)SDL\include</IncludePath>
+    <IncludePath>$(SolutionDir)CLECS</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)CLECS;$(SolutionDir)SDL\include</IncludePath>
+    <IncludePath>$(SolutionDir)CLECS</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)CLECS;$(SolutionDir)SDL\include</IncludePath>
+    <IncludePath>$(SolutionDir)CLECS</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -153,10 +153,12 @@
     <ClCompile Include="Arkanoid.cpp" />
     <ClCompile Include="CollisionKinematicResolverSystem.cpp" />
     <ClCompile Include="CurrentStageSystem.cpp" />
+    <ClCompile Include="RunControllerSystem.cpp" />
     <ClCompile Include="HealthSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovementSystem.cpp" />
     <ClCompile Include="PlayerInputSystem.cpp" />
+    <ClCompile Include="StageUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionComponent.h" />
@@ -164,15 +166,21 @@
     <ClInclude Include="Arkanoid.h" />
     <ClInclude Include="CollisionEvent.h" />
     <ClInclude Include="CollisionKinematicResolverSystem.h" />
-    <ClInclude Include="CurrentStageResetComponent.h" />
     <ClInclude Include="CurrentStageSystem.h" />
+    <ClInclude Include="RunControllerSystem.h" />
     <ClInclude Include="HealthChangedEvent.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="HealthSystem.h" />
     <ClInclude Include="MovementSystem.h" />
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PlayerInputSystem.h" />
+    <ClInclude Include="RunStateComponent.h" />
+    <ClInclude Include="StageDataComponent.h" />
+    <ClInclude Include="StageUtils.h" />
     <ClInclude Include="VelocityComponent.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\SDL_image\VisualC\SDL_image.vcxproj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

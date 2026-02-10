@@ -35,6 +35,12 @@
     <Filter Include="Source\Systems\CurrentStageSystem">
       <UniqueIdentifier>{fcc0e7ff-15e9-4484-88b1-ca1b9ee4a79a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\RunControllerSystem">
+      <UniqueIdentifier>{a1afb117-2c85-4835-b63c-60e604f72d2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils">
+      <UniqueIdentifier>{3469ba66-4a8c-4a48-940f-c94ef57ba53a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -60,6 +66,12 @@
     </ClCompile>
     <ClCompile Include="CurrentStageSystem.cpp">
       <Filter>Source\Systems\CurrentStageSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="RunControllerSystem.cpp">
+      <Filter>Source\Systems\RunControllerSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="StageUtils.cpp">
+      <Filter>Source\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -102,8 +114,20 @@
     <ClInclude Include="HealthChangedEvent.h">
       <Filter>Source\Events</Filter>
     </ClInclude>
-    <ClInclude Include="CurrentStageResetComponent.h">
+    <ClInclude Include="RunControllerSystem.h">
+      <Filter>Source\Systems\RunControllerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="RunStateComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
+    <ClInclude Include="StageDataComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="StageUtils.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\SDL_image\VisualC\SDL_image.vcxproj" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,63 @@
+#pragma once
+#include <vector>
+#include <string>
+#include "MathTypes.h"
+#include <SDL3/SDL.h>
+
+struct TextureData
+{
+    std::string Path;
+    SDL_FRect SourceRect{ 0.f, 0.f, 0.f, 0.f };
+};
+
+struct PlayerData
+{
+    Vector2D<float> Position;
+    Vector2D<float> Size;
+	TextureData TextureData;
+};
+
+struct BallData
+{
+    Vector2D<float> Position;
+    Vector2D<float> Velocity;
+};
+
+struct WallData
+{
+    Vector2D<float> Position;
+    Vector2D<float> Size;
+	SDL_FColor Color{ 1.f, 1.f, 1.f, 1.f };
+	TextureData TextureData;
+    int Health = 1;
+};
+
+struct TriggerData
+{
+    Vector2D<float> Position;
+    Vector2D<float> Size;
+    int Health = 3;
+};
+
+struct BrickData
+{
+    Vector2D<float> Position;
+    Vector2D<float> Size;
+    SDL_FColor Color = {1.f, 1.f, 1.f, 1.f};
+    int Health = 1;
+    TextureData TextureData;
+};
+
+struct StageData
+{
+	PlayerData PlayerData;
+	BallData BallData;
+    TriggerData Trigger;
+	std::vector<WallData> Walls;
+    std::vector<BrickData> Bricks;
+};
+
+struct StageDataComponent
+{
+    std::vector<StageData> Stages;
+};
