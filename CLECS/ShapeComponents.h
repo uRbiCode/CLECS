@@ -7,11 +7,6 @@ struct ShapeFillComponent
 	bool Filled = true;
 };
 
-struct ColorComponent
-{
-    SDL_FColor Color = {1.f, 1.f, 1.f, 1.f};
-};
-
 struct RectComponent
 {
     SDL_FRect Rect = {0, 0, 0, 0};

@@ -55,6 +55,7 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	EntityAdmin.AddComponent<RenderComponent>(PlayerEntity);
 	EntityAdmin.AddComponent<VelocityComponent>(PlayerEntity);
 	auto& PlayerCollisionComponent = EntityAdmin.AddComponent<CollisionComponent>(PlayerEntity, CollisionChannel::Player);
+	PlayerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Ball)] = CollisionResponse::Ignore;
 	EntityAdmin.AddComponent<PlayerControllerComponent>(PlayerEntity);
 
 	auto BallEntity = EntityAdmin.CreateEntity();
@@ -63,7 +64,7 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	EntityAdmin.AddComponent<ColorComponent>(BallEntity, SDL_FColor{ 0.f, 0.f, 1.f, 1.f });
 	EntityAdmin.AddComponent<RenderComponent>(BallEntity);
 	auto& BallVelocityComponent = EntityAdmin.AddComponent<VelocityComponent>(BallEntity);
-	BallVelocityComponent.Velocity = { 0.f, 200.f };
+	BallVelocityComponent.Velocity = { 0.f, 300.f };
 	auto& BallCollisionComponent = EntityAdmin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
 
 	// Create brick grid
