@@ -7,6 +7,6 @@ struct ColorComponent
 
 struct RenderComponent
 {
-    bool Visible = true;
 	int Layer = 0;
+    bool Visible = true;
 };

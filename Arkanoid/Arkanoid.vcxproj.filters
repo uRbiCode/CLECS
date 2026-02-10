@@ -20,9 +20,6 @@
     <Filter Include="Source\Systems\PlayerInputSystem">
       <UniqueIdentifier>{12e763f4-8188-424f-b635-31a16fee4479}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\CollisionResolverSystem">
-      <UniqueIdentifier>{2e950d7b-bdc5-48cf-9b4e-4f68adc9c8d9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Systems\CollisionDetectionSystem">
       <UniqueIdentifier>{abdff57a-6b04-43eb-9f7d-f60b98384039}</UniqueIdentifier>
     </Filter>
@@ -31,6 +28,12 @@
     </Filter>
     <Filter Include="Source\Systems\HealthSystem">
       <UniqueIdentifier>{2dcc9ca3-0eb4-4e43-949e-def6b4720387}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\CollisionKinematicResolverSystem">
+      <UniqueIdentifier>{2e950d7b-bdc5-48cf-9b4e-4f68adc9c8d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\CurrentStageSystem">
+      <UniqueIdentifier>{fcc0e7ff-15e9-4484-88b1-ca1b9ee4a79a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -49,11 +52,14 @@
     <ClCompile Include="CollisionDetectionSystem.cpp">
       <Filter>Source\Systems\CollisionDetectionSystem</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionResolverSystem.cpp">
-      <Filter>Source\Systems\CollisionResolverSystem</Filter>
+    <ClCompile Include="CollisionKinematicResolverSystem.cpp">
+      <Filter>Source\Systems\CollisionKinematicResolverSystem</Filter>
     </ClCompile>
     <ClCompile Include="HealthSystem.cpp">
       <Filter>Source\Systems\HealthSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CurrentStageSystem.cpp">
+      <Filter>Source\Systems\CurrentStageSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,14 +87,23 @@
     <ClInclude Include="CollisionEvent.h">
       <Filter>Source\Events</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionResolverSystem.h">
-      <Filter>Source\Systems\CollisionResolverSystem</Filter>
+    <ClInclude Include="CollisionKinematicResolverSystem.h">
+      <Filter>Source\Systems\CollisionKinematicResolverSystem</Filter>
     </ClInclude>
     <ClInclude Include="HealthComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
     <ClInclude Include="HealthSystem.h">
       <Filter>Source\Systems\HealthSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="CurrentStageSystem.h">
+      <Filter>Source\Systems\CurrentStageSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthChangedEvent.h">
+      <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="CurrentStageResetComponent.h">
+      <Filter>Source\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -151,7 +151,8 @@
   <ItemGroup>
     <ClCompile Include="CollisionDetectionSystem.cpp" />
     <ClCompile Include="Arkanoid.cpp" />
-    <ClCompile Include="CollisionResolverSystem.cpp" />
+    <ClCompile Include="CollisionKinematicResolverSystem.cpp" />
+    <ClCompile Include="CurrentStageSystem.cpp" />
     <ClCompile Include="HealthSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovementSystem.cpp" />
@@ -162,7 +163,10 @@
     <ClInclude Include="CollisionDetectionSystem.h" />
     <ClInclude Include="Arkanoid.h" />
     <ClInclude Include="CollisionEvent.h" />
-    <ClInclude Include="CollisionResolverSystem.h" />
+    <ClInclude Include="CollisionKinematicResolverSystem.h" />
+    <ClInclude Include="CurrentStageResetComponent.h" />
+    <ClInclude Include="CurrentStageSystem.h" />
+    <ClInclude Include="HealthChangedEvent.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="HealthSystem.h" />
     <ClInclude Include="MovementSystem.h" />

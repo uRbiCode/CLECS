@@ -1,4 +1,4 @@
-#include "CollisionResolverSystem.h"
+#include "CollisionKinematicResolverSystem.h"
 #include "SystemContext.h"
 #include "EventBus.h"
 #include "CollisionEvent.h"
@@ -97,7 +97,7 @@ namespace
 	}
 }
 
-void CollisionResolverSystem::Initialize(const SystemContext& Context) const
+void CollisionKinematicResolverSystem::Initialize(const SystemContext& Context) const
 {
 	auto& EventBus = Context.EventBus;
 	EventBus.Subscribe<CollisionEvent>(this, [this](const SystemContext& Context, const CollisionEvent& Event)
@@ -107,7 +107,7 @@ void CollisionResolverSystem::Initialize(const SystemContext& Context) const
 	});
 }
 
-void CollisionResolverSystem::OnCollision(const SystemContext& Context, const CollisionEvent& Event) const
+void CollisionKinematicResolverSystem::OnCollision(const SystemContext& Context, const CollisionEvent& Event) const
 {
 	auto& Admin = Context.EntityAdmin;
 	assert(Admin.HasComponent<CollisionComponent>(Event.EntityA) && "EntityA must have a CollisionComponent");

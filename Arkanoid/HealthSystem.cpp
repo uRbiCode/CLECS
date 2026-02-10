@@ -4,16 +4,21 @@
 #include "CollisionEvent.h"
 #include "HealthComponent.h"
 #include "EntityAdmin.h"
+#include "HealthChangedEvent.h"
 
 namespace
 {
+	constexpr int DamageOnCollision = 1;
+
 	void HandleCollision(const SystemContext& Context, const Entity& Entity)
 	{
 		if (!Context.EntityAdmin.HasComponent<HealthComponent>(Entity))
 			return;
 
 		auto& Health = Context.EntityAdmin.AccessComponent<HealthComponent>(Entity);
-		Health.CurrentHealth -= 1;
+		Health.CurrentHealth -= DamageOnCollision;
+
+		Context.EventBus.Notify(Context, HealthChangedEvent{ Entity, -DamageOnCollision, Health.CurrentHealth });
 	}
 }
 
@@ -29,8 +34,10 @@ void HealthSystem::Initialize(const SystemContext& Context) const
 
 void HealthSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
+	auto HealthGroup = Context.EntityAdmin.GetGroup<HealthComponent>();
 	std::vector<Entity> EntitiesToDestroy;
-	Context.EntityAdmin.GetGroup<HealthComponent>().ForEach([&Context, &EntitiesToDestroy](const Entity& CurrentEntity, const HealthComponent& Health)
+	EntitiesToDestroy.reserve(HealthGroup.Size());
+	HealthGroup.ForEach([&Context, &EntitiesToDestroy](const Entity& CurrentEntity, const HealthComponent& Health)
 	{
 		if (Health.CurrentHealth <= 0)
 		{
