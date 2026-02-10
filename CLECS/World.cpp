@@ -11,13 +11,13 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 {
 	if (!CreateWindow(Data.RendererConfig))
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create window");
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeWorld -> Failed to create window");
 		return CLECS::ResultType::Failure;
 	}
 
 	if (!CreateRenderer())
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to create renderer");
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeWorld -> Failed to create renderer");
 		return CLECS::ResultType::Failure;
 	}
 
@@ -28,7 +28,7 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 		SDL_LOGICAL_PRESENTATION_LETTERBOX
 	))
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Failed to set logical presentation: %s", SDL_GetError());
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeWorld -> Failed to set logical presentation: %s", SDL_GetError());
 		return CLECS::ResultType::Failure;
 	}
 
@@ -100,7 +100,7 @@ bool World::CreateWindow(const RendererInitializationData& Data)
 
 	if (Window == nullptr)
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Window creation failed: %s", SDL_GetError());
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::CreateWindow -> Window creation failed: %s", SDL_GetError());
 		return false;
 	}
 
@@ -113,7 +113,7 @@ bool World::CreateRenderer()
 
 	if (Renderer == nullptr)
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Renderer creation failed: %s", SDL_GetError());
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::CreateRenderer -> Renderer creation failed: %s", SDL_GetError());
 		return false;
 	}
 

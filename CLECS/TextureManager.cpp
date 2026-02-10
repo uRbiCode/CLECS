@@ -26,21 +26,21 @@ SDL_Texture* TextureManager::LoadTexture(const std::string& FilePath)
 
     if (!Renderer)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager: Renderer not initialized");
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexture -> Renderer not initialized");
         return nullptr;
     }
 
     auto NewTexture = IMG_LoadTexture(Renderer, FilePath.c_str());
     if (!NewTexture)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s. SDL Error: %s", 
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexture -> Failed to load texture: %s. SDL Error: %s", 
                      FilePath.c_str(), SDL_GetError());
         return nullptr;
     }
 
     TextureCache[FilePath] = NewTexture;
     SDL_SetTextureScaleMode(NewTexture, SDL_SCALEMODE_PIXELART);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Loaded texture: %s", FilePath.c_str());
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexture -> Loaded texture: %s", FilePath.c_str());
 
     return NewTexture;
 }
@@ -66,7 +66,7 @@ void TextureManager::UnloadTexture(const std::string& FilePath)
     {
         SDL_DestroyTexture(It->second);
         TextureCache.erase(It);
-        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Unloaded texture: %s", FilePath.c_str());
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::UnloadTexture -> Unloaded texture: %s", FilePath.c_str());
     }
 }
 
@@ -84,19 +84,19 @@ void TextureManager::LoadTexturesFromAssetsDirectory()
     auto current_dir = std::filesystem::current_path();
     if (!Renderer)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager: Renderer not initialized");
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexturesFromAssetsDirectory -> Renderer not initialized");
         return;
     }
 
     if (!std::filesystem::exists(TexturesDirectory))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Directory does not exist: %s", TexturesDirectory);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexturesFromAssetsDirectory -> Directory does not exist: %s", TexturesDirectory);
         return;
     }
 
     if (!std::filesystem::is_directory(TexturesDirectory))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Path is not a directory: %s", TexturesDirectory);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexturesFromAssetsDirectory -> Path is not a directory: %s", TexturesDirectory);
         return;
     }
 
