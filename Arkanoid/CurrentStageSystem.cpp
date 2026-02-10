@@ -4,10 +4,11 @@
 #include "EventBus.h"
 #include "EntityAdmin.h"
 #include "CollisionComponent.h"
-#include "CurrentStageResetComponent.h"
-#include <TransformComponent.h>
+#include "TransformComponent.h"
 #include "VelocityComponent.h"
 #include "HealthComponent.h"
+#include "StageUtils.h"
+#include "StageDataComponent.h"
 
 void CurrentStageSystem::Initialize(const SystemContext& Context) const
 {
@@ -37,22 +38,20 @@ void CurrentStageSystem::OnHealthChanged(const SystemContext& Context, const Hea
 
 void CurrentStageSystem::ResetStage(const SystemContext& Context) const
 {
-	Context.EntityAdmin.GetGroup<CurrentStageResetComponent>().ForEach([&Context](const Entity& ResetEntity, const CurrentStageResetComponent& ResetComponent)
+	const auto CurrentStageData = StageUtils::GetCurrentStageData(Context);
+	Context.EntityAdmin.GetGroup<CollisionComponent>().ForEach([&Context, &CurrentStageData](const Entity& TargetEntity, const CollisionComponent& Collision)
 	{
-		Context.EntityAdmin.GetGroup<CollisionComponent>().ForEach([&Context, &ResetComponent](const Entity& TargetEntity, const CollisionComponent& Collision)
+		if (Collision.Channel == CollisionChannel::Player)
 		{
-			if (Collision.Channel == CollisionChannel::Player)
-			{
-				auto& Transform = Context.EntityAdmin.AccessComponent<TransformComponent>(TargetEntity);
-				Transform.Position = ResetComponent.PlayerInitialPosition;
-			}
-			else if (Collision.Channel == CollisionChannel::Ball)
-			{
-				auto& Transform = Context.EntityAdmin.AccessComponent<TransformComponent>(TargetEntity);
-				Transform.Position = ResetComponent.BallInitialPosition;
-				auto& Velocity = Context.EntityAdmin.AccessComponent<VelocityComponent>(TargetEntity);
-				Velocity.Velocity = ResetComponent.BallInitialVelocity;
-			}
-		});
+			auto& Transform = Context.EntityAdmin.AccessComponent<TransformComponent>(TargetEntity);
+			Transform.Position = CurrentStageData.PlayerData.Position;
+		}
+		else if (Collision.Channel == CollisionChannel::Ball)
+		{
+			auto& Transform = Context.EntityAdmin.AccessComponent<TransformComponent>(TargetEntity);
+			Transform.Position = CurrentStageData.BallData.Position;
+			auto& Velocity = Context.EntityAdmin.AccessComponent<VelocityComponent>(TargetEntity);
+			Velocity.Velocity = CurrentStageData.BallData.Velocity;
+		}
 	});
 }

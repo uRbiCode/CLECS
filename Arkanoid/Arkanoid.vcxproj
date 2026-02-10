@@ -158,6 +158,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovementSystem.cpp" />
     <ClCompile Include="PlayerInputSystem.cpp" />
+    <ClCompile Include="StageUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionComponent.h" />
@@ -165,7 +166,6 @@
     <ClInclude Include="Arkanoid.h" />
     <ClInclude Include="CollisionEvent.h" />
     <ClInclude Include="CollisionKinematicResolverSystem.h" />
-    <ClInclude Include="CurrentStageResetComponent.h" />
     <ClInclude Include="CurrentStageSystem.h" />
     <ClInclude Include="RunControllerSystem.h" />
     <ClInclude Include="HealthChangedEvent.h" />
@@ -176,6 +176,7 @@
     <ClInclude Include="PlayerInputSystem.h" />
     <ClInclude Include="RunStateComponent.h" />
     <ClInclude Include="StageDataComponent.h" />
+    <ClInclude Include="StageUtils.h" />
     <ClInclude Include="VelocityComponent.h" />
   </ItemGroup>
   <ItemGroup>

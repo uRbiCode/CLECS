@@ -4,6 +4,19 @@
 #include "MathTypes.h"
 #include <SDL3/SDL.h>
 
+struct TextureData
+{
+    std::string Path;
+    SDL_FRect SourceRect{ 0.f, 0.f, 0.f, 0.f };
+};
+
+struct PlayerData
+{
+    Vector2D<float> Position;
+    Vector2D<float> Size;
+	TextureData TextureData;
+};
+
 struct BallData
 {
     Vector2D<float> Position;
@@ -15,8 +28,7 @@ struct WallData
     Vector2D<float> Position;
     Vector2D<float> Size;
 	SDL_FColor Color{ 1.f, 1.f, 1.f, 1.f };
-    std::string TexturePath;
-	SDL_FRect TextureSourceRect{ 0.f, 0.f, 0.f, 0.f };
+	TextureData TextureData;
     int Health = 1;
 };
 
@@ -33,14 +45,12 @@ struct BrickData
     Vector2D<float> Size;
     SDL_FColor Color = {1.f, 1.f, 1.f, 1.f};
     int Health = 1;
-    std::string TexturePath;
-	SDL_FRect TextureSourceRect{ 0.f, 0.f, 0.f, 0.f };
+    TextureData TextureData;
 };
 
 struct StageData
 {
-    Vector2D<float> PlayerSpawnPosition;
-
+	PlayerData PlayerData;
 	BallData BallData;
     TriggerData Trigger;
 	std::vector<WallData> Walls;

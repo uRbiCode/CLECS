@@ -13,7 +13,6 @@
 #include "CollisionKinematicResolverSystem.h"
 #include "HealthSystem.h"
 #include "RenderComponent.h"
-#include "CurrentStageResetComponent.h"
 #include "CurrentStageSystem.h"
 #include "RunStateComponent.h"
 #include "RunControllerSystem.h"
@@ -30,12 +29,6 @@ namespace
 	constexpr Vector2D<float> BallInitialPosition = { ScreenWidth * 0.5f, ScreenHeight * 0.5f };
 	constexpr Vector2D<float> BallInitialVelocity = { 0.f, 250.f };
 	constexpr Vector2D<float> PlayerInitialPosition = { ScreenWidth * 0.5f, ScreenHeight * 0.9f };
-
-	void AddCurrentStageResetComponent(EntityAdmin& Admin, const Vector2D<float>& BallInitialPosition, const Vector2D<float>& BallInitialVelocity, const Vector2D<float>& PlayerInitialPosition)
-	{
-		auto ResetEntity = Admin.CreateEntity();
-		Admin.AddComponent<CurrentStageResetComponent>(ResetEntity, BallInitialPosition, BallInitialVelocity, PlayerInitialPosition);
-	}
 
 	void AddRunStateComponent(EntityAdmin& Admin)
 	{
@@ -60,7 +53,11 @@ namespace
 		for (int i = 0; i < StagesCount; ++i)
 		{
 			StageData NewStageData;
-			NewStageData.PlayerSpawnPosition = PlayerInitialPosition;
+			NewStageData.PlayerData.Position = PlayerInitialPosition;
+			NewStageData.PlayerData.Size = Vector2D<float>{ 80.f, 20.f };
+			NewStageData.PlayerData.TextureData.Path = "../Assets/Textures/paddles_and_balls.png";
+			NewStageData.PlayerData.TextureData.SourceRect = SDL_FRect{ 0.f, 7.f, 32.f, 8.f };
+
 			NewStageData.BallData.Position = BallInitialPosition;
 			NewStageData.BallData.Velocity = BallInitialVelocity;
 
@@ -78,8 +75,8 @@ namespace
 					NewBrick.Position = Vector2D<float>{ GridStartX + Col * (BrickWidth + BrickSpacing) + BrickWidth * 0.5f, GridStartY + Row * (BrickHeight + BrickSpacing) + BrickHeight * 0.5f };
 					NewBrick.Size = Vector2D<float>{ BrickWidth, BrickHeight };
 					NewBrick.Health = 1;
-					NewBrick.TexturePath = "../Assets/Textures/bricks.png";
-					NewBrick.TextureSourceRect = SDL_FRect{ 0.f, 23.f + static_cast<float>(16.f * Row), 32.f, 8.f};
+					NewBrick.TextureData.Path = "../Assets/Textures/bricks.png";
+					NewBrick.TextureData.SourceRect = SDL_FRect{ 0.f, 23.f + static_cast<float>(16.f * Row), 32.f, 8.f};
 					NewStageData.Bricks.push_back(NewBrick);
 				}
 			}
@@ -103,8 +100,6 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	auto& EntityAdmin = Data.AccessEntityAdmin();
 
 	AddRunStateComponent(EntityAdmin);
-	AddCurrentStageResetComponent(EntityAdmin, BallInitialPosition, BallInitialVelocity, PlayerInitialPosition);
-
 	AddStageDataComponents(EntityAdmin);
 
 	return true;
