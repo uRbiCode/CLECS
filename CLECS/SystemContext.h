@@ -5,6 +5,7 @@ class InputState;
 class EventBus;
 struct SDL_Window;
 struct SDL_Renderer;
+class TextureManager;
 
 struct SystemContext
 {
@@ -13,4 +14,5 @@ struct SystemContext
 	SDL_Renderer& Renderer;
 	const InputState& Input;
 	EventBus& EventBus;
+	TextureManager& TextureManager;
 };

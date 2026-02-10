@@ -4,6 +4,7 @@
 #include "EntityAdmin.h"
 #include "InputState.h"
 #include "EventBus.h"
+#include "TextureManager.h"
 
 #include <vector>
 #include <memory>
@@ -40,6 +41,7 @@ private:
 	SystemCollection Systems;
 	InputState Input;
 	EventBus EventBus;
+	std::unique_ptr<TextureManager> TextureManagerPtr;
 	SDL_Window* Window = nullptr;
 	SDL_Renderer* Renderer = nullptr;
 };

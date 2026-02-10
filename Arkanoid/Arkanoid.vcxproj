@@ -72,16 +72,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)CLECS;$(SolutionDir)SDL\include</IncludePath>
+    <IncludePath>$(SolutionDir)CLECS</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)CLECS;$(SolutionDir)SDL\include</IncludePath>
+    <IncludePath>$(SolutionDir)CLECS</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)CLECS;$(SolutionDir)SDL\include</IncludePath>
+    <IncludePath>$(SolutionDir)CLECS</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)CLECS;$(SolutionDir)SDL\include</IncludePath>
+    <IncludePath>$(SolutionDir)CLECS</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -177,6 +177,9 @@
     <ClInclude Include="RunStateComponent.h" />
     <ClInclude Include="StageDataComponent.h" />
     <ClInclude Include="VelocityComponent.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\SDL_image\VisualC\SDL_image.vcxproj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

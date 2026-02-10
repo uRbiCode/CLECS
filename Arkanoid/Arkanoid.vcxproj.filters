@@ -121,4 +121,7 @@
       <Filter>Source\Components</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\SDL_image\VisualC\SDL_image.vcxproj" />
+  </ItemGroup>
 </Project>

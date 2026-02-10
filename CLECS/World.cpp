@@ -32,6 +32,9 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 		return CLECS::ResultType::Failure;
 	}
 
+	TextureManagerPtr = std::make_unique<TextureManager>();
+	TextureManagerPtr->Initialize(*Renderer);
+
 	EntityAdminPtr = std::move(Data.EntityAdminPtr);
 	Systems = std::move(Data.Systems);
 
@@ -114,5 +117,5 @@ bool World::CreateRenderer()
 
 SystemContext World::MakeSystemContext()
 {
-	return SystemContext{ *EntityAdminPtr, *Window, *Renderer, Input, EventBus };
+	return SystemContext{ *EntityAdminPtr, *Window, *Renderer, Input, EventBus, *TextureManagerPtr };
 }

@@ -5,6 +5,9 @@
 #include "ShapeComponents.h"
 #include "RenderComponent.h"
 #include "TransformComponent.h"
+#include "TextureComponent.h"
+
+using RenderData = std::pair<TransformComponent, RenderComponent>;
 
 namespace
 {
@@ -75,7 +78,6 @@ namespace
 		}
 	}
 
-	using RenderData = std::pair<TransformComponent, RenderComponent>;
 	std::vector<std::pair<Entity, RenderData>> GetRenderEntities(const SystemContext& Context)
 	{
 		auto& Admin = Context.EntityAdmin;
@@ -106,6 +108,60 @@ namespace
 		}
 		return true;
 	}
+
+	SDL_FRect CalcRenderRect(const TransformComponent& Transform, const RectComponent& Rect)
+	{
+		return SDL_FRect{
+			Transform.Position.X + Rect.Rect.x * Transform.Scale.X,
+			Transform.Position.Y + Rect.Rect.y * Transform.Scale.Y,
+			Rect.Rect.w * Transform.Scale.X,
+			Rect.Rect.h * Transform.Scale.Y
+		};
+	}
+
+	void RenderTexture(const SystemContext& Context, const Entity& Entity, const RenderData& RenderData)
+	{
+		auto& Admin = Context.EntityAdmin;
+		auto& Renderer = Context.Renderer;
+
+		if (!Admin.HasComponent<RectComponent>(Entity))
+		{
+			SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "RenderSystem::RenderTexture -> Entity %u does not have a RectComponent.", Entity.GetId());
+			return;
+		}
+
+		const auto& [Transform, Render] = RenderData;
+		const auto& TexComponent = Admin.GetComponent<TextureComponent>(Entity);
+		if (TexComponent.Texture)
+		{
+			if (TexComponent.SourceRect.w == 0.f || TexComponent.SourceRect.h == 0.f)
+			{
+				SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "RenderSystem::RenderTexture -> TextureComponent for Entity %u has zero width or height in SourceRect.", Entity.GetId());
+				return;
+			}
+			
+			const auto& RectComp = Admin.GetComponent<RectComponent>(Entity);
+			const auto RenderRect = CalcRenderRect(Transform, RectComp);
+		
+			if (Admin.HasComponent<ColorComponent>(Entity))
+			{
+				const auto& Color = Admin.GetComponent<ColorComponent>(Entity);
+				SDL_SetTextureColorModFloat(TexComponent.Texture, Color.Color.r, Color.Color.g, Color.Color.b);
+				SDL_SetTextureAlphaModFloat(TexComponent.Texture, Color.Color.a);
+			}
+			
+			if (Transform.Rotation != 0.f)
+			{
+				const SDL_FPoint Center = {RenderRect.w * 0.5f, RenderRect.h * 0.5f};
+				SDL_RenderTextureRotated(&Renderer, TexComponent.Texture, &TexComponent.SourceRect, &RenderRect, 
+										 Transform.Rotation * (180.0 / SDL_PI_D), &Center, SDL_FLIP_NONE);
+			}
+			else
+			{
+				SDL_RenderTexture(&Renderer, TexComponent.Texture, &TexComponent.SourceRect, &RenderRect);
+			}
+		}
+	}
 }
 
 void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
@@ -123,15 +179,16 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 		const auto& [Transform, Render] = RenderData;
 		DecideColor(Context, Entity);
 
+		if (Admin.HasComponent<TextureComponent>(Entity))
+		{
+			RenderTexture(Context, Entity, RenderData);
+		}
+
 		if (Admin.HasComponent<RectComponent>(Entity))
 		{
 			const auto& Rect = Admin.GetComponent<RectComponent>(Entity);
-			const SDL_FRect RenderRect{
-				Transform.Position.X + Rect.Rect.x * Transform.Scale.X,
-				Transform.Position.Y + Rect.Rect.y * Transform.Scale.Y,
-				Rect.Rect.w * Transform.Scale.X,
-				Rect.Rect.h * Transform.Scale.Y
-			};
+			const auto RenderRect = CalcRenderRect(Transform, Rect);
+
 			if (IsFilled(Context, Entity))
 			{
 				SDL_RenderFillRect(&Renderer, &RenderRect);
@@ -146,7 +203,8 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 		{
 			const auto& Circle = Admin.GetComponent<CircleComponent>(Entity);
 			const Vector2D<float> Center = { Transform.Position.X, Transform.Position.Y };
-			RenderCircle(&Renderer, Center, Circle.Radius * std::max(Transform.Scale.X, Transform.Scale.Y), IsFilled(Context, Entity), { 1.f, 1.f, 1.f, 1.f });
+			RenderCircle(&Renderer, Center, Circle.Radius * std::max(Transform.Scale.X, Transform.Scale.Y), 
+			             IsFilled(Context, Entity), { 1.f, 1.f, 1.f, 1.f });
 		}
 
 		if (Admin.HasComponent<LineComponent>(Entity))
