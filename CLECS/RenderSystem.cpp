@@ -2,7 +2,8 @@
 #include "SystemContext.h"
 #include "EntityAdmin.h"
 #include "SDL3/SDL.h"
-#include "ShapeComponent.h"
+#include "ShapeComponents.h"
+#include "RenderComponent.h"
 #include "TransformComponent.h"
 
 namespace
@@ -58,6 +59,53 @@ namespace
 			Center.Y + Delta.X * SinA + Delta.Y * CosA
 		};
 	}
+
+	void DecideColor(const SystemContext& Context, const Entity& Entity)
+	{
+		auto& Renderer = Context.Renderer;
+		auto& Admin = Context.EntityAdmin;
+		if (Admin.HasComponent<ColorComponent>(Entity))
+		{
+			const auto& Color = Admin.GetComponent<ColorComponent>(Entity);
+			SDL_SetRenderDrawColorFloat(&Renderer, Color.Color.r, Color.Color.g, Color.Color.b, Color.Color.a);
+		}
+		else
+		{
+			SDL_SetRenderDrawColor(&Renderer, 255, 255, 255, 255);
+		}
+	}
+
+	using RenderData = std::pair<TransformComponent, RenderComponent>;
+	std::vector<std::pair<Entity, RenderData>> GetRenderEntities(const SystemContext& Context)
+	{
+		auto& Admin = Context.EntityAdmin;
+		auto RenderGroup = Admin.GetGroup<TransformComponent, RenderComponent>();
+		std::vector<std::pair<Entity, RenderData>> SortedEntities;
+		SortedEntities.reserve(RenderGroup.Size());
+		for (const auto& Entity : RenderGroup)
+		{
+			const auto& Render = Admin.GetComponent<RenderComponent>(Entity);
+			if (!Render.Visible)
+				continue;
+			const auto& Transform = Admin.GetComponent<TransformComponent>(Entity);
+			SortedEntities.emplace_back(Entity, std::make_pair(Transform, Render));
+		}
+		std::sort(SortedEntities.begin(), SortedEntities.end(), [](const auto& A, const auto& B)
+		{
+			return A.second.second.Layer < B.second.second.Layer;
+		});
+		return SortedEntities;
+	}
+
+	bool IsFilled(const SystemContext& Context, const Entity& Entity)
+	{
+		auto& Admin = Context.EntityAdmin;
+		if (Admin.HasComponent<ShapeFillComponent>(Entity))
+		{
+			return Admin.GetComponent<ShapeFillComponent>(Entity).Filled;
+		}
+		return true;
+	}
 }
 
 void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
@@ -68,106 +116,66 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 	SDL_SetRenderDrawColor(&Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(&Renderer);
 
-	auto Group = Admin.GetGroup<TransformComponent, ShapeComponent>();
+	const auto RenderEntities = GetRenderEntities(Context);
 
-	Group.ForEach([&Renderer](Entity CurrentEntity, const TransformComponent& Transform, const ShapeComponent& Shape)
+	for (const auto& [Entity, RenderData] : RenderEntities)
 	{
-		if (!Shape.Visible)
-			return;
+		const auto& [Transform, Render] = RenderData;
+		DecideColor(Context, Entity);
 
-		// Set render draw color from shape color
-		SDL_SetRenderDrawColorFloat(&Renderer, Shape.Color.r, Shape.Color.g, Shape.Color.b, Shape.Color.a);
-
-		const SDL_FRect RenderRect{
-			Transform.Position.X + Shape.Rect.x * Transform.Scale.X,
-			Transform.Position.Y + Shape.Rect.y * Transform.Scale.Y,
-			Shape.Rect.w * Transform.Scale.X,
-			Shape.Rect.h * Transform.Scale.Y
-		};
-
-		switch (Shape.Type)
+		if (Admin.HasComponent<RectComponent>(Entity))
 		{
-		case ShapeComponent::ShapeType::Rectangle:
-		{
-			if (Transform.Rotation != 0.f)
+			const auto& Rect = Admin.GetComponent<RectComponent>(Entity);
+			const SDL_FRect RenderRect{
+				Transform.Position.X + Rect.Rect.x * Transform.Scale.X,
+				Transform.Position.Y + Rect.Rect.y * Transform.Scale.Y,
+				Rect.Rect.w * Transform.Scale.X,
+				Rect.Rect.h * Transform.Scale.Y
+			};
+			if (IsFilled(Context, Entity))
 			{
-				const Vector2D<float> Center = {
-					RenderRect.x + RenderRect.w * 0.5f,
-					RenderRect.y + RenderRect.h * 0.5f
-				};
-
-				const Vector2D<float> Corner1 = RotatePoint({ RenderRect.x, RenderRect.y }, Center, Transform.Rotation);
-				const Vector2D<float> Corner2 = RotatePoint({ RenderRect.x + RenderRect.w, RenderRect.y }, Center, Transform.Rotation);
-				const Vector2D<float> Corner3 = RotatePoint({ RenderRect.x + RenderRect.w, RenderRect.y + RenderRect.h }, Center, Transform.Rotation);
-				const Vector2D<float> Corner4 = RotatePoint({ RenderRect.x, RenderRect.y + RenderRect.h }, Center, Transform.Rotation);
-
-				if (Shape.Filled)
-				{
-					// Render as two triangles using SDL_RenderGeometry
-					const SDL_Vertex Vertices[4] = {
-						{ { Corner1.X, Corner1.Y }, { Shape.Color.r, Shape.Color.g, Shape.Color.b, Shape.Color.a }, { 0, 0 } },
-						{ { Corner2.X, Corner2.Y }, { Shape.Color.r, Shape.Color.g, Shape.Color.b, Shape.Color.a }, { 0, 0 } },
-						{ { Corner3.X, Corner3.Y }, { Shape.Color.r, Shape.Color.g, Shape.Color.b, Shape.Color.a }, { 0, 0 } },
-						{ { Corner4.X, Corner4.Y }, { Shape.Color.r, Shape.Color.g, Shape.Color.b, Shape.Color.a }, { 0, 0 } }
-					};
-
-					constexpr int Indices[6] = { 0, 1, 2, 0, 2, 3 };
-
-					SDL_RenderGeometry(&Renderer, nullptr, Vertices, 4, Indices, 6);
-				}
-				else
-				{
-					SDL_RenderLine(&Renderer, Corner1.X, Corner1.Y, Corner2.X, Corner2.Y);
-					SDL_RenderLine(&Renderer, Corner2.X, Corner2.Y, Corner3.X, Corner3.Y);
-					SDL_RenderLine(&Renderer, Corner3.X, Corner3.Y, Corner4.X, Corner4.Y);
-					SDL_RenderLine(&Renderer, Corner4.X, Corner4.Y, Corner1.X, Corner1.Y);
-				}
+				SDL_RenderFillRect(&Renderer, &RenderRect);
 			}
 			else
 			{
-				if (Shape.Filled)
-				{
-					SDL_RenderFillRect(&Renderer, &RenderRect);
-				}
-				else
-				{
-					SDL_RenderRect(&Renderer, &RenderRect);
-				}
+				SDL_RenderRect(&Renderer, &RenderRect);
 			}
-			break;
+
+			continue;
 		}
 
-		case ShapeComponent::ShapeType::Circle:
+		if (Admin.HasComponent<CircleComponent>(Entity))
 		{
-			const Vector2D<float> Center = { RenderRect.x + RenderRect.w * 0.5f, RenderRect.y + RenderRect.h * 0.5f };
-			const float Radius = (RenderRect.w > RenderRect.h ? RenderRect.w : RenderRect.h) * 0.5f;
+			const auto& Circle = Admin.GetComponent<CircleComponent>(Entity);
+			const Vector2D<float> Center = { Transform.Position.X, Transform.Position.Y };
+			RenderCircle(&Renderer, Center, Circle.Radius * std::max(Transform.Scale.X, Transform.Scale.Y), IsFilled(Context, Entity), { 1.f, 1.f, 1.f, 1.f });
 
-			RenderCircle(&Renderer, Center, Radius, Shape.Filled, Shape.Color);
-			break;
+			continue;
 		}
 
-		case ShapeComponent::ShapeType::Line:
+		if (Admin.HasComponent<LineComponent>(Entity))
 		{
+			const auto& Line = Admin.GetComponent<LineComponent>(Entity);
 			Vector2D<float> Point1 = {
-				Transform.Position.X + Shape.Rect.x * Transform.Scale.X,
-				Transform.Position.Y + Shape.Rect.y * Transform.Scale.Y
+				Transform.Position.X + Line.Start.X * Transform.Scale.X,
+				Transform.Position.Y + Line.Start.Y * Transform.Scale.Y
 			};
 			Vector2D<float> Point2 = {
-				Point1.X + Shape.Rect.w * Transform.Scale.X,
-				Point1.Y + Shape.Rect.h * Transform.Scale.Y
+				Transform.Position.X + Line.End.X * Transform.Scale.X,
+				Transform.Position.Y + Line.End.Y * Transform.Scale.Y
 			};
-
 			if (Transform.Rotation != 0.f)
 			{
 				Point1 = RotatePoint(Point1, Transform.Position, Transform.Rotation);
 				Point2 = RotatePoint(Point2, Transform.Position, Transform.Rotation);
 			}
-
 			SDL_RenderLine(&Renderer, Point1.X, Point1.Y, Point2.X, Point2.Y);
-			break;
+
+			continue;
 		}
-		}
-	});
+
+		SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "Entity %d has RenderComponent but no shape component!", Entity.GetId());
+	}
 
 	SDL_RenderPresent(&Renderer);
 }

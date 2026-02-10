@@ -154,9 +154,10 @@
     <ClInclude Include="GameRunner.h" />
     <ClInclude Include="InputState.h" />
     <ClInclude Include="MathTypes.h" />
+    <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="RendererInitializationData.h" />
     <ClInclude Include="RenderSystem.h" />
-    <ClInclude Include="ShapeComponent.h" />
+    <ClInclude Include="ShapeComponents.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemContext.h" />
     <ClInclude Include="TransformComponent.h" />
