@@ -31,6 +31,43 @@ namespace
 		auto& WallCollisionComponent = Admin.AddComponent<CollisionComponent>(Wall, CollisionChannel::Static);
 		WallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Static)] = CollisionResponse::Ignore;
 	}
+
+	void CreatePlayer(EntityAdmin& Admin)
+	{
+		auto PlayerEntity = Admin.CreateEntity();
+		Admin.AddComponent<TransformComponent>(PlayerEntity, Vector2D<float>{ 640.f, 650.f });
+		Admin.AddComponent<RectComponent>(PlayerEntity, SDL_FRect{ -60.f, -10.f, 120.f, 20.f });
+		Admin.AddComponent<ColorComponent>(PlayerEntity, SDL_FColor{ 0.7f, 0.7f, 0.7f, 1.f });
+		Admin.AddComponent<RenderComponent>(PlayerEntity);
+		Admin.AddComponent<VelocityComponent>(PlayerEntity);
+		auto& PlayerCollisionComponent = Admin.AddComponent<CollisionComponent>(PlayerEntity, CollisionChannel::Player);
+		PlayerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Ball)] = CollisionResponse::Ignore;
+		Admin.AddComponent<PlayerControllerComponent>(PlayerEntity);
+	}
+
+	void CreateBall(EntityAdmin& Admin)
+	{
+		auto BallEntity = Admin.CreateEntity();
+		Admin.AddComponent<TransformComponent>(BallEntity, Vector2D<float>{ 640.f, 300.f });
+		Admin.AddComponent<CircleComponent>(BallEntity, 10.f);
+		Admin.AddComponent<ColorComponent>(BallEntity, SDL_FColor{ 0.f, 0.f, 1.f, 1.f });
+		Admin.AddComponent<RenderComponent>(BallEntity);
+		auto& BallVelocityComponent = Admin.AddComponent<VelocityComponent>(BallEntity);
+		BallVelocityComponent.Velocity = { 0.f, 300.f };
+		auto& BallCollisionComponent = Admin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
+	}
+
+	void CreateBrick(EntityAdmin& Admin, const Vector2D<float>& Position, const Vector2D<float>& Size, const SDL_FColor& Color)
+	{
+		auto BrickEntity = Admin.CreateEntity();
+		Admin.AddComponent<TransformComponent>(BrickEntity, Position);
+		Admin.AddComponent<RectComponent>(BrickEntity, SDL_FRect{ -Size.X * 0.5f, -Size.Y * 0.5f, Size.X, Size.Y });
+		Admin.AddComponent<ColorComponent>(BrickEntity, Color);
+		Admin.AddComponent<RenderComponent>(BrickEntity);
+		auto& BrickCollisionComponent = Admin.AddComponent<CollisionComponent>(BrickEntity, CollisionChannel::Brick);
+		BrickCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Ball)] = CollisionResponse::Ignore;
+		Admin.AddComponent<HealthComponent>(BrickEntity, 1);
+	}
 }
 
 bool Arkanoid::Initialize(WorldInitializationData& Data)
@@ -48,24 +85,9 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	CreateWall(EntityAdmin, Vector2D<float>{ WallThickness * 0.5f, ScreenHeight * 0.5f }, Vector2D<float>{ WallThickness, ScreenHeight });
 	CreateWall(EntityAdmin, Vector2D<float>{ ScreenWidth - WallThickness * 0.5f, ScreenHeight * 0.5f }, Vector2D<float>{ WallThickness, ScreenHeight });
 
-	auto PlayerEntity = EntityAdmin.CreateEntity();
-	EntityAdmin.AddComponent<TransformComponent>(PlayerEntity, Vector2D<float>{ 640.f, 650.f });
-	EntityAdmin.AddComponent<RectComponent>(PlayerEntity, SDL_FRect{ -60.f, -10.f, 120.f, 20.f });
-	EntityAdmin.AddComponent<ColorComponent>(PlayerEntity, SDL_FColor{ 0.7f, 0.7f, 0.7f, 1.f });
-	EntityAdmin.AddComponent<RenderComponent>(PlayerEntity);
-	EntityAdmin.AddComponent<VelocityComponent>(PlayerEntity);
-	auto& PlayerCollisionComponent = EntityAdmin.AddComponent<CollisionComponent>(PlayerEntity, CollisionChannel::Player);
-	PlayerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Ball)] = CollisionResponse::Ignore;
-	EntityAdmin.AddComponent<PlayerControllerComponent>(PlayerEntity);
+	CreatePlayer(EntityAdmin);
 
-	auto BallEntity = EntityAdmin.CreateEntity();
-	EntityAdmin.AddComponent<TransformComponent>(BallEntity, Vector2D<float>{ 640.f, 300.f });
-	EntityAdmin.AddComponent<CircleComponent>(BallEntity, 10.f);
-	EntityAdmin.AddComponent<ColorComponent>(BallEntity, SDL_FColor{ 0.f, 0.f, 1.f, 1.f });
-	EntityAdmin.AddComponent<RenderComponent>(BallEntity);
-	auto& BallVelocityComponent = EntityAdmin.AddComponent<VelocityComponent>(BallEntity);
-	BallVelocityComponent.Velocity = { 0.f, 300.f };
-	auto& BallCollisionComponent = EntityAdmin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
+	CreateBall(EntityAdmin);
 
 	// Create brick grid
 	constexpr int BrickRows = 5;
@@ -88,17 +110,10 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	{
 		for (int Col = 0; Col < BrickColumns; ++Col)
 		{
-			auto Brick = EntityAdmin.CreateEntity();
-			
-			float BrickX = GridStartX + Col * (BrickWidth + BrickSpacing) + BrickWidth * 0.5f;
-			float BrickY = GridStartY + Row * (BrickHeight + BrickSpacing) + BrickHeight * 0.5f;
-			
-			EntityAdmin.AddComponent<TransformComponent>(Brick, Vector2D<float>{ BrickX, BrickY });
-			EntityAdmin.AddComponent<RectComponent>(Brick, SDL_FRect{ -BrickWidth * 0.5f, -BrickHeight * 0.5f, BrickWidth, BrickHeight });
-			EntityAdmin.AddComponent<ColorComponent>(Brick, BrickColors[Row]);
-			EntityAdmin.AddComponent<RenderComponent>(Brick);
-			EntityAdmin.AddComponent<CollisionComponent>(Brick, CollisionChannel::Brick);
-			EntityAdmin.AddComponent<HealthComponent>(Brick, 1);
+			CreateBrick(EntityAdmin,
+				Vector2D<float>{ GridStartX + Col * (BrickWidth + BrickSpacing) + BrickWidth * 0.5f, GridStartY + Row * (BrickHeight + BrickSpacing) + BrickHeight * 0.5f },
+				Vector2D<float>{ BrickWidth, BrickHeight },
+				BrickColors[Row % std::size(BrickColors)]);
 		}
 	}
 
