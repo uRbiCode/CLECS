@@ -140,8 +140,6 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 			{
 				SDL_RenderRect(&Renderer, &RenderRect);
 			}
-
-			continue;
 		}
 
 		if (Admin.HasComponent<CircleComponent>(Entity))
@@ -149,8 +147,6 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 			const auto& Circle = Admin.GetComponent<CircleComponent>(Entity);
 			const Vector2D<float> Center = { Transform.Position.X, Transform.Position.Y };
 			RenderCircle(&Renderer, Center, Circle.Radius * std::max(Transform.Scale.X, Transform.Scale.Y), IsFilled(Context, Entity), { 1.f, 1.f, 1.f, 1.f });
-
-			continue;
 		}
 
 		if (Admin.HasComponent<LineComponent>(Entity))
@@ -170,11 +166,7 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 				Point2 = RotatePoint(Point2, Transform.Position, Transform.Rotation);
 			}
 			SDL_RenderLine(&Renderer, Point1.X, Point1.Y, Point2.X, Point2.Y);
-
-			continue;
 		}
-
-		SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "Entity %d has RenderComponent but no shape component!", Entity.GetId());
 	}
 
 	SDL_RenderPresent(&Renderer);

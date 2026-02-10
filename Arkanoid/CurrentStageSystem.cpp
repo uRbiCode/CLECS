@@ -7,6 +7,7 @@
 #include "CurrentStageResetComponent.h"
 #include <TransformComponent.h>
 #include "VelocityComponent.h"
+#include "HealthComponent.h"
 
 void CurrentStageSystem::Initialize(const SystemContext& Context) const
 {
@@ -27,13 +28,10 @@ void CurrentStageSystem::OnHealthChanged(const SystemContext& Context, const Hea
 		return;
 
 	const auto& Collision = Context.EntityAdmin.GetComponent<CollisionComponent>(Event.TargetEntity);
-	if (Collision.Channel != CollisionChannel::Trigger)
-		return;
 
-	if (Event.NewHealth > 0)
+	if (Collision.Channel == CollisionChannel::Trigger && Event.NewHealth > 0)
 	{
 		ResetStage(Context);
-		return;
 	}
 }
 

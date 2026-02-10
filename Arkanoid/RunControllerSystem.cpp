@@ -1,0 +1,206 @@
+#include "RunControllerSystem.h"
+#include "SystemContext.h"
+#include "EventBus.h"
+#include "RunStateComponent.h"
+#include "StageDataComponent.h"
+#include "EntityAdmin.h"
+#include "CollisionComponent.h"
+#include "TransformComponent.h"
+#include <ShapeComponents.h>
+#include <RenderComponent.h>
+#include "HealthComponent.h"
+#include "VelocityComponent.h"
+#include "PlayerControllerComponent.h"
+#include "HealthChangedEvent.h"
+
+namespace
+{
+	void AddWall(EntityAdmin& Admin, const WallData& WallData)
+	{
+		auto Wall = Admin.CreateEntity();
+		Admin.AddComponent<TransformComponent>(Wall, WallData.Position);
+		Admin.AddComponent<RectComponent>(Wall, SDL_FRect{ -WallData.Size.X * 0.5f, -WallData.Size.Y * 0.5f, WallData.Size.X, WallData.Size.Y });
+		Admin.AddComponent<ColorComponent>(Wall, SDL_FColor{ 0.3f, 0.3f, 0.3f, 1.f });
+		Admin.AddComponent<RenderComponent>(Wall);
+		auto& WallCollisionComponent = Admin.AddComponent<CollisionComponent>(Wall, CollisionChannel::Static);
+		WallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Static)] = CollisionResponse::Ignore;
+		WallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
+	}
+
+	void AddTrigger(EntityAdmin& Admin, const TriggerData& TriggerData)
+	{
+		auto TriggerEntity = Admin.CreateEntity();
+		Admin.AddComponent<TransformComponent>(TriggerEntity, TriggerData.Position);
+		Admin.AddComponent<RectComponent>(TriggerEntity, SDL_FRect{ -TriggerData.Size.X * 0.5f, -TriggerData.Size.Y * 0.5f, TriggerData.Size.X, TriggerData.Size.Y });
+		Admin.AddComponent<HealthComponent>(TriggerEntity, 3);
+		auto& TriggerCollisionComponent = Admin.AddComponent<CollisionComponent>(TriggerEntity, CollisionChannel::Trigger);
+		TriggerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Static)] = CollisionResponse::Ignore;
+	}
+
+	void AddBrick(EntityAdmin& Admin, const BrickData& BrickData)
+	{
+		auto BrickEntity = Admin.CreateEntity();
+		Admin.AddComponent<TransformComponent>(BrickEntity, BrickData.Position);
+		Admin.AddComponent<RectComponent>(BrickEntity, SDL_FRect{ -BrickData.Size.X * 0.5f, -BrickData.Size.Y * 0.5f, BrickData.Size.X, BrickData.Size.Y });
+		Admin.AddComponent<ColorComponent>(BrickEntity, BrickData.Color);
+		Admin.AddComponent<RenderComponent>(BrickEntity);
+		auto& BrickCollisionComponent = Admin.AddComponent<CollisionComponent>(BrickEntity, CollisionChannel::Brick);
+		BrickCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Ball)] = CollisionResponse::Ignore;
+		Admin.AddComponent<HealthComponent>(BrickEntity, 1);
+	}
+}
+
+void RunControllerSystem::Initialize(const SystemContext& Context) const
+{
+	Context.EventBus.Subscribe<HealthChangedEvent>(this, [this](const SystemContext& Context, const HealthChangedEvent& Event)
+	{
+		OnHealthChanged(Context, Event);
+		return;
+	});
+
+	// TODO: change, for now simulte starting game from here
+	AdvanceToNextStage(Context, 0);
+}
+
+void RunControllerSystem::OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const
+{
+	if (Event.Delta > 0)
+		return;
+
+	if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Event.TargetEntity))
+		return;
+
+	const auto& Collision = Context.EntityAdmin.GetComponent<CollisionComponent>(Event.TargetEntity);
+	if (Collision.Channel == CollisionChannel::Brick)
+	{
+		if (AreAllBricksDestroyed(Context))
+		{
+			HandleStageCleared(Context);
+		}
+	}
+	else if (Collision.Channel == CollisionChannel::Trigger)
+	{
+		if (HasPlayerLost(Context))
+		{
+			HandleRunDefeat(Context);
+		}
+	}
+}
+
+void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
+{
+	Context.EntityAdmin.GetGroup<RunStateComponent>().ForEach([this, &Context](const Entity& RunStateEntity, RunStateComponent& RunStateComponent)
+	{
+		RunStateComponent.CurrentStage++;
+		if (!AdvanceToNextStage(Context, RunStateComponent.CurrentStage))
+		{
+			HandleRunVictory(Context);
+		}
+	});
+}
+
+void RunControllerSystem::HandleRunVictory(const SystemContext& Context) const
+{
+	// TODO: implement
+}
+
+void RunControllerSystem::HandleRunDefeat(const SystemContext& Context) const
+{
+	// TODO: implement
+}
+
+bool RunControllerSystem::AreAllBricksDestroyed(const SystemContext& Context) const
+{
+	bool AllDestroyed = true;
+	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&AllDestroyed](const Entity& TargetEntity, const CollisionComponent& Collision, const HealthComponent& Health)
+	{
+		AllDestroyed &= (Collision.Channel != CollisionChannel::Brick || Health.CurrentHealth <= 0);
+	});
+	return AllDestroyed;
+}
+
+bool RunControllerSystem::HasPlayerLost(const SystemContext& Context) const
+{
+	bool TriggerHasHealth = true;
+	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&TriggerHasHealth](const Entity& TargetEntity, const CollisionComponent& Collision, const HealthComponent& Health)
+	{
+		if (Collision.Channel == CollisionChannel::Trigger)
+		{
+			TriggerHasHealth &= (Health.CurrentHealth > 0);
+		}
+	});
+	return !TriggerHasHealth;
+}
+
+bool RunControllerSystem::AdvanceToNextStage(const SystemContext& Context, int NextStageId) const
+{
+	CleanupCurrentStage(Context);
+	
+	bool AdvancementSuccessful = false;
+
+	auto& Admin = Context.EntityAdmin;
+	Admin.GetGroup<StageDataComponent>().ForEach([this, &Context, NextStageId, &AdvancementSuccessful](const Entity& StageEntity, StageDataComponent& StageData)
+	{
+		if (!AdvancementSuccessful && StageData.Stages.size() > NextStageId)
+		{
+			SpawnStageEntities(Context, StageData.Stages[NextStageId]);
+			AdvancementSuccessful = true;
+		}
+	});
+
+	return AdvancementSuccessful;
+}
+
+void RunControllerSystem::SpawnStageEntities(const SystemContext& Context, const StageData& StageData) const
+{
+	auto& Admin = Context.EntityAdmin;
+	
+	Admin.GetGroup<CollisionComponent>().ForEach([&StageData, &Admin](const Entity& Entity, const CollisionComponent& Collision)
+	{
+		if (Collision.Channel == CollisionChannel::Player)
+		{
+			auto& Transform = Admin.AccessComponent<TransformComponent>(Entity);
+			Transform.Position = StageData.PlayerSpawnPosition;
+		}
+	});
+	
+	Admin.GetGroup<CollisionComponent, VelocityComponent>().ForEach([&StageData, &Admin](const Entity& Entity, const CollisionComponent& Collision, VelocityComponent& Velocity)
+	{
+		if (Collision.Channel == CollisionChannel::Ball)
+		{
+			auto& Transform = Admin.AccessComponent<TransformComponent>(Entity);
+			Transform.Position = StageData.BallSpawnPosition;
+			Velocity.Velocity = StageData.BallInitialVelocity;
+		}
+	});
+	
+	for (const auto& WallData : StageData.Walls)
+	{
+		AddWall(Admin, WallData);
+	}
+	
+	for (const auto& BrickData : StageData.Bricks)
+	{
+		AddBrick(Admin, BrickData);
+	}
+	
+	AddTrigger(Admin, StageData.Trigger);
+}
+
+void RunControllerSystem::CleanupCurrentStage(const SystemContext& Context) const
+{
+	std::vector<Entity> EntitiesToDestroy;
+	auto& Admin = Context.EntityAdmin;
+	Admin.GetGroup<CollisionComponent>().ForEach([&EntitiesToDestroy](const Entity& TargetEntity, const CollisionComponent& Collision)
+	{
+		if (Collision.Channel == CollisionChannel::Player || Collision.Channel == CollisionChannel::Ball)
+			return;
+
+		EntitiesToDestroy.push_back(TargetEntity);
+	});
+
+	for (const auto& TargetEntity : EntitiesToDestroy)
+	{
+		Admin.DestroyEntity(TargetEntity);
+	}
+}

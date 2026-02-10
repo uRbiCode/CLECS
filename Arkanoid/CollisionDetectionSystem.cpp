@@ -156,6 +156,9 @@ void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaT
 	for (size_t i = 0; i < CollisionGroup.Size(); ++i)
 	{
 		const Entity EntityA = CollisionGroup[i];
+		if (!Admin.HasComponent<CollisionComponent>(EntityA))
+			continue;
+
 		const auto& CollisionA = Admin.GetComponent<CollisionComponent>(EntityA);
 		const auto& TransformA = Admin.GetComponent<TransformComponent>(EntityA);
 		
@@ -168,6 +171,9 @@ void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaT
 		for (size_t j = i + 1; j < CollisionGroup.Size(); ++j)
 		{
 			const Entity EntityB = CollisionGroup[j];
+			if (!Admin.HasComponent<CollisionComponent>(EntityB))
+				continue;
+
 			const auto& CollisionB = Admin.GetComponent<CollisionComponent>(EntityB);
 			
 			const auto ResponseA = CollisionA.ResponseTable[ChannelToIndex(CollisionB.Channel)];

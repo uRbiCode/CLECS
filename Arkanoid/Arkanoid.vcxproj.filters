@@ -35,6 +35,9 @@
     <Filter Include="Source\Systems\CurrentStageSystem">
       <UniqueIdentifier>{fcc0e7ff-15e9-4484-88b1-ca1b9ee4a79a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\RunControllerSystem">
+      <UniqueIdentifier>{a1afb117-2c85-4835-b63c-60e604f72d2b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -60,6 +63,9 @@
     </ClCompile>
     <ClCompile Include="CurrentStageSystem.cpp">
       <Filter>Source\Systems\CurrentStageSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="RunControllerSystem.cpp">
+      <Filter>Source\Systems\RunControllerSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +109,15 @@
       <Filter>Source\Events</Filter>
     </ClInclude>
     <ClInclude Include="CurrentStageResetComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RunControllerSystem.h">
+      <Filter>Source\Systems\RunControllerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="RunStateComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="StageDataComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
   </ItemGroup>
