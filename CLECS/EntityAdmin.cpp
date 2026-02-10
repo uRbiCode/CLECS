@@ -54,7 +54,9 @@ void EntityAdmin::Clear()
 {
 	ComponentPools.clear();
 	EntityVersions.clear();
+
 	while (!FreeEntityIds.empty())
 		FreeEntityIds.pop();
+
 	NextEntityId = 0;
 }

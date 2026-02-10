@@ -41,6 +41,9 @@
     <Filter Include="Source\Core\System\Systems\RenderSystem">
       <UniqueIdentifier>{8570a26a-e9ec-4f6d-8402-ea9240f96d92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\World\TextureManager">
+      <UniqueIdentifier>{4b3d7598-da4d-419a-a9c3-3b35b9f49414}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -65,7 +68,7 @@
       <Filter>Source\Core\System\Systems\RenderSystem</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Core\World\TextureManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +129,8 @@
     <ClInclude Include="TextureComponent.h">
       <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="TextureManager.h">
+      <Filter>Source\Core\World\TextureManager</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
