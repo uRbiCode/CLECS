@@ -103,6 +103,31 @@ namespace
 
 		Admin.AddComponent<TextureComponent>(BackgroundEntity, TextureComponent{ Texture, {32.f, 20.f, 31.f, 25.f} });
 	}
+
+	void AddPlayer(EntityAdmin& Admin, const StageData& StageData)
+	{
+		auto PlayerEntity = Admin.CreateEntity();
+		Admin.AddComponent<TransformComponent>(PlayerEntity, StageData.PlayerSpawnPosition);
+		Admin.AddComponent<RectComponent>(PlayerEntity, SDL_FRect{ -60.f, -10.f, 80.f, 20.f });
+		Admin.AddComponent<RenderComponent>(PlayerEntity);
+		Admin.AddComponent<VelocityComponent>(PlayerEntity);
+		auto& PlayerCollisionComponent = Admin.AddComponent<CollisionComponent>(PlayerEntity, CollisionChannel::Player);
+		PlayerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Ball)] = CollisionResponse::Ignore;
+		PlayerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
+		Admin.AddComponent<PlayerControllerComponent>(PlayerEntity);
+	}
+
+	void AddBall(EntityAdmin& Admin, const StageData& StageData)
+	{
+		auto BallEntity = Admin.CreateEntity();
+		Admin.AddComponent<TransformComponent>(BallEntity, StageData.BallSpawnPosition);
+		Admin.AddComponent<CircleComponent>(BallEntity, 10.f);
+		Admin.AddComponent<ColorComponent>(BallEntity, SDL_FColor{ 0.f, 0.f, 1.f, 1.f });
+		Admin.AddComponent<RenderComponent>(BallEntity);
+		Admin.AddComponent<VelocityComponent>(BallEntity, StageData.BallInitialVelocity);
+		auto& BallCollisionComponent = Admin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
+		BallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
+	}
 }
 
 void RunControllerSystem::Initialize(const SystemContext& Context) const
@@ -243,6 +268,8 @@ void RunControllerSystem::SpawnStageEntities(const SystemContext& Context, const
 	}
 	
 	AddTrigger(Admin, StageData.Trigger);
+	AddPlayer(Admin, StageData);
+	AddBall(Admin, StageData);
 }
 
 void RunControllerSystem::CleanupCurrentStage(const SystemContext& Context) const
@@ -251,9 +278,6 @@ void RunControllerSystem::CleanupCurrentStage(const SystemContext& Context) cons
 	auto& Admin = Context.EntityAdmin;
 	Admin.GetGroup<CollisionComponent>().ForEach([&EntitiesToDestroy](const Entity& TargetEntity, const CollisionComponent& Collision)
 	{
-		if (Collision.Channel == CollisionChannel::Player || Collision.Channel == CollisionChannel::Ball)
-			return;
-
 		EntitiesToDestroy.push_back(TargetEntity);
 	});
 

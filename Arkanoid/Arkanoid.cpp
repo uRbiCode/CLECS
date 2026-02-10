@@ -31,31 +31,6 @@ namespace
 	constexpr Vector2D<float> BallInitialVelocity = { 0.f, 250.f };
 	constexpr Vector2D<float> PlayerInitialPosition = { ScreenWidth * 0.5f, ScreenHeight * 0.9f };
 
-	void AddPlayer(EntityAdmin& Admin)
-	{
-		auto PlayerEntity = Admin.CreateEntity();
-		Admin.AddComponent<TransformComponent>(PlayerEntity, PlayerInitialPosition);
-		Admin.AddComponent<RectComponent>(PlayerEntity, SDL_FRect{ -60.f, -10.f, 80.f, 20.f });
-		Admin.AddComponent<RenderComponent>(PlayerEntity);
-		Admin.AddComponent<VelocityComponent>(PlayerEntity);
-		auto& PlayerCollisionComponent = Admin.AddComponent<CollisionComponent>(PlayerEntity, CollisionChannel::Player);
-		PlayerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Ball)] = CollisionResponse::Ignore;
-		PlayerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
-		Admin.AddComponent<PlayerControllerComponent>(PlayerEntity);
-	}
-
-	void AddBall(EntityAdmin& Admin)
-	{
-		auto BallEntity = Admin.CreateEntity();
-		Admin.AddComponent<TransformComponent>(BallEntity, BallInitialPosition);
-		Admin.AddComponent<CircleComponent>(BallEntity, 10.f);
-		Admin.AddComponent<ColorComponent>(BallEntity, SDL_FColor{ 0.f, 0.f, 1.f, 1.f });
-		Admin.AddComponent<RenderComponent>(BallEntity);
-		auto& BallVelocityComponent = Admin.AddComponent<VelocityComponent>(BallEntity);
-		BallVelocityComponent.Velocity = BallInitialVelocity;
-		auto& BallCollisionComponent = Admin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
-		BallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
-	}
 	void AddCurrentStageResetComponent(EntityAdmin& Admin, const Vector2D<float>& BallInitialPosition, const Vector2D<float>& BallInitialVelocity, const Vector2D<float>& PlayerInitialPosition)
 	{
 		auto ResetEntity = Admin.CreateEntity();
@@ -130,10 +105,6 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	AddRunStateComponent(EntityAdmin);
 	AddCurrentStageResetComponent(EntityAdmin, BallInitialPosition, BallInitialVelocity, PlayerInitialPosition);
 
-	AddPlayer(EntityAdmin);
-
-	AddBall(EntityAdmin);
-	
 	AddStageDataComponents(EntityAdmin);
 
 	return true;
