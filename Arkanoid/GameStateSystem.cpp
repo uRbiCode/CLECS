@@ -11,6 +11,7 @@
 #include "RenderComponent.h"
 #include "TextureComponent.h"
 #include <cassert>
+#include <SDLUtils.h>
 
 void GameStateSystem::Initialize(const SystemContext& Context) const
 {
@@ -35,16 +36,15 @@ void GameStateSystem::AddBackgroundRenderEntity(const SystemContext& Context) co
 {
 	auto& Admin = Context.EntityAdmin;
 	
-	int WindowWidth, WindowHeight;
-	SDL_GetWindowSize(&Context.Window, &WindowWidth, &WindowHeight);
+	const auto WindowSize = SDLUtils::GetWindowSize(&Context.Window);
 
 	auto BackgroundEntity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(BackgroundEntity);
 	Admin.AddComponent<RectComponent>(BackgroundEntity, SDL_FRect{ 
 		0.f, 
 		0.f, 
-		static_cast<float>(WindowWidth), 
-		static_cast<float>(WindowHeight)
+		static_cast<float>(WindowSize.X), 
+		static_cast<float>(WindowSize.Y)
 	});
 	Admin.AddComponent<RenderComponent>(BackgroundEntity, RenderConstants::BackgroundLayer);
 	

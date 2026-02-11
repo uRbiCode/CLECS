@@ -12,6 +12,7 @@
 #include "HealthIndicatorSystem.h"
 #include "GameStateSystem.h"
 #include "GameStateComponent.h"
+#include "MainMenuControllerSystem.h"
 
 namespace
 {
@@ -30,6 +31,7 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	Data.AddSystem<HealthSystem>();
 	Data.AddSystem<MovementSystem>();
 	Data.AddSystem<CurrentStageSystem>();
+	Data.AddSystem<MainMenuControllerSystem>();
 	Data.AddSystem<RunControllerSystem>();
 	Data.AddSystem<GameStateSystem>();
 	Data.AddSystem<RenderSystem>();
@@ -49,7 +51,5 @@ RendererInitializationData Arkanoid::GetRendererConfig() const
 void Arkanoid::AddGameStateComponent(EntityAdmin& Admin) const
 {
 	auto GameStateEntity = Admin.CreateEntity();
-
-	// TODO: change, for now start on run
-	Admin.AddComponent<GameStateComponent>(GameStateEntity, GameState::Run);
+	Admin.AddComponent<GameStateComponent>(GameStateEntity, GameState::MainMenu);
 }

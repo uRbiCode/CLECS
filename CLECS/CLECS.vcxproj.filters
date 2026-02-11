@@ -73,6 +73,9 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>Source\Core\World\TextureManager</Filter>
     </ClCompile>
+    <ClCompile Include="SDLUtils.cpp">
+      <Filter>Source\Core\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="World.h">
@@ -140,6 +143,9 @@
     </ClInclude>
     <ClInclude Include="MouseClickEvent.h">
       <Filter>Source\Core\World\EventBus\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="SDLUtils.h">
+      <Filter>Source\Core\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

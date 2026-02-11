@@ -155,6 +155,7 @@
     <ClCompile Include="CurrentStageSystem.cpp" />
     <ClCompile Include="GameStateSystem.cpp" />
     <ClCompile Include="HealthIndicatorSystem.cpp" />
+    <ClCompile Include="MainMenuControllerSystem.cpp" />
     <ClCompile Include="RunControllerSystem.cpp" />
     <ClCompile Include="HealthSystem.cpp" />
     <ClCompile Include="main.cpp" />
@@ -163,6 +164,8 @@
     <ClCompile Include="StageUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClickableComponent.h" />
+    <ClInclude Include="ClickableUsedEvent.h" />
     <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="CollisionDetectionSystem.h" />
     <ClInclude Include="Arkanoid.h" />
@@ -173,6 +176,7 @@
     <ClInclude Include="GameStateEvents.h" />
     <ClInclude Include="GameStateSystem.h" />
     <ClInclude Include="HealthIndicatorSystem.h" />
+    <ClInclude Include="MainMenuControllerSystem.h" />
     <ClInclude Include="RunControllerSystem.h" />
     <ClInclude Include="HealthChangedEvent.h" />
     <ClInclude Include="HealthComponent.h" />

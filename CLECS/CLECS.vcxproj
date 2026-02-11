@@ -155,6 +155,7 @@
     <ClCompile Include="GameRunner.cpp" />
     <ClCompile Include="InputState.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
+    <ClCompile Include="SDLUtils.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="World.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="RendererInitializationData.h" />
     <ClInclude Include="RenderSystem.h" />
+    <ClInclude Include="SDLUtils.h" />
     <ClInclude Include="ShapeComponents.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemContext.h" />

@@ -13,6 +13,7 @@
 #include "StageUtils.h"
 #include "CollisionComponent.h"
 #include "RenderConstants.h"
+#include "SDLUtils.h"
 
 namespace
 {
@@ -91,14 +92,12 @@ void HealthIndicatorSystem::AddHealthIndicators(const SystemContext& Context, in
 	const float MostRightPosition = HealthIndicatorEntities.empty() ? 0.f : HealthIndicatorEntities.back().second;
 	const float NewIndicatorPositionX = MostRightPosition + HealthIndicatorSpacing;
 
-	int WindowWidth, WindowHeight;
-	SDL_RendererLogicalPresentation LogicalPresentation = SDL_LOGICAL_PRESENTATION_LETTERBOX;
-	SDL_GetRenderLogicalPresentation(&Context.Renderer, &WindowWidth, &WindowHeight, &LogicalPresentation);
+	const auto RendererLogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 
 	for (int i = 0; i < Count; ++i)
 	{
 		auto HealthIndicatorEntity = Context.EntityAdmin.CreateEntity();
-		Context.EntityAdmin.AddComponent<TransformComponent>(HealthIndicatorEntity, Vector2D<float>{ WindowWidth * 0.07f + NewIndicatorPositionX * i * 1.2f , WindowHeight * 0.95f });
+		Context.EntityAdmin.AddComponent<TransformComponent>(HealthIndicatorEntity, Vector2D<float>{ RendererLogicalPresentation.X * 0.07f + NewIndicatorPositionX * i * 1.2f , RendererLogicalPresentation.Y * 0.95f });
 		Context.EntityAdmin.AddComponent<RenderComponent>(HealthIndicatorEntity, RenderConstants::UILayer);
 		Context.EntityAdmin.AddComponent<TextureComponent>(HealthIndicatorEntity, TextureComponent{ Context.TextureManager.GetTexture(HealthIndicatorTexturePath), HealthIndicatorTextureRect });
 		Context.EntityAdmin.AddComponent<RectComponent>(HealthIndicatorEntity, SDL_FRect{ -HealthIndicatorSpacing * 0.5f, -HealthIndicatorSpacing * 0.5f, HealthIndicatorSpacing, HealthIndicatorSpacing });

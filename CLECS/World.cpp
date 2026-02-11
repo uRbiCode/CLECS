@@ -131,9 +131,10 @@ void World::InitializeTextureManager()
 
 void World::SendInputEvents(const SystemContext& Context)
 {
+	const auto& MousePosition = Input.GetMousePosition();
 	for (const auto& MouseButtonClicked : Input.JustPressedMouseButtons)
 	{
-		EventBus.Notify(Context, MouseClickEvent{ Input.GetMousePosition(), MouseButtonClicked });
+		EventBus.Notify(Context, MouseClickEvent{ MousePosition, MouseButtonClicked });
 	}
 }
 
