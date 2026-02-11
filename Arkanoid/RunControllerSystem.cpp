@@ -172,10 +172,8 @@ void RunControllerSystem::AddStageDataComponent(const SystemContext& Context) co
 	constexpr Vector2D<float> PlayerInitialPosition = { ScreenWidth * 0.5f, ScreenHeight * 0.9f };
 
 	// Create brick grid
-	//constexpr int BrickRows = 5;
-	//constexpr int BrickColumns = 5;
-	constexpr int BrickRows = 2;
-	constexpr int BrickColumns = 1;
+	constexpr int BrickRows = 5;
+	constexpr int BrickColumns = 5;
 	constexpr float BrickWidth = 64.f;
 	constexpr float BrickHeight = 32.f;
 	constexpr float BrickSpacing = 8.f;
