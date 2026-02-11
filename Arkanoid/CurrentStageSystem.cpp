@@ -44,7 +44,7 @@ void CurrentStageSystem::ResetStage(const SystemContext& Context) const
 		if (Collision.Channel == CollisionChannel::Player)
 		{
 			auto& Transform = Context.EntityAdmin.AccessComponent<TransformComponent>(TargetEntity);
-			Transform.Position = CurrentStageData.PlayerData.Position;
+			Transform.Position = CurrentStageData.PlayerData.PositionSize.Position;
 		}
 		else if (Collision.Channel == CollisionChannel::Ball)
 		{

@@ -54,13 +54,14 @@ namespace
 		for (int i = 0; i < StagesCount; ++i)
 		{
 			StageData NewStageData;
-			NewStageData.PlayerData.Position = PlayerInitialPosition;
-			NewStageData.PlayerData.Size = Vector2D<float>{ 80.f, 20.f };
+			NewStageData.PlayerData.PositionSize.Position = PlayerInitialPosition;
+			NewStageData.PlayerData.PositionSize.Size = Vector2D<float>{ 80.f, 20.f };
 			NewStageData.PlayerData.TextureData.Path = "../Assets/Textures/paddles_and_balls.png";
 			NewStageData.PlayerData.TextureData.SourceRect = SDL_FRect{ 0.f, 7.f, 32.f, 8.f };
 
 			NewStageData.BallData.Position = BallInitialPosition;
 			NewStageData.BallData.Velocity = BallInitialVelocity;
+			NewStageData.BallData.Radius = 10.f;
 			NewStageData.BallData.TextureData.Path = "../Assets/Textures/paddles_and_balls.png";
 			NewStageData.BallData.TextureData.SourceRect = SDL_FRect{ 160.f, 5.f, 10.f, 10.f };
 
@@ -75,8 +76,8 @@ namespace
 				for (int Col = 0; Col < BrickColumns; ++Col)
 				{
 					BrickData NewBrick;
-					NewBrick.Position = Vector2D<float>{ GridStartX + Col * (BrickWidth + BrickSpacing) + BrickWidth * 0.5f, GridStartY + Row * (BrickHeight + BrickSpacing) + BrickHeight * 0.5f };
-					NewBrick.Size = Vector2D<float>{ BrickWidth, BrickHeight };
+					NewBrick.PositionSize.Position = Vector2D<float>{ GridStartX + Col * (BrickWidth + BrickSpacing) + BrickWidth * 0.5f, GridStartY + Row * (BrickHeight + BrickSpacing) + BrickHeight * 0.5f };
+					NewBrick.PositionSize.Size = Vector2D<float>{ BrickWidth, BrickHeight };
 					NewBrick.Health = 1;
 					NewBrick.TextureData.Path = "../Assets/Textures/bricks.png";
 					NewBrick.TextureData.SourceRect = SDL_FRect{ 0.f, 23.f + static_cast<float>(16.f * Row), 32.f, 8.f};

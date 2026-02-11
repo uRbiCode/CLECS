@@ -57,8 +57,8 @@ namespace
 		auto& Admin = Context.EntityAdmin;
 
 		auto TriggerEntity = Admin.CreateEntity();
-		Admin.AddComponent<TransformComponent>(TriggerEntity, TriggerData.Position);
-		Admin.AddComponent<RectComponent>(TriggerEntity, SDL_FRect{ -TriggerData.Size.X * 0.5f, -TriggerData.Size.Y * 0.5f, TriggerData.Size.X, TriggerData.Size.Y });
+		Admin.AddComponent<TransformComponent>(TriggerEntity, TriggerData.PositionSize.Position);
+		Admin.AddComponent<RectComponent>(TriggerEntity, SDL_FRect{ -TriggerData.PositionSize.Size.X * 0.5f, -TriggerData.PositionSize.Size.Y * 0.5f, TriggerData.PositionSize.Size.X, TriggerData.PositionSize.Size.Y });
 		Admin.AddComponent<HealthComponent>(TriggerEntity, TriggerData.Health);
 		auto& TriggerCollisionComponent = Admin.AddComponent<CollisionComponent>(TriggerEntity, CollisionChannel::Trigger);
 		TriggerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Static)] = CollisionResponse::Ignore;
@@ -70,8 +70,8 @@ namespace
 		auto& TexManager = Context.TextureManager;
 
 		auto BrickEntity = Admin.CreateEntity();
-		Admin.AddComponent<TransformComponent>(BrickEntity, BrickData.Position);
-		Admin.AddComponent<RectComponent>(BrickEntity, SDL_FRect{ -BrickData.Size.X * 0.5f, -BrickData.Size.Y * 0.5f, BrickData.Size.X, BrickData.Size.Y });
+		Admin.AddComponent<TransformComponent>(BrickEntity, BrickData.PositionSize.Position);
+		Admin.AddComponent<RectComponent>(BrickEntity, SDL_FRect{ -BrickData.PositionSize.Size.X * 0.5f, -BrickData.PositionSize.Size.Y * 0.5f, BrickData.PositionSize.Size.X, BrickData.PositionSize.Size.Y });
 		Admin.AddComponent<RenderComponent>(BrickEntity);
 		
 		TryAddTexture(Context, BrickEntity, BrickData.TextureData);
@@ -110,8 +110,8 @@ namespace
 		auto& Admin = Context.EntityAdmin;
 
 		auto PlayerEntity = Admin.CreateEntity();
-		Admin.AddComponent<TransformComponent>(PlayerEntity, StageData.PlayerData.Position);
-		Admin.AddComponent<RectComponent>(PlayerEntity, SDL_FRect{ -StageData.PlayerData.Size.X * 0.5f, -StageData.PlayerData.Size.Y * 0.5f, StageData.PlayerData.Size.X, StageData.PlayerData.Size.Y });
+		Admin.AddComponent<TransformComponent>(PlayerEntity, StageData.PlayerData.PositionSize.Position);
+		Admin.AddComponent<RectComponent>(PlayerEntity, SDL_FRect{ -StageData.PlayerData.PositionSize.Size.X * 0.5f, -StageData.PlayerData.PositionSize.Size.Y * 0.5f, StageData.PlayerData.PositionSize.Size.X, StageData.PlayerData.PositionSize.Size.Y });
 		Admin.AddComponent<RenderComponent>(PlayerEntity);
 		Admin.AddComponent<VelocityComponent>(PlayerEntity);
 		auto& PlayerCollisionComponent = Admin.AddComponent<CollisionComponent>(PlayerEntity, CollisionChannel::Player);
@@ -128,7 +128,7 @@ namespace
 
 		auto BallEntity = Admin.CreateEntity();
 		Admin.AddComponent<TransformComponent>(BallEntity, BallData.Position);
-		Admin.AddComponent<CircleComponent>(BallEntity, 10.f);
+		Admin.AddComponent<CircleComponent>(BallEntity, BallData.Radius);
 		Admin.AddComponent<RenderComponent>(BallEntity);
 		Admin.AddComponent<VelocityComponent>(BallEntity, BallData.Velocity);
 		auto& BallCollisionComponent = Admin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
