@@ -6,6 +6,7 @@ class EventBus;
 struct SDL_Window;
 struct SDL_Renderer;
 class TextureManager;
+class AudioManager;
 
 struct SystemContext
 {
@@ -15,4 +16,5 @@ struct SystemContext
 	const InputState& Input;
 	EventBus& EventBus;
 	TextureManager& TextureManager;
+	AudioManager& AudioManager;
 };

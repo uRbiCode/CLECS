@@ -33,8 +33,7 @@ SDL_Texture* TextureManager::LoadTexture(const std::string& FilePath)
     auto NewTexture = IMG_LoadTexture(Renderer, FilePath.c_str());
     if (!NewTexture)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexture -> Failed to load texture: %s. SDL Error: %s", 
-                     FilePath.c_str(), SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexture -> Failed to load texture: %s. SDL Error: %s", FilePath.c_str(), SDL_GetError());
         return nullptr;
     }
 
@@ -61,13 +60,13 @@ bool TextureManager::HasTexture(const std::string& FilePath) const
 
 void TextureManager::UnloadTexture(const std::string& FilePath)
 {
-    auto It = TextureCache.find(FilePath);
-    if (It != TextureCache.end())
-    {
-        SDL_DestroyTexture(It->second);
-        TextureCache.erase(It);
-        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::UnloadTexture -> Unloaded texture: %s", FilePath.c_str());
-    }
+    const auto It = TextureCache.find(FilePath);
+    if (It == TextureCache.end())
+        return;
+
+	SDL_DestroyTexture(It->second);
+	TextureCache.erase(It);
+	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::UnloadTexture -> Unloaded texture: %s", FilePath.c_str());
 }
 
 void TextureManager::UnloadAll()
@@ -81,7 +80,6 @@ void TextureManager::UnloadAll()
 
 void TextureManager::LoadTexturesFromAssetsDirectory()
 {
-    auto current_dir = std::filesystem::current_path();
     if (!Renderer)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexturesFromAssetsDirectory -> Renderer not initialized");
@@ -105,7 +103,7 @@ void TextureManager::LoadTexturesFromAssetsDirectory()
 		if (!Entry.is_regular_file())
 			continue;
 
-		const std::string FilePath = Entry.path().string();
+		const auto FilePath = Entry.path().string();
 		LoadTexture(FilePath);
 	}
 }

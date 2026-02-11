@@ -151,6 +151,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="EntityAdmin.cpp" />
     <ClCompile Include="GameRunner.cpp" />
     <ClCompile Include="InputState.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="WorldInitializationData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="ComponentPool.h" />
     <ClInclude Include="EventBus.h" />
     <ClInclude Include="CoreTypes.h" />

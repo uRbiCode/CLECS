@@ -5,7 +5,7 @@
 #include "InputState.h"
 #include "EventBus.h"
 #include "TextureManager.h"
-
+#include "AudioManager.h"
 #include <vector>
 #include <memory>
 
@@ -36,6 +36,7 @@ private:
 	bool CreateWindow(const RendererInitializationData& Data);
 	bool CreateRenderer();
 	void InitializeTextureManager();
+	void InitializeAudioManager();
 	void SendInputEvents(const SystemContext& Context);
 
 	SystemContext MakeSystemContext();
@@ -45,6 +46,7 @@ private:
 	InputState Input;
 	EventBus EventBus;
 	std::unique_ptr<TextureManager> TextureManagerPtr;
+	std::unique_ptr<AudioManager> AudioManagerPtr;
 	SDL_Window* Window = nullptr;
 	SDL_Renderer* Renderer = nullptr;
 };
