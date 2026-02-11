@@ -315,9 +315,22 @@ void RenderSystem::RenderText(const SystemContext& Context, const Entity& Entity
 	float TextureHeight = 0.f;
 	SDL_GetTextureSize(TextTexture, &TextureWidth, &TextureHeight);
 
-	SDL_FRect DestRect = {
-		Transform.Position.X,
-		Transform.Position.Y,
+	Vector2D<float> RenderPosition = Transform.Position;
+	if (Admin.HasComponent<RectComponent>(Entity))
+	{
+		const auto& Rect = Admin.GetComponent<RectComponent>(Entity);
+		const auto RenderRect = CalcRenderRect(Transform, Rect);
+
+		// Center text 
+		const float ScaledTextWidth = TextureWidth * Transform.Scale.X;
+		const float ScaledTextHeight = TextureHeight * Transform.Scale.Y;
+		RenderPosition.X = RenderRect.x + (RenderRect.w - ScaledTextWidth) * 0.5f;
+		RenderPosition.Y = RenderRect.y + (RenderRect.h - ScaledTextHeight) * 0.5f;
+	}
+
+	const SDL_FRect DestRect = {
+		RenderPosition.X,
+		RenderPosition.Y,
 		TextureWidth * Transform.Scale.X,
 		TextureHeight * Transform.Scale.Y
 	};
@@ -333,5 +346,4 @@ void RenderSystem::RenderText(const SystemContext& Context, const Entity& Entity
 	}
 
 	SDL_DestroyTexture(TextTexture);
-
 }

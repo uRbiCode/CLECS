@@ -11,6 +11,14 @@
 #include "RenderConstants.h"
 #include "ClickableUsedEvent.h"
 #include "GameStateUtils.h"
+#include "TextComponent.h"
+
+namespace
+{
+	constexpr const char* PlayButtonText = "Play";
+	constexpr const char* QuitButtonText = "Quit";
+	constexpr const char* FontFilePath = "../Assets/Fonts/arkanoid.ttf";
+}
 
 void MainMenuControllerSystem::Initialize(const SystemContext& Context) const
 {
@@ -49,6 +57,7 @@ void MainMenuControllerSystem::InitializeMainMenu(const SystemContext& Context) 
 	Admin.AddComponent<RectComponent>(PlayButtonEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });
 	Admin.AddComponent<ShapeFillComponent>(PlayButtonEntity, false);
 	Admin.AddComponent<RenderComponent>(PlayButtonEntity, RenderConstants::UILayer);
+	Admin.AddComponent<TextComponent>(PlayButtonEntity, PlayButtonText, FontFilePath, 24);
 
 	auto QuitButtonEntity = Admin.CreateEntity();
 	Admin.AddComponent<ClickableComponent>(QuitButtonEntity, ClickableTag::QuitButton);
@@ -56,6 +65,7 @@ void MainMenuControllerSystem::InitializeMainMenu(const SystemContext& Context) 
 	Admin.AddComponent<RectComponent>(QuitButtonEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });
 	Admin.AddComponent<ShapeFillComponent>(QuitButtonEntity, false);
 	Admin.AddComponent<RenderComponent>(QuitButtonEntity, RenderConstants::UILayer);
+	Admin.AddComponent<TextComponent>(QuitButtonEntity, QuitButtonText, FontFilePath, 24);
 }
 
 void MainMenuControllerSystem::CleanupMainMenu(const SystemContext& Context) const
