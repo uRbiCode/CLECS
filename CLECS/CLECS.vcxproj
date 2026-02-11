@@ -71,16 +71,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)SDL\include;$(SolutionDir)SDL_image\include</IncludePath>
+    <IncludePath>$(SolutionDir)SDL\include;$(SolutionDir)SDL_ttf\include;$(SolutionDir)SDL_image\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)SDL\include;$(SolutionDir)SDL_image\include</IncludePath>
+    <IncludePath>$(SolutionDir)SDL\include;$(SolutionDir)SDL_ttf\include;$(SolutionDir)SDL_image\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)SDL\include;$(SolutionDir)SDL_image\include</IncludePath>
+    <IncludePath>$(SolutionDir)SDL\include;$(SolutionDir)SDL_ttf\include;$(SolutionDir)SDL_image\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)SDL\include;$(SolutionDir)SDL_image\include</IncludePath>
+    <IncludePath>$(SolutionDir)SDL\include;$(SolutionDir)SDL_ttf\include;$(SolutionDir)SDL_image\include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -148,6 +148,9 @@
     </ProjectReference>
     <ProjectReference Include="..\SDL_image\VisualC\SDL_image.vcxproj">
       <Project>{2bd5534e-00e2-4bea-ac96-d9a92ea24696}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\SDL_ttf\VisualC\SDL_ttf.vcxproj">
+      <Project>{dddbd07d-dc76-4af6-8d02-3e2deb6ee255}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
