@@ -75,5 +75,5 @@ void GameStateSystem::AddBackgroundRenderEntity(const SystemContext& Context) co
 	if (Texture == nullptr)
 		return;
 
-	Admin.AddComponent<TextureComponent>(BackgroundEntity, TextureComponent{ Texture, {34.f, 13.f, 60.f, 42.f} });
+	Admin.AddComponent<TextureComponent>(BackgroundEntity, TextureComponent{ Texture, {34.f, 33.f, 60.f, 42.f} });
 }
