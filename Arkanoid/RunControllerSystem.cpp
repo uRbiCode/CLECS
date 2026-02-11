@@ -15,6 +15,7 @@
 #include "HealthChangedEvent.h"
 #include "TextureManager.h"
 #include "StageBeginEvent.h"
+#include "RenderConstants.h"
 
 namespace
 {
@@ -95,7 +96,7 @@ namespace
 			static_cast<float>(WindowWidth), 
 			static_cast<float>(WindowHeight)
 		});
-		Admin.AddComponent<RenderComponent>(BackgroundEntity, -1);
+		Admin.AddComponent<RenderComponent>(BackgroundEntity, RenderConstants::BackgroundLayer);
 		
 		auto Texture = Context.TextureManager.LoadTexture("../Assets/Textures/Background_Tiles.png");
 		if (Texture == nullptr)

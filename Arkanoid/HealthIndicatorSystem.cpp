@@ -12,6 +12,7 @@
 #include "StageBeginEvent.h"
 #include "StageUtils.h"
 #include "CollisionComponent.h"
+#include "RenderConstants.h"
 
 namespace
 {
@@ -92,7 +93,7 @@ void HealthIndicatorSystem::AddHealthIndicators(const SystemContext& Context, in
 	{
 		auto HealthIndicatorEntity = Context.EntityAdmin.CreateEntity();
 		Context.EntityAdmin.AddComponent<TransformComponent>(HealthIndicatorEntity, Vector2D<float>{ WindowWidth * 0.07f + NewIndicatorPositionX * i * 1.2f , WindowHeight * 0.95f });
-		Context.EntityAdmin.AddComponent<RenderComponent>(HealthIndicatorEntity, 1);
+		Context.EntityAdmin.AddComponent<RenderComponent>(HealthIndicatorEntity, RenderConstants::UILayer);
 		Context.EntityAdmin.AddComponent<TextureComponent>(HealthIndicatorEntity, TextureComponent{ Context.TextureManager.GetTexture(HealthIndicatorTexturePath), HealthIndicatorTextureRect });
 		Context.EntityAdmin.AddComponent<RectComponent>(HealthIndicatorEntity, SDL_FRect{ -HealthIndicatorSpacing * 0.5f, -HealthIndicatorSpacing * 0.5f, HealthIndicatorSpacing, HealthIndicatorSpacing });
 	}

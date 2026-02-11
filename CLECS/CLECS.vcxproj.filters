@@ -132,5 +132,8 @@
     <ClInclude Include="TextureManager.h">
       <Filter>Source\Core\World\TextureManager</Filter>
     </ClInclude>
+    <ClInclude Include="RenderConstants.h">
+      <Filter>Source\Core\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
