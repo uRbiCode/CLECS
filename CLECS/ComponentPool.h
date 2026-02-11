@@ -7,8 +7,8 @@ class ComponentPoolBase
 {
 public:
 	virtual ~ComponentPoolBase() = default;
-	virtual void Remove(const Entity& TargetEntity) = 0;
-	virtual bool Has(const Entity& TargetEntity) const = 0;
+	virtual void Remove(const Entity& Entity) = 0;
+	virtual bool Has(const Entity& Entity) const = 0;
 	virtual void Clear() = 0;
 };
 
@@ -22,9 +22,9 @@ class ComponentPool : public ComponentPoolBase
 {
 public:
 	template<typename... Args>
-	T& Emplace(const Entity& TargetEntity, Args&&... Arguments)
+	T& Emplace(const Entity& Entity, Args&&... Arguments)
 	{
-		const auto EntityId = TargetEntity.GetId();
+		const auto EntityId = Entity.GetId();
 		
 		if (EntityId >= Sparse.size())
 		{
@@ -36,27 +36,27 @@ public:
 
 		const auto DenseIndex = static_cast<uint32_t>(Components.size());
 		Sparse[EntityId] = DenseIndex;
-		Entities.push_back(TargetEntity);
+		Entities.push_back(Entity);
 		Components.emplace_back(std::forward<Args>(Arguments)...);
 
 		return Components.back();
 	}
 
-	T& Access(const Entity& TargetEntity)
+	T& Access(const Entity& Entity)
 	{
-		const auto EntityId = TargetEntity.GetId();
+		const auto EntityId = Entity.GetId();
 		return Components[Sparse[EntityId]];
 	}
 
-	const T& Get(const Entity& TargetEntity) const
+	const T& Get(const Entity& Entity) const
 	{
-		const auto EntityId = TargetEntity.GetId();
+		const auto EntityId = Entity.GetId();
 		return Components[Sparse[EntityId]];
 	}
 
-	void Remove(const Entity& TargetEntity) override
+	void Remove(const Entity& Entity) override
 	{
-		const auto EntityId = TargetEntity.GetId();
+		const auto EntityId = Entity.GetId();
 		if (EntityId >= Sparse.size() || Sparse[EntityId] == INVALID_DENSE_INDEX)
 			return;
 
@@ -77,9 +77,9 @@ public:
 		Sparse[EntityId] = INVALID_DENSE_INDEX;
 	}
 
-	bool Has(const Entity& TargetEntity) const override
+	bool Has(const Entity& Entity) const override
 	{
-		const auto EntityId = TargetEntity.GetId();
+		const auto EntityId = Entity.GetId();
 		if (EntityId >= Sparse.size())
 			return false;
 
@@ -87,7 +87,7 @@ public:
 		if (DenseIndex == INVALID_DENSE_INDEX)
 			return false;
 
-		return Entities[DenseIndex] == TargetEntity;
+		return Entities[DenseIndex] == Entity;
 	}
 
 	std::vector<T>& AccessComponents()	{ return Components; }

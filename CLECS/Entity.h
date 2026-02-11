@@ -60,9 +60,9 @@ namespace std
 	template <>
 	struct hash<Entity>
 	{
-		size_t operator()(const Entity& TargetEntity) const noexcept
+		size_t operator()(const Entity& Entity) const noexcept
 		{
-			return hash<uint32_t>()(TargetEntity.Identifier);
+			return hash<uint32_t>()(Entity.Identifier);
 		}
 	};
 }

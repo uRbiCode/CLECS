@@ -42,7 +42,7 @@ StageData StageUtils::GetCurrentStageData(const SystemContext& Context)
 int StageUtils::GetCurrentPlayerHealth(const SystemContext& Context)
 {
 	std::optional<int> Health = std::nullopt;
-	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&Context, &Health](const Entity& TargetEntity, const CollisionComponent& Collision, const HealthComponent& HealthComp)
+	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&Context, &Health](const Entity& Entity, const CollisionComponent& Collision, const HealthComponent& HealthComp)
 	{
 		if (Collision.Channel == CollisionChannel::Trigger)
 		{

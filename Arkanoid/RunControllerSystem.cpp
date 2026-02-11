@@ -22,7 +22,7 @@
 
 namespace
 {
-	void TryAddTexture(const SystemContext& Context, const Entity& TargetEntity, const TextureData& Data)
+	void TryAddTexture(const SystemContext& Context, const Entity& Entity, const TextureData& Data)
 	{
 		if (Data.Path.empty())
 			return;
@@ -31,7 +31,7 @@ namespace
 		if (Texture == nullptr)
 			return;
 
-		Context.EntityAdmin.AddComponent<TextureComponent>(TargetEntity, TextureComponent{
+		Context.EntityAdmin.AddComponent<TextureComponent>(Entity, TextureComponent{
 			Texture,
 			Data.SourceRect
 		});
@@ -244,10 +244,10 @@ void RunControllerSystem::OnHealthChanged(const SystemContext& Context, const He
 	if (Event.Delta >= 0)
 		return;
 
-	if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Event.TargetEntity))
+	if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Event.Entity))
 		return;
 
-	const auto& Collision = Context.EntityAdmin.GetComponent<CollisionComponent>(Event.TargetEntity);
+	const auto& Collision = Context.EntityAdmin.GetComponent<CollisionComponent>(Event.Entity);
 	if (Collision.Channel == CollisionChannel::Brick)
 	{
 		if (AreAllBricksDestroyed(Context))
@@ -300,7 +300,7 @@ void RunControllerSystem::HandleRunDefeat(const SystemContext& Context) const
 bool RunControllerSystem::AreAllBricksDestroyed(const SystemContext& Context) const
 {
 	bool AllDestroyed = true;
-	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&AllDestroyed](const Entity& TargetEntity, const CollisionComponent& Collision, const HealthComponent& Health)
+	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&AllDestroyed](const Entity& Entity, const CollisionComponent& Collision, const HealthComponent& Health)
 	{
 		AllDestroyed &= (Collision.Channel != CollisionChannel::Brick || Health.CurrentHealth <= 0);
 	});
@@ -310,7 +310,7 @@ bool RunControllerSystem::AreAllBricksDestroyed(const SystemContext& Context) co
 bool RunControllerSystem::HasPlayerLost(const SystemContext& Context) const
 {
 	bool TriggerHasHealth = true;
-	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&TriggerHasHealth](const Entity& TargetEntity, const CollisionComponent& Collision, const HealthComponent& Health)
+	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&TriggerHasHealth](const Entity& Entity, const CollisionComponent& Collision, const HealthComponent& Health)
 	{
 		if (Collision.Channel == CollisionChannel::Trigger)
 		{

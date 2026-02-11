@@ -40,11 +40,11 @@ namespace
 	{
 		std::vector<std::pair<Entity, float>> HealthIndicatorEntities;
 		const auto HealthIndicatorTexture = GetHealthIndicatorTexture(Context.TextureManager);
-		Context.EntityAdmin.GetGroup<TextureComponent, TransformComponent>().ForEach([&HealthIndicatorEntities, &HealthIndicatorTexture, &Context](const Entity& TargetEntity, const TextureComponent& TextureComponent, const TransformComponent& TransformComponent)
+		Context.EntityAdmin.GetGroup<TextureComponent, TransformComponent>().ForEach([&HealthIndicatorEntities, &HealthIndicatorTexture, &Context](const Entity& Entity, const TextureComponent& TextureComponent, const TransformComponent& TransformComponent)
 		{
 			if (IsHealthIndicatorTextureComponent(Context.TextureManager, TextureComponent, HealthIndicatorTexture))
 			{
-				HealthIndicatorEntities.push_back({ TargetEntity, TransformComponent.Position.X });
+				HealthIndicatorEntities.push_back({ Entity, TransformComponent.Position.X });
 			}
 		});
 
@@ -127,11 +127,11 @@ void HealthIndicatorSystem::RemoveHealthIndicators(const SystemContext& Context,
 void HealthIndicatorSystem::CleanupHealthIndicators(const SystemContext& Context) const
 {
 	const auto HealthIndicatorTexture = GetHealthIndicatorTexture(Context.TextureManager);
-	Context.EntityAdmin.GetGroup<TextureComponent, TransformComponent>().ForEach([&HealthIndicatorTexture, &Context](const Entity& TargetEntity, const TextureComponent& TextureComponent, const TransformComponent& TransformComponent)
+	Context.EntityAdmin.GetGroup<TextureComponent, TransformComponent>().ForEach([&HealthIndicatorTexture, &Context](const Entity& Entity, const TextureComponent& TextureComponent, const TransformComponent& TransformComponent)
 	{
 		if (IsHealthIndicatorTextureComponent(Context.TextureManager, TextureComponent, HealthIndicatorTexture))
 		{
-			Context.EntityAdmin.DestroyEntity(TargetEntity);
+			Context.EntityAdmin.DestroyEntity(Entity);
 		}
 	});
 }
@@ -142,10 +142,10 @@ void HealthIndicatorSystem::OnHealthChanged(const SystemContext& Context, const 
 		return;
 
 	auto& Admin = Context.EntityAdmin;
-	if (!Admin.HasComponent<CollisionComponent>(Event.TargetEntity))
+	if (!Admin.HasComponent<CollisionComponent>(Event.Entity))
 		return;
 
-	if (Admin.GetComponent<CollisionComponent>(Event.TargetEntity).Channel != CollisionChannel::Trigger)
+	if (Admin.GetComponent<CollisionComponent>(Event.Entity).Channel != CollisionChannel::Trigger)
 		return;
 
 	if (Event.Delta < 0)

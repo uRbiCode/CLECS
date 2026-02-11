@@ -24,7 +24,7 @@ namespace
 		std::optional<ClickableTag> ClickedTag = std::nullopt;
 
 		const auto LogicalEventPosition = SDLUtils::TranslateCoordinatesFromWindowToLogical(&Context.Renderer, &Context.Window, Event.Position);
-		Context.EntityAdmin.GetGroup<ClickableComponent, TransformComponent, RectComponent>().ForEach([&ClickedTag, &Context, &LogicalEventPosition](const Entity& TargetEntity, const ClickableComponent& Clickable, const TransformComponent& Transform, const RectComponent& Rect)
+		Context.EntityAdmin.GetGroup<ClickableComponent, TransformComponent, RectComponent>().ForEach([&ClickedTag, &Context, &LogicalEventPosition](const Entity& Entity, const ClickableComponent& Clickable, const TransformComponent& Transform, const RectComponent& Rect)
 		{
 			const auto Left = Transform.Position.X + Rect.Rect.x;
 			const auto Right = Left + Rect.Rect.w;
@@ -58,7 +58,7 @@ void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime) co
 	const auto& Input = Context.Input;
 
 	auto PlayerGroup = Admin.GetGroup<VelocityComponent, PlayerControllerComponent>();
-	PlayerGroup.ForEach([&Input](Entity CurrentEntity, VelocityComponent& Velocity, const PlayerControllerComponent& Controller)
+	PlayerGroup.ForEach([&Input](const Entity& Entity, VelocityComponent& Velocity, const PlayerControllerComponent& Controller)
 	{
 		Velocity.Velocity = { 0.f, 0.f };
 
