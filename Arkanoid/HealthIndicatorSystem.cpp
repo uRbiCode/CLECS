@@ -96,20 +96,19 @@ void HealthIndicatorSystem::OnStageBegin(const SystemContext& Context, const Sta
 
 void HealthIndicatorSystem::AddHealthIndicators(const SystemContext& Context, int Count) const
 {
-	auto HealthIndicatorEntities = GetHealthIndicatorEntitiesSorted(Context);
-
-	const float MostRightPosition = HealthIndicatorEntities.empty() ? 0.f : HealthIndicatorEntities.back().second;
-	const float NewIndicatorPositionX = MostRightPosition + HealthIndicatorSpacing;
-
+	const auto HealthIndicatorEntities = GetHealthIndicatorEntitiesSorted(Context);
 	const auto RendererLogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+	const float MostRightPosition = HealthIndicatorEntities.empty() ? RendererLogicalPresentation.X * 0.07f : HealthIndicatorEntities.back().second;
+	float NewIndicatorPositionX = MostRightPosition + HealthIndicatorSpacing;
 
-	for (int i = 0; i < Count; ++i)
+	for (size_t i = 0; i < Count; ++i)
 	{
 		auto HealthIndicatorEntity = Context.EntityAdmin.CreateEntity();
-		Context.EntityAdmin.AddComponent<TransformComponent>(HealthIndicatorEntity, Vector2D<float>{ RendererLogicalPresentation.X * 0.07f + NewIndicatorPositionX * i * 1.2f , RendererLogicalPresentation.Y * 0.95f });
 		Context.EntityAdmin.AddComponent<RenderComponent>(HealthIndicatorEntity, RenderConstants::UILayer);
 		Context.EntityAdmin.AddComponent<TextureComponent>(HealthIndicatorEntity, TextureComponent{ Context.TextureManager.GetTexture(HealthIndicatorTexturePath), HealthIndicatorTextureRect });
 		Context.EntityAdmin.AddComponent<RectComponent>(HealthIndicatorEntity, SDL_FRect{ -HealthIndicatorSpacing * 0.5f, -HealthIndicatorSpacing * 0.5f, HealthIndicatorSpacing, HealthIndicatorSpacing });
+		auto& Transform = Context.EntityAdmin.AddComponent<TransformComponent>(HealthIndicatorEntity, Vector2D<float>{ NewIndicatorPositionX, RendererLogicalPresentation.Y * 0.95f });
+		NewIndicatorPositionX += HealthIndicatorSpacing;
 	}
 }
 
