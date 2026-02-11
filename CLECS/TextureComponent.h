@@ -7,5 +7,4 @@ struct TextureComponent
 {
 	SDL_Texture* Texture = nullptr;
 	SDL_FRect SourceRect = {};
-	bool Tiled = false;
 };

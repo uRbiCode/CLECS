@@ -41,6 +41,9 @@
     <Filter Include="Source\Utils">
       <UniqueIdentifier>{3469ba66-4a8c-4a48-940f-c94ef57ba53a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\HealthIndicatorSystem">
+      <UniqueIdentifier>{e4ea1060-ced9-449a-9f59-8c8624ae51ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -72,6 +75,9 @@
     </ClCompile>
     <ClCompile Include="StageUtils.cpp">
       <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthIndicatorSystem.cpp">
+      <Filter>Source\Systems\HealthIndicatorSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -126,8 +132,11 @@
     <ClInclude Include="StageUtils.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\SDL_image\VisualC\SDL_image.vcxproj" />
+    <ClInclude Include="HealthIndicatorSystem.h">
+      <Filter>Source\Systems\HealthIndicatorSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="StageBeginEvent.h">
+      <Filter>Source\Events</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

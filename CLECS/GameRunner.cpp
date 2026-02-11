@@ -22,7 +22,7 @@ int GameRunner::Run(std::unique_ptr<Game> GameInstance)
 {
 	if (GameInstance == nullptr)
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "No game instance provided");
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "GameRunner::Run -> GameInstance is null");
 		return 1;
 	}
 
@@ -34,7 +34,7 @@ int GameRunner::Run(std::unique_ptr<Game> GameInstance)
 
 	if (!GameInstance->Initialize(WorldInitializationData))
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "Game initialization failed");
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "GameRunner::Run -> Game initialization failed");
 		SDL_Quit();
 		return 1;
 	}
@@ -58,7 +58,7 @@ bool GameRunner::InitializeSDL()
 {
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "SDL initialization failed: %s", SDL_GetError());
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "GameRunner::InitializeSDL -> SDL initialization failed: %s", SDL_GetError());
 		return false;
 	}
 	return true;
@@ -68,7 +68,7 @@ bool GameRunner::InitializeWorld(World& GameWorld, WorldInitializationData& Data
 	const CLECS::ResultType Result = GameWorld.InitializeWorld(Data);
 	if (Result != CLECS::ResultType::Success)
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World failed to initialize");
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "GameRunner::InitializeWorld -> World failed to initialize");
 		return false;
 	}
 	return true;
@@ -100,7 +100,7 @@ int GameRunner::RunGameLoop(World& GameWorld)
 
 		if (UpdateResult == CLECS::ResultType::Failure)
 		{
-			SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World update failed");
+			SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "GameRunner::RunGameLoop -> World update failed");
 			return 1;
 		}
 	}

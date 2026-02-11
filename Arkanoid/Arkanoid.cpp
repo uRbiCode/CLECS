@@ -18,6 +18,7 @@
 #include "RunControllerSystem.h"
 #include "StageDataComponent.h"
 #include <TextureComponent.h>
+#include "HealthIndicatorSystem.h"
 
 namespace
 {
@@ -60,6 +61,8 @@ namespace
 
 			NewStageData.BallData.Position = BallInitialPosition;
 			NewStageData.BallData.Velocity = BallInitialVelocity;
+			NewStageData.BallData.TextureData.Path = "../Assets/Textures/paddles_and_balls.png";
+			NewStageData.BallData.TextureData.SourceRect = SDL_FRect{ 160.f, 5.f, 10.f, 10.f };
 
 			NewStageData.Walls.push_back(WallData{ Vector2D<float>{ ScreenWidth * 0.5f, WallThickness * 0.5f }, Vector2D<float>{ ScreenWidth, WallThickness } });
 			NewStageData.Walls.push_back(WallData{ Vector2D<float>{ WallThickness * 0.5f, ScreenHeight * 0.5f }, Vector2D<float>{ WallThickness, ScreenHeight } });
@@ -89,6 +92,7 @@ namespace
 bool Arkanoid::Initialize(WorldInitializationData& Data)
 {
 	Data.AddSystem<PlayerInputSystem>();
+	Data.AddSystem<HealthIndicatorSystem>();
 	Data.AddSystem<CollisionDetectionSystem>();
 	Data.AddSystem<CollisionKinematicResolverSystem>();
 	Data.AddSystem<HealthSystem>();

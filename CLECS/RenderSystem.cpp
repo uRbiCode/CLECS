@@ -6,6 +6,7 @@
 #include "RenderComponent.h"
 #include "TransformComponent.h"
 #include "TextureComponent.h"
+#include <optional>
 
 using RenderData = std::pair<TransformComponent, RenderComponent>;
 
@@ -120,16 +121,21 @@ namespace
 		};
 	}
 
+	SDL_FRect CalcRenderRectFromCircle(const TransformComponent& Transform, const CircleComponent& Circle)
+	{
+		const float Diameter = Circle.Radius * 2.f;
+		return SDL_FRect{
+			Transform.Position.X - Circle.Radius,
+			Transform.Position.Y - Circle.Radius,
+			Diameter,
+			Diameter
+		};
+	}
+
 	void RenderTexture(const SystemContext& Context, const Entity& Entity, const RenderData& RenderData)
 	{
 		auto& Admin = Context.EntityAdmin;
 		auto& Renderer = Context.Renderer;
-
-		if (!Admin.HasComponent<RectComponent>(Entity))
-		{
-			SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "RenderSystem::RenderTexture -> Entity %u does not have a RectComponent.", Entity.GetId());
-			return;
-		}
 
 		const auto& [Transform, Render] = RenderData;
 		const auto& TexComponent = Admin.GetComponent<TextureComponent>(Entity);
@@ -138,12 +144,28 @@ namespace
 
 		if (TexComponent.SourceRect.w == 0.f || TexComponent.SourceRect.h == 0.f)
 		{
-			SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "RenderSystem::RenderTexture -> TextureComponent for Entity %u has zero width or height in SourceRect.", Entity.GetId());
+			SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "RenderSystem::RenderTexture -> TextureComponent for Entity %u has zero width or height in SourceRect", Entity.GetId());
 			return;
 		}
 		
-		const auto& RectComp = Admin.GetComponent<RectComponent>(Entity);
-		const auto RenderRect = CalcRenderRect(Transform, RectComp);
+		std::optional<SDL_FRect> RenderRect = std::nullopt;
+
+		if (Admin.HasComponent<CircleComponent>(Entity))
+		{
+			const auto& CircleComp = Admin.GetComponent<CircleComponent>(Entity);
+			RenderRect = CalcRenderRectFromCircle(Transform, CircleComp);
+		}
+		else if (Admin.HasComponent<RectComponent>(Entity))
+		{
+			const auto& RectComp = Admin.GetComponent<RectComponent>(Entity);
+			RenderRect = CalcRenderRect(Transform, RectComp);
+		}
+
+		if (!RenderRect.has_value())
+		{
+			SDL_LogWarn(SDL_LOG_CATEGORY_RENDER, "RenderSystem::RenderTexture -> Entity %u does not have a valid shape component for calculating render rect", Entity.GetId());
+			return;
+		}
 	
 		if (Admin.HasComponent<ColorComponent>(Entity))
 		{
@@ -152,15 +174,16 @@ namespace
 			SDL_SetTextureAlphaModFloat(TexComponent.Texture, Color.Color.a);
 		}
 		
+		const auto& RenderRectValue = RenderRect.value();
 		if (Transform.Rotation != 0.f)
 		{
-			const SDL_FPoint Center = {RenderRect.w * 0.5f, RenderRect.h * 0.5f};
-			SDL_RenderTextureRotated(&Renderer, TexComponent.Texture, &TexComponent.SourceRect, &RenderRect, 
+			const SDL_FPoint Center = {RenderRectValue.w * 0.5f, RenderRectValue.h * 0.5f};
+			SDL_RenderTextureRotated(&Renderer, TexComponent.Texture, &TexComponent.SourceRect, &RenderRectValue, 
 									 Transform.Rotation * (180.0 / SDL_PI_D), &Center, SDL_FLIP_NONE);
 		}
 		else
 		{
-			SDL_RenderTexture(&Renderer, TexComponent.Texture, &TexComponent.SourceRect, &RenderRect);
+			SDL_RenderTexture(&Renderer, TexComponent.Texture, &TexComponent.SourceRect, &RenderRectValue);
 		}
 	}
 }

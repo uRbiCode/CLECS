@@ -14,6 +14,7 @@
 #include "PlayerControllerComponent.h"
 #include "HealthChangedEvent.h"
 #include "TextureManager.h"
+#include "StageBeginEvent.h"
 
 namespace
 {
@@ -100,7 +101,7 @@ namespace
 		if (Texture == nullptr)
 			return;
 
-		Admin.AddComponent<TextureComponent>(BackgroundEntity, TextureComponent{ Texture, {32.f, 20.f, 31.f, 25.f} });
+		Admin.AddComponent<TextureComponent>(BackgroundEntity, TextureComponent{ Texture, {34.f, 13.f, 60.f, 42.f} });
 	}
 
 	void AddPlayer(const SystemContext& Context, const StageData& StageData)
@@ -127,11 +128,12 @@ namespace
 		auto BallEntity = Admin.CreateEntity();
 		Admin.AddComponent<TransformComponent>(BallEntity, BallData.Position);
 		Admin.AddComponent<CircleComponent>(BallEntity, 10.f);
-		Admin.AddComponent<ColorComponent>(BallEntity, SDL_FColor{ 0.f, 0.f, 1.f, 1.f });
 		Admin.AddComponent<RenderComponent>(BallEntity);
 		Admin.AddComponent<VelocityComponent>(BallEntity, BallData.Velocity);
 		auto& BallCollisionComponent = Admin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
 		BallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
+
+		TryAddTexture(Context, BallEntity, BallData.TextureData);
 	}
 }
 
@@ -146,7 +148,7 @@ void RunControllerSystem::Initialize(const SystemContext& Context) const
 	AddBackgroundRenderEntity(Context);
 
 	// TODO: change, for now simulte starting game from here
-	AdvanceToNextStage(Context, 0);
+	HandleStageCleared(Context);
 }
 
 void RunControllerSystem::OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const
@@ -179,7 +181,11 @@ void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
 	Context.EntityAdmin.GetGroup<RunStateComponent>().ForEach([this, &Context](const Entity& RunStateEntity, RunStateComponent& RunStateComponent)
 	{
 		RunStateComponent.CurrentStage++;
-		if (!AdvanceToNextStage(Context, RunStateComponent.CurrentStage))
+		if (AdvanceToNextStage(Context, RunStateComponent.CurrentStage))
+		{
+			Context.EventBus.Notify(Context, StageBeginEvent{ RunStateComponent.CurrentStage });
+		}
+		else
 		{
 			HandleRunVictory(Context);
 		}
