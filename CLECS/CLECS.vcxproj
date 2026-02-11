@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="EntityAdmin.cpp" />
+    <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="GameRunner.cpp" />
     <ClCompile Include="InputState.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="CoreTypes.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityAdmin.h" />
+    <ClInclude Include="FontManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameRunner.h" />
     <ClInclude Include="InputState.h" />
