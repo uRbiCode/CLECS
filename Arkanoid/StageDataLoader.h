@@ -3,13 +3,14 @@
 #include "StageDataComponent.h"
 #include <string>
 #include <vector>
+#include <optional>
 
 using Json = nlohmann::json;
 
 class StageDataLoader
 {
 public:
-	static std::vector<StageData> LoadFromFile(const std::string& FilePath);
+	static std::optional<StageData> LoadStageByNumber(int StageNumber, const std::string& BaseDirectory = "../Assets/Stages/");
 
 private:
 	static StageData ParseStageData(const Json& Json);

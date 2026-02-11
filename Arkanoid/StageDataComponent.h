@@ -64,5 +64,5 @@ struct StageData
 
 struct StageDataComponent
 {
-    std::vector<StageData> Stages;
+    StageData CurrentStageData;
 };

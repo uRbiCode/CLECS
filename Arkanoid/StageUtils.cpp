@@ -6,37 +6,17 @@
 #include <optional>
 #include "HealthComponent.h"
 #include "CollisionComponent.h"
+#include <cassert>
 
 StageData StageUtils::GetCurrentStageData(const SystemContext& Context)
 {
-	StageData Data;
+	const auto StageDataGroup = Context.EntityAdmin.GetGroup<StageDataComponent>();
+	assert(StageDataGroup.Size() == 1 && "Expected exactly one StageDataComponent in the world");
 
-	std::optional<int> CurrentStageId = std::nullopt;
+	if (StageDataGroup.Empty())
+		return {};
 
-	auto& Admin = Context.EntityAdmin;
-	Admin.GetGroup<RunStateComponent>().ForEach([&Context, &CurrentStageId](const Entity& StageEntity, const RunStateComponent& RunState)
-	{
-		CurrentStageId = RunState.CurrentStage;
-	});
-
-	if (!CurrentStageId.has_value())
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "StageUtils::GetCurrentStageData -> RunStateComponent is missing");
-		return Data;
-	}
-
-	Admin.GetGroup<StageDataComponent>().ForEach([&Context, &Data, StageId = CurrentStageId.value()](const Entity& StageEntity, const StageDataComponent& StageDataComponent)
-	{
-		if (StageId >= static_cast<int>(StageDataComponent.Stages.size()))
-		{
-			SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "StageUtils::GetCurrentStageData -> Invalid stage index %d", StageId);
-			return;
-		}
-
-		Data = StageDataComponent.Stages[StageId];
-	});
-
-	return Data;
+	return Context.EntityAdmin.GetComponent<StageDataComponent>(StageDataGroup[0]).CurrentStageData;
 }
 
 int StageUtils::GetCurrentPlayerHealth(const SystemContext& Context)

@@ -110,8 +110,8 @@ void CollisionKinematicResolverSystem::Initialize(const SystemContext& Context) 
 void CollisionKinematicResolverSystem::OnCollision(const SystemContext& Context, const CollisionEvent& Event) const
 {
 	auto& Admin = Context.EntityAdmin;
-	assert(Admin.HasComponent<CollisionComponent>(Event.EntityA) && "EntityA must have a CollisionComponent");
-	assert(Admin.HasComponent<CollisionComponent>(Event.EntityB) && "EntityB must have a CollisionComponent");
+	if (!Admin.HasComponent<CollisionComponent>(Event.EntityA) || !Admin.HasComponent<CollisionComponent>(Event.EntityB))
+		return;
 
 	const auto& CollisionA = Admin.GetComponent<CollisionComponent>(Event.EntityA);
 	const auto& CollisionB = Admin.GetComponent<CollisionComponent>(Event.EntityB);

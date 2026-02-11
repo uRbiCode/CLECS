@@ -34,6 +34,7 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 	}
 
 	InitializeTextureManager();
+	InitializeAudioManager();
 
 	EntityAdminPtr = std::move(Data.EntityAdminPtr);
 	Systems = std::move(Data.Systems);
@@ -88,7 +89,11 @@ void World::Shutdown()
 	if (TextureManagerPtr != nullptr)
 	{
 		TextureManagerPtr->UnloadAll();
-		TextureManagerPtr = nullptr;
+	}
+
+	if (AudioManagerPtr != nullptr)
+	{
+		AudioManagerPtr->Shutdown();
 	}
 }
 
@@ -129,6 +134,12 @@ void World::InitializeTextureManager()
 	TextureManagerPtr->Initialize(*Renderer);
 }
 
+void World::InitializeAudioManager()
+{
+	AudioManagerPtr = std::make_unique<AudioManager>();
+	AudioManagerPtr->Initialize();
+}
+
 void World::SendInputEvents(const SystemContext& Context)
 {
 	const auto& MousePosition = Input.GetMousePosition();
@@ -140,5 +151,5 @@ void World::SendInputEvents(const SystemContext& Context)
 
 SystemContext World::MakeSystemContext()
 {
-	return SystemContext{ *EntityAdminPtr, *Window, *Renderer, Input, EventBus, *TextureManagerPtr };
+	return SystemContext{ *EntityAdminPtr, *Window, *Renderer, Input, EventBus, *TextureManagerPtr, *AudioManagerPtr };
 }

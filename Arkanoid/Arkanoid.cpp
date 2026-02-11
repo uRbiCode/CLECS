@@ -13,6 +13,7 @@
 #include "GameStateSystem.h"
 #include "GameStateComponent.h"
 #include "MainMenuControllerSystem.h"
+#include "AudioSystem.h"
 
 namespace
 {
@@ -24,6 +25,7 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 {
 	AddGameStateComponent(Data.AccessEntityAdmin());
 
+	Data.AddSystem<AudioSystem>();
 	Data.AddSystem<PlayerInputSystem>();
 	Data.AddSystem<HealthIndicatorSystem>();
 	Data.AddSystem<CollisionDetectionSystem>();
