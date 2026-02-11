@@ -18,6 +18,7 @@
 #include "RunControllerSystem.h"
 #include "StageDataComponent.h"
 #include <TextureComponent.h>
+#include "HealthIndicatorSystem.h"
 
 namespace
 {
@@ -91,6 +92,7 @@ namespace
 bool Arkanoid::Initialize(WorldInitializationData& Data)
 {
 	Data.AddSystem<PlayerInputSystem>();
+	Data.AddSystem<HealthIndicatorSystem>();
 	Data.AddSystem<CollisionDetectionSystem>();
 	Data.AddSystem<CollisionKinematicResolverSystem>();
 	Data.AddSystem<HealthSystem>();

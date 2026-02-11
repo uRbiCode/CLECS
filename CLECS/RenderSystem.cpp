@@ -148,7 +148,8 @@ namespace
 			return;
 		}
 		
-		std::optional<SDL_FRect> RenderRect;
+		std::optional<SDL_FRect> RenderRect = std::nullopt;
+
 		if (Admin.HasComponent<CircleComponent>(Entity))
 		{
 			const auto& CircleComp = Admin.GetComponent<CircleComponent>(Entity);

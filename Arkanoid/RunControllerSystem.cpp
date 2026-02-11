@@ -14,6 +14,7 @@
 #include "PlayerControllerComponent.h"
 #include "HealthChangedEvent.h"
 #include "TextureManager.h"
+#include "StageBeginEvent.h"
 
 namespace
 {
@@ -147,7 +148,7 @@ void RunControllerSystem::Initialize(const SystemContext& Context) const
 	AddBackgroundRenderEntity(Context);
 
 	// TODO: change, for now simulte starting game from here
-	AdvanceToNextStage(Context, 0);
+	HandleStageCleared(Context);
 }
 
 void RunControllerSystem::OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const
@@ -180,7 +181,11 @@ void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
 	Context.EntityAdmin.GetGroup<RunStateComponent>().ForEach([this, &Context](const Entity& RunStateEntity, RunStateComponent& RunStateComponent)
 	{
 		RunStateComponent.CurrentStage++;
-		if (!AdvanceToNextStage(Context, RunStateComponent.CurrentStage))
+		if (AdvanceToNextStage(Context, RunStateComponent.CurrentStage))
+		{
+			Context.EventBus.Notify(Context, StageBeginEvent{ RunStateComponent.CurrentStage });
+		}
+		else
 		{
 			HandleRunVictory(Context);
 		}

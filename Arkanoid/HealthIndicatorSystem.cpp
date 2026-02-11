@@ -1,0 +1,131 @@
+#include "HealthIndicatorSystem.h"
+#include "SystemContext.h"
+#include "HealthChangedEvent.h"
+#include "EventBus.h"
+#include "TextureComponent.h"
+#include "TextureManager.h"
+#include "EntityAdmin.h"
+#include "TransformComponent.h"
+#include "ShapeComponents.h"
+#include "PlayerControllerComponent.h"
+#include "RenderComponent.h"
+#include "StageBeginEvent.h"
+#include "StageUtils.h"
+#include "CollisionComponent.h"
+
+namespace
+{
+	constexpr const char* HealthIndicatorTexturePath = "../Assets/Textures/Hearts.png";
+	constexpr const SDL_FRect HealthIndicatorTextureRect = {115.f, 3.f, 11.f, 10.f};
+	constexpr float HealthIndicatorSpacing = 20.f;
+
+	bool IsHealthIndicatorTextureComponent(TextureManager& TextureManager, const TextureComponent& TextureComponent)
+	{
+		return TextureComponent.SourceRect.x == HealthIndicatorTextureRect.x 
+			&& TextureComponent.SourceRect.y == HealthIndicatorTextureRect.y
+			&& TextureComponent.SourceRect.w == HealthIndicatorTextureRect.w 
+			&& TextureComponent.SourceRect.h == HealthIndicatorTextureRect.h
+			&& TextureComponent.Texture == TextureManager.GetTexture(HealthIndicatorTexturePath);
+	}
+
+	std::vector<std::pair<Entity, float>> GetHealthIndicatorEntitiesSorted(const SystemContext& Context)
+	{
+		std::vector<std::pair<Entity, float>> HealthIndicatorEntities;
+		Context.EntityAdmin.GetGroup<TextureComponent, TransformComponent>().ForEach([&HealthIndicatorEntities, &Context](const Entity& TargetEntity, const TextureComponent& TextureComponent, const TransformComponent& TransformComponent)
+		{
+			if (IsHealthIndicatorTextureComponent(Context.TextureManager, TextureComponent))
+			{
+				HealthIndicatorEntities.push_back({ TargetEntity, TransformComponent.Position.X });
+			}
+		});
+
+		std::sort(HealthIndicatorEntities.begin(), HealthIndicatorEntities.end(), [](const auto& A, const auto& B)
+		{
+			return A.second < B.second;
+		});
+
+		return HealthIndicatorEntities;
+	}
+}
+
+void HealthIndicatorSystem::Initialize(const SystemContext& Context) const
+{
+	Context.EventBus.Subscribe<HealthChangedEvent>(this, [this](const SystemContext& Context, const HealthChangedEvent& Event)
+	{
+		OnHealthChanged(Context, Event);
+	});
+
+	Context.EventBus.Subscribe<StageBeginEvent>(this, [this](const SystemContext& Context, const StageBeginEvent& Event)
+	{
+		OnStageBegin(Context, Event);
+	});
+}
+
+void HealthIndicatorSystem::OnStageBegin(const SystemContext& Context, const StageBeginEvent& Event) const
+{
+	const auto CurrentHealth = StageUtils::GetCurrentPlayerHealth(Context);
+	const auto ExistingHealthIndicators = GetHealthIndicatorEntitiesSorted(Context);
+
+	const auto Difference = static_cast<int>(ExistingHealthIndicators.size()) - CurrentHealth;
+	if (Difference < 0)
+	{
+		AddHealthIndicators(Context, -Difference);
+	}
+	else if (Difference > 0)
+	{
+		RemoveHealthIndicators(Context, Difference);
+	}
+}
+
+void HealthIndicatorSystem::AddHealthIndicators(const SystemContext& Context, int Count) const
+{
+	auto HealthIndicatorEntities = GetHealthIndicatorEntitiesSorted(Context);
+
+	const float MostRightPosition = HealthIndicatorEntities.empty() ? 0.f : HealthIndicatorEntities.back().second;
+	const float NewIndicatorPositionX = MostRightPosition + HealthIndicatorSpacing;
+
+	int WindowWidth, WindowHeight;
+	SDL_RendererLogicalPresentation LogicalPresentation = SDL_LOGICAL_PRESENTATION_LETTERBOX;
+	SDL_GetRenderLogicalPresentation(&Context.Renderer, &WindowWidth, &WindowHeight, &LogicalPresentation);
+
+	for (int i = 0; i < Count; ++i)
+	{
+		auto HealthIndicatorEntity = Context.EntityAdmin.CreateEntity();
+		Context.EntityAdmin.AddComponent<TransformComponent>(HealthIndicatorEntity, Vector2D<float>{ WindowWidth * 0.07f + NewIndicatorPositionX * i * 1.2f , WindowHeight * 0.95f });
+		Context.EntityAdmin.AddComponent<RenderComponent>(HealthIndicatorEntity, 1);
+		Context.EntityAdmin.AddComponent<TextureComponent>(HealthIndicatorEntity, TextureComponent{ Context.TextureManager.GetTexture(HealthIndicatorTexturePath), HealthIndicatorTextureRect });
+		Context.EntityAdmin.AddComponent<RectComponent>(HealthIndicatorEntity, SDL_FRect{ -HealthIndicatorSpacing * 0.5f, -HealthIndicatorSpacing * 0.5f, HealthIndicatorSpacing, HealthIndicatorSpacing });
+	}
+}
+
+void HealthIndicatorSystem::RemoveHealthIndicators(const SystemContext& Context, int Count) const
+{
+	auto HealthIndicatorEntities = GetHealthIndicatorEntitiesSorted(Context);
+
+	for (int i = 0; i < Count && !HealthIndicatorEntities.empty(); ++i)
+	{
+		Context.EntityAdmin.DestroyEntity(HealthIndicatorEntities.back().first);
+		HealthIndicatorEntities.pop_back();
+	}
+}
+
+void HealthIndicatorSystem::OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const
+{
+	if (Event.Delta == 0)
+		return;
+
+	auto& Admin = Context.EntityAdmin;
+	if (!Admin.HasComponent<CollisionComponent>(Event.TargetEntity))
+		return;
+
+	if (Admin.GetComponent<CollisionComponent>(Event.TargetEntity).Channel != CollisionChannel::Trigger)
+		return;
+
+	if (Event.Delta < 0)
+	{
+		RemoveHealthIndicators(Context, -Event.Delta);
+		return;
+	}
+
+	AddHealthIndicators(Context, Event.Delta);
+}
