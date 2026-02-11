@@ -16,6 +16,8 @@ private:
 
 	void AddRunStateComponent(const SystemContext& Context) const;
 	void AddStageDataComponent(const SystemContext& Context) const;
+	void RemoveRunStateComponent(const SystemContext& Context) const;
+	void RemoveStageDataComponent(const SystemContext& Context) const;
 
 	void OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const;
 
@@ -29,6 +31,7 @@ private:
 
 	//Returns whether advancment was succesful or was it the last stage already
 	bool AdvanceToNextStage(const SystemContext& Context, int CurrentStageId) const;
-	void CleanupCurrentStage(const SystemContext& Context) const;
+
 	void SpawnStageEntities(const SystemContext& Context, const StageData& StageData) const;
+	void CleanupCurrentStage(const SystemContext& Context) const;
 };

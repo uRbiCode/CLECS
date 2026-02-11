@@ -10,26 +10,49 @@
 #include "RenderConstants.h"
 #include "RenderComponent.h"
 #include "TextureComponent.h"
+#include "SDLUtils.h"
+#include "GameStateUtils.h"
 #include <cassert>
-#include <SDLUtils.h>
 
 void GameStateSystem::Initialize(const SystemContext& Context) const
 {
+	Context.EventBus.Subscribe<RequestGameStateChangeEvent>(this, [this](const SystemContext& Context, const RequestGameStateChangeEvent& Event)
+	{
+		ChangeGameState(Context, Event.NewState);
+	});
+
 	AddBackgroundRenderEntity(Context);
 	InitializeCurrentState(Context);
 }
 
 void GameStateSystem::InitializeCurrentState(const SystemContext& Context) const
 {
-	auto& Admin = Context.EntityAdmin;
-	auto GameStateGroup = Admin.GetGroup<GameStateComponent>();
-	assert(GameStateGroup.Size() == 1 && "Expected exactly one GameStateComponent in the world");
-
-	if (GameStateGroup.Empty())
+	const auto CurrentState = GameStateUtils::GetCurrentGameState(Context);
+	if (CurrentState == GameState::Invalid)
 		return;
 
-	const auto& GameState = GameStateGroup.Get<GameStateComponent>(GameStateGroup[0]).CurrentState;
-	Context.EventBus.Notify<GameStateBeginEvent>(Context, GameStateBeginEvent{ GameState });
+	Context.EventBus.Notify(Context, GameStateBeginEvent{ CurrentState });
+}
+
+void GameStateSystem::EndCurrentState(const SystemContext& Context) const
+{
+	const auto CurrentState = GameStateUtils::GetCurrentGameState(Context);
+	if (CurrentState == GameState::Invalid)
+		return;
+
+	Context.EventBus.Notify(Context, GameStateEndEvent{ CurrentState });
+}
+
+void GameStateSystem::ChangeGameState(const SystemContext& Context, GameState NewState) const
+{
+	EndCurrentState(Context);
+
+	auto& Admin = Context.EntityAdmin;
+	Admin.GetGroup<GameStateComponent>().ForEach([&](const Entity& Entity, GameStateComponent& GameStateComp) {
+		GameStateComp.CurrentState = NewState;
+	});
+
+	InitializeCurrentState(Context);
 }
 
 void GameStateSystem::AddBackgroundRenderEntity(const SystemContext& Context) const

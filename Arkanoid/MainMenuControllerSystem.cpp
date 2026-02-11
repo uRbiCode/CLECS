@@ -10,6 +10,7 @@
 #include "RenderComponent.h"
 #include "RenderConstants.h"
 #include "ClickableUsedEvent.h"
+#include "GameStateUtils.h"
 
 void MainMenuControllerSystem::Initialize(const SystemContext& Context) const
 {
@@ -19,6 +20,14 @@ void MainMenuControllerSystem::Initialize(const SystemContext& Context) const
 			return;
 
 		InitializeMainMenu(Context);
+	});
+
+	Context.EventBus.Subscribe<GameStateEndEvent>(this, [this](const SystemContext& Context, const GameStateEndEvent& Event)
+	{
+		if (Event.EndingState != GameState::MainMenu)
+			return;
+
+		CleanupMainMenu(Context);
 	});
 
 	Context.EventBus.Subscribe<ClickableUsedEvent>(this, [this](const SystemContext& Context, const ClickableUsedEvent& Event)
@@ -49,17 +58,24 @@ void MainMenuControllerSystem::InitializeMainMenu(const SystemContext& Context) 
 	Admin.AddComponent<RenderComponent>(QuitButtonEntity, RenderConstants::UILayer);
 }
 
+void MainMenuControllerSystem::CleanupMainMenu(const SystemContext& Context) const
+{
+	Context.EntityAdmin.GetGroup<ClickableComponent>().ForEach([&](const Entity& Entity, const ClickableComponent& ClickableComp) 
+	{
+		Context.EntityAdmin.DestroyEntity(Entity);
+	});
+}
+
 void MainMenuControllerSystem::OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const
 {
 	switch (Event.UsedClickableTag)
 	{
 		case ClickableTag::PlayButton:
-			// Request transfer to Run
+			GameStateUtils::RequestStateChange(Context, GameState::Run);
 			break;
 		case ClickableTag::QuitButton:
 			QuitGame();
 			break;
-
 		case ClickableTag::Invalid:
 		default:
 			break;

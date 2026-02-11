@@ -3,10 +3,15 @@
 
 struct GameStateBeginEvent
 {
-	GameState BeginningState = GameState::MainMenu;
+	GameState BeginningState = GameState::Invalid;
 };
 
-struct GameStateEndedEvent
+struct GameStateEndEvent
 {
-	GameState EndingState = GameState::MainMenu;
+	GameState EndingState = GameState::Invalid;
+};
+
+struct RequestGameStateChangeEvent
+{
+	GameState NewState = GameState::Invalid;
 };

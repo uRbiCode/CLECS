@@ -17,6 +17,7 @@
 #include "StageBeginEvent.h"
 #include "RenderConstants.h"
 #include "GameStateEvents.h"
+#include "GameStateUtils.h"
 #include <cassert>
 
 namespace
@@ -144,6 +145,9 @@ void RunControllerSystem::BeginRun(const SystemContext& Context) const
 
 void RunControllerSystem::CleanupRun(const SystemContext& Context) const
 {
+	CleanupCurrentStage(Context);
+	RemoveRunStateComponent(Context);
+	RemoveStageDataComponent(Context);
 }
 
 void RunControllerSystem::AddRunStateComponent(const SystemContext& Context) const
@@ -219,9 +223,25 @@ void RunControllerSystem::AddStageDataComponent(const SystemContext& Context) co
 	}
 }
 
+void RunControllerSystem::RemoveRunStateComponent(const SystemContext& Context) const
+{
+	Context.EntityAdmin.GetGroup<RunStateComponent>().ForEach([&Context](const Entity& Entity, const RunStateComponent& RunState)
+	{
+		Context.EntityAdmin.DestroyEntity(Entity);
+	});
+}
+
+void RunControllerSystem::RemoveStageDataComponent(const SystemContext& Context) const
+{
+	Context.EntityAdmin.GetGroup<StageDataComponent>().ForEach([&Context](const Entity& Entity, const StageDataComponent& StageData)
+	{
+		Context.EntityAdmin.DestroyEntity(Entity);
+	});
+}
+
 void RunControllerSystem::OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const
 {
-	if (Event.Delta > 0)
+	if (Event.Delta >= 0)
 		return;
 
 	if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Event.TargetEntity))
@@ -265,12 +285,16 @@ void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
 
 void RunControllerSystem::HandleRunVictory(const SystemContext& Context) const
 {
-	// TODO: implement
+	CleanupRun(Context);
+	// TODO: Transition to victory state? For now mainmenu
+	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
 }
 
 void RunControllerSystem::HandleRunDefeat(const SystemContext& Context) const
 {
-	// TODO: implement
+	CleanupRun(Context);
+	// TODO: Transition to defeat state? For now mainmenu
+	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
 }
 
 bool RunControllerSystem::AreAllBricksDestroyed(const SystemContext& Context) const
@@ -338,15 +362,8 @@ void RunControllerSystem::SpawnStageEntities(const SystemContext& Context, const
 
 void RunControllerSystem::CleanupCurrentStage(const SystemContext& Context) const
 {
-	std::vector<Entity> EntitiesToDestroy;
-	auto& Admin = Context.EntityAdmin;
-	Admin.GetGroup<CollisionComponent>().ForEach([&EntitiesToDestroy](const Entity& TargetEntity, const CollisionComponent& Collision)
+	Context.EntityAdmin.GetGroup<CollisionComponent>().ForEach([&Context](const Entity& Entity, const CollisionComponent& Collision)
 	{
-		EntitiesToDestroy.push_back(TargetEntity);
+		Context.EntityAdmin.DestroyEntity(Entity);
 	});
-
-	for (const auto& TargetEntity : EntitiesToDestroy)
-	{
-		Admin.DestroyEntity(TargetEntity);
-	}
 }

@@ -14,6 +14,7 @@
 #include "CollisionComponent.h"
 #include "RenderConstants.h"
 #include "SDLUtils.h"
+#include "GameStateEvents.h"
 
 namespace
 {
@@ -67,6 +68,14 @@ void HealthIndicatorSystem::Initialize(const SystemContext& Context) const
 	{
 		OnStageBegin(Context, Event);
 	});
+
+	Context.EventBus.Subscribe<GameStateEndEvent>(this, [this](const SystemContext& Context, const GameStateEndEvent& Event)
+	{
+		if (Event.EndingState == GameState::Run)
+		{
+			CleanupHealthIndicators(Context);
+		}
+	});
 }
 
 void HealthIndicatorSystem::OnStageBegin(const SystemContext& Context, const StageBeginEvent& Event) const
@@ -113,6 +122,18 @@ void HealthIndicatorSystem::RemoveHealthIndicators(const SystemContext& Context,
 		Context.EntityAdmin.DestroyEntity(HealthIndicatorEntities.back().first);
 		HealthIndicatorEntities.pop_back();
 	}
+}
+
+void HealthIndicatorSystem::CleanupHealthIndicators(const SystemContext& Context) const
+{
+	const auto HealthIndicatorTexture = GetHealthIndicatorTexture(Context.TextureManager);
+	Context.EntityAdmin.GetGroup<TextureComponent, TransformComponent>().ForEach([&HealthIndicatorTexture, &Context](const Entity& TargetEntity, const TextureComponent& TextureComponent, const TransformComponent& TransformComponent)
+	{
+		if (IsHealthIndicatorTextureComponent(Context.TextureManager, TextureComponent, HealthIndicatorTexture))
+		{
+			Context.EntityAdmin.DestroyEntity(TargetEntity);
+		}
+	});
 }
 
 void HealthIndicatorSystem::OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const

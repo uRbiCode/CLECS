@@ -154,6 +154,7 @@
     <ClCompile Include="CollisionKinematicResolverSystem.cpp" />
     <ClCompile Include="CurrentStageSystem.cpp" />
     <ClCompile Include="GameStateSystem.cpp" />
+    <ClCompile Include="GameStateUtils.cpp" />
     <ClCompile Include="HealthIndicatorSystem.cpp" />
     <ClCompile Include="MainMenuControllerSystem.cpp" />
     <ClCompile Include="RunControllerSystem.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="GameStateComponent.h" />
     <ClInclude Include="GameStateEvents.h" />
     <ClInclude Include="GameStateSystem.h" />
+    <ClInclude Include="GameStateUtils.h" />
     <ClInclude Include="HealthIndicatorSystem.h" />
     <ClInclude Include="MainMenuControllerSystem.h" />
     <ClInclude Include="RunControllerSystem.h" />

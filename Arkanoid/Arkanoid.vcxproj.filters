@@ -91,6 +91,9 @@
     <ClCompile Include="MainMenuControllerSystem.cpp">
       <Filter>Source\Systems\MainMenuControllerSystem</Filter>
     </ClCompile>
+    <ClCompile Include="GameStateUtils.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arkanoid.h">
@@ -167,6 +170,9 @@
     </ClInclude>
     <ClInclude Include="ClickableUsedEvent.h">
       <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateUtils.h">
+      <Filter>Source\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

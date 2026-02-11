@@ -86,5 +86,5 @@ void PlayerInputSystem::OnMouseClick(const SystemContext& Context, const MouseCl
 		return;
 	}
 
-	Context.EventBus.Notify<ClickableUsedEvent>(Context, ClickableUsedEvent{ ClickedTag.value() });
+	Context.EventBus.Notify(Context, ClickableUsedEvent{ ClickedTag.value() });
 }
