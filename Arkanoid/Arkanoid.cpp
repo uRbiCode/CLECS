@@ -25,6 +25,7 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 {
 	AddGameStateComponent(Data.AccessEntityAdmin());
 
+	Data.AddSystem<AudioSystem>();
 	Data.AddSystem<PlayerInputSystem>();
 	Data.AddSystem<HealthIndicatorSystem>();
 	Data.AddSystem<CollisionDetectionSystem>();
@@ -35,7 +36,6 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	Data.AddSystem<MainMenuControllerSystem>();
 	Data.AddSystem<RunControllerSystem>();
 	Data.AddSystem<GameStateSystem>();
-	Data.AddSystem<AudioSystem>();
 	Data.AddSystem<RenderSystem>();
 
 	return true;

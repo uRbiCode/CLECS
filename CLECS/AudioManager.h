@@ -11,8 +11,11 @@ public:
     void Initialize();
     void Shutdown();
     void LoadSound(const std::string& Name, const std::string& FilePath);
-    void PlaySound(const std::string& Name, float Volume) const;
+    void PlaySound(const std::string& Name, float Volume = 1.0f) const;
     void SetMasterVolume(float Volume);
+
+    void PlayMusic(const std::string& Name, float Volume = 1.0f);
+    void StopMusic();
 
 private:
     void LoadAllSoundsFromAssetsDirectory();
@@ -27,4 +30,9 @@ private:
     SDL_AudioDeviceID AudioDeviceId = 0;
     float MasterVolume = 1.0f;
     std::unordered_map<std::string, SoundData> SoundCache;
+
+    SDL_AudioStream* MusicStream = nullptr;
+    std::string CurrentMusicName;
+
+    static void SDLCALL MusicCallback(void* Userdata, SDL_AudioStream* Stream, int AdditionalAmount, int TotalAmount);
 };

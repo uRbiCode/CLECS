@@ -30,6 +30,8 @@ void AudioManager::Initialize()
 
 void AudioManager::Shutdown()
 {
+	StopMusic();
+
     for (auto& [Name, Sound] : SoundCache)
     {
         if (Sound.Buffer != nullptr)
@@ -44,6 +46,12 @@ void AudioManager::Shutdown()
         SDL_CloseAudioDevice(AudioDeviceId);
         AudioDeviceId = 0;
     }
+
+    if (MusicStream != nullptr)
+    {
+        SDL_DestroyAudioStream(MusicStream);
+        MusicStream = nullptr;
+	}
 }
 
 void AudioManager::LoadSound(const std::string& Name, const std::string& FilePath)
@@ -129,6 +137,88 @@ void AudioManager::SetMasterVolume(float Volume)
     MasterVolume = std::clamp(Volume, 0.0f, 1.0f);
 }
 
+void AudioManager::PlayMusic(const std::string& Name, float Volume)
+{
+    StopMusic();
+
+    if (AudioDeviceId == 0)
+    {
+        SDL_LogWarn(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Audio device not initialized");
+        return;
+    }
+
+    const auto It = SoundCache.find(Name);
+    if (It == SoundCache.end())
+    {
+        SDL_LogWarn(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Music '%s' not found", Name.c_str());
+        return;
+    }
+
+    const SoundData& SoundData = It->second;
+
+    SDL_AudioSpec DeviceSpec;
+    if (!SDL_GetAudioDeviceFormat(AudioDeviceId, &DeviceSpec, nullptr))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Failed to get audio device format: %s", SDL_GetError());
+        return;
+    }
+
+    MusicStream = SDL_CreateAudioStream(&SoundData.Spec, &DeviceSpec);
+    if (MusicStream == nullptr)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Failed to create music stream: %s", SDL_GetError());
+        return;
+    }
+
+    if (!SDL_SetAudioStreamGetCallback(MusicStream, MusicCallback, this))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Failed to set music callback: %s", SDL_GetError());
+        SDL_DestroyAudioStream(MusicStream);
+        MusicStream = nullptr;
+        return;
+    }
+
+    SDL_SetAudioStreamGain(MusicStream, Volume * MasterVolume);
+
+    if (!SDL_PutAudioStreamData(MusicStream, SoundData.Buffer, SoundData.Length))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Failed to put initial music data: %s", SDL_GetError());
+        SDL_DestroyAudioStream(MusicStream);
+        MusicStream = nullptr;
+        return;
+    }
+
+    if (!SDL_FlushAudioStream(MusicStream))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Failed to flush music stream: %s", SDL_GetError());
+        SDL_DestroyAudioStream(MusicStream);
+        MusicStream = nullptr;
+        return;
+    }
+
+    if (!SDL_BindAudioStream(AudioDeviceId, MusicStream))
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Failed to bind music stream: %s", SDL_GetError());
+        SDL_DestroyAudioStream(MusicStream);
+        MusicStream = nullptr;
+        return;
+    }
+
+    CurrentMusicName = Name;
+    SDL_LogInfo(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Started playing music '%s'", Name.c_str());
+}
+
+void AudioManager::StopMusic()
+{
+    if (MusicStream == nullptr)
+        return;
+
+	SDL_UnbindAudioStream(MusicStream);
+	SDL_DestroyAudioStream(MusicStream);
+	MusicStream = nullptr;
+	CurrentMusicName.clear();
+}
+
 void AudioManager::LoadAllSoundsFromAssetsDirectory()
 {
     if (!std::filesystem::exists(SoundsDirectory))
@@ -151,5 +241,21 @@ void AudioManager::LoadAllSoundsFromAssetsDirectory()
         const auto FilePath = Entry.path().string();
         const auto SoundName = Entry.path().stem().string();
         LoadSound(SoundName, FilePath);
+    }
+}
+
+void SDLCALL AudioManager::MusicCallback(void* Userdata, SDL_AudioStream* Stream, int AdditionalAmount, int TotalAmount)
+{
+    auto* Manager = static_cast<AudioManager*>(Userdata);
+
+    const auto It = Manager->SoundCache.find(Manager->CurrentMusicName);
+    if (It == Manager->SoundCache.end())
+        return;
+
+    const SoundData& Data = It->second;
+
+    if (SDL_GetAudioStreamQueued(Stream) < (Data.Length / 2))
+    {
+        SDL_PutAudioStreamData(Stream, Data.Buffer, Data.Length);
     }
 }
