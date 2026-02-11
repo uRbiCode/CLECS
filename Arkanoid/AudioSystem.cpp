@@ -44,16 +44,16 @@ void AudioSystem::OnCollision(const SystemContext& Context, const CollisionEvent
 	if (!ShouldPlaySound)
 		return;
 
-	Context.AudioManager.PlaySound(BallCollisionSoundName, 0.5f);
+	Context.Managers.AudioManager.PlaySound(BallCollisionSoundName, 0.5f);
 }
 
 void AudioSystem::OnGameStateBegin(const SystemContext& Context, GameState State) const
 {
 	if (State != GameState::MainMenu)
 	{
-		Context.AudioManager.StopMusic();
+		Context.Managers.AudioManager.StopMusic();
 		return;
 	}
 
-	Context.AudioManager.PlayMusic(MainMenuLoopSoundName, 0.5f);
+	Context.Managers.AudioManager.PlayMusic(MainMenuLoopSoundName, 0.5f);
 }

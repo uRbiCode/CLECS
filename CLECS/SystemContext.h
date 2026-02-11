@@ -1,4 +1,5 @@
 #pragma once
+#include "FontManager.h"
 
 class EntityAdmin;
 class InputState;
@@ -8,6 +9,13 @@ struct SDL_Renderer;
 class TextureManager;
 class AudioManager;
 
+struct Managers
+{
+	TextureManager& TextureManager;
+	AudioManager& AudioManager;
+	FontManager& FontManager;
+};
+
 struct SystemContext
 {
 	EntityAdmin& EntityAdmin;
@@ -15,6 +23,5 @@ struct SystemContext
 	SDL_Renderer& Renderer;
 	const InputState& Input;
 	EventBus& EventBus;
-	TextureManager& TextureManager;
-	AudioManager& AudioManager;
+	Managers Managers;
 };

@@ -50,6 +50,9 @@
     <Filter Include="Source\Core\World\AudioManager">
       <UniqueIdentifier>{5c648224-606f-43b0-a22e-43789ff36ae5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\World\FontManager">
+      <UniqueIdentifier>{347aef15-f542-4f23-809f-db8635adf5bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -81,6 +84,9 @@
     </ClCompile>
     <ClCompile Include="AudioManager.cpp">
       <Filter>Source\Core\World\AudioManager</Filter>
+    </ClCompile>
+    <ClCompile Include="FontManager.cpp">
+      <Filter>Source\Core\World\FontManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +161,12 @@
     </ClInclude>
     <ClInclude Include="AudioManager.h">
       <Filter>Source\Core\World\AudioManager</Filter>
+    </ClInclude>
+    <ClInclude Include="FontManager.h">
+      <Filter>Source\Core\World\FontManager</Filter>
+    </ClInclude>
+    <ClInclude Include="TextComponent.h">
+      <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
