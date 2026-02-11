@@ -44,6 +44,9 @@
     <Filter Include="Source\Core\World\TextureManager">
       <UniqueIdentifier>{4b3d7598-da4d-419a-a9c3-3b35b9f49414}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\World\EventBus\Events">
+      <UniqueIdentifier>{e5579a31-ac92-4828-a7d7-a878202d9a42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -134,6 +137,9 @@
     </ClInclude>
     <ClInclude Include="RenderConstants.h">
       <Filter>Source\Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseClickEvent.h">
+      <Filter>Source\Core\World\EventBus\Events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

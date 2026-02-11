@@ -170,6 +170,7 @@
     <ClInclude Include="GameRunner.h" />
     <ClInclude Include="InputState.h" />
     <ClInclude Include="MathTypes.h" />
+    <ClInclude Include="MouseClickEvent.h" />
     <ClInclude Include="RenderConstants.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="RendererInitializationData.h" />
