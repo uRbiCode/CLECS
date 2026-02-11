@@ -20,7 +20,7 @@ void TextureManager::Initialize(SDL_Renderer& InRenderer)
 
 SDL_Texture* TextureManager::LoadTexture(const std::string& FilePath)
 {
-    auto It = TextureCache.find(FilePath);
+    const auto It = TextureCache.find(FilePath);
     if (It != TextureCache.end())
         return It->second;
 
@@ -30,7 +30,7 @@ SDL_Texture* TextureManager::LoadTexture(const std::string& FilePath)
         return nullptr;
     }
 
-    auto NewTexture = IMG_LoadTexture(Renderer, FilePath.c_str());
+    const auto NewTexture = IMG_LoadTexture(Renderer, FilePath.c_str());
     if (!NewTexture)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexture -> Failed to load texture: %s. SDL Error: %s", FilePath.c_str(), SDL_GetError());

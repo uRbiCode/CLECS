@@ -28,7 +28,7 @@ namespace
 		if (Data.Path.empty())
 			return;
 
-		auto Texture = Context.TextureManager.GetTexture(Data.Path);
+		auto Texture = Context.Managers.TextureManager.GetTexture(Data.Path);
 		if (Texture == nullptr)
 			return;
 
@@ -41,7 +41,7 @@ namespace
 	void AddWall(const SystemContext& Context, const WallData& WallData)
 	{
 		auto& Admin = Context.EntityAdmin;
-		auto& TexManager = Context.TextureManager;
+		auto& TexManager = Context.Managers.TextureManager;
 
 		auto Wall = Admin.CreateEntity();
 		Admin.AddComponent<TransformComponent>(Wall, WallData.Position);
@@ -71,7 +71,7 @@ namespace
 	void AddBrick(const SystemContext& Context, const BrickData& BrickData)
 	{
 		auto& Admin = Context.EntityAdmin;
-		auto& TexManager = Context.TextureManager;
+		auto& TexManager = Context.Managers.TextureManager;
 
 		auto BrickEntity = Admin.CreateEntity();
 		Admin.AddComponent<TransformComponent>(BrickEntity, BrickData.PositionSize.Position);
@@ -283,7 +283,7 @@ bool RunControllerSystem::AdvanceToNextStage(const SystemContext& Context, int C
 void RunControllerSystem::SpawnStageEntities(const SystemContext& Context, const StageData& StageData) const
 {
 	auto& Admin = Context.EntityAdmin;
-	auto& TexManager = Context.TextureManager;
+	auto& TexManager = Context.Managers.TextureManager;
 	
 	for (const auto& WallData : StageData.Walls)
 	{

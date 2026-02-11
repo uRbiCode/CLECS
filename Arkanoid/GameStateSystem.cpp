@@ -71,7 +71,7 @@ void GameStateSystem::AddBackgroundRenderEntity(const SystemContext& Context) co
 	});
 	Admin.AddComponent<RenderComponent>(BackgroundEntity, RenderConstants::BackgroundLayer);
 	
-	auto Texture = Context.TextureManager.LoadTexture("../Assets/Textures/Background_Tiles.png");
+	const auto Texture = Context.Managers.TextureManager.LoadTexture("../Assets/Textures/Background_Tiles.png");
 	if (Texture == nullptr)
 		return;
 

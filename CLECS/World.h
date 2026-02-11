@@ -8,6 +8,7 @@
 #include "AudioManager.h"
 #include <vector>
 #include <memory>
+#include "FontManager.h"
 
 class WorldInitializationData;
 struct SDL_Window;
@@ -37,6 +38,7 @@ private:
 	bool CreateRenderer();
 	void InitializeTextureManager();
 	void InitializeAudioManager();
+	void InitializeFontManager();
 	void SendInputEvents(const SystemContext& Context);
 
 	SystemContext MakeSystemContext();
@@ -47,6 +49,7 @@ private:
 	EventBus EventBus;
 	std::unique_ptr<TextureManager> TextureManagerPtr;
 	std::unique_ptr<AudioManager> AudioManagerPtr;
+	std::unique_ptr<FontManager> FontManagerPtr;
 	SDL_Window* Window = nullptr;
 	SDL_Renderer* Renderer = nullptr;
 };

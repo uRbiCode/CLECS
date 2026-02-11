@@ -165,5 +165,8 @@
     <ClInclude Include="FontManager.h">
       <Filter>Source\Core\World\FontManager</Filter>
     </ClInclude>
+    <ClInclude Include="TextComponent.h">
+      <Filter>Source\Core\Component\Components</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

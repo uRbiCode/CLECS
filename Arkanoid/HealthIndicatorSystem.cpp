@@ -39,10 +39,10 @@ namespace
 	std::vector<std::pair<Entity, float>> GetHealthIndicatorEntitiesSorted(const SystemContext& Context)
 	{
 		std::vector<std::pair<Entity, float>> HealthIndicatorEntities;
-		const auto HealthIndicatorTexture = GetHealthIndicatorTexture(Context.TextureManager);
+		const auto HealthIndicatorTexture = GetHealthIndicatorTexture(Context.Managers.TextureManager);
 		Context.EntityAdmin.GetGroup<TextureComponent, TransformComponent>().ForEach([&HealthIndicatorEntities, &HealthIndicatorTexture, &Context](const Entity& Entity, const TextureComponent& TextureComponent, const TransformComponent& TransformComponent)
 		{
-			if (IsHealthIndicatorTextureComponent(Context.TextureManager, TextureComponent, HealthIndicatorTexture))
+			if (IsHealthIndicatorTextureComponent(Context.Managers.TextureManager, TextureComponent, HealthIndicatorTexture))
 			{
 				HealthIndicatorEntities.push_back({ Entity, TransformComponent.Position.X });
 			}
@@ -105,7 +105,7 @@ void HealthIndicatorSystem::AddHealthIndicators(const SystemContext& Context, in
 	{
 		auto HealthIndicatorEntity = Context.EntityAdmin.CreateEntity();
 		Context.EntityAdmin.AddComponent<RenderComponent>(HealthIndicatorEntity, RenderConstants::UILayer);
-		Context.EntityAdmin.AddComponent<TextureComponent>(HealthIndicatorEntity, TextureComponent{ Context.TextureManager.GetTexture(HealthIndicatorTexturePath), HealthIndicatorTextureRect });
+		Context.EntityAdmin.AddComponent<TextureComponent>(HealthIndicatorEntity, TextureComponent{ Context.Managers.TextureManager.GetTexture(HealthIndicatorTexturePath), HealthIndicatorTextureRect });
 		Context.EntityAdmin.AddComponent<RectComponent>(HealthIndicatorEntity, SDL_FRect{ -HealthIndicatorSpacing * 0.5f, -HealthIndicatorSpacing * 0.5f, HealthIndicatorSpacing, HealthIndicatorSpacing });
 		auto& Transform = Context.EntityAdmin.AddComponent<TransformComponent>(HealthIndicatorEntity, Vector2D<float>{ NewIndicatorPositionX, RendererLogicalPresentation.Y * 0.95f });
 		NewIndicatorPositionX += HealthIndicatorSpacing;
@@ -125,10 +125,10 @@ void HealthIndicatorSystem::RemoveHealthIndicators(const SystemContext& Context,
 
 void HealthIndicatorSystem::CleanupHealthIndicators(const SystemContext& Context) const
 {
-	const auto HealthIndicatorTexture = GetHealthIndicatorTexture(Context.TextureManager);
+	const auto HealthIndicatorTexture = GetHealthIndicatorTexture(Context.Managers.TextureManager);
 	Context.EntityAdmin.GetGroup<TextureComponent, TransformComponent>().ForEach([&HealthIndicatorTexture, &Context](const Entity& Entity, const TextureComponent& TextureComponent, const TransformComponent& TransformComponent)
 	{
-		if (IsHealthIndicatorTextureComponent(Context.TextureManager, TextureComponent, HealthIndicatorTexture))
+		if (IsHealthIndicatorTextureComponent(Context.Managers.TextureManager, TextureComponent, HealthIndicatorTexture))
 		{
 			Context.EntityAdmin.DestroyEntity(Entity);
 		}
