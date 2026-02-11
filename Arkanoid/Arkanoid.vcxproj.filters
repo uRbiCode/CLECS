@@ -50,6 +50,9 @@
     <Filter Include="Source\Systems\MainMenuControllerSystem">
       <UniqueIdentifier>{4126f583-8c30-4ee1-aa23-6ae19a087d39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\RunControllerSystem\StageDataLoader">
+      <UniqueIdentifier>{5596190a-9ab9-4b5f-bf5f-d805b2cc4d10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -93,6 +96,9 @@
     </ClCompile>
     <ClCompile Include="GameStateUtils.cpp">
       <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="StageDataLoader.cpp">
+      <Filter>Source\Systems\RunControllerSystem\StageDataLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +179,9 @@
     </ClInclude>
     <ClInclude Include="GameStateUtils.h">
       <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="StageDataLoader.h">
+      <Filter>Source\Systems\RunControllerSystem\StageDataLoader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

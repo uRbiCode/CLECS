@@ -1,0 +1,23 @@
+#pragma once
+#include <nlohmann/json.hpp>
+#include "StageDataComponent.h"
+#include <string>
+#include <vector>
+
+using Json = nlohmann::json;
+
+class StageDataLoader
+{
+public:
+	static std::vector<StageData> LoadFromFile(const std::string& FilePath);
+
+private:
+	static StageData ParseStageData(const Json& Json);
+	static Vector2D<float> ParseVector2D(const Json& Json);
+	static TextureData ParseTextureData(const Json& Json);
+	static WallData ParseWallData(const Json& Json);
+	static BrickData ParseBrickData(const Json& Json);
+	static TriggerData ParseTriggerData(const Json& Json);
+	static PlayerData ParsePlayerData(const Json& Json);
+	static BallData ParseBallData(const Json& Json);
+};
