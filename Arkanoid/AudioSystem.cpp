@@ -41,6 +41,9 @@ void AudioSystem::OnCollision(const SystemContext& Context, const CollisionEvent
 	ShouldPlaySound |= CheckBallCollision(Event.EntityA);
 	ShouldPlaySound |= CheckBallCollision(Event.EntityB);
 
+	if (!ShouldPlaySound)
+		return;
+
 	Context.AudioManager.PlaySound(BallCollisionSoundName, 0.5f);
 }
 

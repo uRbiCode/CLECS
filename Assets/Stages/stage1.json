@@ -4,7 +4,7 @@
     "size": { "x": 80.0, "y": 20.0 },
     "texture": {
       "path": "../Assets/Textures/paddles_and_balls.png",
-      "sourceRect": { "x": 0.0, "y": 7.0, "w": 32.0, "h": 8.0 }
+      "sourceRect": { "x": 32.0, "y": 7.0, "w": 32.0, "h": 8.0 }
     }
   },
   "ball": {

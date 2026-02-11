@@ -71,19 +71,19 @@ void AudioManager::LoadSound(const std::string& Name, const std::string& FilePat
     SDL_LogInfo(SDL_LOG_CATEGORY_AUDIO, "AudioManager::LoadSound -> Loaded sound '%s' (%u bytes, %d Hz, %d channels)", Name.c_str(), SoundData.Length, SoundData.Spec.freq, SoundData.Spec.channels);
 }
 
-void AudioManager::PlaySound(const std::string& Name, float Volume) const
+SDL_AudioStream* AudioManager::CreateAndBindAudioStream(const std::string& Name, float Volume, const StreamConfig& Config)
 {
     if (AudioDeviceId == 0)
     {
-        SDL_LogWarn(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlaySound -> Audio device not initialized");
-        return;
+        SDL_LogWarn(SDL_LOG_CATEGORY_AUDIO, "AudioManager::CreateAndBindAudioStream -> Audio device not initialized");
+        return nullptr;
     }
 
     const auto It = SoundCache.find(Name);
     if (It == SoundCache.end())
     {
-        SDL_LogWarn(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlaySound -> Sound '%s' not found", Name.c_str());
-        return;
+        SDL_LogWarn(SDL_LOG_CATEGORY_AUDIO, "AudioManager::CreateAndBindAudioStream -> Audio '%s' not found", Name.c_str());
+        return nullptr;
     }
 
     const SoundData& SoundData = It->second;
@@ -91,121 +91,93 @@ void AudioManager::PlaySound(const std::string& Name, float Volume) const
     SDL_AudioSpec DeviceSpec;
     if (!SDL_GetAudioDeviceFormat(AudioDeviceId, &DeviceSpec, nullptr))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlaySound -> Failed to get audio device format: %s", SDL_GetError());
-        return;
+        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::CreateAndBindAudioStream -> Failed to get audio device format: %s", SDL_GetError());
+        return nullptr;
     }
 
-    auto SoundStream = SDL_CreateAudioStream(&SoundData.Spec, &DeviceSpec);
-    if (SoundStream == nullptr)
+    SDL_AudioStream* Stream = SDL_CreateAudioStream(&SoundData.Spec, &DeviceSpec);
+    if (Stream == nullptr)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlaySound -> Failed to create sound stream: %s", SDL_GetError());
-        return;
+        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::CreateAndBindAudioStream -> Failed to create audio stream: %s", SDL_GetError());
+        return nullptr;
     }
 
-    auto StreamPropertiesId = SDL_GetAudioStreamProperties(SoundStream);
-    if (StreamPropertiesId != 0)
+    if (Config.Callback != nullptr)
     {
-        SDL_SetBooleanProperty(StreamPropertiesId, SDL_PROP_AUDIOSTREAM_AUTO_CLEANUP_BOOLEAN, true);
+        if (!SDL_SetAudioStreamGetCallback(Stream, Config.Callback, this))
+        {
+            SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::CreateAndBindAudioStream -> Failed to set audio callback: %s", SDL_GetError());
+            SDL_DestroyAudioStream(Stream);
+            return nullptr;
+        }
     }
 
-    SDL_SetAudioStreamGain(SoundStream, Volume * MasterVolume);
+    if (Config.AutoCleanup)
+    {
+        SDL_PropertiesID StreamPropertiesId = SDL_GetAudioStreamProperties(Stream);
+        if (StreamPropertiesId != 0)
+        {
+            SDL_SetBooleanProperty(StreamPropertiesId, SDL_PROP_AUDIOSTREAM_AUTO_CLEANUP_BOOLEAN, true);
+        }
+    }
+
+    SDL_SetAudioStreamGain(Stream, Volume * MasterVolume);
     
-    if (!SDL_PutAudioStreamData(SoundStream, SoundData.Buffer, SoundData.Length))
+    if (!SDL_PutAudioStreamData(Stream, SoundData.Buffer, SoundData.Length))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlaySound -> Failed to put audio data: %s", SDL_GetError());
-        SDL_DestroyAudioStream(SoundStream);
-        return;
+        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::CreateAndBindAudioStream -> Failed to put audio data: %s", SDL_GetError());
+        SDL_DestroyAudioStream(Stream);
+        return nullptr;
     }
     
-    if (!SDL_FlushAudioStream(SoundStream))
+    if (!SDL_FlushAudioStream(Stream))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlaySound -> Failed to flush audio stream: %s", SDL_GetError());
-        SDL_DestroyAudioStream(SoundStream);
-        return;
+        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::CreateAndBindAudioStream -> Failed to flush audio stream: %s", SDL_GetError());
+        SDL_DestroyAudioStream(Stream);
+        return nullptr;
     }
 
-    if (!SDL_BindAudioStream(AudioDeviceId, SoundStream))
+    if (!SDL_BindAudioStream(AudioDeviceId, Stream))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlaySound -> Failed to bind audio stream: %s", SDL_GetError());
-        SDL_DestroyAudioStream(SoundStream);
-        return;
+        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::CreateAndBindAudioStream -> Failed to bind audio stream: %s", SDL_GetError());
+        SDL_DestroyAudioStream(Stream);
+        return nullptr;
     }
+
+    return Stream;
+}
+
+void AudioManager::PlaySound(const std::string& Name, float Volume)
+{
+    StreamConfig Config;
+    Config.Loop = false;
+    Config.AutoCleanup = true;
+    Config.Callback = nullptr;
+
+    CreateAndBindAudioStream(Name, Volume, Config);
 }
 
 void AudioManager::SetMasterVolume(float Volume)
 {
-    MasterVolume = std::clamp(Volume, 0.0f, 1.0f);
+	MasterVolume = std::clamp(Volume, 0.f, 1.f);
 }
 
 void AudioManager::PlayMusic(const std::string& Name, float Volume)
 {
     StopMusic();
 
-    if (AudioDeviceId == 0)
+    StreamConfig Config;
+    Config.Loop = true;
+    Config.AutoCleanup = false;
+    Config.Callback = MusicCallback;
+
+    MusicStream = CreateAndBindAudioStream(Name, Volume, Config);
+    
+    if (MusicStream != nullptr)
     {
-        SDL_LogWarn(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Audio device not initialized");
-        return;
+        CurrentMusicName = Name;
+        SDL_LogInfo(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Started playing music '%s'", Name.c_str());
     }
-
-    const auto It = SoundCache.find(Name);
-    if (It == SoundCache.end())
-    {
-        SDL_LogWarn(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Music '%s' not found", Name.c_str());
-        return;
-    }
-
-    const SoundData& SoundData = It->second;
-
-    SDL_AudioSpec DeviceSpec;
-    if (!SDL_GetAudioDeviceFormat(AudioDeviceId, &DeviceSpec, nullptr))
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Failed to get audio device format: %s", SDL_GetError());
-        return;
-    }
-
-    MusicStream = SDL_CreateAudioStream(&SoundData.Spec, &DeviceSpec);
-    if (MusicStream == nullptr)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Failed to create music stream: %s", SDL_GetError());
-        return;
-    }
-
-    if (!SDL_SetAudioStreamGetCallback(MusicStream, MusicCallback, this))
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Failed to set music callback: %s", SDL_GetError());
-        SDL_DestroyAudioStream(MusicStream);
-        MusicStream = nullptr;
-        return;
-    }
-
-    SDL_SetAudioStreamGain(MusicStream, Volume * MasterVolume);
-
-    if (!SDL_PutAudioStreamData(MusicStream, SoundData.Buffer, SoundData.Length))
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Failed to put initial music data: %s", SDL_GetError());
-        SDL_DestroyAudioStream(MusicStream);
-        MusicStream = nullptr;
-        return;
-    }
-
-    if (!SDL_FlushAudioStream(MusicStream))
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Failed to flush music stream: %s", SDL_GetError());
-        SDL_DestroyAudioStream(MusicStream);
-        MusicStream = nullptr;
-        return;
-    }
-
-    if (!SDL_BindAudioStream(AudioDeviceId, MusicStream))
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Failed to bind music stream: %s", SDL_GetError());
-        SDL_DestroyAudioStream(MusicStream);
-        MusicStream = nullptr;
-        return;
-    }
-
-    CurrentMusicName = Name;
-    SDL_LogInfo(SDL_LOG_CATEGORY_AUDIO, "AudioManager::PlayMusic -> Started playing music '%s'", Name.c_str());
 }
 
 void AudioManager::StopMusic()

@@ -11,7 +11,7 @@ public:
     void Initialize();
     void Shutdown();
     void LoadSound(const std::string& Name, const std::string& FilePath);
-    void PlaySound(const std::string& Name, float Volume = 1.0f) const;
+    void PlaySound(const std::string& Name, float Volume = 1.0f);
     void SetMasterVolume(float Volume);
 
     void PlayMusic(const std::string& Name, float Volume = 1.0f);
@@ -35,4 +35,13 @@ private:
     std::string CurrentMusicName;
 
     static void SDLCALL MusicCallback(void* Userdata, SDL_AudioStream* Stream, int AdditionalAmount, int TotalAmount);
+
+    struct StreamConfig
+    {
+        bool Loop = false;
+        bool AutoCleanup = true;
+        SDL_AudioStreamCallback Callback = nullptr;
+    };
+
+    SDL_AudioStream* CreateAndBindAudioStream(const std::string& Name, float Volume, const StreamConfig& Config);
 };
