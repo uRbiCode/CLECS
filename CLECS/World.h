@@ -36,6 +36,7 @@ private:
 	bool CreateWindow(const RendererInitializationData& Data);
 	bool CreateRenderer();
 	void InitializeTextureManager();
+	void SendInputEvents(const SystemContext& Context);
 
 	SystemContext MakeSystemContext();
 

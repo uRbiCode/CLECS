@@ -38,4 +38,6 @@ private:
 
 	Vector2D<float> MousePosition{ 0.f, 0.f };
 	Vector2D<float> MouseDelta{ 0.f, 0.f };
+
+	friend class World;
 };

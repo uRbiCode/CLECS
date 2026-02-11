@@ -1,6 +1,7 @@
 #include "World.h"
 #include "SystemContext.h"
 #include "WorldInitializationData.h"
+#include "MouseClickEvent.h"
 
 World::~World()
 {
@@ -60,6 +61,8 @@ CLECS::ResultType World::Update(float DeltaTime)
 	}
 
 	const auto Context = MakeSystemContext();
+	SendInputEvents(Context);
+
 	for (const auto& CurrentSystem : Systems)
 	{
 		CurrentSystem->Update(Context, DeltaTime);
@@ -124,6 +127,15 @@ void World::InitializeTextureManager()
 {
 	TextureManagerPtr = std::make_unique<TextureManager>();
 	TextureManagerPtr->Initialize(*Renderer);
+}
+
+void World::SendInputEvents(const SystemContext& Context)
+{
+	const auto& MousePosition = Input.GetMousePosition();
+	for (const auto& MouseButtonClicked : Input.JustPressedMouseButtons)
+	{
+		EventBus.Notify(Context, MouseClickEvent{ MousePosition, MouseButtonClicked });
+	}
 }
 
 SystemContext World::MakeSystemContext()

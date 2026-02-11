@@ -14,5 +14,6 @@ private:
 	void OnStageBegin(const SystemContext& Context, const StageBeginEvent& Event) const;
 	void AddHealthIndicators(const SystemContext& Context, int Count) const;
 	void RemoveHealthIndicators(const SystemContext& Context, int Count) const;
+	void CleanupHealthIndicators(const SystemContext& Context) const;
 	void OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const;
 };

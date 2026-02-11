@@ -34,21 +34,13 @@ void HealthSystem::Initialize(const SystemContext& Context) const
 
 void HealthSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
-	auto HealthGroup = Context.EntityAdmin.GetGroup<HealthComponent>();
-	std::vector<Entity> EntitiesToDestroy;
-	EntitiesToDestroy.reserve(HealthGroup.Size());
-	HealthGroup.ForEach([&Context, &EntitiesToDestroy](const Entity& CurrentEntity, const HealthComponent& Health)
+	Context.EntityAdmin.GetGroup<HealthComponent>().ForEach([&Context](const Entity& Entity, const HealthComponent& Health)
 	{
 		if (Health.CurrentHealth <= 0)
 		{
-			EntitiesToDestroy.push_back(CurrentEntity);
+			Context.EntityAdmin.DestroyEntity(Entity);
 		}
 	});
-
-	for (const auto& Entity : EntitiesToDestroy)
-	{
-		Context.EntityAdmin.DestroyEntity(Entity);
-	}
 }
 
 void HealthSystem::OnCollision(const SystemContext& Context, const CollisionEvent& Event) const

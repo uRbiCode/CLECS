@@ -6,6 +6,7 @@
 #include <memory>
 #include <algorithm>
 
+class System;
 struct SystemContext;
 
 /* Responsible for managing event subscriptions and notifications in CLECS.

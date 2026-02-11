@@ -21,16 +21,16 @@ Entity EntityAdmin::CreateEntity()
 	return Entity::Create(Id, Version);
 }
 
-void EntityAdmin::DestroyEntity(const Entity& TargetEntity)
+void EntityAdmin::DestroyEntity(const Entity& Entity)
 {
-	if (!IsEntityValid(TargetEntity))
+	if (!IsEntityValid(Entity))
 		return;
 
-	const auto EntityId = TargetEntity.GetId();
+	const auto EntityId = Entity.GetId();
 
 	for (auto& [TypeId, Pool] : ComponentPools)
 	{
-		Pool->Remove(TargetEntity);
+		Pool->Remove(Entity);
 	}
 
 	// Increment version to invalidate old references
@@ -38,16 +38,16 @@ void EntityAdmin::DestroyEntity(const Entity& TargetEntity)
 	FreeEntityIds.push(EntityId);
 }
 
-bool EntityAdmin::IsEntityValid(const Entity& TargetEntity) const
+bool EntityAdmin::IsEntityValid(const Entity& Entity) const
 {
-	if (!TargetEntity.IsValid())
+	if (!Entity.IsValid())
 		return false;
 
-	const auto EntityId = TargetEntity.GetId();
+	const auto EntityId = Entity.GetId();
 	if (EntityId >= EntityVersions.size())
 		return false;
 
-	return EntityVersions[EntityId] == TargetEntity.GetVersion();
+	return EntityVersions[EntityId] == Entity.GetVersion();
 }
 
 void EntityAdmin::Clear()

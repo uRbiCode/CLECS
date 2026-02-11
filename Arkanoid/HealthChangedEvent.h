@@ -4,7 +4,7 @@ struct Entity;
 
 struct HealthChangedEvent
 {
-	const Entity& TargetEntity;
+	const Entity& Entity;
 	int Delta = 0;
 	int NewHealth = 0;
 };

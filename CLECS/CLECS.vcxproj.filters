@@ -44,6 +44,9 @@
     <Filter Include="Source\Core\World\TextureManager">
       <UniqueIdentifier>{4b3d7598-da4d-419a-a9c3-3b35b9f49414}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\World\EventBus\Events">
+      <UniqueIdentifier>{e5579a31-ac92-4828-a7d7-a878202d9a42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -69,6 +72,9 @@
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
       <Filter>Source\Core\World\TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SDLUtils.cpp">
+      <Filter>Source\Core\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +137,15 @@
     </ClInclude>
     <ClInclude Include="TextureManager.h">
       <Filter>Source\Core\World\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderConstants.h">
+      <Filter>Source\Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseClickEvent.h">
+      <Filter>Source\Core\World\EventBus\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="SDLUtils.h">
+      <Filter>Source\Core\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

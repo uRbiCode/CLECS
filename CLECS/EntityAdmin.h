@@ -20,42 +20,42 @@ public:
 	EntityAdmin& operator=(const EntityAdmin&) = delete;
 
 	Entity CreateEntity();
-	void DestroyEntity(const Entity& TargetEntity);
-	bool IsEntityValid(const Entity& TargetEntity) const;
+	void DestroyEntity(const Entity& Entity);
+	bool IsEntityValid(const Entity& Entity) const;
 
 	template<typename T, typename... Args>
-	T& AddComponent(const Entity& TargetEntity, Args&&... Arguments)
+	T& AddComponent(const Entity& Entity, Args&&... Arguments)
 	{
-		return GetOrCreatePool<T>()->Emplace(TargetEntity, std::forward<Args>(Arguments)...);
+		return GetOrCreatePool<T>()->Emplace(Entity, std::forward<Args>(Arguments)...);
 	}
 
 	template<typename T>
-	T& AccessComponent(const Entity& TargetEntity)
+	T& AccessComponent(const Entity& Entity)
 	{
-		return GetPool<T>()->Access(TargetEntity);
+		return GetPool<T>()->Access(Entity);
 	}
 
 	template<typename T>
-	const T& GetComponent(const Entity& TargetEntity) const
+	const T& GetComponent(const Entity& Entity) const
 	{
-		return GetPool<T>()->Get(TargetEntity);
+		return GetPool<T>()->Get(Entity);
 	}
 
 	template<typename T>
-	bool HasComponent(const Entity& TargetEntity) const
+	bool HasComponent(const Entity& Entity) const
 	{
 		const auto* Pool = GetPool<T>();
-		return Pool != nullptr && Pool->Has(TargetEntity);
+		return Pool != nullptr && Pool->Has(Entity);
 	}
 
 	template<typename T>
-	void RemoveComponent(const Entity& TargetEntity)
+	void RemoveComponent(const Entity& Entity)
 	{
 		auto* Pool = GetPool<T>();
 		if (Pool == nullptr)
 			return;
 
-		Pool->Remove(TargetEntity);
+		Pool->Remove(Entity);
 	}
 
 	template<typename... Components>
@@ -104,23 +104,23 @@ public:
 		}
 
 		template<typename T>
-		T& Access(const Entity& TargetEntity)
+		T& Access(const Entity& Entity)
 		{
-			return Admin->AccessComponent<T>(TargetEntity);
+			return Admin->AccessComponent<T>(Entity);
 		}
 
 		template<typename T>
-		const T& Get(const Entity& TargetEntity) const
+		const T& Get(const Entity& Entity) const
 		{
-			return Admin->GetComponent<T>(TargetEntity);
+			return Admin->GetComponent<T>(Entity);
 		}
 
 		template<typename Func>
 		void ForEach(Func&& Function)
 		{
-			for (const auto& TargetEntity : CachedEntities)
+			for (const auto& Entity : CachedEntities)
 			{
-				Function(TargetEntity, Admin->AccessComponent<Components>(TargetEntity)...);
+				Function(Entity, Admin->AccessComponent<Components>(Entity)...);
 			}
 		}
 
@@ -131,11 +131,11 @@ public:
 			if (SmallestPool == nullptr)
 				return;
 
-			for (const auto& TargetEntity : *SmallestPool)
+			for (const auto& Entity : *SmallestPool)
 			{
-				if (HasAllComponents(TargetEntity))
+				if (HasAllComponents(Entity))
 				{
-					CachedEntities.push_back(TargetEntity);
+					CachedEntities.push_back(Entity);
 				}
 			}
 		}
@@ -161,9 +161,9 @@ public:
 			}
 		}
 
-		bool HasAllComponents(const Entity& TargetEntity) const
+		bool HasAllComponents(const Entity& Entity) const
 		{
-			return (Admin->HasComponent<Components>(TargetEntity) && ...);
+			return (Admin->HasComponent<Components>(Entity) && ...);
 		}
 
 		EntityAdmin* Admin;

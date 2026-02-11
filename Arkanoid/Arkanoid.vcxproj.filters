@@ -44,6 +44,12 @@
     <Filter Include="Source\Systems\HealthIndicatorSystem">
       <UniqueIdentifier>{e4ea1060-ced9-449a-9f59-8c8624ae51ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\GameStateSystem">
+      <UniqueIdentifier>{4a6eddd6-fb9a-4929-8ba9-4977280821db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\MainMenuControllerSystem">
+      <UniqueIdentifier>{4126f583-8c30-4ee1-aa23-6ae19a087d39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -78,6 +84,15 @@
     </ClCompile>
     <ClCompile Include="HealthIndicatorSystem.cpp">
       <Filter>Source\Systems\HealthIndicatorSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateSystem.cpp">
+      <Filter>Source\Systems\GameStateSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenuControllerSystem.cpp">
+      <Filter>Source\Systems\MainMenuControllerSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateUtils.cpp">
+      <Filter>Source\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +152,27 @@
     </ClInclude>
     <ClInclude Include="StageBeginEvent.h">
       <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateSystem.h">
+      <Filter>Source\Systems\GameStateSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateEvents.h">
+      <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="ClickableComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuControllerSystem.h">
+      <Filter>Source\Systems\MainMenuControllerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ClickableUsedEvent.h">
+      <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateUtils.h">
+      <Filter>Source\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

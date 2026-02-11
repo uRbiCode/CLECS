@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -153,7 +153,10 @@
     <ClCompile Include="Arkanoid.cpp" />
     <ClCompile Include="CollisionKinematicResolverSystem.cpp" />
     <ClCompile Include="CurrentStageSystem.cpp" />
+    <ClCompile Include="GameStateSystem.cpp" />
+    <ClCompile Include="GameStateUtils.cpp" />
     <ClCompile Include="HealthIndicatorSystem.cpp" />
+    <ClCompile Include="MainMenuControllerSystem.cpp" />
     <ClCompile Include="RunControllerSystem.cpp" />
     <ClCompile Include="HealthSystem.cpp" />
     <ClCompile Include="main.cpp" />
@@ -162,13 +165,20 @@
     <ClCompile Include="StageUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClickableComponent.h" />
+    <ClInclude Include="ClickableUsedEvent.h" />
     <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="CollisionDetectionSystem.h" />
     <ClInclude Include="Arkanoid.h" />
     <ClInclude Include="CollisionEvent.h" />
     <ClInclude Include="CollisionKinematicResolverSystem.h" />
     <ClInclude Include="CurrentStageSystem.h" />
+    <ClInclude Include="GameStateComponent.h" />
+    <ClInclude Include="GameStateEvents.h" />
+    <ClInclude Include="GameStateSystem.h" />
+    <ClInclude Include="GameStateUtils.h" />
     <ClInclude Include="HealthIndicatorSystem.h" />
+    <ClInclude Include="MainMenuControllerSystem.h" />
     <ClInclude Include="RunControllerSystem.h" />
     <ClInclude Include="HealthChangedEvent.h" />
     <ClInclude Include="HealthComponent.h" />

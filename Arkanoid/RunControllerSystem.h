@@ -11,6 +11,14 @@ public:
 	void Initialize(const SystemContext& Context) const;
 	
 private:
+	void BeginRun(const SystemContext& Context) const;
+	void CleanupRun(const SystemContext& Context) const;
+
+	void AddRunStateComponent(const SystemContext& Context) const;
+	void AddStageDataComponent(const SystemContext& Context) const;
+	void RemoveRunStateComponent(const SystemContext& Context) const;
+	void RemoveStageDataComponent(const SystemContext& Context) const;
+
 	void OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const;
 
 	void HandleStageCleared(const SystemContext& Context) const;
@@ -22,7 +30,8 @@ private:
 	bool HasPlayerLost(const SystemContext& Context) const;
 
 	//Returns whether advancment was succesful or was it the last stage already
-	bool AdvanceToNextStage(const SystemContext& Context, int NextStageId) const;
-	void CleanupCurrentStage(const SystemContext& Context) const;
+	bool AdvanceToNextStage(const SystemContext& Context, int CurrentStageId) const;
+
 	void SpawnStageEntities(const SystemContext& Context, const StageData& StageData) const;
+	void CleanupCurrentStage(const SystemContext& Context) const;
 };
