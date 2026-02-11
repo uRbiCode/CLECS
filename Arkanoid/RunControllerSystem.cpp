@@ -6,9 +6,9 @@
 #include "EntityAdmin.h"
 #include "CollisionComponent.h"
 #include "TransformComponent.h"
-#include <ShapeComponents.h>
-#include <RenderComponent.h>
-#include <TextureComponent.h>
+#include "ShapeComponents.h"
+#include "RenderComponent.h"
+#include "TextureComponent.h"
 #include "HealthComponent.h"
 #include "VelocityComponent.h"
 #include "PlayerControllerComponent.h"
@@ -16,6 +16,8 @@
 #include "TextureManager.h"
 #include "StageBeginEvent.h"
 #include "RenderConstants.h"
+#include "GameStateEvents.h"
+#include <cassert>
 
 namespace
 {
@@ -81,30 +83,6 @@ namespace
 		Admin.AddComponent<HealthComponent>(BrickEntity, BrickData.Health);
 	}
 
-	void AddBackgroundRenderEntity(const SystemContext& Context)
-	{
-		auto& Admin = Context.EntityAdmin;
-		
-		int WindowWidth, WindowHeight;
-		SDL_GetWindowSize(&Context.Window, &WindowWidth, &WindowHeight);
-
-		auto BackgroundEntity = Admin.CreateEntity();
-		Admin.AddComponent<TransformComponent>(BackgroundEntity);
-		Admin.AddComponent<RectComponent>(BackgroundEntity, SDL_FRect{ 
-			0.f, 
-			0.f, 
-			static_cast<float>(WindowWidth), 
-			static_cast<float>(WindowHeight)
-		});
-		Admin.AddComponent<RenderComponent>(BackgroundEntity, RenderConstants::BackgroundLayer);
-		
-		auto Texture = Context.TextureManager.LoadTexture("../Assets/Textures/Background_Tiles.png");
-		if (Texture == nullptr)
-			return;
-
-		Admin.AddComponent<TextureComponent>(BackgroundEntity, TextureComponent{ Texture, {34.f, 13.f, 60.f, 42.f} });
-	}
-
 	void AddPlayer(const SystemContext& Context, const StageData& StageData)
 	{
 		auto& Admin = Context.EntityAdmin;
@@ -146,10 +124,99 @@ void RunControllerSystem::Initialize(const SystemContext& Context) const
 		return;
 	});
 
-	AddBackgroundRenderEntity(Context);
+	Context.EventBus.Subscribe<GameStateBeginEvent>(this, [this](const SystemContext& Context, const GameStateBeginEvent& Event)
+	{
+		if (Event.BeginningState == GameState::Run)
+		{
+			BeginRun(Context);
+		}
+	});
+}
 
-	// TODO: change, for now simulte starting game from here
+void RunControllerSystem::BeginRun(const SystemContext& Context) const
+{
+	AddRunStateComponent(Context);
+	AddStageDataComponent(Context);
+
+	// Move forward from stage 0
 	HandleStageCleared(Context);
+}
+
+void RunControllerSystem::CleanupRun(const SystemContext& Context) const
+{
+}
+
+void RunControllerSystem::AddRunStateComponent(const SystemContext& Context) const
+{
+	auto& Admin = Context.EntityAdmin;
+	auto RunStateEntity = Admin.CreateEntity();
+	Admin.AddComponent<RunStateComponent>(RunStateEntity);
+}
+
+void RunControllerSystem::AddStageDataComponent(const SystemContext& Context) const
+{
+	auto& Admin = Context.EntityAdmin;
+
+	// TODO: load from file instead of hardcoding
+	constexpr float WallThickness = 20.f;
+	constexpr float ScreenWidth = 640.f;
+	constexpr float ScreenHeight = 480.f;
+	constexpr int StagesCount = 3;
+
+	constexpr Vector2D<float> BallInitialPosition = { ScreenWidth * 0.5f, ScreenHeight * 0.5f };
+	constexpr Vector2D<float> BallInitialVelocity = { 0.f, 250.f };
+	constexpr Vector2D<float> PlayerInitialPosition = { ScreenWidth * 0.5f, ScreenHeight * 0.9f };
+
+	// Create brick grid
+	//constexpr int BrickRows = 5;
+	//constexpr int BrickColumns = 5;
+	constexpr int BrickRows = 2;
+	constexpr int BrickColumns = 1;
+	constexpr float BrickWidth = 64.f;
+	constexpr float BrickHeight = 32.f;
+	constexpr float BrickSpacing = 8.f;
+	constexpr float GridStartX = (ScreenWidth - (BrickColumns * (BrickWidth + BrickSpacing))) * 0.5f;
+	constexpr float GridStartY = WallThickness + BrickSpacing;
+
+	auto StageDataEntity = Admin.CreateEntity();
+	auto& StageDataEntityComponent = Admin.AddComponent<StageDataComponent>(StageDataEntity);
+
+	for (int i = 0; i < StagesCount; ++i)
+	{
+		StageData NewStageData;
+		NewStageData.PlayerData.PositionSize.Position = PlayerInitialPosition;
+		NewStageData.PlayerData.PositionSize.Size = Vector2D<float>{ 80.f, 20.f };
+		NewStageData.PlayerData.TextureData.Path = "../Assets/Textures/paddles_and_balls.png";
+		NewStageData.PlayerData.TextureData.SourceRect = SDL_FRect{ 0.f, 7.f, 32.f, 8.f };
+
+		NewStageData.BallData.Position = BallInitialPosition;
+		NewStageData.BallData.Velocity = BallInitialVelocity;
+		NewStageData.BallData.Radius = 10.f;
+		NewStageData.BallData.TextureData.Path = "../Assets/Textures/paddles_and_balls.png";
+		NewStageData.BallData.TextureData.SourceRect = SDL_FRect{ 160.f, 5.f, 10.f, 10.f };
+
+		NewStageData.Walls.push_back(WallData{ Vector2D<float>{ ScreenWidth * 0.5f, WallThickness * 0.5f }, Vector2D<float>{ ScreenWidth, WallThickness } });
+		NewStageData.Walls.push_back(WallData{ Vector2D<float>{ WallThickness * 0.5f, ScreenHeight * 0.5f }, Vector2D<float>{ WallThickness, ScreenHeight } });
+		NewStageData.Walls.push_back(WallData{ Vector2D<float>{ ScreenWidth - WallThickness * 0.5f, ScreenHeight * 0.5f }, Vector2D<float>{ WallThickness, ScreenHeight } });
+
+		NewStageData.Trigger = TriggerData{ Vector2D<float>{ ScreenWidth * 0.5f, ScreenHeight - WallThickness * 0.5f }, Vector2D<float>{ ScreenWidth, WallThickness } };
+
+		for (int Row = 0; Row < BrickRows; ++Row)
+		{
+			for (int Col = 0; Col < BrickColumns; ++Col)
+			{
+				BrickData NewBrick;
+				NewBrick.PositionSize.Position = Vector2D<float>{ GridStartX + Col * (BrickWidth + BrickSpacing) + BrickWidth * 0.5f, GridStartY + Row * (BrickHeight + BrickSpacing) + BrickHeight * 0.5f };
+				NewBrick.PositionSize.Size = Vector2D<float>{ BrickWidth, BrickHeight };
+				NewBrick.Health = 1;
+				NewBrick.TextureData.Path = "../Assets/Textures/bricks.png";
+				NewBrick.TextureData.SourceRect = SDL_FRect{ 0.f, 23.f + static_cast<float>(16.f * Row), 32.f, 8.f};
+				NewStageData.Bricks.push_back(NewBrick);
+			}
+		}
+		
+		StageDataEntityComponent.Stages.push_back(NewStageData);
+	}
 }
 
 void RunControllerSystem::OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const
@@ -179,18 +246,21 @@ void RunControllerSystem::OnHealthChanged(const SystemContext& Context, const He
 
 void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
 {
-	Context.EntityAdmin.GetGroup<RunStateComponent>().ForEach([this, &Context](const Entity& RunStateEntity, RunStateComponent& RunStateComponent)
+	const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
+	assert(RunStateGroup.Size() == 1 && "Expected exactly one RunStateComponent in the world");
+	if (RunStateGroup.Empty())
+		return;
+
+	auto& RunStateComp = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
+	if (AdvanceToNextStage(Context, RunStateComp.CurrentStage))
 	{
-		RunStateComponent.CurrentStage++;
-		if (AdvanceToNextStage(Context, RunStateComponent.CurrentStage))
-		{
-			Context.EventBus.Notify(Context, StageBeginEvent{ RunStateComponent.CurrentStage });
-		}
-		else
-		{
-			HandleRunVictory(Context);
-		}
-	});
+		Context.EventBus.Notify(Context, StageBeginEvent{ RunStateComp.CurrentStage });
+		RunStateComp.CurrentStage++;
+	}
+	else
+	{
+		HandleRunVictory(Context);
+	}
 }
 
 void RunControllerSystem::HandleRunVictory(const SystemContext& Context) const
@@ -226,18 +296,19 @@ bool RunControllerSystem::HasPlayerLost(const SystemContext& Context) const
 	return !TriggerHasHealth;
 }
 
-bool RunControllerSystem::AdvanceToNextStage(const SystemContext& Context, int NextStageId) const
+bool RunControllerSystem::AdvanceToNextStage(const SystemContext& Context, int CurrentStageId) const
 {
 	CleanupCurrentStage(Context);
 	
 	bool AdvancementSuccessful = false;
 
 	auto& Admin = Context.EntityAdmin;
-	Admin.GetGroup<StageDataComponent>().ForEach([this, &Context, NextStageId, &AdvancementSuccessful](const Entity& StageEntity, StageDataComponent& StageData)
+	Admin.GetGroup<StageDataComponent>().ForEach([this, &Context, CurrentStageId, &AdvancementSuccessful](const Entity& StageEntity, StageDataComponent& StageData)
 	{
-		if (!AdvancementSuccessful && StageData.Stages.size() > NextStageId)
+		if (!AdvancementSuccessful && StageData.Stages.size() > CurrentStageId)
 		{
-			SpawnStageEntities(Context, StageData.Stages[NextStageId]);
+			// Current not next due to array offset
+			SpawnStageEntities(Context, StageData.Stages[CurrentStageId]);
 			AdvancementSuccessful = true;
 		}
 	});

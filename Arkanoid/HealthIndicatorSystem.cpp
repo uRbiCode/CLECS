@@ -20,7 +20,7 @@ namespace
 	constexpr const SDL_FRect HealthIndicatorTextureRect = {115.f, 3.f, 11.f, 10.f};
 	constexpr float HealthIndicatorSpacing = 20.f;
 
-	bool IsHealthIndicatorTextureComponent(TextureManager& TextureManager, const TextureComponent& TextureComponent)
+	bool IsHealthIndicatorTextureComponent(TextureManager& TextureManager, const TextureComponent& TextureComponent, SDL_Texture* HealthIndicatorTexture)
 	{
 		return TextureComponent.SourceRect.x == HealthIndicatorTextureRect.x 
 			&& TextureComponent.SourceRect.y == HealthIndicatorTextureRect.y
@@ -29,12 +29,18 @@ namespace
 			&& TextureComponent.Texture == TextureManager.GetTexture(HealthIndicatorTexturePath);
 	}
 
+	SDL_Texture* GetHealthIndicatorTexture(TextureManager& TextureManager)
+	{
+		return TextureManager.GetTexture(HealthIndicatorTexturePath);
+	}
+
 	std::vector<std::pair<Entity, float>> GetHealthIndicatorEntitiesSorted(const SystemContext& Context)
 	{
 		std::vector<std::pair<Entity, float>> HealthIndicatorEntities;
-		Context.EntityAdmin.GetGroup<TextureComponent, TransformComponent>().ForEach([&HealthIndicatorEntities, &Context](const Entity& TargetEntity, const TextureComponent& TextureComponent, const TransformComponent& TransformComponent)
+		const auto HealthIndicatorTexture = GetHealthIndicatorTexture(Context.TextureManager);
+		Context.EntityAdmin.GetGroup<TextureComponent, TransformComponent>().ForEach([&HealthIndicatorEntities, &HealthIndicatorTexture, &Context](const Entity& TargetEntity, const TextureComponent& TextureComponent, const TransformComponent& TransformComponent)
 		{
-			if (IsHealthIndicatorTextureComponent(Context.TextureManager, TextureComponent))
+			if (IsHealthIndicatorTextureComponent(Context.TextureManager, TextureComponent, HealthIndicatorTexture))
 			{
 				HealthIndicatorEntities.push_back({ TargetEntity, TransformComponent.Position.X });
 			}

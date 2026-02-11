@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -153,6 +153,7 @@
     <ClCompile Include="Arkanoid.cpp" />
     <ClCompile Include="CollisionKinematicResolverSystem.cpp" />
     <ClCompile Include="CurrentStageSystem.cpp" />
+    <ClCompile Include="GameStateSystem.cpp" />
     <ClCompile Include="HealthIndicatorSystem.cpp" />
     <ClCompile Include="RunControllerSystem.cpp" />
     <ClCompile Include="HealthSystem.cpp" />
@@ -168,6 +169,9 @@
     <ClInclude Include="CollisionEvent.h" />
     <ClInclude Include="CollisionKinematicResolverSystem.h" />
     <ClInclude Include="CurrentStageSystem.h" />
+    <ClInclude Include="GameStateComponent.h" />
+    <ClInclude Include="GameStateEvents.h" />
+    <ClInclude Include="GameStateSystem.h" />
     <ClInclude Include="HealthIndicatorSystem.h" />
     <ClInclude Include="RunControllerSystem.h" />
     <ClInclude Include="HealthChangedEvent.h" />
