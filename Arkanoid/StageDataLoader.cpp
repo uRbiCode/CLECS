@@ -2,25 +2,20 @@
 #include <fstream>
 #include <stdexcept>
 
-std::vector<StageData> StageDataLoader::LoadFromFile(const std::string& FilePath)
+std::optional<StageData> StageDataLoader::LoadStageByNumber(int StageNumber, const std::string& BaseDirectory)
 {
+	std::string FilePath = BaseDirectory + "stage" + std::to_string(StageNumber) + ".json";
+	
 	std::ifstream File(FilePath);
 	if (!File.is_open())
 	{
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "StageDataLoader::LoadFromFile -> Failed to open stage data file: %s", FilePath.c_str());
-		return {};
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "StageDataLoader::LoadStageByNumber -> Stage file not found: %s", FilePath.c_str());
+		return std::nullopt;
 	}
 
 	Json JsonData;
 	File >> JsonData;
-
-	std::vector<StageData> Stages;
-	for (const auto& StageJson : JsonData["stages"])
-	{
-		Stages.push_back(ParseStageData(StageJson));
-	}
-
-	return Stages;
+	return ParseStageData(JsonData);
 }
 
 Vector2D<float> StageDataLoader::ParseVector2D(const Json& Json)
@@ -121,14 +116,20 @@ StageData StageDataLoader::ParseStageData(const Json& Json)
 	Stage.BallData = ParseBallData(Json["ball"]);
 	Stage.Trigger = ParseTriggerData(Json["trigger"]);
 	
-	for (const auto& WallJson : Json["walls"])
+	if (Json.contains("walls"))
 	{
-		Stage.Walls.push_back(ParseWallData(WallJson));
+		for (const auto& WallJson : Json["walls"])
+		{
+			Stage.Walls.push_back(ParseWallData(WallJson));
+		}
 	}
 	
-	for (const auto& BrickJson : Json["bricks"])
+	if (Json.contains("bricks"))
 	{
-		Stage.Bricks.push_back(ParseBrickData(BrickJson));
+		for (const auto& BrickJson : Json["bricks"])
+		{
+			Stage.Bricks.push_back(ParseBrickData(BrickJson));
+		}
 	}
 	
 	return Stage;

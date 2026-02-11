@@ -33,5 +33,6 @@ private:
 	bool AdvanceToNextStage(const SystemContext& Context, int CurrentStageId) const;
 
 	void SpawnStageEntities(const SystemContext& Context, const StageData& StageData) const;
+	void SetStageData(const SystemContext& Context, const StageData& StageData) const;
 	void CleanupCurrentStage(const SystemContext& Context) const;
 };

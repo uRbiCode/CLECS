@@ -140,7 +140,7 @@ void RunControllerSystem::BeginRun(const SystemContext& Context) const
 	AddRunStateComponent(Context);
 	AddStageDataComponent(Context);
 
-	// Move forward from stage 0
+	// Move to stage 1
 	HandleStageCleared(Context);
 }
 
@@ -163,8 +163,7 @@ void RunControllerSystem::AddStageDataComponent(const SystemContext& Context) co
 	auto& Admin = Context.EntityAdmin;
 
 	auto StageDataEntity = Admin.CreateEntity();
-	auto& StageDataEntityComponent = Admin.AddComponent<StageDataComponent>(StageDataEntity);
-	StageDataEntityComponent.Stages = StageDataLoader::LoadFromFile("../Assets/Stages/stages.json");
+	Admin.AddComponent<StageDataComponent>(StageDataEntity);
 }
 
 void RunControllerSystem::RemoveRunStateComponent(const SystemContext& Context) const
@@ -268,20 +267,17 @@ bool RunControllerSystem::AdvanceToNextStage(const SystemContext& Context, int C
 {
 	CleanupCurrentStage(Context);
 	
-	bool AdvancementSuccessful = false;
-
-	auto& Admin = Context.EntityAdmin;
-	Admin.GetGroup<StageDataComponent>().ForEach([this, &Context, CurrentStageId, &AdvancementSuccessful](const Entity& StageEntity, StageDataComponent& StageData)
+	const auto NextStageNumber = CurrentStageId + 1;
+	const auto StageDataOpt = StageDataLoader::LoadStageByNumber(NextStageNumber);
+	if (!StageDataOpt.has_value())
 	{
-		if (!AdvancementSuccessful && StageData.Stages.size() > CurrentStageId)
-		{
-			// Current not next due to array offset
-			SpawnStageEntities(Context, StageData.Stages[CurrentStageId]);
-			AdvancementSuccessful = true;
-		}
-	});
+		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "RunControllerSystem::AdvanceToNextStage -> No more stages found. Victory!");
+		return false;
+	}
 
-	return AdvancementSuccessful;
+	SpawnStageEntities(Context, StageDataOpt.value());
+	SetStageData(Context, StageDataOpt.value());
+	return true;
 }
 
 void RunControllerSystem::SpawnStageEntities(const SystemContext& Context, const StageData& StageData) const
@@ -302,6 +298,17 @@ void RunControllerSystem::SpawnStageEntities(const SystemContext& Context, const
 	AddTrigger(Context, StageData.Trigger);
 	AddPlayer(Context, StageData);
 	AddBall(Context, StageData.BallData);
+}
+
+void RunControllerSystem::SetStageData(const SystemContext& Context, const StageData& StageData) const
+{
+	const auto StageDataGroup = Context.EntityAdmin.GetGroup<StageDataComponent>();
+	assert(StageDataGroup.Size() == 1 && "Expected exactly one StageDataComponent in the world");
+	if (StageDataGroup.Empty())
+		return;
+
+	auto& StageDataComp = Context.EntityAdmin.AccessComponent<StageDataComponent>(StageDataGroup[0]);
+	StageDataComp.CurrentStageData = StageData;
 }
 
 void RunControllerSystem::CleanupCurrentStage(const SystemContext& Context) const
