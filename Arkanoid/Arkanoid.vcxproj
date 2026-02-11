@@ -149,6 +149,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="CollisionDetectionSystem.cpp" />
     <ClCompile Include="Arkanoid.cpp" />
     <ClCompile Include="CollisionKinematicResolverSystem.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="StageUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="ClickableComponent.h" />
     <ClInclude Include="ClickableUsedEvent.h" />
     <ClInclude Include="CollisionComponent.h" />

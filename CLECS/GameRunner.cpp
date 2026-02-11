@@ -56,7 +56,7 @@ int GameRunner::Run(std::unique_ptr<Game> GameInstance)
 
 bool GameRunner::InitializeSDL()
 {
-	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
+	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO))
 	{
 		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "GameRunner::InitializeSDL -> SDL initialization failed: %s", SDL_GetError());
 		return false;
