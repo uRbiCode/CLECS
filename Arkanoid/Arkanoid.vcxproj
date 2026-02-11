@@ -162,6 +162,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovementSystem.cpp" />
     <ClCompile Include="PlayerInputSystem.cpp" />
+    <ClCompile Include="StageDataLoader.cpp" />
     <ClCompile Include="StageUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +190,7 @@
     <ClInclude Include="RunStateComponent.h" />
     <ClInclude Include="StageBeginEvent.h" />
     <ClInclude Include="StageDataComponent.h" />
+    <ClInclude Include="StageDataLoader.h" />
     <ClInclude Include="StageUtils.h" />
     <ClInclude Include="VelocityComponent.h" />
   </ItemGroup>

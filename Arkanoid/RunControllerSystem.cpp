@@ -19,6 +19,7 @@
 #include "GameStateEvents.h"
 #include "GameStateUtils.h"
 #include <cassert>
+#include "StageDataLoader.h"
 
 namespace
 {
@@ -161,64 +162,9 @@ void RunControllerSystem::AddStageDataComponent(const SystemContext& Context) co
 {
 	auto& Admin = Context.EntityAdmin;
 
-	// TODO: load from file instead of hardcoding
-	constexpr float WallThickness = 20.f;
-	constexpr float ScreenWidth = 640.f;
-	constexpr float ScreenHeight = 480.f;
-	constexpr int StagesCount = 3;
-
-	constexpr Vector2D<float> BallInitialPosition = { ScreenWidth * 0.5f, ScreenHeight * 0.5f };
-	constexpr Vector2D<float> BallInitialVelocity = { 0.f, 250.f };
-	constexpr Vector2D<float> PlayerInitialPosition = { ScreenWidth * 0.5f, ScreenHeight * 0.9f };
-
-	// Create brick grid
-	constexpr int BrickRows = 5;
-	constexpr int BrickColumns = 5;
-	constexpr float BrickWidth = 64.f;
-	constexpr float BrickHeight = 32.f;
-	constexpr float BrickSpacing = 8.f;
-	constexpr float GridStartX = (ScreenWidth - (BrickColumns * (BrickWidth + BrickSpacing))) * 0.5f;
-	constexpr float GridStartY = WallThickness + BrickSpacing;
-
 	auto StageDataEntity = Admin.CreateEntity();
 	auto& StageDataEntityComponent = Admin.AddComponent<StageDataComponent>(StageDataEntity);
-
-	for (int i = 0; i < StagesCount; ++i)
-	{
-		StageData NewStageData;
-		NewStageData.PlayerData.PositionSize.Position = PlayerInitialPosition;
-		NewStageData.PlayerData.PositionSize.Size = Vector2D<float>{ 80.f, 20.f };
-		NewStageData.PlayerData.TextureData.Path = "../Assets/Textures/paddles_and_balls.png";
-		NewStageData.PlayerData.TextureData.SourceRect = SDL_FRect{ 0.f, 7.f, 32.f, 8.f };
-
-		NewStageData.BallData.Position = BallInitialPosition;
-		NewStageData.BallData.Velocity = BallInitialVelocity;
-		NewStageData.BallData.Radius = 10.f;
-		NewStageData.BallData.TextureData.Path = "../Assets/Textures/paddles_and_balls.png";
-		NewStageData.BallData.TextureData.SourceRect = SDL_FRect{ 160.f, 5.f, 10.f, 10.f };
-
-		NewStageData.Walls.push_back(WallData{ Vector2D<float>{ ScreenWidth * 0.5f, WallThickness * 0.5f }, Vector2D<float>{ ScreenWidth, WallThickness } });
-		NewStageData.Walls.push_back(WallData{ Vector2D<float>{ WallThickness * 0.5f, ScreenHeight * 0.5f }, Vector2D<float>{ WallThickness, ScreenHeight } });
-		NewStageData.Walls.push_back(WallData{ Vector2D<float>{ ScreenWidth - WallThickness * 0.5f, ScreenHeight * 0.5f }, Vector2D<float>{ WallThickness, ScreenHeight } });
-
-		NewStageData.Trigger = TriggerData{ Vector2D<float>{ ScreenWidth * 0.5f, ScreenHeight - WallThickness * 0.5f }, Vector2D<float>{ ScreenWidth, WallThickness } };
-
-		for (int Row = 0; Row < BrickRows; ++Row)
-		{
-			for (int Col = 0; Col < BrickColumns; ++Col)
-			{
-				BrickData NewBrick;
-				NewBrick.PositionSize.Position = Vector2D<float>{ GridStartX + Col * (BrickWidth + BrickSpacing) + BrickWidth * 0.5f, GridStartY + Row * (BrickHeight + BrickSpacing) + BrickHeight * 0.5f };
-				NewBrick.PositionSize.Size = Vector2D<float>{ BrickWidth, BrickHeight };
-				NewBrick.Health = 1;
-				NewBrick.TextureData.Path = "../Assets/Textures/bricks.png";
-				NewBrick.TextureData.SourceRect = SDL_FRect{ 0.f, 23.f + static_cast<float>(16.f * Row), 32.f, 8.f};
-				NewStageData.Bricks.push_back(NewBrick);
-			}
-		}
-		
-		StageDataEntityComponent.Stages.push_back(NewStageData);
-	}
+	StageDataEntityComponent.Stages = StageDataLoader::LoadFromFile("../Assets/Stages/stages.json");
 }
 
 void RunControllerSystem::RemoveRunStateComponent(const SystemContext& Context) const
