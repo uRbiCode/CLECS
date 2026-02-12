@@ -6,6 +6,8 @@
 #include "CollisionComponent.h"
 #include "EntityAdmin.h"
 #include "GameStateEvents.h"
+#include "HealthChangedEvent.h"
+#include "RunStateComponent.h"
 
 namespace
 {
@@ -13,6 +15,7 @@ namespace
 	constexpr const char* MainMenuLoopSoundName = "main_menu_loop";
 	constexpr const char* DefeatSoundName = "defeat_sfx";
 	constexpr const char* VictorySoundName = "victory_sfx";
+	constexpr const char* PlayerHitSoundName = "player_hit_sfx";
 }
 
 void AudioSystem::Initialize(const SystemContext& Context) const
@@ -26,27 +29,40 @@ void AudioSystem::Initialize(const SystemContext& Context) const
 	{
 		OnGameStateBegin(Context, Event.BeginningState);
 	});
+
+	Context.EventBus.Subscribe<HealthChangedEvent>(this, [this, &Context](const SystemContext& Context, const HealthChangedEvent& Event)
+	{
+		if (Event.Delta >= 0)
+			return;
+
+		OnHealthLost(Context, Event.Entity);
+	});
 }
 
 void AudioSystem::OnCollision(const SystemContext& Context, const CollisionEvent& Event) const
 {
-	bool ShouldPlaySound = false;
+	if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Event.EntityA)
+		|| !Context.EntityAdmin.HasComponent<CollisionComponent>(Event.EntityB))
+		return;
 
-	auto CheckBallCollision = [&Context](const Entity& Entity)
-	{
-		if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Entity))
-			return false;
+	const auto& CollisionA = Context.EntityAdmin.GetComponent<CollisionComponent>(Event.EntityA);
+	const auto& CollisionB = Context.EntityAdmin.GetComponent<CollisionComponent>(Event.EntityB);
 
-		return Context.EntityAdmin.GetComponent<CollisionComponent>(Entity).Channel == CollisionChannel::Ball;
-	};
+	if (CollisionA.Channel == CollisionChannel::Trigger || CollisionB.Channel == CollisionChannel::Trigger)
+		return;
 
-	ShouldPlaySound |= CheckBallCollision(Event.EntityA);
-	ShouldPlaySound |= CheckBallCollision(Event.EntityB);
-
-	if (!ShouldPlaySound)
+	if (CollisionA.Channel != CollisionChannel::Ball && CollisionB.Channel != CollisionChannel::Ball)
 		return;
 
 	Context.Managers.AudioManager.PlaySound(BallCollisionSoundName, 0.5f);
+}
+
+void AudioSystem::OnHealthLost(const SystemContext& Context, const Entity& Entity) const
+{
+	if (!Context.EntityAdmin.HasComponent<RunStateComponent>(Entity))
+		return;
+
+	Context.Managers.AudioManager.PlaySound(PlayerHitSoundName, 0.5f);
 }
 
 void AudioSystem::OnGameStateBegin(const SystemContext& Context, GameState State) const
