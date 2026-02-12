@@ -1,8 +1,9 @@
 #pragma once
 #include "System.h"
+#include <cstdint>
 
 struct CollisionEvent;
-enum class GameState;
+enum class GameState : uint8_t;
 
 // Simple audio system that can be used to play sound
 class AudioSystem : public System

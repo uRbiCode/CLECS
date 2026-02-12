@@ -12,5 +12,6 @@ public:
 private:
 	void OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const;
 	void ResetStage(const SystemContext& Context) const;
-	void SendStageFinishedEvent(const SystemContext& Context, bool Victory) const;
+	bool AreAllBricksDestroyed(const SystemContext& Context) const;
+	void NotifyStageEnd(const SystemContext& Context, bool Victory) const;
 };

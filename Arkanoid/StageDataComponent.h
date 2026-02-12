@@ -42,7 +42,6 @@ struct WallData
 struct TriggerData
 {
 	PositionSizeData PositionSize;
-    int Health = 3;
 };
 
 struct BrickData

@@ -18,8 +18,7 @@
   },
   "trigger": {
     "position": { "x": 320.0, "y": 470.0 },
-    "size": { "x": 640.0, "y": 20.0 },
-    "health": 3
+    "size": { "x": 640.0, "y": 20.0 }
   },
   "walls": [
     {
@@ -36,14 +35,14 @@
     }
   ],
   "bricks": [
-    {
-      "position": { "x": 164.0, "y": 44.0 },
-      "size": { "x": 64.0, "y": 32.0 },
-      "health": 1,
-      "texture": {
-        "path": "../Assets/Textures/bricks.png",
-        "sourceRect": { "x": 0.0, "y": 23.0, "w": 32.0, "h": 8.0 }
-      }
-    }
+       {
+          "position": { "x": 308.0, "y": 44.0 },
+          "size": { "x": 64.0, "y": 32.0 },
+          "health": 1,
+          "texture": {
+            "path": "../Assets/Textures/bricks.png",
+            "sourceRect": { "x": 0.0, "y": 23.0, "w": 32.0, "h": 8.0 }
+          }
+       }
   ]
 }

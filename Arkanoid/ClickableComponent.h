@@ -1,10 +1,11 @@
 #pragma once
 #include <string>
 
-enum class ClickableTag
+enum class ClickableTag : uint8_t
 {
 	PlayButton = 0,
 	QuitButton,
+	MainMenuButton,
 	Invalid
 };
 

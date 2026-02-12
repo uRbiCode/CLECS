@@ -12,126 +12,39 @@
 #include "HealthComponent.h"
 #include "VelocityComponent.h"
 #include "PlayerControllerComponent.h"
-#include "HealthChangedEvent.h"
 #include "TextureManager.h"
-#include "StageBeginEvent.h"
 #include "RenderConstants.h"
 #include "GameStateEvents.h"
 #include "GameStateUtils.h"
-#include <cassert>
 #include "StageDataLoader.h"
+#include "StageUtils.h"
+#include "StageEndEvent.h"
+#include <cassert>
 
 namespace
 {
-	void TryAddTexture(const SystemContext& Context, const Entity& Entity, const TextureData& Data)
-	{
-		if (Data.Path.empty())
-			return;
-
-		auto Texture = Context.Managers.TextureManager.GetTexture(Data.Path);
-		if (Texture == nullptr)
-			return;
-
-		Context.EntityAdmin.AddComponent<TextureComponent>(Entity, TextureComponent{
-			Texture,
-			Data.SourceRect
-		});
-	}
-
-	void AddWall(const SystemContext& Context, const WallData& WallData)
-	{
-		auto& Admin = Context.EntityAdmin;
-		auto& TexManager = Context.Managers.TextureManager;
-
-		auto Wall = Admin.CreateEntity();
-		Admin.AddComponent<TransformComponent>(Wall, WallData.Position);
-		Admin.AddComponent<RectComponent>(Wall, SDL_FRect{ -WallData.Size.X * 0.5f, -WallData.Size.Y * 0.5f, WallData.Size.X, WallData.Size.Y });
-		Admin.AddComponent<ColorComponent>(Wall, SDL_FColor{ 0.3f, 0.3f, 0.3f, 1.f });
-		Admin.AddComponent<RenderComponent>(Wall);
-		
-		TryAddTexture(Context, Wall, WallData.TextureData);
-		
-		auto& WallCollisionComponent = Admin.AddComponent<CollisionComponent>(Wall, CollisionChannel::Static);
-		WallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Static)] = CollisionResponse::Ignore;
-		WallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
-	}
-
-	void AddTrigger(const SystemContext& Context, const TriggerData& TriggerData)
-	{
-		auto& Admin = Context.EntityAdmin;
-
-		auto TriggerEntity = Admin.CreateEntity();
-		Admin.AddComponent<TransformComponent>(TriggerEntity, TriggerData.PositionSize.Position);
-		Admin.AddComponent<RectComponent>(TriggerEntity, SDL_FRect{ -TriggerData.PositionSize.Size.X * 0.5f, -TriggerData.PositionSize.Size.Y * 0.5f, TriggerData.PositionSize.Size.X, TriggerData.PositionSize.Size.Y });
-		Admin.AddComponent<HealthComponent>(TriggerEntity, TriggerData.Health);
-		auto& TriggerCollisionComponent = Admin.AddComponent<CollisionComponent>(TriggerEntity, CollisionChannel::Trigger);
-		TriggerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Static)] = CollisionResponse::Ignore;
-	}
-
-	void AddBrick(const SystemContext& Context, const BrickData& BrickData)
-	{
-		auto& Admin = Context.EntityAdmin;
-		auto& TexManager = Context.Managers.TextureManager;
-
-		auto BrickEntity = Admin.CreateEntity();
-		Admin.AddComponent<TransformComponent>(BrickEntity, BrickData.PositionSize.Position);
-		Admin.AddComponent<RectComponent>(BrickEntity, SDL_FRect{ -BrickData.PositionSize.Size.X * 0.5f, -BrickData.PositionSize.Size.Y * 0.5f, BrickData.PositionSize.Size.X, BrickData.PositionSize.Size.Y });
-		Admin.AddComponent<RenderComponent>(BrickEntity);
-		
-		TryAddTexture(Context, BrickEntity, BrickData.TextureData);
-		
-		auto& BrickCollisionComponent = Admin.AddComponent<CollisionComponent>(BrickEntity, CollisionChannel::Brick);
-		BrickCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Ball)] = CollisionResponse::Ignore;
-		Admin.AddComponent<HealthComponent>(BrickEntity, BrickData.Health);
-	}
-
-	void AddPlayer(const SystemContext& Context, const StageData& StageData)
-	{
-		auto& Admin = Context.EntityAdmin;
-
-		auto PlayerEntity = Admin.CreateEntity();
-		Admin.AddComponent<TransformComponent>(PlayerEntity, StageData.PlayerData.PositionSize.Position);
-		Admin.AddComponent<RectComponent>(PlayerEntity, SDL_FRect{ -StageData.PlayerData.PositionSize.Size.X * 0.5f, -StageData.PlayerData.PositionSize.Size.Y * 0.5f, StageData.PlayerData.PositionSize.Size.X, StageData.PlayerData.PositionSize.Size.Y });
-		Admin.AddComponent<RenderComponent>(PlayerEntity);
-		Admin.AddComponent<VelocityComponent>(PlayerEntity);
-		auto& PlayerCollisionComponent = Admin.AddComponent<CollisionComponent>(PlayerEntity, CollisionChannel::Player);
-		PlayerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Ball)] = CollisionResponse::Ignore;
-		PlayerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
-		Admin.AddComponent<PlayerControllerComponent>(PlayerEntity);
-
-		TryAddTexture(Context, PlayerEntity, StageData.PlayerData.TextureData);
-	}
-
-	void AddBall(const SystemContext& Context, const BallData& BallData)
-	{
-		auto& Admin = Context.EntityAdmin;
-
-		auto BallEntity = Admin.CreateEntity();
-		Admin.AddComponent<TransformComponent>(BallEntity, BallData.Position);
-		Admin.AddComponent<CircleComponent>(BallEntity, BallData.Radius);
-		Admin.AddComponent<RenderComponent>(BallEntity);
-		Admin.AddComponent<VelocityComponent>(BallEntity, BallData.Velocity);
-		auto& BallCollisionComponent = Admin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
-		BallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
-
-		TryAddTexture(Context, BallEntity, BallData.TextureData);
-	}
+	constexpr int InitialPlayerHealth = 3;
 }
 
 void RunControllerSystem::Initialize(const SystemContext& Context) const
 {
-	Context.EventBus.Subscribe<HealthChangedEvent>(this, [this](const SystemContext& Context, const HealthChangedEvent& Event)
-	{
-		OnHealthChanged(Context, Event);
-		return;
-	});
-
 	Context.EventBus.Subscribe<GameStateBeginEvent>(this, [this](const SystemContext& Context, const GameStateBeginEvent& Event)
 	{
-		if (Event.BeginningState == GameState::Run)
+		if (Event.BeginningState != GameState::Run)
+			return;
+
+		BeginRun(Context);
+	});
+
+	Context.EventBus.Subscribe<StageEndEvent>(this, [this](const SystemContext& Context, const StageEndEvent& Event)
+	{
+		if (!Event.Victory)
 		{
-			BeginRun(Context);
+			HandleRunDefeat(Context);
+			return;
 		}
+
+		HandleStageCleared(Context);
 	});
 }
 
@@ -156,6 +69,7 @@ void RunControllerSystem::AddRunStateComponent(const SystemContext& Context) con
 	auto& Admin = Context.EntityAdmin;
 	auto RunStateEntity = Admin.CreateEntity();
 	Admin.AddComponent<RunStateComponent>(RunStateEntity);
+	Admin.AddComponent<HealthComponent>(RunStateEntity, HealthComponent{ InitialPlayerHealth });
 }
 
 void RunControllerSystem::AddStageDataComponent(const SystemContext& Context) const
@@ -182,31 +96,6 @@ void RunControllerSystem::RemoveStageDataComponent(const SystemContext& Context)
 	});
 }
 
-void RunControllerSystem::OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const
-{
-	if (Event.Delta >= 0)
-		return;
-
-	if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Event.Entity))
-		return;
-
-	const auto& Collision = Context.EntityAdmin.GetComponent<CollisionComponent>(Event.Entity);
-	if (Collision.Channel == CollisionChannel::Brick)
-	{
-		if (AreAllBricksDestroyed(Context))
-		{
-			HandleStageCleared(Context);
-		}
-	}
-	else if (Collision.Channel == CollisionChannel::Trigger)
-	{
-		if (HasPlayerLost(Context))
-		{
-			HandleRunDefeat(Context);
-		}
-	}
-}
-
 void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
 {
 	const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
@@ -217,7 +106,6 @@ void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
 	auto& RunStateComp = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
 	if (AdvanceToNextStage(Context, RunStateComp.CurrentStage))
 	{
-		Context.EventBus.Notify(Context, StageBeginEvent{ RunStateComp.CurrentStage });
 		RunStateComp.CurrentStage++;
 	}
 	else
@@ -229,38 +117,13 @@ void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
 void RunControllerSystem::HandleRunVictory(const SystemContext& Context) const
 {
 	CleanupRun(Context);
-	// TODO: Transition to victory state? For now mainmenu
-	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
+	GameStateUtils::RequestStateChange(Context, GameState::Victory);
 }
 
 void RunControllerSystem::HandleRunDefeat(const SystemContext& Context) const
 {
 	CleanupRun(Context);
-	// TODO: Transition to defeat state? For now mainmenu
-	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
-}
-
-bool RunControllerSystem::AreAllBricksDestroyed(const SystemContext& Context) const
-{
-	bool AllDestroyed = true;
-	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&AllDestroyed](const Entity& Entity, const CollisionComponent& Collision, const HealthComponent& Health)
-	{
-		AllDestroyed &= (Collision.Channel != CollisionChannel::Brick || Health.CurrentHealth <= 0);
-	});
-	return AllDestroyed;
-}
-
-bool RunControllerSystem::HasPlayerLost(const SystemContext& Context) const
-{
-	bool TriggerHasHealth = true;
-	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&TriggerHasHealth](const Entity& Entity, const CollisionComponent& Collision, const HealthComponent& Health)
-	{
-		if (Collision.Channel == CollisionChannel::Trigger)
-		{
-			TriggerHasHealth &= (Health.CurrentHealth > 0);
-		}
-	});
-	return !TriggerHasHealth;
+	GameStateUtils::RequestStateChange(Context, GameState::Defeat);
 }
 
 bool RunControllerSystem::AdvanceToNextStage(const SystemContext& Context, int CurrentStageId) const
@@ -268,7 +131,7 @@ bool RunControllerSystem::AdvanceToNextStage(const SystemContext& Context, int C
 	CleanupCurrentStage(Context);
 	
 	const auto NextStageNumber = CurrentStageId + 1;
-	const auto StageDataOpt = StageDataLoader::LoadStageByNumber(NextStageNumber);
+	const auto StageDataOpt = StageDataLoader::LoadStageDataByNumber(NextStageNumber);
 	if (!StageDataOpt.has_value())
 	{
 		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "RunControllerSystem::AdvanceToNextStage -> No more stages found. Victory!");
@@ -287,17 +150,17 @@ void RunControllerSystem::SpawnStageEntities(const SystemContext& Context, const
 	
 	for (const auto& WallData : StageData.Walls)
 	{
-		AddWall(Context, WallData);
+		StageUtils::AddWall(Context, WallData);
 	}
 	
 	for (const auto& BrickData : StageData.Bricks)
 	{
-		AddBrick(Context, BrickData);
+		StageUtils::AddBrick(Context, BrickData);
 	}
 	
-	AddTrigger(Context, StageData.Trigger);
-	AddPlayer(Context, StageData);
-	AddBall(Context, StageData.BallData);
+	StageUtils::AddTrigger(Context, StageData.Trigger);
+	StageUtils::AddPlayer(Context, StageData.PlayerData);
+	StageUtils::AddBall(Context, StageData.BallData);
 }
 
 void RunControllerSystem::SetStageData(const SystemContext& Context, const StageData& StageData) const

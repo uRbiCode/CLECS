@@ -3,7 +3,6 @@
 
 struct SystemContext;
 struct StageData;
-struct HealthChangedEvent;
 
 class RunControllerSystem : public System
 {
@@ -19,15 +18,10 @@ private:
 	void RemoveRunStateComponent(const SystemContext& Context) const;
 	void RemoveStageDataComponent(const SystemContext& Context) const;
 
-	void OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const;
-
 	void HandleStageCleared(const SystemContext& Context) const;
 
 	void HandleRunVictory(const SystemContext& Context) const;
 	void HandleRunDefeat(const SystemContext& Context) const;
-
-	bool AreAllBricksDestroyed(const SystemContext& Context) const;
-	bool HasPlayerLost(const SystemContext& Context) const;
 
 	//Returns whether advancment was succesful or was it the last stage already
 	bool AdvanceToNextStage(const SystemContext& Context, int CurrentStageId) const;
