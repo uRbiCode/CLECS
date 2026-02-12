@@ -54,6 +54,12 @@ void AudioSystem::OnCollision(const SystemContext& Context, const CollisionEvent
 	if (CollisionA.Channel != CollisionChannel::Ball && CollisionB.Channel != CollisionChannel::Ball)
 		return;
 
+	const bool IsBallPlayerCollision = (CollisionA.Channel == CollisionChannel::Ball && CollisionB.Channel == CollisionChannel::Player) 
+		|| (CollisionA.Channel == CollisionChannel::Player && CollisionB.Channel == CollisionChannel::Ball);
+
+	if (IsBallPlayerCollision && std::abs(Event.Separation.X) > std::abs(Event.Separation.Y))
+		return;
+
 	Context.Managers.AudioManager.PlaySound(BallCollisionSoundName, 0.5f);
 }
 
