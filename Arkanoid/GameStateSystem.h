@@ -1,7 +1,8 @@
 #pragma once
 #include "System.h"
+#include <cstdint>
 
-enum class GameState;
+enum class GameState : uint8_t;
 
 // Tracks top-level game state. Relies on present GameStateComponent
 class GameStateSystem : public System

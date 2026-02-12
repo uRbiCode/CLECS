@@ -62,11 +62,11 @@ void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime) co
 	{
 		Velocity.Velocity = { 0.f, 0.f };
 
-		if (Input.IsKeyDown(SDLK_A))
+		if (Input.IsKeyDown(SDLK_A) || Input.IsKeyDown(SDLK_LEFT))
 		{
 			Velocity.Velocity.X -= Controller.MoveSpeed;
 		}
-		if (Input.IsKeyDown(SDLK_D))
+		if (Input.IsKeyDown(SDLK_D) || Input.IsKeyDown(SDLK_RIGHT))
 		{
 			Velocity.Velocity.X += Controller.MoveSpeed;
 		}

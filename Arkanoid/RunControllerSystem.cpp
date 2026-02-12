@@ -229,15 +229,13 @@ void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
 void RunControllerSystem::HandleRunVictory(const SystemContext& Context) const
 {
 	CleanupRun(Context);
-	// TODO: Transition to victory state? For now mainmenu
-	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
+	GameStateUtils::RequestStateChange(Context, GameState::Victory);
 }
 
 void RunControllerSystem::HandleRunDefeat(const SystemContext& Context) const
 {
 	CleanupRun(Context);
-	// TODO: Transition to defeat state? For now mainmenu
-	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
+	GameStateUtils::RequestStateChange(Context, GameState::Defeat);
 }
 
 bool RunControllerSystem::AreAllBricksDestroyed(const SystemContext& Context) const

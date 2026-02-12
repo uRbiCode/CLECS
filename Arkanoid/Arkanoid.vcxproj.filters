@@ -56,6 +56,9 @@
     <Filter Include="Source\Systems\AudioSystem">
       <UniqueIdentifier>{70f73783-be21-407f-9017-09ea3f6d7c98}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\SummaryControllerSystem">
+      <UniqueIdentifier>{157a2de6-4e54-4a43-80bf-891c91174303}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -105,6 +108,9 @@
     </ClCompile>
     <ClCompile Include="AudioSystem.cpp">
       <Filter>Source\Systems\AudioSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="SummaryControllerSystem.cpp">
+      <Filter>Source\Systems\SummaryControllerSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +197,12 @@
     </ClInclude>
     <ClInclude Include="AudioSystem.h">
       <Filter>Source\Systems\AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SummaryControllerSystem.h">
+      <Filter>Source\Systems\SummaryControllerSystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

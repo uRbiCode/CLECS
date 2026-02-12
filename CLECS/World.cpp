@@ -96,6 +96,11 @@ void World::Shutdown()
 	{
 		AudioManagerPtr->Shutdown();
 	}
+	
+	if (FontManagerPtr != nullptr)
+	{
+		FontManagerPtr->UnloadAll();
+	}
 }
 
 bool World::CreateWindow(const RendererInitializationData& Data)

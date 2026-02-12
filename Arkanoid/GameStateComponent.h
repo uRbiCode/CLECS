@@ -1,10 +1,13 @@
 #pragma once
+#include <cstdint>
 
-enum class GameState
+enum class GameState : uint8_t
 {
 	Invalid,
 	MainMenu,
-	Run
+	Run,
+	Victory,
+	Defeat
 };
 
 struct GameStateComponent

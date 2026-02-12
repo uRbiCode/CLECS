@@ -1,7 +1,8 @@
 #pragma once
+#include <cstdint>
 
 struct SystemContext;
-enum class GameState;
+enum class GameState : uint8_t;
 
 namespace GameStateUtils
 {

@@ -1,0 +1,110 @@
+#include "SummaryControllerSystem.h"
+#include "SystemContext.h"
+#include "EventBus.h"
+#include "GameStateEvents.h"
+#include "EntityAdmin.h"
+#include "TextComponent.h"
+#include "SDLUtils.h"
+#include "ClickableComponent.h"
+#include "TransformComponent.h"
+#include "ShapeComponents.h"
+#include "RenderComponent.h"
+#include "RenderConstants.h"
+#include "Constants.h"
+#include "ClickableUsedEvent.h"
+#include "GameStateUtils.h"
+
+namespace
+{
+	constexpr const char* MainMenuButtonText = "Main Menu";
+	constexpr const char* VictoryText = "VICTORY"; 
+	constexpr const char* DefeatText = "DEFEAT";
+}
+
+void SummaryControllerSystem::Initialize(const SystemContext& Context) const
+{
+	Context.EventBus.Subscribe<GameStateBeginEvent>(this, [this](const SystemContext& Context, const GameStateBeginEvent& Event)
+	{
+		if (Event.BeginningState == GameState::Victory)
+		{
+			InitializeVictory(Context);
+		}
+		else if (Event.BeginningState == GameState::Defeat)
+		{
+			InitializeDefeat(Context);
+		}
+	});
+
+	Context.EventBus.Subscribe<GameStateEndEvent>(this, [this](const SystemContext& Context, const GameStateEndEvent& Event)
+	{
+		if (Event.EndingState == GameState::Victory || Event.EndingState == GameState::Defeat)
+		{
+			CleanupSummary(Context);
+		}
+	});
+
+	Context.EventBus.Subscribe<ClickableUsedEvent>(this, [this](const SystemContext& Context, const ClickableUsedEvent& Event)
+	{
+		OnClickableUsed(Context, Event);
+	});
+}
+
+void SummaryControllerSystem::AddSummaryText(const SystemContext& Context, const std::string& Text) const
+{
+	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+
+	const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
+
+	auto& Admin = Context.EntityAdmin;
+	auto SummaryTextEntity = Admin.CreateEntity();
+	Admin.AddComponent<TransformComponent>(SummaryTextEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.25f });
+	Admin.AddComponent<RectComponent>(SummaryTextEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });
+	Admin.AddComponent<ColorComponent>(SummaryTextEntity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
+	Admin.AddComponent<TextComponent>(SummaryTextEntity, Text, Constants::FontFilePath, 64);
+	Admin.AddComponent<RenderComponent>(SummaryTextEntity, RenderConstants::UILayer);
+}
+
+void SummaryControllerSystem::AddMainMenuButton(const SystemContext& Context) const
+{
+	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+
+	const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
+
+	auto& Admin = Context.EntityAdmin;
+	auto MainMenuButtonEntity = Admin.CreateEntity();
+	Admin.AddComponent<ClickableComponent>(MainMenuButtonEntity, ClickableTag::MainMenuButton);
+	Admin.AddComponent<TransformComponent>(MainMenuButtonEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.6f });
+	Admin.AddComponent<RectComponent>(MainMenuButtonEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });
+	Admin.AddComponent<ShapeFillComponent>(MainMenuButtonEntity, false);
+	Admin.AddComponent<RenderComponent>(MainMenuButtonEntity, RenderConstants::UILayer);
+	Admin.AddComponent<TextComponent>(MainMenuButtonEntity, MainMenuButtonText, Constants::FontFilePath, 24);
+}
+
+void SummaryControllerSystem::InitializeVictory(const SystemContext& Context) const
+{
+	AddMainMenuButton(Context);
+	AddSummaryText(Context, VictoryText);
+}
+
+void SummaryControllerSystem::InitializeDefeat(const SystemContext& Context) const
+{
+	AddMainMenuButton(Context);
+	AddSummaryText(Context, DefeatText);
+}
+
+void SummaryControllerSystem::CleanupSummary(const SystemContext& Context) const
+{
+	Context.EntityAdmin.GetGroup<TextComponent>().ForEach([&](const Entity& Entity, const TextComponent& TextComp)
+	{
+		Context.EntityAdmin.DestroyEntity(Entity);
+	});
+}
+
+void SummaryControllerSystem::OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const
+{
+	if (Event.UsedClickableTag != ClickableTag::MainMenuButton)
+		return;
+
+	CleanupSummary(Context);
+	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
+}

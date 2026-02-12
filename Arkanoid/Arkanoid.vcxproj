@@ -165,6 +165,7 @@
     <ClCompile Include="PlayerInputSystem.cpp" />
     <ClCompile Include="StageDataLoader.cpp" />
     <ClCompile Include="StageUtils.cpp" />
+    <ClCompile Include="SummaryControllerSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSystem.h" />
@@ -175,6 +176,7 @@
     <ClInclude Include="Arkanoid.h" />
     <ClInclude Include="CollisionEvent.h" />
     <ClInclude Include="CollisionKinematicResolverSystem.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="CurrentStageSystem.h" />
     <ClInclude Include="GameStateComponent.h" />
     <ClInclude Include="GameStateEvents.h" />
@@ -194,6 +196,7 @@
     <ClInclude Include="StageDataComponent.h" />
     <ClInclude Include="StageDataLoader.h" />
     <ClInclude Include="StageUtils.h" />
+    <ClInclude Include="SummaryControllerSystem.h" />
     <ClInclude Include="VelocityComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
