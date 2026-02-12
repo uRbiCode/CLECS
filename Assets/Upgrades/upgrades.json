@@ -1,0 +1,39 @@
+{
+  "upgrades": [
+    {
+      "name": "Wide Paddle 1",
+      "description": "Increases paddle width by 20%",
+      "upgrade": {
+        "paddleWidthMultiplier": 1.2
+      }
+    },
+	{
+      "name": "Wide Paddle 2",
+      "description": "Increases paddle width by 20%",
+      "upgrade": {
+        "paddleWidthMultiplier": 1.2
+      }
+    },
+	{
+      "name": "Wide Paddle 3",
+      "description": "Increases paddle width by 20%",
+      "upgrade": {
+        "paddleWidthMultiplier": 1.2
+      }
+    },
+	{
+	  "name": "Wide Paddle 4",
+	  "description": "Increases paddle width by 20%",
+	  "upgrade": {
+		"paddleWidthMultiplier": 1.2
+	  }
+	},
+	{
+	  "name": "Wide Paddle 5",
+	  "description": "Increases paddle width by 20%",
+	  "upgrade": {
+		"paddleWidthMultiplier": 1.2
+	  }
+	}
+  ]
+}

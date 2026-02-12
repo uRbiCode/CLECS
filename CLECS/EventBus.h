@@ -41,7 +41,7 @@ public:
 		if (It == Subscribers.end())
 			return;
 
-		const auto& Callbacks = It->second;
+		auto& Callbacks = It->second;
 		Callbacks.erase(
 			std::remove_if(Callbacks.begin(), Callbacks.end(),
 				[Subscriber](const SubscriptionEntry& Entry)

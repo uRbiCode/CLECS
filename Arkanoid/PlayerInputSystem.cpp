@@ -16,15 +16,15 @@
 
 namespace
 {
-	std::optional<ClickableTag> GetClickableTagFromEvent(const SystemContext& Context, const MouseClickEvent& Event)
+	std::optional<std::pair<Entity, ClickableTag>> GetClickableFromEvent(const SystemContext& Context, const MouseClickEvent& Event)
 	{
 		if (Event.Button != SDL_BUTTON_LEFT)
 			return std::nullopt;
 
-		std::optional<ClickableTag> ClickedTag = std::nullopt;
+		std::optional<std::pair<Entity, ClickableTag>> ClickedPair = std::nullopt;
 
 		const auto LogicalEventPosition = SDLUtils::TranslateCoordinatesFromWindowToLogical(&Context.Renderer, &Context.Window, Event.Position);
-		Context.EntityAdmin.GetGroup<ClickableComponent, TransformComponent, RectComponent>().ForEach([&ClickedTag, &Context, &LogicalEventPosition](const Entity& Entity, const ClickableComponent& Clickable, const TransformComponent& Transform, const RectComponent& Rect)
+		Context.EntityAdmin.GetGroup<ClickableComponent, TransformComponent, RectComponent>().ForEach([&ClickedPair, &Context, &LogicalEventPosition](const Entity& Entity, const ClickableComponent& Clickable, const TransformComponent& Transform, const RectComponent& Rect)
 		{
 			const auto Left = Transform.Position.X + Rect.Rect.x;
 			const auto Right = Left + Rect.Rect.w;
@@ -36,11 +36,11 @@ namespace
 				&& LogicalEventPosition.Y >= Top 
 				&& LogicalEventPosition.Y <= Bottom)
 			{
-				ClickedTag = Clickable.Tag;
+				ClickedPair = std::make_pair(Entity, Clickable.Tag);
 			}
 		});
 
-		return ClickedTag;
+		return ClickedPair;
 	}
 }
 
@@ -75,16 +75,16 @@ void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime) co
 
 void PlayerInputSystem::OnMouseClick(const SystemContext& Context, const MouseClickEvent& Event) const
 {
-	const auto ClickedTag = GetClickableTagFromEvent(Context, Event);
-	if (!ClickedTag.has_value())
+	const auto ClickedPair = GetClickableFromEvent(Context, Event);
+	if (!ClickedPair.has_value())
 		return;
 
-	const auto ClickedTagValue = ClickedTag.value();
+	const auto [ClickedEntity, ClickedTagValue] = ClickedPair.value();
 	if (ClickedTagValue == ClickableTag::Invalid)
 	{
 		SDL_LogWarn(SDL_LOG_CATEGORY_INPUT, "PlayerInputSystem::OnMouseClick -> Clickable has invalid tag");
 		return;
 	}
 
-	Context.EventBus.Notify(Context, ClickableUsedEvent{ ClickedTag.value() });
+	Context.EventBus.Notify(Context, ClickableUsedEvent{ ClickedEntity, ClickedTagValue });
 }

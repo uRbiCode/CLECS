@@ -3,7 +3,7 @@
 
 enum class GameState : uint8_t
 {
-	Invalid,
+	Invalid = 0,
 	MainMenu,
 	Run,
 	Victory,

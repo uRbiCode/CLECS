@@ -3,6 +3,7 @@
 
 struct SystemContext;
 struct StageData;
+enum class RunState : uint8_t;
 
 class RunControllerSystem : public System
 {
@@ -29,4 +30,8 @@ private:
 	void SpawnStageEntities(const SystemContext& Context, const StageData& StageData) const;
 	void SetStageData(const SystemContext& Context, const StageData& StageData) const;
 	void CleanupCurrentStage(const SystemContext& Context) const;
+
+	bool AreUpgradesAvailable(const SystemContext& Context) const;
+	void ChangeRunState(const SystemContext& Context, RunState NewState) const;
+	void TryStartNextStage(const SystemContext& Context) const;
 };

@@ -32,8 +32,8 @@ namespace
 		SDL_FRect Result;
 		Result.x = Transform.Position.X - Circle.Radius;
 		Result.y = Transform.Position.Y - Circle.Radius;
-		Result.w = Circle.Radius * 2.0f;
-		Result.h = Circle.Radius * 2.0f;
+		Result.w = Circle.Radius * 2.f;
+		Result.h = Circle.Radius * 2.f;
 		return Result;
 	}
 
@@ -105,7 +105,7 @@ namespace
 		const float DY = CircleCenterY - ClosestY;
 		const float Distance = std::sqrt(DX * DX + DY * DY);
 		
-		if (Distance > 0.0f)
+		if (Distance > 0.f)
 		{
 			const float Penetration = Circle.Radius - Distance;
 			return { (DX / Distance) * Penetration, (DY / Distance) * Penetration };
@@ -119,13 +119,13 @@ namespace
 		const float MinDist = std::min({DistLeft, DistRight, DistTop, DistBottom});
 		
 		if (MinDist == DistLeft)
-			return { -DistLeft - Circle.Radius, 0.0f };
+			return { -DistLeft - Circle.Radius, 0.f };
 		if (MinDist == DistRight)
-			return { DistRight + Circle.Radius, 0.0f };
+			return { DistRight + Circle.Radius, 0.f };
 		if (MinDist == DistTop)
-			return { 0.0f, -DistTop - Circle.Radius };
+			return { 0.f, -DistTop - Circle.Radius };
 
-		return { 0.0f, DistBottom + Circle.Radius };
+		return { 0.f, DistBottom + Circle.Radius };
 	}
 
 	Vector2D<float> GetSeparationCircleCircle(const TransformComponent& TransformA, const CircleComponent& CircleA,
@@ -135,14 +135,14 @@ namespace
 		const float DY = TransformB.Position.Y - TransformA.Position.Y;
 		const float Distance = std::sqrt(DX * DX + DY * DY);
 		
-		if (Distance > 0.0f)
+		if (Distance > 0.f)
 		{
 			const float RadiusSum = CircleA.Radius + CircleB.Radius;
 			const float Penetration = RadiusSum - Distance;
 			return { -(DX / Distance) * Penetration, -(DY / Distance) * Penetration };
 		}
 		
-		return { -(CircleA.Radius + CircleB.Radius), 0.0f };
+		return { -(CircleA.Radius + CircleB.Radius), 0.f };
 	}
 }
 
@@ -190,7 +190,7 @@ void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaT
 				continue;
 
 			bool Colliding = false;
-			Vector2D<float> Separation = { 0.0f, 0.0f };
+			Vector2D<float> Separation = { 0.f, 0.f };
 
 			if (AHasRect && BHasRect)
 			{

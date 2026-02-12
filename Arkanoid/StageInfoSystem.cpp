@@ -2,17 +2,17 @@
 #include "SystemContext.h"
 #include "EventBus.h"
 #include "GameStateEvents.h"
-#include "StageEndEvent.h"
 #include "EntityAdmin.h"
 #include "RunStateComponent.h"
 #include "TransformComponent.h"
 #include "SDLUtils.h"
-#include <cassert>
-#include <ShapeComponents.h>
-#include <RenderComponent.h>
-#include <TextComponent.h>
-#include <RenderConstants.h>
+#include "ShapeComponents.h"
+#include "RenderComponent.h"
+#include "TextComponent.h"
+#include "RenderConstants.h"
 #include "Constants.h"
+#include "RunStateEvent.h"
+#include <cassert>
 
 namespace
 {
@@ -43,9 +43,9 @@ void StageInfoSystem::Initialize(const SystemContext& Context) const
 		InitializeStageInfo(Context);
 	});
 
-	Context.EventBus.Subscribe<StageEndEvent>(this, [this](const SystemContext& Context, const StageEndEvent& Event)
+	Context.EventBus.Subscribe<ChangeRunStateEvent>(this, [this](const SystemContext& Context, const ChangeRunStateEvent& Event)
 	{
-		if (!Event.Victory)
+		if (Event.NewState != RunState::Stage)
 			return;
 
 		RefreshStageInfo(Context);
@@ -74,7 +74,7 @@ void StageInfoSystem::RefreshStageInfo(const SystemContext& Context) const
 {
 	auto& Admin = Context.EntityAdmin;
 	const auto RunStateGroup = Admin.GetGroup<RunStateComponent>();
-	if (RunStateGroup.Empty())
+	if (RunStateGroup.Empty() || !Admin.HasComponent<TextComponent>(RunStateGroup[0]))
 		return;
 
 	auto& TextComp = Admin.AccessComponent<TextComponent>(RunStateGroup[0]);

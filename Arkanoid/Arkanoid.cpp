@@ -16,6 +16,7 @@
 #include "AudioSystem.h"
 #include "SummaryControllerSystem.h"
 #include "StageInfoSystem.h"
+#include "UpgradeControllerSystem.h"
 
 namespace
 {
@@ -34,6 +35,7 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	Data.AddSystem<HealthSystem>();
 	Data.AddSystem<MovementSystem>();
 	Data.AddSystem<CurrentStageSystem>();
+	Data.AddSystem<UpgradeControllerSystem>();
 	Data.AddSystem<MainMenuControllerSystem>();
 	Data.AddSystem<RunControllerSystem>();
 	Data.AddSystem<SummaryControllerSystem>();
