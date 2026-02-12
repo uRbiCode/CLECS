@@ -3,7 +3,7 @@
 
 struct HealthChangedEvent;
 
-// Event-driven controller for displaying remaining player lives
+// Controller for displaying remaining player lives
 class HealthIndicatorSystem : public System
 {
 public:

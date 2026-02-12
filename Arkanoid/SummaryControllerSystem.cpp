@@ -52,22 +52,20 @@ void SummaryControllerSystem::Initialize(const SystemContext& Context) const
 void SummaryControllerSystem::AddSummaryText(const SystemContext& Context, const std::string& Text) const
 {
 	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-
-	const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
+	const Vector2D<float> RectSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
 
 	auto& Admin = Context.EntityAdmin;
 	auto SummaryTextEntity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(SummaryTextEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.25f });
-	Admin.AddComponent<RectComponent>(SummaryTextEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });
+	Admin.AddComponent<RectComponent>(SummaryTextEntity, SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y });
 	Admin.AddComponent<ColorComponent>(SummaryTextEntity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
-	Admin.AddComponent<TextComponent>(SummaryTextEntity, Text, Constants::FontFilePath, 64);
+	Admin.AddComponent<TextComponent>(SummaryTextEntity, Text, Constants::FontFilePath, 72);
 	Admin.AddComponent<RenderComponent>(SummaryTextEntity, RenderConstants::UILayer);
 }
 
 void SummaryControllerSystem::AddMainMenuButton(const SystemContext& Context) const
 {
 	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-
 	const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
 
 	auto& Admin = Context.EntityAdmin;

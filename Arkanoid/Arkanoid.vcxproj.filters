@@ -59,6 +59,9 @@
     <Filter Include="Source\Systems\SummaryControllerSystem">
       <UniqueIdentifier>{157a2de6-4e54-4a43-80bf-891c91174303}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\StageInfoSystem">
+      <UniqueIdentifier>{98a8cdc9-76db-4f0c-bda0-a8dd20310d92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -111,6 +114,9 @@
     </ClCompile>
     <ClCompile Include="SummaryControllerSystem.cpp">
       <Filter>Source\Systems\SummaryControllerSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="StageInfoSystem.cpp">
+      <Filter>Source\Systems\StageInfoSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,6 +209,9 @@
     </ClInclude>
     <ClInclude Include="StageEndEvent.h">
       <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="StageInfoSystem.h">
+      <Filter>Source\Systems\StageInfoSystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

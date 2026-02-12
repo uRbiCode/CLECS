@@ -112,7 +112,7 @@ void FontManager::LoadFontsFromAssetsDirectory()
         const auto FilePath = Entry.path().string();
         const auto Extension = Entry.path().extension().string();
         
-        if (Extension == ".ttf")
+        if (Extension == ".ttf" || Extension == ".otf")
         {
             LoadFont(FilePath, DefaultFontSize);
         }

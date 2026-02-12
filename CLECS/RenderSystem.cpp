@@ -295,7 +295,7 @@ void RenderSystem::RenderText(const SystemContext& Context, const Entity& Entity
 		}
 	}
 
-	const auto TextSurface = TTF_RenderText_Blended(Font, TextComp.Text.c_str(), TextComp.Text.length(), TextComp.Color);
+	const auto TextSurface = TTF_RenderText_Solid(Font, TextComp.Text.c_str(), TextComp.Text.length(), TextComp.Color);
 	if (TextSurface == nullptr)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_RENDER, "RenderSystem::RenderText -> Failed to create text surface for Entity %u: %s", Entity.GetId(), SDL_GetError());

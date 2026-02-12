@@ -2,5 +2,5 @@
 
 namespace Constants
 {
-	constexpr const char* FontFilePath = "../Assets/Fonts/arkanoid.ttf";
+	constexpr const char* FontFilePath = "../Assets/Fonts/pixy_regular.ttf";
 }
