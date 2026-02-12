@@ -73,7 +73,7 @@ void SummaryControllerSystem::AddMainMenuButton(const SystemContext& Context) co
 	auto& Admin = Context.EntityAdmin;
 	auto MainMenuButtonEntity = Admin.CreateEntity();
 	Admin.AddComponent<ClickableComponent>(MainMenuButtonEntity, ClickableTag::MainMenuButton);
-	Admin.AddComponent<TransformComponent>(MainMenuButtonEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.6f });
+	Admin.AddComponent<TransformComponent>(MainMenuButtonEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.75f });
 	Admin.AddComponent<RectComponent>(MainMenuButtonEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });
 	Admin.AddComponent<ShapeFillComponent>(MainMenuButtonEntity, false);
 	Admin.AddComponent<RenderComponent>(MainMenuButtonEntity, RenderConstants::UILayer);

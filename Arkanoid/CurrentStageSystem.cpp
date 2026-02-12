@@ -10,6 +10,7 @@
 #include "StageUtils.h"
 #include "StageDataComponent.h"
 #include "StageEndEvent.h"
+#include "RunStateComponent.h"
 
 void CurrentStageSystem::Initialize(const SystemContext& Context) const
 {
@@ -23,15 +24,7 @@ void CurrentStageSystem::Initialize(const SystemContext& Context) const
 
 void CurrentStageSystem::OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const
 {
-	if (Event.Delta > 0)
-		return;
-
-	if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Event.Entity))
-		return;
-
-	const auto& Collision = Context.EntityAdmin.GetComponent<CollisionComponent>(Event.Entity);
-
-	if (Collision.Channel == CollisionChannel::Trigger)
+	if (Context.EntityAdmin.HasComponent<RunStateComponent>(Event.Entity))
 	{
 		if (Event.NewHealth > 0)
 		{
@@ -41,9 +34,15 @@ void CurrentStageSystem::OnHealthChanged(const SystemContext& Context, const Hea
 		{
 			NotifyStageEnd(Context, false);
 		}
+
+		return;
 	}
 
-	else if (Collision.Channel == CollisionChannel::Brick && Event.NewHealth <= 0 && AreAllBricksDestroyed(Context))
+	if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Event.Entity))
+		return;
+
+	const auto& Collision = Context.EntityAdmin.GetComponent<CollisionComponent>(Event.Entity);
+	if (Collision.Channel == CollisionChannel::Brick && Event.NewHealth <= 0 && AreAllBricksDestroyed(Context))
 	{
 		NotifyStageEnd(Context, true);
 	}

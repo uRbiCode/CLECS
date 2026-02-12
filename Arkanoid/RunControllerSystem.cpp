@@ -21,6 +21,11 @@
 #include "StageEndEvent.h"
 #include <cassert>
 
+namespace
+{
+	constexpr int InitialPlayerHealth = 3;
+}
+
 void RunControllerSystem::Initialize(const SystemContext& Context) const
 {
 	Context.EventBus.Subscribe<GameStateBeginEvent>(this, [this](const SystemContext& Context, const GameStateBeginEvent& Event)
@@ -64,6 +69,7 @@ void RunControllerSystem::AddRunStateComponent(const SystemContext& Context) con
 	auto& Admin = Context.EntityAdmin;
 	auto RunStateEntity = Admin.CreateEntity();
 	Admin.AddComponent<RunStateComponent>(RunStateEntity);
+	Admin.AddComponent<HealthComponent>(RunStateEntity, HealthComponent{ InitialPlayerHealth });
 }
 
 void RunControllerSystem::AddStageDataComponent(const SystemContext& Context) const

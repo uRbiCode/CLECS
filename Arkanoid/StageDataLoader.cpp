@@ -82,7 +82,6 @@ TriggerData StageDataLoader::ParseTriggerData(const Json& Json)
 	TriggerData Data;
 	Data.PositionSize.Position = ParseVector2D(Json["position"]);
 	Data.PositionSize.Size = ParseVector2D(Json["size"]);
-	Data.Health = Json.value("health", 1);
 	return Data;
 }
 

@@ -14,6 +14,7 @@
 #include "RenderConstants.h"
 #include "SDLUtils.h"
 #include "GameStateEvents.h"
+#include "RunStateComponent.h"
 
 namespace
 {
@@ -143,10 +144,7 @@ void HealthIndicatorSystem::OnHealthChanged(const SystemContext& Context, const 
 		return;
 
 	auto& Admin = Context.EntityAdmin;
-	if (!Admin.HasComponent<CollisionComponent>(Event.Entity))
-		return;
-
-	if (Admin.GetComponent<CollisionComponent>(Event.Entity).Channel != CollisionChannel::Trigger)
+	if (!Admin.HasComponent<RunStateComponent>(Event.Entity))
 		return;
 
 	if (Event.Delta < 0)
