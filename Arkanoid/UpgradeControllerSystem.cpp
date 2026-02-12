@@ -58,7 +58,7 @@ void UpgradeControllerSystem::InitializeUpgradeSelection(const SystemContext& Co
 		return;
 	}
 
-	const auto SampledUpgrades = std::move(SampleUpgrades(Context, AvailableUpgrades));
+	const auto& SampledUpgrades = std::move(SampleUpgrades(Context, AvailableUpgrades));
 	AddUpgradeTitle(Context);
 	PresentUpgradesToPlayer(Context, SampledUpgrades);
 
@@ -127,7 +127,7 @@ void UpgradeControllerSystem::PresentUpgradesToPlayer(const SystemContext& Conte
 		Admin.AddComponent<RectComponent>(UpgradeButtonEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });
 		Admin.AddComponent<ShapeFillComponent>(UpgradeButtonEntity, false);
 		Admin.AddComponent<RenderComponent>(UpgradeButtonEntity, RenderConstants::UILayer);
-		Admin.AddComponent<TextComponent>(UpgradeButtonEntity, BuildUpgradeButtonText(Upgrades[i]), Constants::FontFilePath, 12);
+		Admin.AddComponent<TextComponent>(UpgradeButtonEntity, std::move(BuildUpgradeButtonText(Upgrades[i])), Constants::FontFilePath, 12);
 		Admin.AddComponent<UpgradeComponent>(UpgradeButtonEntity, Upgrades[i]);
 	}
 }

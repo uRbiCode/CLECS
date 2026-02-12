@@ -20,6 +20,20 @@
       "upgrade": {
         "paddleWidthIncrease": 0.2
       }
-    }
+    },
+	{
+	  "name": "Wide Paddle 4",
+	  "description": "Increases paddle width by 20%",
+	  "upgrade": {
+		"paddleWidthIncrease": 0.2
+	  }
+	},
+	{
+	  "name": "Wide Paddle 5",
+	  "description": "Increases paddle width by 20%",
+	  "upgrade": {
+		"paddleWidthIncrease": 0.2
+	  }
+	}
   ]
 }
