@@ -3,10 +3,35 @@
 #include "EntityAdmin.h"
 #include "SystemContext.h"
 #include "StageDataComponent.h"
-#include <optional>
 #include "HealthComponent.h"
 #include "CollisionComponent.h"
+#include "TextureComponent.h"
+#include "TextureManager.h"
+#include "ShapeComponents.h"
+#include "TransformComponent.h"
+#include "RenderComponent.h"
+#include "VelocityComponent.h"
+#include "PlayerControllerComponent.h"
 #include <cassert>
+#include <optional>
+
+namespace
+{
+	void TryAddTexture(const SystemContext& Context, const Entity& Entity, const TextureData& Data)
+	{
+		if (Data.Path.empty())
+			return;
+
+		auto Texture = Context.Managers.TextureManager.GetTexture(Data.Path);
+		if (Texture == nullptr)
+			return;
+
+		Context.EntityAdmin.AddComponent<TextureComponent>(Entity, TextureComponent{
+			Texture,
+			Data.SourceRect
+		});
+	}
+}
 
 StageData StageUtils::GetCurrentStageData(const SystemContext& Context)
 {
@@ -36,4 +61,83 @@ int StageUtils::GetCurrentPlayerHealth(const SystemContext& Context)
 	}
 
 	return Health.value_or(0);
+}
+
+void StageUtils::AddWall(const SystemContext& Context, const WallData& WallData)
+{
+	auto& Admin = Context.EntityAdmin;
+	auto& TexManager = Context.Managers.TextureManager;
+
+	auto Wall = Admin.CreateEntity();
+	Admin.AddComponent<TransformComponent>(Wall, WallData.Position);
+	Admin.AddComponent<RectComponent>(Wall, SDL_FRect{ -WallData.Size.X * 0.5f, -WallData.Size.Y * 0.5f, WallData.Size.X, WallData.Size.Y });
+	Admin.AddComponent<ColorComponent>(Wall, SDL_FColor{ 0.3f, 0.3f, 0.3f, 1.f });
+	Admin.AddComponent<RenderComponent>(Wall);
+	
+	TryAddTexture(Context, Wall, WallData.TextureData);
+	
+	auto& WallCollisionComponent = Admin.AddComponent<CollisionComponent>(Wall, CollisionChannel::Static);
+	WallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Static)] = CollisionResponse::Ignore;
+	WallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
+}
+
+void StageUtils::AddTrigger(const SystemContext& Context, const TriggerData& TriggerData)
+{
+	auto& Admin = Context.EntityAdmin;
+
+	auto TriggerEntity = Admin.CreateEntity();
+	Admin.AddComponent<TransformComponent>(TriggerEntity, TriggerData.PositionSize.Position);
+	Admin.AddComponent<RectComponent>(TriggerEntity, SDL_FRect{ -TriggerData.PositionSize.Size.X * 0.5f, -TriggerData.PositionSize.Size.Y * 0.5f, TriggerData.PositionSize.Size.X, TriggerData.PositionSize.Size.Y });
+	Admin.AddComponent<HealthComponent>(TriggerEntity, TriggerData.Health);
+	auto& TriggerCollisionComponent = Admin.AddComponent<CollisionComponent>(TriggerEntity, CollisionChannel::Trigger);
+	TriggerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Static)] = CollisionResponse::Ignore;
+}
+
+void StageUtils::AddBrick(const SystemContext& Context, const BrickData& BrickData)
+{
+	auto& Admin = Context.EntityAdmin;
+	auto& TexManager = Context.Managers.TextureManager;
+
+	auto BrickEntity = Admin.CreateEntity();
+	Admin.AddComponent<TransformComponent>(BrickEntity, BrickData.PositionSize.Position);
+	Admin.AddComponent<RectComponent>(BrickEntity, SDL_FRect{ -BrickData.PositionSize.Size.X * 0.5f, -BrickData.PositionSize.Size.Y * 0.5f, BrickData.PositionSize.Size.X, BrickData.PositionSize.Size.Y });
+	Admin.AddComponent<RenderComponent>(BrickEntity);
+	
+	TryAddTexture(Context, BrickEntity, BrickData.TextureData);
+	
+	auto& BrickCollisionComponent = Admin.AddComponent<CollisionComponent>(BrickEntity, CollisionChannel::Brick);
+	BrickCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Ball)] = CollisionResponse::Ignore;
+	Admin.AddComponent<HealthComponent>(BrickEntity, BrickData.Health);
+}
+
+void StageUtils::AddPlayer(const SystemContext& Context, const PlayerData& PlayerData)
+{
+	auto& Admin = Context.EntityAdmin;
+
+	auto PlayerEntity = Admin.CreateEntity();
+	Admin.AddComponent<TransformComponent>(PlayerEntity, PlayerData.PositionSize.Position);
+	Admin.AddComponent<RectComponent>(PlayerEntity, SDL_FRect{ -PlayerData.PositionSize.Size.X * 0.5f, -PlayerData.PositionSize.Size.Y * 0.5f, PlayerData.PositionSize.Size.X, PlayerData.PositionSize.Size.Y });
+	Admin.AddComponent<RenderComponent>(PlayerEntity);
+	Admin.AddComponent<VelocityComponent>(PlayerEntity);
+	auto& PlayerCollisionComponent = Admin.AddComponent<CollisionComponent>(PlayerEntity, CollisionChannel::Player);
+	PlayerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Ball)] = CollisionResponse::Ignore;
+	PlayerCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
+	Admin.AddComponent<PlayerControllerComponent>(PlayerEntity);
+
+	TryAddTexture(Context, PlayerEntity, PlayerData.TextureData);
+}
+
+void StageUtils::AddBall(const SystemContext& Context, const BallData& BallData)
+{
+	auto& Admin = Context.EntityAdmin;
+
+	auto BallEntity = Admin.CreateEntity();
+	Admin.AddComponent<TransformComponent>(BallEntity, BallData.Position);
+	Admin.AddComponent<CircleComponent>(BallEntity, BallData.Radius);
+	Admin.AddComponent<RenderComponent>(BallEntity);
+	Admin.AddComponent<VelocityComponent>(BallEntity, BallData.Velocity);
+	auto& BallCollisionComponent = Admin.AddComponent<CollisionComponent>(BallEntity, CollisionChannel::Ball);
+	BallCollisionComponent.ResponseTable[ChannelToIndex(CollisionChannel::Trigger)] = CollisionResponse::Ignore;
+
+	TryAddTexture(Context, BallEntity, BallData.TextureData);
 }
