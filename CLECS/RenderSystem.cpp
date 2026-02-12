@@ -64,7 +64,7 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 	auto& Renderer = Context.Renderer;
 	auto& Admin = Context.EntityAdmin;
 
-	SDL_SetRenderDrawColor(&Renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(&Renderer, 0, 0, 0, 0);
 	SDL_RenderClear(&Renderer);
 
 	const auto RenderEntities = GetRenderEntities(Context);
@@ -228,6 +228,13 @@ void RenderSystem::RenderShape(const SystemContext& Context, const Entity& Entit
 	auto& Admin = Context.EntityAdmin;
 	auto& Renderer = Context.Renderer;
 	const auto& [Transform, Render] = RenderData;
+
+	if (Admin.HasComponent<ColorComponent>(Entity))
+	{
+		const auto& Color = Admin.GetComponent<ColorComponent>(Entity);
+		if (Color.Color.a == 0.f)
+			return;
+	}
 
 	if (Admin.HasComponent<RectComponent>(Entity))
 	{
