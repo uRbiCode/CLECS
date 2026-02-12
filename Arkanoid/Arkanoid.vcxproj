@@ -164,6 +164,7 @@
     <ClCompile Include="MovementSystem.cpp" />
     <ClCompile Include="PlayerInputSystem.cpp" />
     <ClCompile Include="StageDataLoader.cpp" />
+    <ClCompile Include="StageInfoSystem.cpp" />
     <ClCompile Include="StageUtils.cpp" />
     <ClCompile Include="SummaryControllerSystem.cpp" />
   </ItemGroup>
@@ -195,6 +196,7 @@
     <ClInclude Include="StageDataComponent.h" />
     <ClInclude Include="StageDataLoader.h" />
     <ClInclude Include="StageEndEvent.h" />
+    <ClInclude Include="StageInfoSystem.h" />
     <ClInclude Include="StageUtils.h" />
     <ClInclude Include="SummaryControllerSystem.h" />
     <ClInclude Include="VelocityComponent.h" />

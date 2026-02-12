@@ -15,6 +15,7 @@
 #include "MainMenuControllerSystem.h"
 #include "AudioSystem.h"
 #include "SummaryControllerSystem.h"
+#include "StageInfoSystem.h"
 
 namespace
 {
@@ -38,6 +39,7 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	Data.AddSystem<SummaryControllerSystem>();
 	Data.AddSystem<GameStateSystem>();
 	Data.AddSystem<HealthIndicatorSystem>();
+	Data.AddSystem<StageInfoSystem>();
 	Data.AddSystem<RenderSystem>();
 
 	return true;

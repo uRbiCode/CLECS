@@ -64,7 +64,7 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 	auto& Renderer = Context.Renderer;
 	auto& Admin = Context.EntityAdmin;
 
-	SDL_SetRenderDrawColor(&Renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(&Renderer, 0, 0, 0, 0);
 	SDL_RenderClear(&Renderer);
 
 	const auto RenderEntities = GetRenderEntities(Context);
@@ -229,6 +229,13 @@ void RenderSystem::RenderShape(const SystemContext& Context, const Entity& Entit
 	auto& Renderer = Context.Renderer;
 	const auto& [Transform, Render] = RenderData;
 
+	if (Admin.HasComponent<ColorComponent>(Entity))
+	{
+		const auto& Color = Admin.GetComponent<ColorComponent>(Entity);
+		if (Color.Color.a == 0.f)
+			return;
+	}
+
 	if (Admin.HasComponent<RectComponent>(Entity))
 	{
 		const auto& Rect = Admin.GetComponent<RectComponent>(Entity);
@@ -295,7 +302,7 @@ void RenderSystem::RenderText(const SystemContext& Context, const Entity& Entity
 		}
 	}
 
-	const auto TextSurface = TTF_RenderText_Blended(Font, TextComp.Text.c_str(), TextComp.Text.length(), TextComp.Color);
+	const auto TextSurface = TTF_RenderText_Solid(Font, TextComp.Text.c_str(), TextComp.Text.length(), TextComp.Color);
 	if (TextSurface == nullptr)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_RENDER, "RenderSystem::RenderText -> Failed to create text surface for Entity %u: %s", Entity.GetId(), SDL_GetError());
