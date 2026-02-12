@@ -7,6 +7,7 @@ enum class ClickableTag : uint8_t
 	PlayButton = 0,
 	QuitButton,
 	MainMenuButton,
+	TutorialButton,
 	Upgrade,
 	Invalid
 };

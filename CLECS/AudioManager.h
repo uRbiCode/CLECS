@@ -15,6 +15,7 @@ public:
     void SetMasterVolume(float Volume);
 
     void PlayMusic(const std::string& Name, float Volume = 1.f);
+	bool IsMusicPlaying() const;
     void StopMusic();
 
 private:

@@ -16,7 +16,6 @@
 
 namespace
 {
-	constexpr const char* MainMenuButtonText = "Main Menu";
 	constexpr const char* VictoryText = "VICTORY"; 
 	constexpr const char* DefeatText = "DEFEAT";
 }
@@ -28,10 +27,12 @@ void SummaryControllerSystem::Initialize(const SystemContext& Context) const
 		if (Event.BeginningState == GameState::Victory)
 		{
 			InitializeVictory(Context);
+			SubscribeToClickableUsedEvent(Context);
 		}
 		else if (Event.BeginningState == GameState::Defeat)
 		{
 			InitializeDefeat(Context);
+			SubscribeToClickableUsedEvent(Context);
 		}
 	});
 
@@ -75,7 +76,7 @@ void SummaryControllerSystem::AddMainMenuButton(const SystemContext& Context) co
 	Admin.AddComponent<RectComponent>(MainMenuButtonEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });
 	Admin.AddComponent<ShapeFillComponent>(MainMenuButtonEntity, false);
 	Admin.AddComponent<RenderComponent>(MainMenuButtonEntity, RenderConstants::UILayer);
-	Admin.AddComponent<TextComponent>(MainMenuButtonEntity, MainMenuButtonText, Constants::FontFilePath, 24);
+	Admin.AddComponent<TextComponent>(MainMenuButtonEntity, Constants::MainMenuButtonText, Constants::FontFilePath, 24);
 }
 
 void SummaryControllerSystem::InitializeVictory(const SystemContext& Context) const
@@ -103,6 +104,15 @@ void SummaryControllerSystem::OnClickableUsed(const SystemContext& Context, cons
 	if (Event.UsedClickableTag != ClickableTag::MainMenuButton)
 		return;
 
+	Context.EventBus.Unsubscribe<ClickableUsedEvent>(this);
 	CleanupSummary(Context);
 	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
+}
+
+void SummaryControllerSystem::SubscribeToClickableUsedEvent(const SystemContext& Context) const
+{
+	Context.EventBus.Subscribe<ClickableUsedEvent>(this, [this](const SystemContext& Context, const ClickableUsedEvent& Event)
+	{
+		OnClickableUsed(Context, Event);
+	});
 }

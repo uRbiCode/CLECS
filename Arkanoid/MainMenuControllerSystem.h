@@ -11,6 +11,8 @@ public:
 
 private:
 	void InitializeMainMenu(const SystemContext& Context) const;
+	void AddTitleText(const SystemContext& Context) const;
+	void AddButtons(const SystemContext& Context) const;
 	void CleanupMainMenu(const SystemContext& Context) const;
 	void OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const;
 	void QuitGame() const;

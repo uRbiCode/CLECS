@@ -167,6 +167,7 @@
     <ClCompile Include="StageInfoSystem.cpp" />
     <ClCompile Include="StageUtils.cpp" />
     <ClCompile Include="SummaryControllerSystem.cpp" />
+    <ClCompile Include="TutorialControllerSystem.cpp" />
     <ClCompile Include="UpgradeLoader.cpp" />
     <ClCompile Include="UpgradeControllerSystem.cpp" />
     <ClCompile Include="UpgradeUtils.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="GameStateEvents.h" />
     <ClInclude Include="GameStateSystem.h" />
     <ClInclude Include="GameStateUtils.h" />
+    <ClInclude Include="TutorialControllerSystem.h" />
     <ClInclude Include="UpgradeEvent.h" />
     <ClInclude Include="HealthIndicatorSystem.h" />
     <ClInclude Include="MainMenuControllerSystem.h" />
