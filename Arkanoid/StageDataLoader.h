@@ -10,7 +10,7 @@ using Json = nlohmann::json;
 class StageDataLoader
 {
 public:
-	static std::optional<StageData> LoadStageByNumber(int StageNumber, const std::string& BaseDirectory = "../Assets/Stages/");
+	static std::optional<StageData> LoadStageDataByNumber(int StageNumber);
 
 private:
 	static StageData ParseStageData(const Json& Json);

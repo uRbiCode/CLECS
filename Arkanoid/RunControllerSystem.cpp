@@ -125,7 +125,7 @@ bool RunControllerSystem::AdvanceToNextStage(const SystemContext& Context, int C
 	CleanupCurrentStage(Context);
 	
 	const auto NextStageNumber = CurrentStageId + 1;
-	const auto StageDataOpt = StageDataLoader::LoadStageByNumber(NextStageNumber);
+	const auto StageDataOpt = StageDataLoader::LoadStageDataByNumber(NextStageNumber);
 	if (!StageDataOpt.has_value())
 	{
 		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "RunControllerSystem::AdvanceToNextStage -> No more stages found. Victory!");
