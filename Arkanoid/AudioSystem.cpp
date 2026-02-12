@@ -11,6 +11,8 @@ namespace
 {
 	constexpr const char* BallCollisionSoundName = "ball_collision";
 	constexpr const char* MainMenuLoopSoundName = "main_menu_loop";
+	constexpr const char* DefeatSoundName = "defeat_sfx";
+	constexpr const char* VictorySoundName = "victory_sfx";
 }
 
 void AudioSystem::Initialize(const SystemContext& Context) const
@@ -49,11 +51,20 @@ void AudioSystem::OnCollision(const SystemContext& Context, const CollisionEvent
 
 void AudioSystem::OnGameStateBegin(const SystemContext& Context, GameState State) const
 {
-	if (State != GameState::MainMenu)
+	Context.Managers.AudioManager.StopMusic();
+
+	if (State == GameState::MainMenu)
 	{
-		Context.Managers.AudioManager.StopMusic();
-		return;
+		Context.Managers.AudioManager.PlayMusic(MainMenuLoopSoundName, 0.5f);
 	}
 
-	Context.Managers.AudioManager.PlayMusic(MainMenuLoopSoundName, 0.5f);
+	if (State == GameState::Defeat)
+	{
+		Context.Managers.AudioManager.PlaySound(DefeatSoundName, 0.5f);
+	}
+
+	if (State == GameState::Victory)
+	{
+		Context.Managers.AudioManager.PlaySound(VictorySoundName, 0.5f);
+	}
 }
