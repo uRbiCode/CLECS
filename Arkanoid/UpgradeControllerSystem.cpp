@@ -108,20 +108,22 @@ void UpgradeControllerSystem::PresentUpgradesToPlayer(const SystemContext& Conte
 	auto& Admin = Context.EntityAdmin;
 	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 
-	const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.8f };
+	const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.4f };
 
 	const float UpgradeCount = static_cast<float>(Upgrades.size());
 	const float TotalWidth = LogicalPresentation.X * 0.8f;
-	const float Spacing = TotalWidth / (UpgradeCount + 1.f);
+	const float TotalButtonWidth = ButtonSize.X * UpgradeCount;
+	const float AvailableSpacing = TotalWidth - TotalButtonWidth;
+	const float Spacing = AvailableSpacing / (UpgradeCount + 1.f);
 	const float StartX = LogicalPresentation.X * 0.1f;
 
 	for (size_t i = 0; i < Upgrades.size(); ++i)
 	{
-		const float XPosition = StartX + Spacing * (static_cast<float>(i) + 1.f);
+		const float XPosition = StartX + Spacing * (static_cast<float>(i) + 1.f) + ButtonSize.X * (static_cast<float>(i) + 0.5f);
 
 		auto UpgradeButtonEntity = Admin.CreateEntity();
 		Admin.AddComponent<ClickableComponent>(UpgradeButtonEntity, ClickableTag::Upgrade);
-		Admin.AddComponent<TransformComponent>(UpgradeButtonEntity, Vector2D<float>{ XPosition, LogicalPresentation.Y * 0.45f });
+		Admin.AddComponent<TransformComponent>(UpgradeButtonEntity, Vector2D<float>{ XPosition, LogicalPresentation.Y * 0.55f });
 		Admin.AddComponent<RectComponent>(UpgradeButtonEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });
 		Admin.AddComponent<ShapeFillComponent>(UpgradeButtonEntity, false);
 		Admin.AddComponent<RenderComponent>(UpgradeButtonEntity, RenderConstants::UILayer);
