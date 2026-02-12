@@ -12,30 +12,34 @@
 #include "HealthComponent.h"
 #include "VelocityComponent.h"
 #include "PlayerControllerComponent.h"
-#include "HealthChangedEvent.h"
 #include "TextureManager.h"
-#include "StageBeginEvent.h"
 #include "RenderConstants.h"
 #include "GameStateEvents.h"
 #include "GameStateUtils.h"
-#include <cassert>
 #include "StageDataLoader.h"
 #include "StageUtils.h"
+#include "StageEndEvent.h"
+#include <cassert>
 
 void RunControllerSystem::Initialize(const SystemContext& Context) const
 {
-	Context.EventBus.Subscribe<HealthChangedEvent>(this, [this](const SystemContext& Context, const HealthChangedEvent& Event)
-	{
-		OnHealthChanged(Context, Event);
-		return;
-	});
-
 	Context.EventBus.Subscribe<GameStateBeginEvent>(this, [this](const SystemContext& Context, const GameStateBeginEvent& Event)
 	{
-		if (Event.BeginningState == GameState::Run)
+		if (Event.BeginningState != GameState::Run)
+			return;
+
+		BeginRun(Context);
+	});
+
+	Context.EventBus.Subscribe<StageEndEvent>(this, [this](const SystemContext& Context, const StageEndEvent& Event)
+	{
+		if (!Event.Victory)
 		{
-			BeginRun(Context);
+			HandleRunDefeat(Context);
+			return;
 		}
+
+		HandleStageCleared(Context);
 	});
 }
 
@@ -86,31 +90,6 @@ void RunControllerSystem::RemoveStageDataComponent(const SystemContext& Context)
 	});
 }
 
-void RunControllerSystem::OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const
-{
-	if (Event.Delta >= 0)
-		return;
-
-	if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Event.Entity))
-		return;
-
-	const auto& Collision = Context.EntityAdmin.GetComponent<CollisionComponent>(Event.Entity);
-	if (Collision.Channel == CollisionChannel::Brick)
-	{
-		if (AreAllBricksDestroyed(Context))
-		{
-			HandleStageCleared(Context);
-		}
-	}
-	else if (Collision.Channel == CollisionChannel::Trigger)
-	{
-		if (HasPlayerLost(Context))
-		{
-			HandleRunDefeat(Context);
-		}
-	}
-}
-
 void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
 {
 	const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
@@ -121,7 +100,6 @@ void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
 	auto& RunStateComp = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
 	if (AdvanceToNextStage(Context, RunStateComp.CurrentStage))
 	{
-		Context.EventBus.Notify(Context, StageBeginEvent{ RunStateComp.CurrentStage });
 		RunStateComp.CurrentStage++;
 	}
 	else
@@ -140,29 +118,6 @@ void RunControllerSystem::HandleRunDefeat(const SystemContext& Context) const
 {
 	CleanupRun(Context);
 	GameStateUtils::RequestStateChange(Context, GameState::Defeat);
-}
-
-bool RunControllerSystem::AreAllBricksDestroyed(const SystemContext& Context) const
-{
-	bool AllDestroyed = true;
-	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&AllDestroyed](const Entity& Entity, const CollisionComponent& Collision, const HealthComponent& Health)
-	{
-		AllDestroyed &= (Collision.Channel != CollisionChannel::Brick || Health.CurrentHealth <= 0);
-	});
-	return AllDestroyed;
-}
-
-bool RunControllerSystem::HasPlayerLost(const SystemContext& Context) const
-{
-	bool TriggerHasHealth = true;
-	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&TriggerHasHealth](const Entity& Entity, const CollisionComponent& Collision, const HealthComponent& Health)
-	{
-		if (Collision.Channel == CollisionChannel::Trigger)
-		{
-			TriggerHasHealth &= (Health.CurrentHealth > 0);
-		}
-	});
-	return !TriggerHasHealth;
 }
 
 bool RunControllerSystem::AdvanceToNextStage(const SystemContext& Context, int CurrentStageId) const

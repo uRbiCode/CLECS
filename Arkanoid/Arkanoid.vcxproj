@@ -192,9 +192,9 @@
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PlayerInputSystem.h" />
     <ClInclude Include="RunStateComponent.h" />
-    <ClInclude Include="StageBeginEvent.h" />
     <ClInclude Include="StageDataComponent.h" />
     <ClInclude Include="StageDataLoader.h" />
+    <ClInclude Include="StageEndEvent.h" />
     <ClInclude Include="StageUtils.h" />
     <ClInclude Include="SummaryControllerSystem.h" />
     <ClInclude Include="VelocityComponent.h" />

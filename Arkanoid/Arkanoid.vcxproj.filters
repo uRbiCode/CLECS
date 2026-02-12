@@ -168,9 +168,6 @@
     <ClInclude Include="HealthIndicatorSystem.h">
       <Filter>Source\Systems\HealthIndicatorSystem</Filter>
     </ClInclude>
-    <ClInclude Include="StageBeginEvent.h">
-      <Filter>Source\Events</Filter>
-    </ClInclude>
     <ClInclude Include="GameStateComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
@@ -203,6 +200,9 @@
     </ClInclude>
     <ClInclude Include="SummaryControllerSystem.h">
       <Filter>Source\Systems\SummaryControllerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="StageEndEvent.h">
+      <Filter>Source\Events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

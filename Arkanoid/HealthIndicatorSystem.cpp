@@ -9,7 +9,6 @@
 #include "ShapeComponents.h"
 #include "PlayerControllerComponent.h"
 #include "RenderComponent.h"
-#include "StageBeginEvent.h"
 #include "StageUtils.h"
 #include "CollisionComponent.h"
 #include "RenderConstants.h"
@@ -64,21 +63,24 @@ void HealthIndicatorSystem::Initialize(const SystemContext& Context) const
 		OnHealthChanged(Context, Event);
 	});
 
-	Context.EventBus.Subscribe<StageBeginEvent>(this, [this](const SystemContext& Context, const StageBeginEvent& Event)
+	Context.EventBus.Subscribe<GameStateBeginEvent>(this, [this](const SystemContext& Context, const GameStateBeginEvent& Event)
 	{
-		OnStageBegin(Context, Event);
+		if (Event.BeginningState != GameState::Run)
+			return;
+
+		OnRunBegin(Context);
 	});
 
 	Context.EventBus.Subscribe<GameStateEndEvent>(this, [this](const SystemContext& Context, const GameStateEndEvent& Event)
 	{
-		if (Event.EndingState == GameState::Run)
-		{
-			CleanupHealthIndicators(Context);
-		}
+		if (Event.EndingState != GameState::Run)
+			return;
+
+		CleanupHealthIndicators(Context);
 	});
 }
 
-void HealthIndicatorSystem::OnStageBegin(const SystemContext& Context, const StageBeginEvent& Event) const
+void HealthIndicatorSystem::OnRunBegin(const SystemContext& Context) const
 {
 	const auto CurrentHealth = StageUtils::GetCurrentPlayerHealth(Context);
 	const auto ExistingHealthIndicators = GetHealthIndicatorEntitiesSorted(Context);

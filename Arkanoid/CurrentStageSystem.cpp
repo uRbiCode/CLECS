@@ -9,6 +9,7 @@
 #include "HealthComponent.h"
 #include "StageUtils.h"
 #include "StageDataComponent.h"
+#include "StageEndEvent.h"
 
 void CurrentStageSystem::Initialize(const SystemContext& Context) const
 {
@@ -30,9 +31,21 @@ void CurrentStageSystem::OnHealthChanged(const SystemContext& Context, const Hea
 
 	const auto& Collision = Context.EntityAdmin.GetComponent<CollisionComponent>(Event.Entity);
 
-	if (Collision.Channel == CollisionChannel::Trigger && Event.NewHealth > 0)
+	if (Collision.Channel == CollisionChannel::Trigger)
 	{
-		ResetStage(Context);
+		if (Event.NewHealth > 0)
+		{
+			ResetStage(Context);
+		}
+		else
+		{
+			NotifyStageEnd(Context, false);
+		}
+	}
+
+	else if (Collision.Channel == CollisionChannel::Brick && Event.NewHealth <= 0 && AreAllBricksDestroyed(Context))
+	{
+		NotifyStageEnd(Context, true);
 	}
 }
 
@@ -54,4 +67,19 @@ void CurrentStageSystem::ResetStage(const SystemContext& Context) const
 			Velocity.Velocity = CurrentStageData.BallData.Velocity;
 		}
 	});
+}
+
+bool CurrentStageSystem::AreAllBricksDestroyed(const SystemContext& Context) const
+{
+	bool AllDestroyed = true;
+	Context.EntityAdmin.GetGroup<CollisionComponent, HealthComponent>().ForEach([&AllDestroyed](const Entity& Entity, const CollisionComponent& Collision, const HealthComponent& Health)
+	{
+		AllDestroyed &= (Collision.Channel != CollisionChannel::Brick || Health.CurrentHealth <= 0);
+	});
+	return AllDestroyed;
+}
+
+void CurrentStageSystem::NotifyStageEnd(const SystemContext& Context, bool Victory) const
+{
+	Context.EventBus.Notify(Context, StageEndEvent{ Victory });
 }
