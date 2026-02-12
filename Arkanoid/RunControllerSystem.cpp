@@ -24,6 +24,7 @@
 #include "UpgradeLoader.h"
 #include "UpgradeEvent.h"
 #include <cassert>
+#include "UpgradeUtils.h"
 
 namespace
 {
@@ -170,7 +171,7 @@ void RunControllerSystem::SpawnStageEntities(const SystemContext& Context, const
 	}
 	
 	StageUtils::AddTrigger(Context, StageData.Trigger);
-	StageUtils::AddPlayer(Context, StageData.PlayerData);
+	StageUtils::AddPlayer(Context, UpgradeUtils::GetModifiedPlayerData(Context, StageData.PlayerData));
 	StageUtils::AddBall(Context, StageData.BallData);
 }
 

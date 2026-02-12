@@ -169,6 +169,7 @@
     <ClCompile Include="SummaryControllerSystem.cpp" />
     <ClCompile Include="UpgradeLoader.cpp" />
     <ClCompile Include="UpgradeControllerSystem.cpp" />
+    <ClCompile Include="UpgradeUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSystem.h" />
@@ -206,6 +207,7 @@
     <ClInclude Include="UpgradeComponent.h" />
     <ClInclude Include="UpgradeLoader.h" />
     <ClInclude Include="UpgradeControllerSystem.h" />
+    <ClInclude Include="UpgradeUtils.h" />
     <ClInclude Include="VelocityComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

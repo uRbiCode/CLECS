@@ -6,7 +6,7 @@
 // Represents modifier which player can choose after completing a stage
 struct Upgrade
 {
-	std::optional<float> PaddleWidthIncrease = std::nullopt;
+	std::optional<float> PaddleWidthMultiplier = std::nullopt;
 
 	bool operator==(const Upgrade&) const = default;
 };

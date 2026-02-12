@@ -68,6 +68,15 @@
     <Filter Include="Source\Systems\UpgradeControllerSystem">
       <UniqueIdentifier>{fe1634c8-13ba-4c4e-96e9-58804d998407}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Utils\StageUtils">
+      <UniqueIdentifier>{7a8f9024-ba71-4acf-a560-523eddea69b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils\GameStateUtils">
+      <UniqueIdentifier>{df3f6f8f-11b3-4482-9369-8c98ecdac64c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils\UpgradeUtils">
+      <UniqueIdentifier>{701c7de7-25f7-4482-b54a-ac82fd502a4a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -97,9 +106,6 @@
     <ClCompile Include="RunControllerSystem.cpp">
       <Filter>Source\Systems\RunControllerSystem</Filter>
     </ClCompile>
-    <ClCompile Include="StageUtils.cpp">
-      <Filter>Source\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="HealthIndicatorSystem.cpp">
       <Filter>Source\Systems\HealthIndicatorSystem</Filter>
     </ClCompile>
@@ -108,9 +114,6 @@
     </ClCompile>
     <ClCompile Include="MainMenuControllerSystem.cpp">
       <Filter>Source\Systems\MainMenuControllerSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="GameStateUtils.cpp">
-      <Filter>Source\Utils</Filter>
     </ClCompile>
     <ClCompile Include="StageDataLoader.cpp">
       <Filter>Source\Systems\RunControllerSystem\StageDataLoader</Filter>
@@ -129,6 +132,15 @@
     </ClCompile>
     <ClCompile Include="UpgradeLoader.cpp">
       <Filter>Source\Systems\RunControllerSystem\UpgradeLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="StageUtils.cpp">
+      <Filter>Source\Utils\StageUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStateUtils.cpp">
+      <Filter>Source\Utils\GameStateUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="UpgradeUtils.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -180,9 +192,6 @@
     <ClInclude Include="StageDataComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="StageUtils.h">
-      <Filter>Source\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="HealthIndicatorSystem.h">
       <Filter>Source\Systems\HealthIndicatorSystem</Filter>
     </ClInclude>
@@ -203,9 +212,6 @@
     </ClInclude>
     <ClInclude Include="ClickableUsedEvent.h">
       <Filter>Source\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="GameStateUtils.h">
-      <Filter>Source\Utils</Filter>
     </ClInclude>
     <ClInclude Include="StageDataLoader.h">
       <Filter>Source\Systems\RunControllerSystem\StageDataLoader</Filter>
@@ -240,5 +246,12 @@
     <ClInclude Include="UpgradeLoader.h">
       <Filter>Source\Systems\RunControllerSystem\UpgradeLoader</Filter>
     </ClInclude>
+    <ClInclude Include="StageUtils.h">
+      <Filter>Source\Utils\StageUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStateUtils.h">
+      <Filter>Source\Utils\GameStateUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="UpgradeUtils.h" />
   </ItemGroup>
 </Project>

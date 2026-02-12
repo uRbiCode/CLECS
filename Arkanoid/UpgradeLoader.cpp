@@ -44,9 +44,9 @@ Upgrade UpgradeLoader::ParseUpgrade(const Json& Json)
 {
 	Upgrade UpgradeData;
 	
-	if (Json.contains("paddleWidthIncrease"))
+	if (Json.contains("paddleWidthMultiplier"))
 	{
-		UpgradeData.PaddleWidthIncrease = Json["paddleWidthIncrease"].get<float>();
+		UpgradeData.PaddleWidthMultiplier = Json["paddleWidthMultiplier"].get<float>();
 	}
 
 	return UpgradeData;
