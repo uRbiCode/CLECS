@@ -19,7 +19,8 @@ namespace
 	constexpr const char* Title = "HOW TO PLAY";
 	constexpr const char* TextLine1 = "Bounce the ball to break all the bricks.";
 	constexpr const char* TextLine2 = "Move the paddle with A and D or arrow keys.";
-	constexpr const char* TextLine3 = "Have fun!";
+	constexpr const char* TextLine3 = "Amass infinite power with upgrades!";
+	constexpr const char* TextLine4 = "Have fun!";
 }
 
 void TutorialControllerSystem::Initialize(const SystemContext& Context) const
@@ -80,6 +81,14 @@ void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) con
 	Admin.AddComponent<ColorComponent>(TextLine3Entity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
 	Admin.AddComponent<TextComponent>(TextLine3Entity, TextLine3, Constants::FontFilePath, 24);
 	Admin.AddComponent<RenderComponent>(TextLine3Entity, RenderConstants::UILayer);
+
+	// Text Line 4
+	auto TextLine4Entity = Admin.CreateEntity();
+	Admin.AddComponent<TransformComponent>(TextLine4Entity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.72f });
+	Admin.AddComponent<RectComponent>(TextLine4Entity, SDL_FRect{ -TextRectSize.X * 0.5f, -TextRectSize.Y * 0.5f, TextRectSize.X, TextRectSize.Y });
+	Admin.AddComponent<ColorComponent>(TextLine4Entity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
+	Admin.AddComponent<TextComponent>(TextLine4Entity, TextLine4, Constants::FontFilePath, 24);
+	Admin.AddComponent<RenderComponent>(TextLine4Entity, RenderConstants::UILayer);
 }
 
 void TutorialControllerSystem::AddMainMenuButton(const SystemContext& Context) const
