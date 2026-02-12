@@ -11,6 +11,7 @@ class StageDataLoader
 {
 public:
 	static std::optional<StageData> LoadStageDataByNumber(int StageNumber);
+	static bool IsStageDataAvailable(int StageNumber);
 
 private:
 	static StageData ParseStageData(const Json& Json);

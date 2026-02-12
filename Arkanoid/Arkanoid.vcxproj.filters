@@ -62,6 +62,12 @@
     <Filter Include="Source\Systems\StageInfoSystem">
       <UniqueIdentifier>{98a8cdc9-76db-4f0c-bda0-a8dd20310d92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\RunControllerSystem\UpgradeLoader">
+      <UniqueIdentifier>{59f45407-d726-4ce1-8fec-04e56394af87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\UpgradeControllerSystem">
+      <UniqueIdentifier>{fe1634c8-13ba-4c4e-96e9-58804d998407}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -117,6 +123,12 @@
     </ClCompile>
     <ClCompile Include="StageInfoSystem.cpp">
       <Filter>Source\Systems\StageInfoSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="UpgradeControllerSystem.cpp">
+      <Filter>Source\Systems\UpgradeControllerSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="UpgradeLoader.cpp">
+      <Filter>Source\Systems\RunControllerSystem\UpgradeLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +224,21 @@
     </ClInclude>
     <ClInclude Include="StageInfoSystem.h">
       <Filter>Source\Systems\StageInfoSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="UpgradeComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RunStateEvent.h">
+      <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="UpgradeControllerSystem.h">
+      <Filter>Source\Systems\UpgradeControllerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="UpgradeEvent.h">
+      <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="UpgradeLoader.h">
+      <Filter>Source\Systems\RunControllerSystem\UpgradeLoader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

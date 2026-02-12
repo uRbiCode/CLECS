@@ -24,6 +24,15 @@ std::optional<StageData> StageDataLoader::LoadStageDataByNumber(int StageNumber)
 	return ParseStageData(JsonData);
 }
 
+bool StageDataLoader::IsStageDataAvailable(int StageNumber)
+{
+	const std::string StagesDirectoryString = StagesDirectory;
+	const std::string FilePath = StagesDirectoryString + "stage" + std::to_string(StageNumber) + ".json";
+	
+	std::ifstream File(FilePath);
+	return File.is_open();
+}
+
 Vector2D<float> StageDataLoader::ParseVector2D(const Json& Json)
 {
 	return Vector2D<float>{ Json["x"].get<float>(), Json["y"].get<float>() };

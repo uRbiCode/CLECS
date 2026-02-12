@@ -15,7 +15,7 @@ constexpr size_t MAX_COLLISION_CHANNELS = static_cast<size_t>(CollisionChannel::
 
 enum class CollisionResponse : uint8_t
 {
-	Block,
+	Block = 0,
 	Ignore
 };
 

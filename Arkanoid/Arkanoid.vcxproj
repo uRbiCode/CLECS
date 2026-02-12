@@ -167,6 +167,8 @@
     <ClCompile Include="StageInfoSystem.cpp" />
     <ClCompile Include="StageUtils.cpp" />
     <ClCompile Include="SummaryControllerSystem.cpp" />
+    <ClCompile Include="UpgradeLoader.cpp" />
+    <ClCompile Include="UpgradeControllerSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioSystem.h" />
@@ -183,6 +185,7 @@
     <ClInclude Include="GameStateEvents.h" />
     <ClInclude Include="GameStateSystem.h" />
     <ClInclude Include="GameStateUtils.h" />
+    <ClInclude Include="UpgradeEvent.h" />
     <ClInclude Include="HealthIndicatorSystem.h" />
     <ClInclude Include="MainMenuControllerSystem.h" />
     <ClInclude Include="RunControllerSystem.h" />
@@ -193,12 +196,16 @@
     <ClInclude Include="PlayerControllerComponent.h" />
     <ClInclude Include="PlayerInputSystem.h" />
     <ClInclude Include="RunStateComponent.h" />
+    <ClInclude Include="RunStateEvent.h" />
     <ClInclude Include="StageDataComponent.h" />
     <ClInclude Include="StageDataLoader.h" />
     <ClInclude Include="StageEndEvent.h" />
     <ClInclude Include="StageInfoSystem.h" />
     <ClInclude Include="StageUtils.h" />
     <ClInclude Include="SummaryControllerSystem.h" />
+    <ClInclude Include="UpgradeComponent.h" />
+    <ClInclude Include="UpgradeLoader.h" />
+    <ClInclude Include="UpgradeControllerSystem.h" />
     <ClInclude Include="VelocityComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
