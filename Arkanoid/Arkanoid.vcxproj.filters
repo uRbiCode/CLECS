@@ -77,6 +77,9 @@
     <Filter Include="Source\Utils\UpgradeUtils">
       <UniqueIdentifier>{701c7de7-25f7-4482-b54a-ac82fd502a4a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\TutorialControllerSystem">
+      <UniqueIdentifier>{8f97e8da-d337-4867-890e-c3ce06b0849d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -139,8 +142,11 @@
     <ClCompile Include="GameStateUtils.cpp">
       <Filter>Source\Utils\GameStateUtils</Filter>
     </ClCompile>
+    <ClCompile Include="TutorialControllerSystem.cpp">
+      <Filter>Source\Systems\TutorialControllerSystem</Filter>
+    </ClCompile>
     <ClCompile Include="UpgradeUtils.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Utils\UpgradeUtils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -252,6 +258,11 @@
     <ClInclude Include="GameStateUtils.h">
       <Filter>Source\Utils\GameStateUtils</Filter>
     </ClInclude>
-    <ClInclude Include="UpgradeUtils.h" />
+    <ClInclude Include="TutorialControllerSystem.h">
+      <Filter>Source\Systems\TutorialControllerSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="UpgradeUtils.h">
+      <Filter>Source\Utils\UpgradeUtils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

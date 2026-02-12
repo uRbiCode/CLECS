@@ -180,6 +180,11 @@ void AudioManager::PlayMusic(const std::string& Name, float Volume)
     }
 }
 
+bool AudioManager::IsMusicPlaying() const
+{
+	return MusicStream != nullptr;
+}
+
 void AudioManager::StopMusic()
 {
     if (MusicStream == nullptr)

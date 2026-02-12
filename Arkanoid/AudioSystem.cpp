@@ -73,9 +73,12 @@ void AudioSystem::OnHealthLost(const SystemContext& Context, const Entity& Entit
 
 void AudioSystem::OnGameStateBegin(const SystemContext& Context, GameState State) const
 {
-	Context.Managers.AudioManager.StopMusic();
+	if (State != GameState::MainMenu && State != GameState::Tutorial)
+	{
+		Context.Managers.AudioManager.StopMusic();
+	}
 
-	if (State == GameState::MainMenu)
+	if (State == GameState::MainMenu && !Context.Managers.AudioManager.IsMusicPlaying())
 	{
 		Context.Managers.AudioManager.PlayMusic(MainMenuLoopSoundName, 0.5f);
 	}

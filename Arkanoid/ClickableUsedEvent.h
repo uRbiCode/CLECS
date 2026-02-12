@@ -1,5 +1,6 @@
 #pragma once
 #include "ClickableComponent.h"
+#include "Entity.h"
 
 struct ClickableUsedEvent
 {
