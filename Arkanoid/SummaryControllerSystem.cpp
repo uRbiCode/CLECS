@@ -52,7 +52,7 @@ void SummaryControllerSystem::Initialize(const SystemContext& Context) const
 void SummaryControllerSystem::AddSummaryText(const SystemContext& Context, const std::string& Text) const
 {
 	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-	const Vector2D<float> RectSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
+	const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
 
 	auto& Admin = Context.EntityAdmin;
 	auto SummaryTextEntity = Admin.CreateEntity();

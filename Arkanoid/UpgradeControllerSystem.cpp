@@ -89,7 +89,7 @@ std::vector<UpgradeDefinition> UpgradeControllerSystem::SampleUpgrades(const Sys
 void UpgradeControllerSystem::AddUpgradeTitle(const SystemContext& Context) const
 {
 	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-	const Vector2D<float> RectSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
+	const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
 
 	auto& Admin = Context.EntityAdmin;
 	auto UpgradeTitleEntity = Admin.CreateEntity();

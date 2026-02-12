@@ -302,7 +302,29 @@ void RenderSystem::RenderText(const SystemContext& Context, const Entity& Entity
 		}
 	}
 
-	const auto TextSurface = TTF_RenderText_Solid(Font, TextComp.Text.c_str(), TextComp.Text.length(), TextComp.Color);
+	std::optional<int> WrapWidth = std::nullopt;
+	if (Admin.HasComponent<RectComponent>(Entity))
+	{
+		const auto& Rect = Admin.GetComponent<RectComponent>(Entity);
+		const auto RenderRect = CalcRenderRect(Transform, Rect);
+		WrapWidth = static_cast<int>(RenderRect.w * 0.9f);
+	}
+	else if (Admin.HasComponent<CircleComponent>(Entity))
+	{
+		const auto& Circle = Admin.GetComponent<CircleComponent>(Entity);
+		const float Diameter = Circle.Radius * 2.f * std::max(Transform.Scale.X, Transform.Scale.Y);
+		WrapWidth = static_cast<int>(Diameter * 0.7f);
+	}
+
+	SDL_Surface* TextSurface = nullptr;
+	if (WrapWidth.has_value())
+	{
+		TextSurface = TTF_RenderText_Solid_Wrapped(Font, TextComp.Text.c_str(), TextComp.Text.length(), TextComp.Color, WrapWidth.value());
+	}
+	else
+	{
+		TextSurface = TTF_RenderText_Solid(Font, TextComp.Text.c_str(), TextComp.Text.length(), TextComp.Color);
+	}
 	if (TextSurface == nullptr)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_RENDER, "RenderSystem::RenderText -> Failed to create text surface for Entity %u: %s", Entity.GetId(), SDL_GetError());
