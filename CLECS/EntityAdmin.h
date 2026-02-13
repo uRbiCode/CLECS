@@ -11,7 +11,7 @@
 
 /* EntityAdmin handles entity lifecycle and component storage.
  * It manages Ids of entities with versioning to prevent stale references.
- * It also stores ComponentPools pools for efficient access and iteration.
+ * It also stores ComponentPools for efficient access and iteration.
  */
 class EntityAdmin
 {

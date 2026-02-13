@@ -11,8 +11,8 @@ struct SystemContext;
 
 /* Responsible for managing event subscriptions and notifications in CLECS.
  * Systems may subscribe to events by type, and the EventBus will notify them when events of that type are emitted.
- * The notifications are synchronous and happen immediately.
- * This means that an event sent in reponse to another will be processed first.
+ * Notifications are synchronous and happen immediately.
+ * This means that an event sent in response to another will be processed first.
  */
 class EventBus
 {
