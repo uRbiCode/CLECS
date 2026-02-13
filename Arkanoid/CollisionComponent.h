@@ -24,6 +24,9 @@ constexpr size_t ChannelToIndex(CollisionChannel Channel)
 	return static_cast<size_t>(Channel);
 }
 
+/* Stores collision information for an entity.
+ * CollisionDetectionSystem uses this component to determine if two entities should be checked for collision and how they should respond to each other.
+ */
 struct CollisionComponent
 {
 	CollisionChannel Channel = CollisionChannel::Static;

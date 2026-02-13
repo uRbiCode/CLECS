@@ -4,11 +4,10 @@
 #include "CollisionComponent.h"
 #include "TransformComponent.h"
 #include "ShapeComponents.h"
-#include "VelocityComponent.h"
-#include <cmath>
-#include <algorithm>
 #include "CollisionEvent.h"
 #include "EventBus.h"
+#include <cmath>
+#include <algorithm>
 
 namespace
 {

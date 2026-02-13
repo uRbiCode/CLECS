@@ -10,8 +10,6 @@
 #include "RenderComponent.h"
 #include "TextureComponent.h"
 #include "HealthComponent.h"
-#include "VelocityComponent.h"
-#include "PlayerControllerComponent.h"
 #include "TextureManager.h"
 #include "RenderConstants.h"
 #include "GameStateEvents.h"
