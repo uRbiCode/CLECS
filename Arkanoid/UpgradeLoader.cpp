@@ -49,5 +49,20 @@ Upgrade UpgradeLoader::ParseUpgrade(const Json& Json)
 		UpgradeData.PaddleWidthMultiplier = Json["paddleWidthMultiplier"].get<float>();
 	}
 
+	if (Json.contains("ballSpeedMultiplier"))
+	{
+		UpgradeData.BallSpeedMultiplier = Json["ballSpeedMultiplier"].get<float>();
+	}
+	
+	if (Json.contains("ballSizeMultiplier"))
+	{
+		UpgradeData.BallSizeMultiplier = Json["ballSizeMultiplier"].get<float>();
+	}
+
+	if (Json.contains("heal"))
+	{
+		UpgradeData.Heal = Json["heal"].get<int>();
+	}
+
 	return UpgradeData;
 }

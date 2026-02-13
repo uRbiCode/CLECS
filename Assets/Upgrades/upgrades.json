@@ -1,39 +1,122 @@
 {
   "upgrades": [
     {
-      "name": "Wide Paddle 1",
-      "description": "Increases paddle width by 20%",
+      "name": "Minor Repair",
+      "description": "Heal by 1 health point.",
       "upgrade": {
-        "paddleWidthMultiplier": 1.2
+        "heal": 1
       }
     },
-	{
-      "name": "Wide Paddle 2",
-      "description": "Increases paddle width by 20%",
+    {
+      "name": "Field Repair Kit",
+      "description": "Heal by 2 health points.\nReduce paddle width by 20%.",
       "upgrade": {
-        "paddleWidthMultiplier": 1.2
+        "heal": 2,
+        "paddleWidthMultiplier": 0.8
       }
     },
-	{
-      "name": "Wide Paddle 3",
-      "description": "Increases paddle width by 20%",
+    {
+      "name": "Titan Paddle",
+      "description": "Increase paddle width by 25%.",
       "upgrade": {
-        "paddleWidthMultiplier": 1.2
+        "paddleWidthMultiplier": 1.25
       }
     },
-	{
-	  "name": "Wide Paddle 4",
-	  "description": "Increases paddle width by 20%",
-	  "upgrade": {
-		"paddleWidthMultiplier": 1.2
-	  }
-	},
-	{
-	  "name": "Wide Paddle 5",
-	  "description": "Increases paddle width by 20%",
-	  "upgrade": {
-		"paddleWidthMultiplier": 1.2
-	  }
-	}
+    {
+      "name": "Oversized Paddle",
+      "description": "Increase paddle width by 20%.\nIncrease ball speed by 20%.",
+      "upgrade": {
+        "paddleWidthMultiplier": 1.2,
+        "ballSpeedMultiplier": 1.2
+      }
+    },
+    {
+      "name": "Oversized Ball",
+      "description": "Increase ball size by 30%.",
+      "upgrade": {
+        "ballSizeMultiplier": 1.3
+      }
+    },
+    {
+      "name": "Heavy Core",
+      "description": "Increase ball size by 20%.\nReduce ball speed by 5%.",
+      "upgrade": {
+        "ballSizeMultiplier": 1.2,
+        "ballSpeedMultiplier": 0.95
+      }
+    },
+    {
+      "name": "Stability Core",
+      "description": "Reduce ball speed by 10%.",
+      "upgrade": {
+        "ballSpeedMultiplier": 0.9
+      }
+    },
+    {
+      "name": "Control Field",
+      "description": "Increase ball speed by 15%.\nIncrease ball size by 25%.",
+      "upgrade": {
+        "ballSpeedMultiplier": 1.15,
+        "ballSizeMultiplier": 1.25
+      }
+    },
+
+    {
+      "name": "Lightweight Paddle",
+      "description": "Increase paddle width by 40%.\nIncrease ball speed by 40%.",
+      "upgrade": {
+        "paddleWidthMultiplier": 1.4,
+        "ballSpeedMultiplier": 1.4
+      }
+    },
+    {
+      "name": "Glass Ball",
+      "description": "Increase ball size by 35%.\nIncrease ball speed by 60%.",
+      "upgrade": {
+        "ballSizeMultiplier": 1.35,
+        "ballSpeedMultiplier": 1.6
+      }
+    },
+    {
+      "name": "Compact Precision",
+      "description": "Reduce paddle width by 20%.\nReduce ball speed by 15%.",
+      "upgrade": {
+        "paddleWidthMultiplier": 0.7,
+        "ballSpeedMultiplier": 0.85
+      }
+    },
+    {
+      "name": "Emergency Patch",
+      "description": "Heal by 2 health points.\nIncrease ball speed by 35%.",
+      "upgrade": {
+        "heal": 2,
+        "ballSpeedMultiplier": 1.35
+      }
+    },
+    {
+      "name": "Chaotic Engine",
+      "description": "Reduce ball speed by 15%.\nReduce paddle width by 20%.\nReduce ball size by 20%.",
+      "upgrade": {
+        "ballSpeedMultiplier": 0.85,
+        "paddleWidthMultiplier": 0.8,
+        "ballSizeMultiplier": 0.8
+      }
+    },
+    {
+      "name": "Unstable Growth",
+      "description": "Increase paddle width by 60%.\nIncrease ball speed by 50%.",
+      "upgrade": {
+        "paddleWidthMultiplier": 1.6,
+        "ballSpeedMultiplier": 1.5
+      }
+    },
+    {
+      "name": "Massive Form",
+      "description": "Increase ball size by 70%.\nReduce paddle width by 40%.",
+      "upgrade": {
+        "ballSizeMultiplier": 1.7,
+        "paddleWidthMultiplier": 0.6
+      }
+    }
   ]
 }

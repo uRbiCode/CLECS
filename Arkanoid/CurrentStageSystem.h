@@ -2,6 +2,7 @@
 #include "System.h"
 
 struct HealthChangedEvent;
+struct CollisionEvent;
 
 // Manages currently ongoing stage
 class CurrentStageSystem : public System
@@ -14,4 +15,5 @@ private:
 	void ResetStage(const SystemContext& Context) const;
 	bool AreAllBricksDestroyed(const SystemContext& Context) const;
 	void NotifyStageEnd(const SystemContext& Context, bool Victory) const;
+	void OnCollision(const SystemContext& Context, const CollisionEvent& Event) const;
 };

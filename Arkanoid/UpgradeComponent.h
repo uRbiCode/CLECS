@@ -7,6 +7,9 @@
 struct Upgrade
 {
 	std::optional<float> PaddleWidthMultiplier = std::nullopt;
+	std::optional<float> BallSpeedMultiplier = std::nullopt;
+	std::optional<float> BallSizeMultiplier = std::nullopt;
+	std::optional<int> Heal = std::nullopt;
 
 	bool operator==(const Upgrade&) const = default;
 };

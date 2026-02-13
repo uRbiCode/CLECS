@@ -80,6 +80,9 @@
     <Filter Include="Source\Systems\TutorialControllerSystem">
       <UniqueIdentifier>{8f97e8da-d337-4867-890e-c3ce06b0849d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Utils\HealthUtils">
+      <UniqueIdentifier>{fa0eb49c-ad83-42fe-8f79-ff5988e0096d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -147,6 +150,9 @@
     </ClCompile>
     <ClCompile Include="UpgradeUtils.cpp">
       <Filter>Source\Utils\UpgradeUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthUtils.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -264,5 +270,6 @@
     <ClInclude Include="UpgradeUtils.h">
       <Filter>Source\Utils\UpgradeUtils</Filter>
     </ClInclude>
+    <ClInclude Include="HealthUtils.h" />
   </ItemGroup>
 </Project>

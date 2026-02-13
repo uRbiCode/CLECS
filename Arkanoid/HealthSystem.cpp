@@ -8,6 +8,7 @@
 #include "CollisionComponent.h"
 #include "RunStateComponent.h"
 #include <cassert>
+#include "HealthUtils.h"
 
 namespace
 {
@@ -72,11 +73,5 @@ void HealthSystem::ResolveTriggerHit(const SystemContext& Context) const
 
 void HealthSystem::DealDamage(const SystemContext& Context, const Entity& Entity, int Damage) const
 {
-	if (!Context.EntityAdmin.HasComponent<HealthComponent>(Entity))
-		return;
-
-	auto& Health = Context.EntityAdmin.AccessComponent<HealthComponent>(Entity);
-	Health.CurrentHealth -= DamageOnCollision;
-
-	Context.EventBus.Notify(Context, HealthChangedEvent{ Entity, -Damage, Health.CurrentHealth });
+	HealthUtils::ApplyHealthChange(Context, Entity, -Damage);
 }
