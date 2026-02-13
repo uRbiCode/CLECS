@@ -2,38 +2,41 @@
   "upgrades": [
     {
       "name": "Wide Paddle 1",
-      "description": "Increases paddle width by 20%",
+      "description": "Increase paddle width by 20%.\nReduce ball speed by 10%.\nReduce ball size by 10%.\nHeal by 1 health point.",
       "upgrade": {
-        "paddleWidthMultiplier": 1.2
+        "paddleWidthMultiplier": 1.2,
+        "ballSpeedMultiplier": 0.9,
+        "ballSizeMultiplier": 0.9,
+        "heal" : 1
       }
     },
-	{
-      "name": "Wide Paddle 2",
+    {
+        "name": "Wide Paddle 2",
+        "description": "Increases paddle width by 20%",
+        "upgrade": {
+          "paddleWidthMultiplier": 1.2
+        }
+      },
+    {
+        "name": "Wide Paddle 3",
+        "description": "Increases paddle width by 20%",
+        "upgrade": {
+          "paddleWidthMultiplier": 1.2
+        }
+      },
+    {
+      "name": "Wide Paddle 4",
       "description": "Increases paddle width by 20%",
       "upgrade": {
-        "paddleWidthMultiplier": 1.2
+      "paddleWidthMultiplier": 1.2
       }
     },
-	{
-      "name": "Wide Paddle 3",
+    {
+      "name": "Wide Paddle 5",
       "description": "Increases paddle width by 20%",
       "upgrade": {
-        "paddleWidthMultiplier": 1.2
+      "paddleWidthMultiplier": 1.2
       }
-    },
-	{
-	  "name": "Wide Paddle 4",
-	  "description": "Increases paddle width by 20%",
-	  "upgrade": {
-		"paddleWidthMultiplier": 1.2
-	  }
-	},
-	{
-	  "name": "Wide Paddle 5",
-	  "description": "Increases paddle width by 20%",
-	  "upgrade": {
-		"paddleWidthMultiplier": 1.2
-	  }
-	}
+    }
   ]
 }

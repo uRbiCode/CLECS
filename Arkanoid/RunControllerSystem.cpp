@@ -20,11 +20,10 @@
 #include "StageUtils.h"
 #include "StageEndEvent.h"
 #include "RunStateEvent.h"
-#include "UpgradeComponent.h"
 #include "UpgradeLoader.h"
 #include "UpgradeEvent.h"
-#include <cassert>
 #include "UpgradeUtils.h"
+#include <cassert>
 
 namespace
 {
@@ -54,6 +53,7 @@ void RunControllerSystem::Initialize(const SystemContext& Context) const
 
 	Context.EventBus.Subscribe<UpgradeSelectedEvent>(this, [this](const SystemContext& Context, const UpgradeSelectedEvent& Event)
 	{
+		UpgradeUtils::ApplyHealUpgrade(Context, Event.SelectedUpgrade);
 		TryStartNextStage(Context);
 	});
 }
@@ -172,7 +172,7 @@ void RunControllerSystem::SpawnStageEntities(const SystemContext& Context, const
 	
 	StageUtils::AddTrigger(Context, StageData.Trigger);
 	StageUtils::AddPlayer(Context, UpgradeUtils::GetModifiedPlayerData(Context, StageData.PlayerData));
-	StageUtils::AddBall(Context, StageData.BallData);
+	StageUtils::AddBall(Context, UpgradeUtils::GetModifiedBallData(Context, StageData.BallData));
 }
 
 void RunControllerSystem::SetStageData(const SystemContext& Context, const StageData& StageData) const
