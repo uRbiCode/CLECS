@@ -3,6 +3,7 @@
 
 struct SDL_Texture;
 
+// Used by RenderSystem to display textures.
 struct TextureComponent
 {
 	SDL_Texture* Texture = nullptr;

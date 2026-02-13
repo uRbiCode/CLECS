@@ -4,6 +4,7 @@
 struct SDL_Renderer;
 struct SDL_Window;
 
+// Utility functions related to SDL.
 namespace SDLUtils
 {
 	Vector2D<int> GetWindowSize(SDL_Window* Window);

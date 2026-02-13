@@ -3,7 +3,10 @@
 #include "MathTypes.h"
 #include <unordered_set>
 
-// Manages keyboard and mouse input states.
+/* Responsible for input polling.
+ * Updated each frame by the World, which translates SDL events to it.
+ * Does not forward any events by itself.
+ */
 class InputState
 {
 public:

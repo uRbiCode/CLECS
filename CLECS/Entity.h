@@ -9,6 +9,7 @@ constexpr uint32_t VersionShift = 20;
 
 /* Entity is a fundmanetal concept in CLECS architecture.
  * Represents a unique instance in a world that we can attach components to.
+ * It consists of an Id and a version, both packed into a single uint32_t for memory efficiency.
  */
 struct Entity
 {

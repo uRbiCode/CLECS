@@ -10,8 +10,8 @@ class System;
 struct SystemContext;
 
 /* Responsible for managing event subscriptions and notifications in CLECS.
- * Systems may subscribe to events by type , and the EventBus will notify them when events of that type are emitted.
- * The notifications are synchronous and happend immediately.
+ * Systems may subscribe to events by type, and the EventBus will notify them when events of that type are emitted.
+ * The notifications are synchronous and happen immediately.
  * This means that an event sent in reponse to another will be processed first.
  */
 class EventBus
@@ -60,7 +60,7 @@ public:
 		if (It == Subscribers.end())
 			return;
 
-		// Prevent invalidating iterators if someone unsubscribes in response
+		// Prevent invalidating iterators if someone unsubscribes in response.
 		std::vector<SubscriptionEntry> CallbacksCopy = It->second;
 
 		for (const auto& Entry : CallbacksCopy)

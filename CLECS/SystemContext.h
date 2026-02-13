@@ -16,6 +16,9 @@ struct Managers
 	FontManager& FontManager;
 };
 
+/* SystemContext is a struct that encapsulates all the necessary context and resources that systems need to operate.
+ * It is passed to each system's Initialization and Update function, as well as via events.
+ */
 struct SystemContext
 {
 	EntityAdmin& EntityAdmin;

@@ -3,6 +3,9 @@
 #include <unordered_map>
 #include <string>
 
+/* Responsible for managing textures in the game.
+ * Interacts with SDL to set up resources so that they can be rendered by the RenderSystem.
+ */
 class TextureManager
 {
 public:

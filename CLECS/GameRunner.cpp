@@ -74,13 +74,6 @@ bool GameRunner::InitializeWorld(World& GameWorld, WorldInitializationData& Data
 	return true;
 }
 
-void GameRunner::Shutdown(Game& GameInstance, World& GameWorld)
-{
-	GameInstance.Shutdown();
-	GameWorld.Shutdown();
-	SDL_Quit();
-}
-
 int GameRunner::RunGameLoop(World& GameWorld)
 {
 	bool Running = true;
@@ -106,4 +99,11 @@ int GameRunner::RunGameLoop(World& GameWorld)
 	}
 
 	return 0;
+}
+
+void GameRunner::Shutdown(Game& GameInstance, World& GameWorld)
+{
+	GameInstance.Shutdown();
+	GameWorld.Shutdown();
+	SDL_Quit();
 }

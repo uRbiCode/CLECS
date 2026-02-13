@@ -3,6 +3,7 @@
 #include <vector>
 #include <limits>
 
+// Base class allows storing different component pools in a single container.
 class ComponentPoolBase
 {
 public:
@@ -14,13 +15,12 @@ public:
 
 constexpr uint32_t INVALID_DENSE_INDEX = std::numeric_limits<uint32_t>::max();
 
-/* Templated component pool using sparse set for O(1) lookups.
- * Sparse array maps entity Ids to dense array indices.
- */
+// Templated component pool utilizing sparse set.
 template<typename T>
 class ComponentPool : public ComponentPoolBase
 {
 public:
+	// Emplace a new component for the given entity.
 	template<typename... Args>
 	T& Emplace(const Entity& Entity, Args&&... Arguments)
 	{
@@ -54,6 +54,7 @@ public:
 		return Components[Sparse[EntityId]];
 	}
 
+	// O(1) removal by swapping with the last element.
 	void Remove(const Entity& Entity) override
 	{
 		const auto EntityId = Entity.GetId();
@@ -106,10 +107,10 @@ public:
 	size_t Size() const { return Components.size(); }
 
 private:
-	// Sparse set: entity Id -> dense index
+	// Sparse array. At the position equal to entity Id, it stores the index at which the owned component and this entity are located in the dense arrays.
 	std::vector<uint32_t> Sparse;
 	
-	// Dense arrays for cache-friendly iteration
+	// Dense arrays storing components and their corresponding entities.
 	std::vector<T> Components;
 	std::vector<Entity> Entities;
 };

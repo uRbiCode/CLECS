@@ -92,6 +92,43 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 	SDL_RenderPresent(&Renderer);
 }
 
+void RenderSystem::DecideColor(const SystemContext& Context, const Entity& Entity) const
+{
+	auto& Renderer = Context.Renderer;
+	auto& Admin = Context.EntityAdmin;
+	if (Admin.HasComponent<ColorComponent>(Entity))
+	{
+		const auto& Color = Admin.GetComponent<ColorComponent>(Entity);
+		SDL_SetRenderDrawColorFloat(&Renderer, Color.Color.r, Color.Color.g, Color.Color.b, Color.Color.a);
+	}
+	else
+	{
+		SDL_SetRenderDrawColor(&Renderer, 255, 255, 255, 0);
+	}
+}
+
+std::vector<std::pair<Entity, RenderData>> RenderSystem::GetRenderEntities(const SystemContext& Context) const
+{
+	auto& Admin = Context.EntityAdmin;
+	auto RenderGroup = Admin.GetGroup<TransformComponent, RenderComponent>();
+	std::vector<std::pair<Entity, RenderData>> SortedEntities;
+	SortedEntities.reserve(RenderGroup.Size());
+	for (const auto& Entity : RenderGroup)
+	{
+		const auto& Render = Admin.GetComponent<RenderComponent>(Entity);
+		if (!Render.Visible)
+			continue;
+
+		const auto& Transform = Admin.GetComponent<TransformComponent>(Entity);
+		SortedEntities.emplace_back(Entity, std::make_pair(Transform, Render));
+	}
+	std::sort(SortedEntities.begin(), SortedEntities.end(), [](const auto& A, const auto& B)
+	{
+		return A.second.second.Layer < B.second.second.Layer;
+	});
+	return SortedEntities;
+}
+
 void RenderSystem::RenderCircle(SDL_Renderer* Renderer, const Vector2D<float>& Center, float Radius, bool Filled, const SDL_FColor& Color) const
 {
 	constexpr int Segments = 32;  
@@ -129,43 +166,6 @@ void RenderSystem::RenderCircle(SDL_Renderer* Renderer, const Vector2D<float>& C
 			SDL_RenderLine(Renderer, X1, Y1, X2, Y2);
 		}
 	}
-}
-
-void RenderSystem::DecideColor(const SystemContext& Context, const Entity& Entity) const
-{
-	auto& Renderer = Context.Renderer;
-	auto& Admin = Context.EntityAdmin;
-	if (Admin.HasComponent<ColorComponent>(Entity))
-	{
-		const auto& Color = Admin.GetComponent<ColorComponent>(Entity);
-		SDL_SetRenderDrawColorFloat(&Renderer, Color.Color.r, Color.Color.g, Color.Color.b, Color.Color.a);
-	}
-	else
-	{
-		SDL_SetRenderDrawColor(&Renderer, 255, 255, 255, 0);
-	}
-}
-
-std::vector<std::pair<Entity, RenderData>> RenderSystem::GetRenderEntities(const SystemContext& Context) const
-{
-	auto& Admin = Context.EntityAdmin;
-	auto RenderGroup = Admin.GetGroup<TransformComponent, RenderComponent>();
-	std::vector<std::pair<Entity, RenderData>> SortedEntities;
-	SortedEntities.reserve(RenderGroup.Size());
-	for (const auto& Entity : RenderGroup)
-	{
-		const auto& Render = Admin.GetComponent<RenderComponent>(Entity);
-		if (!Render.Visible)
-			continue;
-
-		const auto& Transform = Admin.GetComponent<TransformComponent>(Entity);
-		SortedEntities.emplace_back(Entity, std::make_pair(Transform, Render));
-	}
-	std::sort(SortedEntities.begin(), SortedEntities.end(), [](const auto& A, const auto& B)
-	{
-		return A.second.second.Layer < B.second.second.Layer;
-	});
-	return SortedEntities;
 }
 
 void RenderSystem::RenderTexture(const SystemContext& Context, const Entity& Entity, const RenderData& RenderData) const

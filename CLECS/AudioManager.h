@@ -3,6 +3,10 @@
 #include <unordered_map>
 #include <string>
 
+/* Responsible for managing audio in the game.
+ * Interacts with SDL to set up audio resources.
+ * Provides API to play sound effects and music independently.
+ */
 class AudioManager
 {
 public:

@@ -161,7 +161,6 @@
     <ClCompile Include="InputState.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="SDLUtils.cpp" />
-    <ClCompile Include="System.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldInitializationData.cpp" />

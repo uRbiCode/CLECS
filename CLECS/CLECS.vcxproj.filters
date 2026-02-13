@@ -58,9 +58,6 @@
     <ClCompile Include="World.cpp">
       <Filter>Source\Core\World</Filter>
     </ClCompile>
-    <ClCompile Include="System.cpp">
-      <Filter>Source\Core\System</Filter>
-    </ClCompile>
     <ClCompile Include="EntityAdmin.cpp">
       <Filter>Source\Core\Entity</Filter>
     </ClCompile>

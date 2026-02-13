@@ -18,8 +18,9 @@ struct RendererInitializationData;
 using SystemCollection = std::vector<std::unique_ptr<System>>;
 
 /* World is the heart of CLECS architecture.
- * It coordinates systems and provides access to entity management.
- * It owns the SDL window and renderer resources.
+ * It owns the SDL and CLECS resources and manages their lifecycle.
+ * It coordinates systems and provides access to entity management to them.
+ * It translates SDL events to the InputState.
  */
 class World
 {
