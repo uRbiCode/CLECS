@@ -9,11 +9,13 @@ struct BrickData;
 struct PlayerData;
 struct BallData;
 
+// Utility functions related to stage state of the run.
 namespace StageUtils
 {
 	StageData GetCurrentStageData(const SystemContext& Context);
 	int GetCurrentPlayerHealth(const SystemContext& Context);
 
+	// Spawners for entities.
 	void AddWall(const SystemContext& Context, const WallData& WallData);
 	void AddTrigger(const SystemContext& Context, const TriggerData& TriggerData);
 	void AddBrick(const SystemContext& Context, const BrickData& BrickData);
