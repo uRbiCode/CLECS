@@ -4,7 +4,6 @@
 #include "StageDataComponent.h"
 #include "UpgradeComponent.h"
 #include "RunStateComponent.h"
-#include "HealthChangedEvent.h"
 #include "EventBus.h"
 #include "HealthUtils.h"
 #include <cassert>

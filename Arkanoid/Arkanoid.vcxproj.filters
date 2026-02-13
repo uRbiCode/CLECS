@@ -246,7 +246,7 @@
     <ClInclude Include="UpgradeComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="RunStateEvent.h">
+    <ClInclude Include="ChangeRunStateEvent.h">
       <Filter>Source\Events</Filter>
     </ClInclude>
     <ClInclude Include="UpgradeControllerSystem.h">

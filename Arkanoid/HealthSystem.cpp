@@ -4,11 +4,10 @@
 #include "CollisionEvent.h"
 #include "HealthComponent.h"
 #include "EntityAdmin.h"
-#include "HealthChangedEvent.h"
 #include "CollisionComponent.h"
 #include "RunStateComponent.h"
-#include <cassert>
 #include "HealthUtils.h"
+#include <cassert>
 
 namespace
 {

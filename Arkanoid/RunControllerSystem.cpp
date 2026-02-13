@@ -17,7 +17,7 @@
 #include "StageDataLoader.h"
 #include "StageUtils.h"
 #include "StageEndEvent.h"
-#include "RunStateEvent.h"
+#include "ChangeRunStateEvent.h"
 #include "UpgradeLoader.h"
 #include "UpgradeEvent.h"
 #include "UpgradeUtils.h"
@@ -51,7 +51,6 @@ void RunControllerSystem::Initialize(const SystemContext& Context) const
 
 	Context.EventBus.Subscribe<UpgradeSelectedEvent>(this, [this](const SystemContext& Context, const UpgradeSelectedEvent& Event)
 	{
-		UpgradeUtils::ApplyHealUpgrade(Context, Event.SelectedUpgrade);
 		TryStartNextStage(Context);
 	});
 }

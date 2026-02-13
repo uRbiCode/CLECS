@@ -11,7 +11,7 @@
 #include "TextComponent.h"
 #include "RenderConstants.h"
 #include "Constants.h"
-#include "RunStateEvent.h"
+#include "ChangeRunStateEvent.h"
 #include <cassert>
 
 namespace

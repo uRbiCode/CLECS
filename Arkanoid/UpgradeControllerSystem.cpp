@@ -1,7 +1,7 @@
 #include "UpgradeControllerSystem.h"
 #include "SystemContext.h"
 #include "EventBus.h"
-#include "RunStateEvent.h"
+#include "ChangeRunStateEvent.h"
 #include "UpgradeComponent.h"
 #include "EntityAdmin.h"
 #include "UpgradeEvent.h"
@@ -14,6 +14,7 @@
 #include "Constants.h"
 #include "TextComponent.h"
 #include "ClickableUsedEvent.h"
+#include "UpgradeUtils.h"
 #include <numeric>
 #include <random>
 #include <algorithm>
@@ -157,7 +158,8 @@ void UpgradeControllerSystem::OnUpgradeSelected(const SystemContext& Context, co
 
 	std::erase(Context.EntityAdmin.AccessComponent<AvailableUpgradesComponent>(Context.EntityAdmin.GetGroup<AvailableUpgradesComponent>()[0]).AvailableUpgrades, SelectedUpgradeDefinition);
 	Context.EntityAdmin.AccessComponent<OwnedUpgradesComponent>(OwnedUpgradesGroup[0]).OwnedUpgrades.push_back(SelectedUpgradeDefinition.Upgrade);
-	Context.EventBus.Notify(Context, UpgradeSelectedEvent{SelectedUpgradeDefinition.Upgrade});
+	Context.EventBus.Notify(Context, UpgradeSelectedEvent{});
+	UpgradeUtils::ApplyHealUpgrade(Context, SelectedUpgradeDefinition.Upgrade);
 	CleanupUpgradeSelection(Context);
 }
 
