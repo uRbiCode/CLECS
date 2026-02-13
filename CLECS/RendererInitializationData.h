@@ -1,6 +1,8 @@
 #pragma once
 
-// RendererInitializationData encapsulates all window and renderer configuration
+/* Encapsulates all window and renderer configuration. 
+ * It is defined by the Game class and passed to the World during initialization.
+ */
 struct RendererInitializationData
 {
 	const char* WindowTitle = "CLECS Game";

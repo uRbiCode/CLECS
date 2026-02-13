@@ -14,6 +14,11 @@
 #include "GameStateUtils.h"
 #include <cassert>
 
+namespace
+{
+	constexpr const char* BackgroundTexturePath = "../Assets/Textures/Background_Tiles.png";
+}
+
 void GameStateSystem::Initialize(const SystemContext& Context) const
 {
 	Context.EventBus.Subscribe<RequestGameStateChangeEvent>(this, [this](const SystemContext& Context, const RequestGameStateChangeEvent& Event)
@@ -71,7 +76,7 @@ void GameStateSystem::AddBackgroundRenderEntity(const SystemContext& Context) co
 	});
 	Admin.AddComponent<RenderComponent>(BackgroundEntity, RenderConstants::BackgroundLayer);
 	
-	const auto Texture = Context.Managers.TextureManager.LoadTexture("../Assets/Textures/Background_Tiles.png");
+	const auto Texture = Context.Managers.TextureManager.LoadTexture(BackgroundTexturePath);
 	if (Texture == nullptr)
 		return;
 

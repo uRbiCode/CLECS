@@ -152,7 +152,7 @@
       <Filter>Source\Utils\UpgradeUtils</Filter>
     </ClCompile>
     <ClCompile Include="HealthUtils.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Utils\HealthUtils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -246,7 +246,7 @@
     <ClInclude Include="UpgradeComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="RunStateEvent.h">
+    <ClInclude Include="ChangeRunStateEvent.h">
       <Filter>Source\Events</Filter>
     </ClInclude>
     <ClInclude Include="UpgradeControllerSystem.h">
@@ -270,9 +270,11 @@
     <ClInclude Include="UpgradeUtils.h">
       <Filter>Source\Utils\UpgradeUtils</Filter>
     </ClInclude>
-    <ClInclude Include="HealthUtils.h" />
     <ClInclude Include="AudioRequestsComponent.h">
       <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthUtils.h">
+      <Filter>Source\Utils\HealthUtils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

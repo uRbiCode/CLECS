@@ -3,6 +3,10 @@
 
 struct MouseClickEvent;
 
+/* Responsible for tracking PlayerInputState.
+ * Conveniently translates PlayerInputState changes into events, so other systems can react to them.
+ * Also directly changes player velocity based on input.
+ */
 class PlayerInputSystem : public System
 {
 public:

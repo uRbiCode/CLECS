@@ -1,6 +1,5 @@
 #include "StageDataLoader.h"
 #include <fstream>
-#include <stdexcept>
 
 namespace
 {

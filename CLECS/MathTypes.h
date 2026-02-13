@@ -2,6 +2,7 @@
 #include <type_traits>
 #include <cmath>
 
+// Templated 2D vector struct for mathematical operations.
 template<typename T>
 requires std::is_arithmetic_v<T>
 struct Vector2D
@@ -75,19 +76,16 @@ struct Vector2D
         return !(*this == other);
     }
 
-    // Get length/magnitude of vector
     T Length() const
     {
         return std::sqrt(X * X + Y * Y);
     }
 
-    // Get squared length (faster, no sqrt)
     constexpr T LengthSquared() const
     {
         return X * X + Y * Y;
     }
 
-    // Get normalized vector (unit length)
     Vector2D Normalized() const
     {
         T len = Length();

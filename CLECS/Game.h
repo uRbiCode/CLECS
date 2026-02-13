@@ -4,8 +4,8 @@
 class WorldInitializationData;
 struct RendererInitializationData;
 
-/* Game is the main entrypoint for CLECS applications.
- * Inherit from this class to define your game's initialization logic and configuration.
+/* Game is the main entry point for CLECS games.
+ * One has to inherit from this class and use CLECS_DEFINE_GAME_ENTRY macro to define the entry point of the game.
  */
 class Game
 {

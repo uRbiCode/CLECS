@@ -7,10 +7,8 @@
 #include "EntityAdmin.h"
 #include "TransformComponent.h"
 #include "ShapeComponents.h"
-#include "PlayerControllerComponent.h"
 #include "RenderComponent.h"
 #include "StageUtils.h"
-#include "CollisionComponent.h"
 #include "RenderConstants.h"
 #include "SDLUtils.h"
 #include "GameStateEvents.h"
@@ -97,6 +95,24 @@ void HealthIndicatorSystem::OnRunBegin(const SystemContext& Context) const
 	}
 }
 
+void HealthIndicatorSystem::OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const
+{
+	if (Event.Delta == 0)
+		return;
+
+	auto& Admin = Context.EntityAdmin;
+	if (!Admin.HasComponent<RunStateComponent>(Event.Entity))
+		return;
+
+	if (Event.Delta < 0)
+	{
+		RemoveHealthIndicators(Context, -Event.Delta);
+		return;
+	}
+
+	AddHealthIndicators(Context, Event.Delta);
+}
+
 void HealthIndicatorSystem::AddHealthIndicators(const SystemContext& Context, int Count) const
 {
 	const auto HealthIndicatorEntities = GetHealthIndicatorEntitiesSorted(Context);
@@ -136,22 +152,4 @@ void HealthIndicatorSystem::CleanupHealthIndicators(const SystemContext& Context
 			Context.EntityAdmin.DestroyEntity(Entity);
 		}
 	});
-}
-
-void HealthIndicatorSystem::OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const
-{
-	if (Event.Delta == 0)
-		return;
-
-	auto& Admin = Context.EntityAdmin;
-	if (!Admin.HasComponent<RunStateComponent>(Event.Entity))
-		return;
-
-	if (Event.Delta < 0)
-	{
-		RemoveHealthIndicators(Context, -Event.Delta);
-		return;
-	}
-
-	AddHealthIndicators(Context, Event.Delta);
 }

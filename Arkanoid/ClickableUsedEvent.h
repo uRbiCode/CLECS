@@ -1,9 +1,13 @@
 #pragma once
 #include "ClickableComponent.h"
-#include "Entity.h"
 
+struct Entity;
+
+/* Send by PlayerInputSystem whenever a clickable Entity was, well, clicked.
+ * Systems then know if they should invoke specific logic in response.
+ */
 struct ClickableUsedEvent
 {
-	Entity ClickedEntity = {};
+	const Entity& ClickedEntity;
 	ClickableTag UsedClickableTag = ClickableTag::Invalid;
 };

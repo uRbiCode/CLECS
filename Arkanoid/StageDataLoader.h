@@ -1,12 +1,13 @@
 #pragma once
-#include <nlohmann/json.hpp>
 #include "StageDataComponent.h"
+#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
 #include <optional>
 
 using Json = nlohmann::json;
 
+// Wrapper for JSON parser of StageData.
 class StageDataLoader
 {
 public:

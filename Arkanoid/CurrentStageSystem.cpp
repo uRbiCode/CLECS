@@ -55,6 +55,28 @@ void CurrentStageSystem::OnHealthChanged(const SystemContext& Context, const Hea
 	}
 }
 
+void CurrentStageSystem::OnCollision(const SystemContext& Context, const CollisionEvent& Event) const
+{
+	auto TryIncreaseBallSpeed = [this, &Context](const Entity& Entity)
+	{
+		if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Entity))
+			return;
+
+		if (Context.EntityAdmin.GetComponent<CollisionComponent>(Entity).Channel != CollisionChannel::Ball)
+			return;
+
+		if (!Context.EntityAdmin.HasComponent<VelocityComponent>(Entity))
+			return;
+
+		//Increase ball speed with each collision.
+		auto& Velocity = Context.EntityAdmin.AccessComponent<VelocityComponent>(Entity);
+		Velocity.Velocity *= 1.01f;
+	};
+
+	TryIncreaseBallSpeed(Event.EntityA);
+	TryIncreaseBallSpeed(Event.EntityB);
+}
+
 void CurrentStageSystem::ResetStage(const SystemContext& Context) const
 {
 	const auto CurrentStageData = StageUtils::GetCurrentStageData(Context);
@@ -88,26 +110,4 @@ bool CurrentStageSystem::AreAllBricksDestroyed(const SystemContext& Context) con
 void CurrentStageSystem::NotifyStageEnd(const SystemContext& Context, bool Victory) const
 {
 	Context.EventBus.Notify(Context, StageEndEvent{ Victory });
-}
-
-void CurrentStageSystem::OnCollision(const SystemContext& Context, const CollisionEvent& Event) const
-{
-	auto TryIncreaseBallSpeed = [this, &Context](const Entity& Entity)
-	{
-		if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Entity))
-			return;
-
-		if (Context.EntityAdmin.GetComponent<CollisionComponent>(Entity).Channel != CollisionChannel::Ball)
-			return;
-
-		if (!Context.EntityAdmin.HasComponent<VelocityComponent>(Entity))
-			return;
-
-		//Increase ball speed with each collision
-		auto& Velocity = Context.EntityAdmin.AccessComponent<VelocityComponent>(Entity);
-		Velocity.Velocity *= 1.01f;
-	};
-
-	TryIncreaseBallSpeed(Event.EntityA);
-	TryIncreaseBallSpeed(Event.EntityB);
 }

@@ -8,6 +8,9 @@ class EntityAdmin;
 
 using SystemCollection = std::vector<std::unique_ptr<System>>;
 
+/* Allows World to be initialized with specified configuration and systems.
+ * Forwarded to the Game class, which can fill it with necessary systems and configure to its need.
+ */
 class WorldInitializationData
 {
 public:

@@ -10,7 +10,8 @@
 #include <algorithm>
 
 /* EntityAdmin handles entity lifecycle and component storage.
- * Uses sparse sets for O(1) component operations.
+ * It manages Ids of entities with versioning to prevent stale references.
+ * It also stores ComponentPools pools for efficient access and iteration.
  */
 class EntityAdmin
 {
@@ -58,6 +59,10 @@ public:
 		Pool->Remove(Entity);
 	}
 
+	/* Enables efficient iteration over entities that have a specific combination of components.
+	 * Caches matching entitities, so combioned with ComponentPool's sparse set, it allows for very fast iteration and access to components.
+	 * Optimized by iterating over the smallest component pool first and checking for the presence of other components, minimizing the number of checks needed.
+	 */ 
 	template<typename... Components>
 	class Group
 	{

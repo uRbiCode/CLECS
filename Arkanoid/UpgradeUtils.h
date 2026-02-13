@@ -5,6 +5,7 @@ struct PlayerData;
 struct BallData;
 struct Upgrade;
 
+// Utility functions related to upgrades.
 namespace UpgradeUtils
 {
 	PlayerData GetModifiedPlayerData(const SystemContext& Context, const PlayerData& OriginalData);

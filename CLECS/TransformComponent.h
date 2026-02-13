@@ -1,6 +1,7 @@
 #pragma once
 #include "MathTypes.h"
 
+// Defines transform of an entity.
 struct TransformComponent
 {
     Vector2D<float> Position = {0.f, 0.f};

@@ -2,6 +2,7 @@
 #include <string>
 #include <SDL3/SDL_pixels.h>
 
+// Used by RenderSystem to display text.
 struct TextComponent
 {
 	std::string Text;

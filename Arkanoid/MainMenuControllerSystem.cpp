@@ -46,6 +46,25 @@ void MainMenuControllerSystem::Initialize(const SystemContext& Context) const
 	});
 }
 
+void MainMenuControllerSystem::OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const
+{
+	switch (Event.UsedClickableTag)
+	{
+		case ClickableTag::PlayButton:
+			GameStateUtils::RequestStateChange(Context, GameState::Run);
+			break;
+		case ClickableTag::QuitButton:
+			QuitGame();
+			break;
+		case ClickableTag::TutorialButton:
+			GameStateUtils::RequestStateChange(Context, GameState::Tutorial);
+			break;
+		case ClickableTag::Invalid:
+		default:
+			break;
+	}
+}
+
 void MainMenuControllerSystem::InitializeMainMenu(const SystemContext& Context) const
 {
 	AddTitleText(Context);
@@ -103,25 +122,6 @@ void MainMenuControllerSystem::CleanupMainMenu(const SystemContext& Context) con
 	{
 		Context.EntityAdmin.DestroyEntity(Entity);
 	});
-}
-
-void MainMenuControllerSystem::OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const
-{
-	switch (Event.UsedClickableTag)
-	{
-		case ClickableTag::PlayButton:
-			GameStateUtils::RequestStateChange(Context, GameState::Run);
-			break;
-		case ClickableTag::QuitButton:
-			QuitGame();
-			break;
-		case ClickableTag::TutorialButton:
-			GameStateUtils::RequestStateChange(Context, GameState::Tutorial);
-			break;
-		case ClickableTag::Invalid:
-		default:
-			break;
-	}
 }
 
 void MainMenuControllerSystem::QuitGame() const

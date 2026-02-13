@@ -5,6 +5,9 @@
 struct SDL_Renderer;
 struct TTF_Font;
 
+/* Responsible for managing fonts in the game.
+ * Interacts with SDL_ttf to set up font resources so that they can be used by the RenderSystem.
+ */
 class FontManager
 {
 public:

@@ -50,6 +50,17 @@ void SummaryControllerSystem::Initialize(const SystemContext& Context) const
 	});
 }
 
+void SummaryControllerSystem::OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const
+{
+	if (Event.UsedClickableTag != ClickableTag::MainMenuButton)
+		return;
+
+	Context.EventBus.Unsubscribe<ClickableUsedEvent>(this);
+	CleanupSummary(Context);
+	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
+}
+
+
 void SummaryControllerSystem::AddSummaryText(const SystemContext& Context, const std::string& Text) const
 {
 	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
@@ -97,16 +108,6 @@ void SummaryControllerSystem::CleanupSummary(const SystemContext& Context) const
 	{
 		Context.EntityAdmin.DestroyEntity(Entity);
 	});
-}
-
-void SummaryControllerSystem::OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const
-{
-	if (Event.UsedClickableTag != ClickableTag::MainMenuButton)
-		return;
-
-	Context.EventBus.Unsubscribe<ClickableUsedEvent>(this);
-	CleanupSummary(Context);
-	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
 }
 
 void SummaryControllerSystem::SubscribeToClickableUsedEvent(const SystemContext& Context) const

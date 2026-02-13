@@ -5,12 +5,12 @@
 #include "EntityAdmin.h"
 #include "GameStateEvents.h"
 #include "TextComponent.h"
-#include <SDLUtils.h>
-#include <RenderSystem.h>
-#include <ShapeComponents.h>
-#include <RenderComponent.h>
+#include "SDLUtils.h"
+#include "RenderSystem.h"
+#include "ShapeComponents.h"
+#include "RenderComponent.h"
 #include "Constants.h"
-#include <RenderConstants.h>
+#include "RenderConstants.h"
 #include "GameStateUtils.h"
 #include "TransformComponent.h"
 
@@ -44,6 +44,16 @@ void TutorialControllerSystem::Initialize(const SystemContext& Context) const
 	});
 }
 
+void TutorialControllerSystem::OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const
+{
+	if (Event.UsedClickableTag != ClickableTag::MainMenuButton)
+		return;
+
+	Context.EventBus.Unsubscribe<ClickableUsedEvent>(this);
+	CleanupTutorial(Context);
+	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
+}
+
 void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) const
 {
 	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
@@ -57,8 +67,8 @@ void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) con
 	Admin.AddComponent<TextComponent>(TitleTextEntity, Title, Constants::FontFilePath, 72);
 	Admin.AddComponent<RenderComponent>(TitleTextEntity, RenderConstants::UILayer);
 
-	// Looks awkward but does its job for the centered text visuals. I'm taking the blame
-	// Text Line 1
+	// Looks awkward but does its job for the centered text visuals. I'm taking the blame.
+	// Text Line 1.
 	const Vector2D<float> TextRectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.08f };
 	auto TextLine1Entity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(TextLine1Entity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.42f });
@@ -67,7 +77,7 @@ void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) con
 	Admin.AddComponent<TextComponent>(TextLine1Entity, TextLine1, Constants::FontFilePath, 24);
 	Admin.AddComponent<RenderComponent>(TextLine1Entity, RenderConstants::UILayer);
 
-	// Text Line 2
+	// Text Line 2.
 	auto TextLine2Entity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(TextLine2Entity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.52f });
 	Admin.AddComponent<RectComponent>(TextLine2Entity, SDL_FRect{ -TextRectSize.X * 0.5f, -TextRectSize.Y * 0.5f, TextRectSize.X, TextRectSize.Y });
@@ -75,7 +85,7 @@ void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) con
 	Admin.AddComponent<TextComponent>(TextLine2Entity, TextLine2, Constants::FontFilePath, 24);
 	Admin.AddComponent<RenderComponent>(TextLine2Entity, RenderConstants::UILayer);
 
-	// Text Line 3
+	// Text Line 3.
 	auto TextLine3Entity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(TextLine3Entity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.62f });
 	Admin.AddComponent<RectComponent>(TextLine3Entity, SDL_FRect{ -TextRectSize.X * 0.5f, -TextRectSize.Y * 0.5f, TextRectSize.X, TextRectSize.Y });
@@ -83,7 +93,7 @@ void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) con
 	Admin.AddComponent<TextComponent>(TextLine3Entity, TextLine3, Constants::FontFilePath, 24);
 	Admin.AddComponent<RenderComponent>(TextLine3Entity, RenderConstants::UILayer);
 
-	// Text Line 4
+	// Text Line 4.
 	auto TextLine4Entity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(TextLine4Entity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.72f });
 	Admin.AddComponent<RectComponent>(TextLine4Entity, SDL_FRect{ -TextRectSize.X * 0.5f, -TextRectSize.Y * 0.5f, TextRectSize.X, TextRectSize.Y });
@@ -113,16 +123,6 @@ void TutorialControllerSystem::CleanupTutorial(const SystemContext& Context) con
 	{
 		Context.EntityAdmin.DestroyEntity(Entity);
 	});
-}
-
-void TutorialControllerSystem::OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const
-{
-	if (Event.UsedClickableTag != ClickableTag::MainMenuButton)
-		return;
-
-	Context.EventBus.Unsubscribe<ClickableUsedEvent>(this);
-	CleanupTutorial(Context);
-	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
 }
 
 void TutorialControllerSystem::SubscribeToClickableUsedEvent(const SystemContext& Context) const

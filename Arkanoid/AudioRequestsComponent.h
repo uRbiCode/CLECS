@@ -17,7 +17,9 @@ struct AudioRequest
 	float Volume = 0.f;
 };
 
-// Tracks requested sounds each frame to prevent sounds overlaping
+/* Tracks requested sounds for AudioSystem to consume them.
+ * Prevents playing the same sound multiple times.
+ */	
 struct AudioRequestsComponent
 {
 	std::vector<AudioRequest> Requests;

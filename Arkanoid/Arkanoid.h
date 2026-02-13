@@ -1,9 +1,12 @@
 #pragma once
 #include "Game.h"
 
-struct RendererInitializationData;
 class EntityAdmin;
 
+/* Entry point to the game.
+ * Responsible for registering systems and providing initial renderer configuration.
+ * Here one has to determine order of execution for systems, which may prove crucial for the synchronous framework.
+ */
 class Arkanoid : public Game
 {
 public:
@@ -14,6 +17,7 @@ public:
 	RendererInitializationData GetRendererConfig() const override;
 
 private:
+	// Defines the initial GameState by registering the component with the specified value.
 	void AddGameStateComponent(EntityAdmin& Admin) const;
 };
 
