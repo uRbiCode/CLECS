@@ -17,6 +17,7 @@
 #include <numeric>
 #include <random>
 #include <algorithm>
+#include <cassert>
 
 namespace
 {
@@ -43,6 +44,7 @@ void UpgradeControllerSystem::Initialize(const SystemContext& Context) const
 void UpgradeControllerSystem::InitializeUpgradeSelection(const SystemContext& Context) const
 {
 	const auto AvailableUpgradesGroup = Context.EntityAdmin.GetGroup<AvailableUpgradesComponent>();
+	assert(AvailableUpgradesGroup.Size() == 1 && "Expected exactly one AvailableUpgradesComponent in the world");
 	if (AvailableUpgradesGroup.Empty())
 	{
 		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "UpgradeControllerSystem::InitializeUpgradeSelection -> No AvailableUpgradesComponent found. Skipping upgrade selection.");
@@ -144,6 +146,7 @@ void UpgradeControllerSystem::OnUpgradeSelected(const SystemContext& Context, co
 
 	const auto SelectedUpgradeDefinition = Context.EntityAdmin.GetComponent<UpgradeComponent>(Entity).UpgradeDefinition;
 	const auto OwnedUpgradesGroup = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
+	assert(OwnedUpgradesGroup.Size() == 1 && "Expected exactly one OwnedUpgradesComponent in the world");
 	if (OwnedUpgradesGroup.Empty())
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "UpgradeControllerSystem::OnUpgradeSelected -> No OwnedUpgradesComponent found");

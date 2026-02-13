@@ -271,5 +271,8 @@
       <Filter>Source\Utils\UpgradeUtils</Filter>
     </ClInclude>
     <ClInclude Include="HealthUtils.h" />
+    <ClInclude Include="AudioRequestsComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
