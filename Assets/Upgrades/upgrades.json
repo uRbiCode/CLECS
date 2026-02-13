@@ -47,9 +47,9 @@
     },
     {
       "name": "Precision Paddle",
-      "description": "Increase ball speed by 20%.\nReduce paddle width by 25%.",
+      "description": "Reduce ball speed by 10%.\nReduce paddle width by 25%.",
       "upgrade": {
-        "ballSpeedMultiplier": 1.2,
+        "ballSpeedMultiplier": 0.9,
         "paddleWidthMultiplier": 0.75
       }
     },
