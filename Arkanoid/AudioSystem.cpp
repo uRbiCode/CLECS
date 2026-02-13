@@ -122,7 +122,17 @@ void AudioSystem::EnqueueAudioRequest(const SystemContext& Context, AudioRequest
 	if (AudioRequestsGroup.Empty())
 		return;
 
-	Context.EntityAdmin.AccessComponent<AudioRequestsComponent>(AudioRequestsGroup[0]).Requests.push_back(std::move(AudioRequest));
+	auto& Requests = Context.EntityAdmin.AccessComponent<AudioRequestsComponent>(AudioRequestsGroup[0]).Requests;
+	for (auto& Request : Requests)
+	{
+		if (Request.Name == AudioRequest.Name && Request.Type == AudioRequest.Type)
+		{
+			Request.Volume = std::max(Request.Volume, AudioRequest.Volume);
+			return;
+		}
+	}
+
+	Requests.push_back(std::move(AudioRequest));
 }
 
 void AudioSystem::ConsumeAudioRequests(const SystemContext& Context) const
@@ -133,30 +143,17 @@ void AudioSystem::ConsumeAudioRequests(const SystemContext& Context) const
 		return;
 
 	auto& AudioRequests = Context.EntityAdmin.AccessComponent<AudioRequestsComponent>(AudioRequestsGroup[0]).Requests;
-	
-	std::unordered_map<std::string, AudioRequest> AggregatedRequests;
-	for (const auto& Request : AudioRequests)
+	for (const auto& [Type, Name, Volume] : AudioRequests)
 	{
-		auto It = AggregatedRequests.find(Request.Name);
-		if (It == AggregatedRequests.end())
-		{
-			AggregatedRequests[Request.Name] = Request;
-		}
-		else if (Request.Volume > It->second.Volume)
-		{
-			It->second.Volume = Request.Volume;
-		}
-	}
-
-	for (const auto& [Name, Request] : AggregatedRequests)
-	{
-		switch (Request.Type)
+		switch (Type)
 		{
 		case AudioType::Sfx:
-			Context.Managers.AudioManager.PlaySound(Request.Name, Request.Volume);
+			Context.Managers.AudioManager.PlaySound(Name, Volume);
 			break;
 		case AudioType::Music:
-			Context.Managers.AudioManager.PlayMusic(Request.Name, Request.Volume);
+			Context.Managers.AudioManager.PlayMusic(Name, Volume);
+			break;
+		default:
 			break;
 		}
 	}
