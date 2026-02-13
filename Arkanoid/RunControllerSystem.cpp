@@ -196,11 +196,12 @@ void RunControllerSystem::CleanupCurrentStage(const SystemContext& Context) cons
 
 bool RunControllerSystem::AreUpgradesAvailable(const SystemContext& Context) const
 {
-	const auto RunStateGroup = Context.EntityAdmin.GetGroup<AvailableUpgradesComponent>();
-	if (RunStateGroup.Empty())
+	const auto AvailableUpgradesGroup = Context.EntityAdmin.GetGroup<AvailableUpgradesComponent>();
+	assert(AvailableUpgradesGroup.Size() == 1 && "Expected exactly one AvailableUpgradesComponent in the world");
+	if (AvailableUpgradesGroup.Empty())
 		return false;
 
-	return !Context.EntityAdmin.AccessComponent<AvailableUpgradesComponent>(RunStateGroup[0]).AvailableUpgrades.empty();
+	return !Context.EntityAdmin.AccessComponent<AvailableUpgradesComponent>(AvailableUpgradesGroup[0]).AvailableUpgrades.empty();
 }
 
 void RunControllerSystem::ChangeRunState(const SystemContext& Context, RunState NewState) const
