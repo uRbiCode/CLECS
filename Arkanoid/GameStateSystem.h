@@ -14,11 +14,11 @@ public:
 	void Initialize(const SystemContext& Context) const override;
 
 public:
-	// GameState management
+	// GameState management.
 	void InitializeCurrentState(const SystemContext& Context) const;
 	void EndCurrentState(const SystemContext& Context) const;
 	void ChangeGameState(const SystemContext& Context, GameState NewState) const;
 
-	// Background
+	// Background.
 	void AddBackgroundRenderEntity(const SystemContext& Context) const;
 };

@@ -14,11 +14,11 @@ public:
 	void Initialize(const SystemContext& Context) const override;
 
 private:
-	// Event responses
+	// Event responses.
 	void OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const;
 	void OnCollision(const SystemContext& Context, const CollisionEvent& Event) const;
 
-	// Stage management
+	// Stage management.
 	void ResetStage(const SystemContext& Context) const;
 	bool AreAllBricksDestroyed(const SystemContext& Context) const;
 	void NotifyStageEnd(const SystemContext& Context, bool Victory) const;

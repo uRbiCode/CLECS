@@ -68,7 +68,7 @@ void CurrentStageSystem::OnCollision(const SystemContext& Context, const Collisi
 		if (!Context.EntityAdmin.HasComponent<VelocityComponent>(Entity))
 			return;
 
-		//Increase ball speed with each collision
+		//Increase ball speed with each collision.
 		auto& Velocity = Context.EntityAdmin.AccessComponent<VelocityComponent>(Entity);
 		Velocity.Velocity *= 1.01f;
 	};

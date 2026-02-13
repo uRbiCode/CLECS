@@ -7,7 +7,6 @@ struct Entity;
 /* Responsible for performing health changes. 
  * It's update method is the place where entities with <= 0 health are destroyed.
  */
-// 
 class HealthSystem : public System
 {
 public:
@@ -15,10 +14,10 @@ public:
 	void Update(const SystemContext& Context, float DeltaTime) const override;
 
 private:
-	// Event responses
+	// Event responses.
 	void OnCollision(const SystemContext& Context, const CollisionEvent& Event) const;
 
-	// Health management
+	// Health management.
 	bool WasTriggerHit(const SystemContext& Context, const Entity& Entity) const;
 	void HandleCollision(const SystemContext& Context, const Entity& Entity) const;
 	void ResolveTriggerHit(const SystemContext& Context) const;

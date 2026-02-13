@@ -31,6 +31,6 @@ struct CollisionComponent
 {
 	CollisionChannel Channel = CollisionChannel::Static;
 	
-	// Block all by default
+	// Block all by default.
 	CollisionResponse ResponseTable[MAX_COLLISION_CHANNELS] = {};
 };

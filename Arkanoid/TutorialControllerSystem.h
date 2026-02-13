@@ -12,10 +12,10 @@ public:
 	void Initialize(const SystemContext& Context) const override;
 
 private:
-	// Event responses
+	// Event responses.
 	void OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const;
 
-	// Tutorial management
+	// Tutorial management.
 	void AddTutorialText(const SystemContext& Context) const;
 	void AddMainMenuButton(const SystemContext& Context) const;
 	void CleanupTutorial(const SystemContext& Context) const;

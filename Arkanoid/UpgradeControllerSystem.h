@@ -14,15 +14,15 @@ public:
 	void Initialize(const SystemContext& Context) const override;
 
 private:
-	// Event responses
+	// Event responses.
 	void OnUpgradeSelected(const SystemContext& Context, const Entity& Entity) const;
 
-	// UI management
+	// UI management.
 	void InitializeUpgradeSelection(const SystemContext& Context) const;
 	void AddUpgradeTitle(const SystemContext& Context) const;
 	void PresentUpgradesToPlayer(const SystemContext& Context, const std::vector<UpgradeDefinition>& Upgrades) const;
 	void CleanupUpgradeSelection(const SystemContext& Context) const;
 
-	// Upgrade management
+	// Upgrade management.
 	std::vector<UpgradeDefinition> SampleUpgrades(const SystemContext& Context, const std::vector<UpgradeDefinition>& AvailableUpgrades) const;
 };

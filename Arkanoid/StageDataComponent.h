@@ -1,8 +1,8 @@
 #pragma once
-#include <vector>
-#include <string>
 #include "MathTypes.h"
 #include <SDL3/SDL.h>
+#include <vector>
+#include <string>
 
 // Stores data for creating a texture for an entity.
 struct TextureData

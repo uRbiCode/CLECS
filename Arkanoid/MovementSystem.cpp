@@ -1,7 +1,6 @@
 #include "MovementSystem.h"
 #include "SystemContext.h"
 #include "EntityAdmin.h"
-#include <SDL3/SDL.h>
 #include "VelocityComponent.h"
 #include "TransformComponent.h"
 

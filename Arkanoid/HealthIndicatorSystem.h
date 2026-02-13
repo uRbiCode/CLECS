@@ -12,11 +12,11 @@ public:
 	void Initialize(const SystemContext& Context) const override;
 
 private:
-	// Event responses
+	// Event responses.
 	void OnRunBegin(const SystemContext& Context) const;
 	void OnHealthChanged(const SystemContext& Context, const HealthChangedEvent& Event) const;
 
-	// Health indicator management
+	// Health indicator management.
 	void AddHealthIndicators(const SystemContext& Context, int Count) const;
 	void RemoveHealthIndicators(const SystemContext& Context, int Count) const;
 	void CleanupHealthIndicators(const SystemContext& Context) const;

@@ -18,12 +18,12 @@ public:
 	void Update(const SystemContext& Context, float DeltaTime) const override;
 
 private:
-	// Event responses
+	// Event responses.
 	void OnCollision(const SystemContext& Context, const CollisionEvent& Event) const;
 	void OnHealthLost(const SystemContext& Context, const Entity& Entity) const;
 	void OnGameStateBegin(const SystemContext& Context, GameState State) const;
 
-	// Audio request management
+	// Audio request management.
 	void EnqueueAudioRequest(const SystemContext& Context, AudioRequest&& AudioRequest) const;
 	void ConsumeAudioRequests(const SystemContext& Context) const;
 };

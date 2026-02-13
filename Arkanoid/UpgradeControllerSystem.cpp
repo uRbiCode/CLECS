@@ -115,7 +115,7 @@ void UpgradeControllerSystem::AddUpgradeTitle(const SystemContext& Context) cons
 	Admin.AddComponent<TextComponent>(UpgradeTitleEntity, UpgradeTitleText, Constants::FontFilePath, 60);
 	Admin.AddComponent<RenderComponent>(UpgradeTitleEntity, RenderConstants::UILayer);
 
-	// Add mock UpgradeComponent to ease cleanup
+	// Add mock UpgradeComponent to ease cleanup.
 	Admin.AddComponent<UpgradeComponent>(UpgradeTitleEntity);
 }
 

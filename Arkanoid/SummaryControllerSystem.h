@@ -13,10 +13,10 @@ public:
 	void Initialize(const SystemContext& Context) const override;
 
 private:
-	// Event responses
+	// Event responses.
 	void OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const;
 
-	// Summary management
+	// Summary management.
 	void AddSummaryText(const SystemContext& Context, const std::string& Text) const;
 	void AddMainMenuButton(const SystemContext& Context) const;
 	void InitializeVictory(const SystemContext& Context) const;
