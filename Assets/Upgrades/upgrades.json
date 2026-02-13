@@ -1,41 +1,129 @@
 {
   "upgrades": [
     {
-      "name": "Wide Paddle 1",
-      "description": "Increase paddle width by 20%.\nReduce ball speed by 10%.\nReduce ball size by 10%.\nHeal by 1 health point.",
+      "name": "Minor Repair",
+      "description": "Heal by 1 health point.",
       "upgrade": {
-        "paddleWidthMultiplier": 1.2,
+        "heal": 1
+      }
+    },
+    {
+      "name": "Reinforced Paddle",
+      "description": "Increase paddle width by 30%.",
+      "upgrade": {
+        "paddleWidthMultiplier": 1.3
+      }
+    },
+    {
+      "name": "Oversized Ball",
+      "description": "Increase ball size by 30%.",
+      "upgrade": {
+        "ballSizeMultiplier": 1.3
+      }
+    },
+    {
+      "name": "Acceleration Core",
+      "description": "Increase ball speed by 30%.",
+      "upgrade": {
+        "ballSpeedMultiplier": 1.3
+      }
+    },
+    {
+      "name": "Comfort Grip",
+      "description": "Increase paddle width by 25%.\nHeal by 1 health point.",
+      "upgrade": {
+        "paddleWidthMultiplier": 1.25,
+        "heal": 1
+      }
+    },
+
+    {
+      "name": "Heavy Ball",
+      "description": "Increase ball size by 50%.\nIncrease ball speed by 30%.",
+      "upgrade": {
+        "ballSizeMultiplier": 1.5,
+        "ballSpeedMultiplier": 1.3
+      }
+    },
+    {
+      "name": "Precision Paddle",
+      "description": "Increase ball speed by 20%.\nReduce paddle width by 25%.",
+      "upgrade": {
+        "ballSpeedMultiplier": 1.2,
+        "paddleWidthMultiplier": 0.75
+      }
+    },
+    {
+      "name": "Emergency Patch",
+      "description": "Heal by 2 health points.\nReduce paddle width by 30%.",
+      "upgrade": {
+        "heal": 2,
+        "paddleWidthMultiplier": 0.7
+      }
+    },
+    {
+      "name": "Lightweight Paddle",
+      "description": "Increase paddle width by 40%.\nIncrease ball speed by 45%.",
+      "upgrade": {
+        "paddleWidthMultiplier": 1.4,
+        "ballSpeedMultiplier": 1.45
+      }
+    },
+    {
+      "name": "Glass Ball",
+      "description": "Increase ball speed by 60%.\nReduce ball size by 35%.",
+      "upgrade": {
+        "ballSpeedMultiplier": 1.6,
+        "ballSizeMultiplier": 0.65
+      }
+    },
+    {
+      "name": "Safe Control",
+      "description": "Increase ball size by 25%.\nReduce ball speed by 10%.",
+      "upgrade": {
         "ballSpeedMultiplier": 0.9,
-        "ballSizeMultiplier": 0.9,
-        "heal" : 1
+        "ballSizeMultiplier": 1.25
       }
     },
     {
-        "name": "Wide Paddle 2",
-        "description": "Increases paddle width by 20%",
-        "upgrade": {
-          "paddleWidthMultiplier": 1.2
-        }
-      },
-    {
-        "name": "Wide Paddle 3",
-        "description": "Increases paddle width by 20%",
-        "upgrade": {
-          "paddleWidthMultiplier": 1.2
-        }
-      },
-    {
-      "name": "Wide Paddle 4",
-      "description": "Increases paddle width by 20%",
+      "name": "Recovery Field",
+      "description": "Heal by 1 health point.\nIncrease ball speed by 15%.",
       "upgrade": {
-      "paddleWidthMultiplier": 1.2
+        "heal": 1,
+        "ballSpeedMultiplier": 1.15
       }
     },
     {
-      "name": "Wide Paddle 5",
-      "description": "Increases paddle width by 20%",
+      "name": "Aggressive Momentum",
+      "description": "Increase ball size by 45%.\nIncrease ball speed by 60%.",
       "upgrade": {
-      "paddleWidthMultiplier": 1.2
+        "ballSizeMultiplier": 1.45,
+        "ballSpeedMultiplier": 1.6
+      }
+    },
+    {
+      "name": "Shielded Control",
+      "description": "Heal by 1 health point.\nIncrease ball speed by 25%.\nReduce paddle width by 15%.",
+      "upgrade": {
+        "heal": 1,
+        "ballSpeedMultiplier": 1.25,
+        "paddleWidthMultiplier": 0.85
+      }
+    },
+    {
+      "name": "Massive Paddle",
+      "description": "Increase paddle width by 60%.\nReduce ball speed by 15%.",
+      "upgrade": {
+        "paddleWidthMultiplier": 1.6,
+        "ballSpeedMultiplier": 0.85
+      }
+    },
+    {
+      "name": "Tiny Chaos",
+      "description": "Reduce ball size by 40%.\nIncrease ball speed by 70%.",
+      "upgrade": {
+        "ballSizeMultiplier": 0.6,
+        "ballSpeedMultiplier": 1.7
       }
     }
   ]
