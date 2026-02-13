@@ -1,48 +1,53 @@
 {
-    "player": {
-      "position": { "x": 320.0, "y": 432.0 },
-      "size": { "x": 80.0, "y": 20.0 },
-      "texture": {
-        "path": "../Assets/Textures/paddles_and_balls.png",
-        "sourceRect": { "x": 32.0, "y": 7.0, "w": 32.0, "h": 8.0 }
-      }
-    },
-    "ball": {
-      "position": { "x": 320.0, "y": 240.0 },
-      "velocity": { "x": 0.0, "y": 250.0 },
-      "radius": 10.0,
-      "texture": {
-        "path": "../Assets/Textures/paddles_and_balls.png",
-        "sourceRect": { "x": 160.0, "y": 5.0, "w": 10.0, "h": 10.0 }
-      }
-    },
-    "trigger": {
-      "position": { "x": 320.0, "y": 470.0 },
-      "size": { "x": 640.0, "y": 20.0 }
-    },
-    "walls": [
-      {
-        "position": { "x": 320.0, "y": 10.0 },
-        "size": { "x": 640.0, "y": 20.0 }
-      },
-      {
-        "position": { "x": 10.0, "y": 240.0 },
-        "size": { "x": 20.0, "y": 480.0 }
-      },
-      {
-        "position": { "x": 630.0, "y": 240.0 },
-        "size": { "x": 20.0, "y": 480.0 }
-      }
-    ],
-    "bricks": [
-       {
-          "position": { "x": 308.0, "y": 44.0 },
-          "size": { "x": 64.0, "y": 32.0 },
-          "health": 1,
-          "texture": {
-            "path": "../Assets/Textures/bricks.png",
-            "sourceRect": { "x": 0.0, "y": 23.0, "w": 32.0, "h": 8.0 }
-          }
-       }
-    ]
+  "player": {
+    "position": { "x": 320.0, "y": 432.0 },
+    "size": { "x": 80.0, "y": 20.0 },
+    "texture": {
+      "path": "../Assets/Textures/paddles_and_balls.png",
+      "sourceRect": { "x": 32.0, "y": 7.0, "w": 32.0, "h": 8.0 }
+    }
+  },
+
+  "ball": {
+    "position": { "x": 320.0, "y": 270.0 },
+    "velocity": { "x": 0.0, "y": 250.0 },
+    "radius": 10.0,
+    "texture": {
+      "path": "../Assets/Textures/paddles_and_balls.png",
+      "sourceRect": { "x": 160.0, "y": 5.0, "w": 10.0, "h": 10.0 }
+    }
+  },
+
+  "trigger": {
+    "position": { "x": 320.0, "y": 470.0 },
+    "size": { "x": 640.0, "y": 20.0 }
+  },
+
+  "walls": [
+    { "position": { "x": 320.0, "y": 10.0 }, "size": { "x": 640.0, "y": 20.0 } },
+    { "position": { "x": 10.0, "y": 240.0 }, "size": { "x": 20.0, "y": 480.0 } },
+    { "position": { "x": 630.0, "y": 240.0 }, "size": { "x": 20.0, "y": 480.0 } }
+  ],
+
+  "bricks": [
+    { "position": { "x": 320.0, "y": 60.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 23.0, "w": 32.0, "h": 8.0 } } },
+
+    { "position": { "x": 284.0, "y": 100.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 39.0, "w": 32.0, "h": 8.0 } } },
+    { "position": { "x": 356.0, "y": 100.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 39.0, "w": 32.0, "h": 8.0 } } },
+
+    { "position": { "x": 248.0, "y": 140.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 55.0, "w": 32.0, "h": 8.0 } } },
+    { "position": { "x": 320.0, "y": 140.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 55.0, "w": 32.0, "h": 8.0 } } },
+    { "position": { "x": 392.0, "y": 140.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 55.0, "w": 32.0, "h": 8.0 } } },
+
+    { "position": { "x": 212.0, "y": 180.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 71.0, "w": 32.0, "h": 8.0 } } },
+    { "position": { "x": 284.0, "y": 180.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 71.0, "w": 32.0, "h": 8.0 } } },
+    { "position": { "x": 356.0, "y": 180.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 71.0, "w": 32.0, "h": 8.0 } } },
+    { "position": { "x": 428.0, "y": 180.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 71.0, "w": 32.0, "h": 8.0 } } },
+
+    { "position": { "x": 176.0, "y": 220.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 87.0, "w": 32.0, "h": 8.0 } } },
+    { "position": { "x": 248.0, "y": 220.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 87.0, "w": 32.0, "h": 8.0 } } },
+    { "position": { "x": 320.0, "y": 220.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 87.0, "w": 32.0, "h": 8.0 } } },
+    { "position": { "x": 392.0, "y": 220.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 87.0, "w": 32.0, "h": 8.0 } } },
+    { "position": { "x": 464.0, "y": 220.0 }, "size": { "x": 64.0, "y": 32.0 }, "health": 1, "texture": { "path": "../Assets/Textures/bricks.png", "sourceRect": { "x": 0.0, "y": 87.0, "w": 32.0, "h": 8.0 } } }
+  ]
 }

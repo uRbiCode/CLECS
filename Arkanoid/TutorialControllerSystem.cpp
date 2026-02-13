@@ -57,6 +57,7 @@ void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) con
 	Admin.AddComponent<TextComponent>(TitleTextEntity, Title, Constants::FontFilePath, 72);
 	Admin.AddComponent<RenderComponent>(TitleTextEntity, RenderConstants::UILayer);
 
+	// Looks awkward but does its job for the centered text visuals. I'm taking the blame
 	// Text Line 1
 	const Vector2D<float> TextRectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.08f };
 	auto TextLine1Entity = Admin.CreateEntity();
