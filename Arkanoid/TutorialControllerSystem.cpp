@@ -44,6 +44,16 @@ void TutorialControllerSystem::Initialize(const SystemContext& Context) const
 	});
 }
 
+void TutorialControllerSystem::OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const
+{
+	if (Event.UsedClickableTag != ClickableTag::MainMenuButton)
+		return;
+
+	Context.EventBus.Unsubscribe<ClickableUsedEvent>(this);
+	CleanupTutorial(Context);
+	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
+}
+
 void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) const
 {
 	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
@@ -113,16 +123,6 @@ void TutorialControllerSystem::CleanupTutorial(const SystemContext& Context) con
 	{
 		Context.EntityAdmin.DestroyEntity(Entity);
 	});
-}
-
-void TutorialControllerSystem::OnClickableUsed(const SystemContext& Context, const ClickableUsedEvent& Event) const
-{
-	if (Event.UsedClickableTag != ClickableTag::MainMenuButton)
-		return;
-
-	Context.EventBus.Unsubscribe<ClickableUsedEvent>(this);
-	CleanupTutorial(Context);
-	GameStateUtils::RequestStateChange(Context, GameState::MainMenu);
 }
 
 void TutorialControllerSystem::SubscribeToClickableUsedEvent(const SystemContext& Context) const

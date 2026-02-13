@@ -35,18 +35,18 @@ void HealthSystem::Update(const SystemContext& Context, float DeltaTime) const
 	});
 }
 
+void HealthSystem::OnCollision(const SystemContext& Context, const CollisionEvent& Event) const
+{
+	HandleCollision(Context, Event.EntityA);
+	HandleCollision(Context, Event.EntityB);
+}
+
 bool HealthSystem::WasTriggerHit(const SystemContext& Context, const Entity& Entity) const
 {
 	if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Entity))
 		return false;
 
 	return Context.EntityAdmin.GetComponent<CollisionComponent>(Entity).Channel == CollisionChannel::Trigger;
-}
-
-void HealthSystem::OnCollision(const SystemContext& Context, const CollisionEvent& Event) const
-{
-	HandleCollision(Context, Event.EntityA);
-	HandleCollision(Context, Event.EntityB);
 }
 
 void HealthSystem::HandleCollision(const SystemContext& Context, const Entity& Entity) const

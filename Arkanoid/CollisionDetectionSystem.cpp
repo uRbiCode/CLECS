@@ -11,11 +11,6 @@
 
 namespace
 {
-	bool CheckAABB(const SDL_FRect& A, const SDL_FRect& B)
-	{
-		return !(A.x + A.w < B.x || B.x + B.w < A.x || A.y + A.h < B.y || B.y + B.h < A.y);
-	}
-
 	SDL_FRect GetWorldAABB(const TransformComponent& Transform, const RectComponent& Rect)
 	{
 		SDL_FRect Result;
@@ -24,48 +19,6 @@ namespace
 		Result.w = Rect.Rect.w;
 		Result.h = Rect.Rect.h;
 		return Result;
-	}
-
-	SDL_FRect GetCircleAABB(const TransformComponent& Transform, const CircleComponent& Circle)
-	{
-		SDL_FRect Result;
-		Result.x = Transform.Position.X - Circle.Radius;
-		Result.y = Transform.Position.Y - Circle.Radius;
-		Result.w = Circle.Radius * 2.f;
-		Result.h = Circle.Radius * 2.f;
-		return Result;
-	}
-
-	bool CheckCircleRect(const TransformComponent& CircleTransform, const CircleComponent& Circle,
-	                     const TransformComponent& RectTransform, const RectComponent& Rect)
-	{
-		const float CircleCenterX = CircleTransform.Position.X;
-		const float CircleCenterY = CircleTransform.Position.Y;
-		
-		const float RectLeft = RectTransform.Position.X + Rect.Rect.x;
-		const float RectRight = RectLeft + Rect.Rect.w;
-		const float RectTop = RectTransform.Position.Y + Rect.Rect.y;
-		const float RectBottom = RectTop + Rect.Rect.h;
-		
-		const float ClosestX = std::max(RectLeft, std::min(CircleCenterX, RectRight));
-		const float ClosestY = std::max(RectTop, std::min(CircleCenterY, RectBottom));
-		
-		const float DistX = CircleCenterX - ClosestX;
-		const float DistY = CircleCenterY - ClosestY;
-		const float DistanceSquared = DistX * DistX + DistY * DistY;
-		
-		return DistanceSquared < (Circle.Radius * Circle.Radius);
-	}
-
-	bool CheckCircleCircle(const TransformComponent& TransformA, const CircleComponent& CircleA,
-	                       const TransformComponent& TransformB, const CircleComponent& CircleB)
-	{
-		const float DX = TransformB.Position.X - TransformA.Position.X;
-		const float DY = TransformB.Position.Y - TransformA.Position.Y;
-		const float DistanceSquared = DX * DX + DY * DY;
-		const float RadiusSum = CircleA.Radius + CircleB.Radius;
-		
-		return DistanceSquared < (RadiusSum * RadiusSum);
 	}
 
 	Vector2D<float> GetSeparationRectRect(const SDL_FRect& A, const SDL_FRect& B)
@@ -246,4 +199,42 @@ void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaT
 			}
 		}
 	}
+}
+
+bool CollisionDetectionSystem::CheckAABB(const SDL_FRect& A, const SDL_FRect& B) const
+{
+	return !(A.x + A.w < B.x || B.x + B.w < A.x || A.y + A.h < B.y || B.y + B.h < A.y);
+}
+
+bool CollisionDetectionSystem::CheckCircleRect(const TransformComponent& CircleTransform, 
+												const CircleComponent& Circle,
+												const TransformComponent& RectTransform, 
+												const RectComponent& Rect) const
+{
+	const float CircleCenterX = CircleTransform.Position.X;
+	const float CircleCenterY = CircleTransform.Position.Y;
+	
+	const float RectLeft = RectTransform.Position.X + Rect.Rect.x;
+	const float RectRight = RectLeft + Rect.Rect.w;
+	const float RectTop = RectTransform.Position.Y + Rect.Rect.y;
+	const float RectBottom = RectTop + Rect.Rect.h;
+	
+	const float ClosestX = std::max(RectLeft, std::min(CircleCenterX, RectRight));
+	const float ClosestY = std::max(RectTop, std::min(CircleCenterY, RectBottom));
+	
+	const float DistX = CircleCenterX - ClosestX;
+	const float DistY = CircleCenterY - ClosestY;
+	const float DistanceSquared = DistX * DistX + DistY * DistY;
+	
+	return DistanceSquared < (Circle.Radius * Circle.Radius);
+}
+
+bool CollisionDetectionSystem::CheckCircleCircle(const TransformComponent& TransformA, const CircleComponent& CircleA, const TransformComponent& TransformB, const CircleComponent& CircleB) const
+{
+	const float DX = TransformB.Position.X - TransformA.Position.X;
+	const float DY = TransformB.Position.Y - TransformA.Position.Y;
+	const float DistanceSquared = DX * DX + DY * DY;
+	const float RadiusSum = CircleA.Radius + CircleB.Radius;
+	
+	return DistanceSquared < (RadiusSum * RadiusSum);
 }

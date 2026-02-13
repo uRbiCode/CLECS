@@ -7,6 +7,7 @@
 
 using Json = nlohmann::json;
 
+// Wrapper for JSON parser of StageData.
 class StageDataLoader
 {
 public:

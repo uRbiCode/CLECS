@@ -5,6 +5,7 @@
 
 using Json = nlohmann::json;
 
+// Wrapper for JSON parser of UpgradeData.
 class UpgradeLoader
 {
 public:

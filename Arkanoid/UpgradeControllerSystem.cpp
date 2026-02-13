@@ -42,6 +42,34 @@ void UpgradeControllerSystem::Initialize(const SystemContext& Context) const
 	});
 }
 
+void UpgradeControllerSystem::OnUpgradeSelected(const SystemContext& Context, const Entity& Entity) const
+{
+	if (!Context.EntityAdmin.HasComponent<UpgradeComponent>(Entity))
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "UpgradeControllerSystem::OnUpgradeSelected -> Clicked entity does not have UpgradeComponent");
+		Context.EventBus.Notify(Context, UpgradeSelectedEvent{});
+		CleanupUpgradeSelection(Context);
+		return;
+	}
+
+	const auto SelectedUpgradeDefinition = Context.EntityAdmin.GetComponent<UpgradeComponent>(Entity).UpgradeDefinition;
+	const auto OwnedUpgradesGroup = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
+	assert(OwnedUpgradesGroup.Size() == 1 && "Expected exactly one OwnedUpgradesComponent in the world");
+	if (OwnedUpgradesGroup.Empty())
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "UpgradeControllerSystem::OnUpgradeSelected -> No OwnedUpgradesComponent found");
+		Context.EventBus.Notify(Context, UpgradeSelectedEvent{});
+		CleanupUpgradeSelection(Context);
+		return;
+	}
+
+	std::erase(Context.EntityAdmin.AccessComponent<AvailableUpgradesComponent>(Context.EntityAdmin.GetGroup<AvailableUpgradesComponent>()[0]).AvailableUpgrades, SelectedUpgradeDefinition);
+	Context.EntityAdmin.AccessComponent<OwnedUpgradesComponent>(OwnedUpgradesGroup[0]).OwnedUpgrades.push_back(SelectedUpgradeDefinition.Upgrade);
+	Context.EventBus.Notify(Context, UpgradeSelectedEvent{});
+	UpgradeUtils::ApplyHealUpgrade(Context, SelectedUpgradeDefinition.Upgrade);
+	CleanupUpgradeSelection(Context);
+}
+
 void UpgradeControllerSystem::InitializeUpgradeSelection(const SystemContext& Context) const
 {
 	const auto AvailableUpgradesGroup = Context.EntityAdmin.GetGroup<AvailableUpgradesComponent>();
@@ -72,21 +100,6 @@ void UpgradeControllerSystem::InitializeUpgradeSelection(const SystemContext& Co
 
 		OnUpgradeSelected(Context, Event.ClickedEntity);
 	});
-}
-
-std::vector<UpgradeDefinition> UpgradeControllerSystem::SampleUpgrades(const SystemContext& Context, const std::vector<UpgradeDefinition>& AvailableUpgrades) const
-{
-	if (AvailableUpgrades.size() <= MaxUpgradesToPresent)
-		return AvailableUpgrades;
-
-	auto SampledUpgrades = AvailableUpgrades;
-
-	std::random_device rd;
-	std::mt19937 g(rd());
-
-	std::shuffle(SampledUpgrades.begin(), SampledUpgrades.end(), g);
-	SampledUpgrades.resize(MaxUpgradesToPresent);
-	return SampledUpgrades;
 }
 
 void UpgradeControllerSystem::AddUpgradeTitle(const SystemContext& Context) const
@@ -135,34 +148,6 @@ void UpgradeControllerSystem::PresentUpgradesToPlayer(const SystemContext& Conte
 	}
 }
 
-void UpgradeControllerSystem::OnUpgradeSelected(const SystemContext& Context, const Entity& Entity) const
-{
-	if (!Context.EntityAdmin.HasComponent<UpgradeComponent>(Entity))
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "UpgradeControllerSystem::OnUpgradeSelected -> Clicked entity does not have UpgradeComponent");
-		Context.EventBus.Notify(Context, UpgradeSelectedEvent{});
-		CleanupUpgradeSelection(Context);
-		return;
-	}
-
-	const auto SelectedUpgradeDefinition = Context.EntityAdmin.GetComponent<UpgradeComponent>(Entity).UpgradeDefinition;
-	const auto OwnedUpgradesGroup = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
-	assert(OwnedUpgradesGroup.Size() == 1 && "Expected exactly one OwnedUpgradesComponent in the world");
-	if (OwnedUpgradesGroup.Empty())
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "UpgradeControllerSystem::OnUpgradeSelected -> No OwnedUpgradesComponent found");
-		Context.EventBus.Notify(Context, UpgradeSelectedEvent{});
-		CleanupUpgradeSelection(Context);
-		return;
-	}
-
-	std::erase(Context.EntityAdmin.AccessComponent<AvailableUpgradesComponent>(Context.EntityAdmin.GetGroup<AvailableUpgradesComponent>()[0]).AvailableUpgrades, SelectedUpgradeDefinition);
-	Context.EntityAdmin.AccessComponent<OwnedUpgradesComponent>(OwnedUpgradesGroup[0]).OwnedUpgrades.push_back(SelectedUpgradeDefinition.Upgrade);
-	Context.EventBus.Notify(Context, UpgradeSelectedEvent{});
-	UpgradeUtils::ApplyHealUpgrade(Context, SelectedUpgradeDefinition.Upgrade);
-	CleanupUpgradeSelection(Context);
-}
-
 void UpgradeControllerSystem::CleanupUpgradeSelection(const SystemContext& Context) const
 {
 	Context.EntityAdmin.GetGroup<UpgradeComponent>().ForEach([&Context](const Entity& Entity, const UpgradeComponent& UpgradeComp)
@@ -171,4 +156,19 @@ void UpgradeControllerSystem::CleanupUpgradeSelection(const SystemContext& Conte
 	});
 
 	Context.EventBus.Unsubscribe<ClickableUsedEvent>(this);
+}
+
+std::vector<UpgradeDefinition> UpgradeControllerSystem::SampleUpgrades(const SystemContext& Context, const std::vector<UpgradeDefinition>& AvailableUpgrades) const
+{
+	if (AvailableUpgrades.size() <= MaxUpgradesToPresent)
+		return AvailableUpgrades;
+
+	auto SampledUpgrades = AvailableUpgrades;
+
+	std::random_device rd;
+	std::mt19937 g(rd());
+
+	std::shuffle(SampledUpgrades.begin(), SampledUpgrades.end(), g);
+	SampledUpgrades.resize(MaxUpgradesToPresent);
+	return SampledUpgrades;
 }

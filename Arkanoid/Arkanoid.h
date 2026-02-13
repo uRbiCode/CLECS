@@ -17,6 +17,7 @@ public:
 	RendererInitializationData GetRendererConfig() const override;
 
 private:
+	// Defines the initial GameState by registering the component with the specified value.
 	void AddGameStateComponent(EntityAdmin& Admin) const;
 };
 
