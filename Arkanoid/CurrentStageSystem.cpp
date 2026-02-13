@@ -12,6 +12,7 @@
 #include "StageEndEvent.h"
 #include "RunStateComponent.h"
 #include "CollisionEvent.h"
+#include "UpgradeUtils.h"
 
 void CurrentStageSystem::Initialize(const SystemContext& Context) const
 {
@@ -69,7 +70,7 @@ void CurrentStageSystem::ResetStage(const SystemContext& Context) const
 			auto& Transform = Context.EntityAdmin.AccessComponent<TransformComponent>(Entity);
 			Transform.Position = CurrentStageData.BallData.Position;
 			auto& Velocity = Context.EntityAdmin.AccessComponent<VelocityComponent>(Entity);
-			Velocity.Velocity = CurrentStageData.BallData.Velocity;
+			Velocity.Velocity = CurrentStageData.BallData.Velocity * UpgradeUtils::GetBallVelocityModifier(Context);
 		}
 	});
 }

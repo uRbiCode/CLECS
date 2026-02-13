@@ -70,3 +70,24 @@ void UpgradeUtils::ApplyHealUpgrade(const SystemContext& Context, const Upgrade&
 		HealthUtils::ApplyHealthChange(Context, Entity, Upgrade.Heal.value());
 	});
 }
+
+float UpgradeUtils::GetBallVelocityModifier(const SystemContext& Context)
+{
+	float Modifier = 1.f;
+	auto OwnedUpgradesGroup = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
+	if (OwnedUpgradesGroup.Empty())
+		return Modifier;
+
+	OwnedUpgradesGroup.ForEach([&Modifier](const Entity& Entity, const OwnedUpgradesComponent& OwnedUpgrades)
+	{
+		for (const auto& Upgrade : OwnedUpgrades.OwnedUpgrades)
+		{
+			if (!Upgrade.BallSpeedMultiplier.has_value())
+				continue;
+
+			Modifier *= Upgrade.BallSpeedMultiplier.value();
+		}
+	});
+
+	return Modifier;
+}
