@@ -53,10 +53,12 @@ void GameStateSystem::ChangeGameState(const SystemContext& Context, GameState Ne
 	EndCurrentState(Context);
 
 	auto& Admin = Context.EntityAdmin;
-	Admin.GetGroup<GameStateComponent>().ForEach([&](const Entity& Entity, GameStateComponent& GameStateComp) {
-		GameStateComp.CurrentState = NewState;
-	});
+	const auto GameStateGroup = Admin.GetGroup<GameStateComponent>();
+	assert(GameStateGroup.Size() == 1 && "Expected exactly one GameStateComponent in the world");
+	if (GameStateGroup.Empty())
+		return;
 
+	Admin.AccessComponent<GameStateComponent>(GameStateGroup[0]).CurrentState = NewState;
 	InitializeCurrentState(Context);
 }
 
@@ -64,15 +66,15 @@ void GameStateSystem::AddBackgroundRenderEntity(const SystemContext& Context) co
 {
 	auto& Admin = Context.EntityAdmin;
 	
-	const auto WindowSize = SDLUtils::GetWindowSize(&Context.Window);
+	const auto RendererLogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 
-	auto BackgroundEntity = Admin.CreateEntity();
+	const auto BackgroundEntity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(BackgroundEntity);
 	Admin.AddComponent<RectComponent>(BackgroundEntity, SDL_FRect{ 
 		0.f, 
 		0.f, 
-		static_cast<float>(WindowSize.X), 
-		static_cast<float>(WindowSize.Y)
+		static_cast<float>(RendererLogicalPresentation.X), 
+		static_cast<float>(RendererLogicalPresentation.Y)
 	});
 	Admin.AddComponent<RenderComponent>(BackgroundEntity, RenderConstants::BackgroundLayer);
 	
@@ -80,5 +82,5 @@ void GameStateSystem::AddBackgroundRenderEntity(const SystemContext& Context) co
 	if (Texture == nullptr)
 		return;
 
-	Admin.AddComponent<TextureComponent>(BackgroundEntity, TextureComponent{ Texture, {34.f, 33.f, 60.f, 42.f} });
+	Admin.AddComponent<TextureComponent>(BackgroundEntity, TextureComponent{ Texture, { 33.f, 23.f, 25.f, 20.f } });
 }
