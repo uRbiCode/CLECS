@@ -53,6 +53,9 @@
     <Filter Include="Source\Core\World\FontManager">
       <UniqueIdentifier>{347aef15-f542-4f23-809f-db8635adf5bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\Utils\SDLUtils">
+      <UniqueIdentifier>{45a5158f-64cb-4955-b7e7-9a9b6e7acf9f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -76,14 +79,14 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>Source\Core\World\TextureManager</Filter>
     </ClCompile>
-    <ClCompile Include="SDLUtils.cpp">
-      <Filter>Source\Core\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="AudioManager.cpp">
       <Filter>Source\Core\World\AudioManager</Filter>
     </ClCompile>
     <ClCompile Include="FontManager.cpp">
       <Filter>Source\Core\World\FontManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SDLUtils.cpp">
+      <Filter>Source\Core\Utils\SDLUtils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -153,9 +156,6 @@
     <ClInclude Include="MouseClickEvent.h">
       <Filter>Source\Core\World\EventBus\Events</Filter>
     </ClInclude>
-    <ClInclude Include="SDLUtils.h">
-      <Filter>Source\Core\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="AudioManager.h">
       <Filter>Source\Core\World\AudioManager</Filter>
     </ClInclude>
@@ -164,6 +164,12 @@
     </ClInclude>
     <ClInclude Include="TextComponent.h">
       <Filter>Source\Core\Component\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="SDLUtils.h">
+      <Filter>Source\Core\Utils\SDLUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="RingBuffer.h">
+      <Filter>Source\Core\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

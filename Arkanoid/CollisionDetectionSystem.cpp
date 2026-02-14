@@ -32,9 +32,7 @@ namespace
 		const float MinOverlapY = std::min(OverlapTop, OverlapBottom);
 
 		if (MinOverlapX < MinOverlapY)
-		{
 			return { (OverlapLeft < OverlapRight) ? -MinOverlapX : MinOverlapX, 0.f };
-		}
 
 		return { 0.f, (OverlapTop < OverlapBottom) ? -MinOverlapY : MinOverlapY };
 	}
