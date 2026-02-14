@@ -2,14 +2,14 @@
   "upgrades": [
     {
       "name": "Minor Repair",
-      "description": "Heal by 1 health point.",
+      "description": "Add 1 Health.",
       "upgrade": {
         "heal": 1
       }
     },
     {
       "name": "Field Repair Kit",
-      "description": "Heal by 2 health points.\nReduce paddle width by 20%.",
+      "description": "Add 2 Health.\nReduce paddle width by 20%.",
       "upgrade": {
         "heal": 2,
         "paddleWidthMultiplier": 0.8
@@ -87,7 +87,7 @@
     },
     {
       "name": "Emergency Patch",
-      "description": "Heal by 2 health points.\nIncrease ball speed by 35%.",
+      "description": "Add 2 Health.\nIncrease ball speed by 35%.",
       "upgrade": {
         "heal": 2,
         "ballSpeedMultiplier": 1.35
