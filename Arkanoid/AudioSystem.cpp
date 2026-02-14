@@ -51,7 +51,7 @@ void AudioSystem::Initialize(const SystemContext& Context) const
 
 void AudioSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
-	auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
+	const auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
 	assert(AudioRequestsGroup.Size() == 1 && "Expected exactly one AudioRequestsComponent in the world");
 	if (AudioRequestsGroup.Empty())
 		return;
@@ -115,36 +115,28 @@ void AudioSystem::OnGameStateBegin(const SystemContext& Context, GameState State
 	}
 }
 
-void AudioSystem::EnqueueAudioRequest(const SystemContext& Context, AudioRequest&& AudioRequest) const
+void AudioSystem::EnqueueAudioRequest(const SystemContext& Context, AudioRequest&& Request) const
 {
-	auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
+	const auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
 	assert(AudioRequestsGroup.Size() == 1 && "Expected exactly one AudioRequestsComponent in the world");
 	if (AudioRequestsGroup.Empty())
 		return;
 
-	auto& Requests = Context.EntityAdmin.AccessComponent<AudioRequestsComponent>(AudioRequestsGroup[0]).Requests;
-	for (auto& Request : Requests)
-	{
-		if (Request.Name == AudioRequest.Name && Request.Type == AudioRequest.Type)
-		{
-			Request.Volume = std::max(Request.Volume, AudioRequest.Volume);
-			return;
-		}
-	}
-
-	Requests.push_back(std::move(AudioRequest));
+	auto& AudioComponent = Context.EntityAdmin.AccessComponent<AudioRequestsComponent>(AudioRequestsGroup[0]);
+	AudioComponent.Requests.Push(std::move(Request));
 }
 
 void AudioSystem::ConsumeAudioRequests(const SystemContext& Context) const
 {
-	auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
+	const auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
 	assert(AudioRequestsGroup.Size() == 1 && "Expected exactly one AudioRequestsComponent in the world");
 	if (AudioRequestsGroup.Empty())
 		return;
 
-	auto& AudioRequests = Context.EntityAdmin.AccessComponent<AudioRequestsComponent>(AudioRequestsGroup[0]).Requests;
-	for (const auto& [Type, Name, Volume] : AudioRequests)
+	auto& AudioComponent = Context.EntityAdmin.AccessComponent<AudioRequestsComponent>(AudioRequestsGroup[0]);
+	while (!AudioComponent.Requests.IsEmpty())
 	{
+		const auto [Type, Name, Volume] = AudioComponent.Requests.Pop().value();
 		switch (Type)
 		{
 		case AudioType::Sfx:
@@ -157,6 +149,4 @@ void AudioSystem::ConsumeAudioRequests(const SystemContext& Context) const
 			break;
 		}
 	}
-
-	AudioRequests.clear();
 }

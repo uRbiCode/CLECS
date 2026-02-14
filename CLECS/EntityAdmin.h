@@ -129,6 +129,12 @@ public:
 			}
 		}
 
+		template<typename Compare>
+		void Sort(Compare&& Comparator)
+		{
+			std::sort(CachedEntities.begin(), CachedEntities.end(), std::forward<Compare>(Comparator));
+		}
+
 	private:
 		void CacheMatchingEntities()
 		{

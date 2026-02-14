@@ -10,7 +10,7 @@
 
 PlayerData UpgradeUtils::GetModifiedPlayerData(const SystemContext& Context, const PlayerData& OriginalData)
 {
-	auto OwnedUpgradesGroup = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
+	const auto OwnedUpgradesGroup = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
 	assert(OwnedUpgradesGroup.Size() == 1 && "Expected exactly one OwnedUpgradesComponent in the world");
 	if (OwnedUpgradesGroup.Empty())
 		return OriginalData;
@@ -30,7 +30,7 @@ PlayerData UpgradeUtils::GetModifiedPlayerData(const SystemContext& Context, con
 
 BallData UpgradeUtils::GetModifiedBallData(const SystemContext& Context, const BallData& OriginalData)
 {
-	auto OwnedUpgradesGroup = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
+	const auto OwnedUpgradesGroup = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
 	assert(OwnedUpgradesGroup.Size() == 1 && "Expected exactly one OwnedUpgradesComponent in the world");
 	if (OwnedUpgradesGroup.Empty())
 		return OriginalData;
@@ -56,7 +56,7 @@ BallData UpgradeUtils::GetModifiedBallData(const SystemContext& Context, const B
 
 void UpgradeUtils::ApplyHealUpgrade(const SystemContext& Context, const Upgrade& Upgrade)
 {
-	auto RunstateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
+	const auto RunstateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
 	assert(RunstateGroup.Size() == 1 && "Expected exactly one RunStateComponent in the world");
 	if (RunstateGroup.Empty())
 		return;
@@ -67,7 +67,7 @@ void UpgradeUtils::ApplyHealUpgrade(const SystemContext& Context, const Upgrade&
 float UpgradeUtils::GetBallVelocityModifier(const SystemContext& Context)
 {
 	float Modifier = 1.f;
-	auto OwnedUpgradesGroup = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
+	const auto OwnedUpgradesGroup = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
 	assert(OwnedUpgradesGroup.Size() == 1 && "Expected exactly one OwnedUpgradesComponent in the world");
 	if (OwnedUpgradesGroup.Empty())
 		return Modifier;

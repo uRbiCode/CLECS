@@ -13,7 +13,7 @@ namespace
 {
 	SDL_FRect GetWorldAABB(const TransformComponent& Transform, const RectComponent& Rect)
 	{
-		SDL_FRect Result;
+		SDL_FRect Result = {};
 		Result.x = Transform.Position.X + Rect.Rect.x;
 		Result.y = Transform.Position.Y + Rect.Rect.y;
 		Result.w = Rect.Rect.w;
@@ -32,9 +32,7 @@ namespace
 		const float MinOverlapY = std::min(OverlapTop, OverlapBottom);
 
 		if (MinOverlapX < MinOverlapY)
-		{
 			return { (OverlapLeft < OverlapRight) ? -MinOverlapX : MinOverlapX, 0.f };
-		}
 
 		return { 0.f, (OverlapTop < OverlapBottom) ? -MinOverlapY : MinOverlapY };
 	}
@@ -101,7 +99,7 @@ namespace
 void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
 	auto& Admin = Context.EntityAdmin;
-	auto CollisionGroup = Admin.GetGroup<TransformComponent, CollisionComponent>();
+	const auto CollisionGroup = Admin.GetGroup<TransformComponent, CollisionComponent>();
 	if (CollisionGroup.Empty())
 		return;
 

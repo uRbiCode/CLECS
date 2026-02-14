@@ -22,8 +22,8 @@ namespace
 			return std::nullopt;
 
 		std::optional<std::pair<Entity, ClickableTag>> ClickedPair = std::nullopt;
-
 		const auto LogicalEventPosition = SDLUtils::TranslateCoordinatesFromWindowToLogical(&Context.Renderer, &Context.Window, Event.Position);
+
 		Context.EntityAdmin.GetGroup<ClickableComponent, TransformComponent, RectComponent>().ForEach([&ClickedPair, &Context, &LogicalEventPosition](const Entity& Entity, const ClickableComponent& Clickable, const TransformComponent& Transform, const RectComponent& Rect)
 		{
 			const auto Left = Transform.Position.X + Rect.Rect.x;
@@ -54,11 +54,8 @@ void PlayerInputSystem::Initialize(const SystemContext& Context) const
 
 void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
-	auto& Admin = Context.EntityAdmin;
 	const auto& Input = Context.Input;
-
-	auto PlayerGroup = Admin.GetGroup<VelocityComponent, PlayerControllerComponent>();
-	PlayerGroup.ForEach([&Input](const Entity& Entity, VelocityComponent& Velocity, const PlayerControllerComponent& Controller)
+	Context.EntityAdmin.GetGroup<VelocityComponent, PlayerControllerComponent>().ForEach([&Input](const Entity& Entity, VelocityComponent& Velocity, const PlayerControllerComponent& Controller)
 	{
 		Velocity.Velocity = { 0.f, 0.f };
 
@@ -79,7 +76,7 @@ void PlayerInputSystem::OnMouseClick(const SystemContext& Context, const MouseCl
 	if (!ClickedPair.has_value())
 		return;
 
-	const auto [ClickedEntity, ClickedTagValue] = ClickedPair.value();
+	const auto& [ClickedEntity, ClickedTagValue] = ClickedPair.value();
 	if (ClickedTagValue == ClickableTag::Invalid)
 	{
 		SDL_LogWarn(SDL_LOG_CATEGORY_INPUT, "PlayerInputSystem::OnMouseClick -> Clickable has invalid tag");

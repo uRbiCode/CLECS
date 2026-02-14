@@ -24,7 +24,6 @@ public:
 private:
 	// Renderer management.
 	void DecideColor(const SystemContext& Context, const Entity& Entity) const;
-	std::vector<std::pair<Entity, RenderData>> GetRenderEntities(const SystemContext& Context) const;
 
 	// Render methods.
 	void RenderCircle(SDL_Renderer* Renderer, const Vector2D<float>& Center, float Radius, bool Filled, const SDL_FColor& Color) const;

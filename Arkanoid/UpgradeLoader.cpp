@@ -22,6 +22,7 @@ std::vector<UpgradeDefinition> UpgradeLoader::LoadUpgradeDefinitions()
 	std::vector<UpgradeDefinition> Upgrades;
 	if (JsonData.contains("upgrades") && JsonData["upgrades"].is_array())
 	{
+		Upgrades.reserve(JsonData["upgrades"].size());
 		for (const auto& UpgradeJson : JsonData["upgrades"])
 		{
 			Upgrades.push_back(ParseUpgradeDefinition(UpgradeJson));

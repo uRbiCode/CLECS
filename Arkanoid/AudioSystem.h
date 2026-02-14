@@ -24,6 +24,6 @@ private:
 	void OnGameStateBegin(const SystemContext& Context, GameState State) const;
 
 	// Audio request management.
-	void EnqueueAudioRequest(const SystemContext& Context, AudioRequest&& AudioRequest) const;
+	void EnqueueAudioRequest(const SystemContext& Context, AudioRequest&& Request) const;
 	void ConsumeAudioRequests(const SystemContext& Context) const;
 };

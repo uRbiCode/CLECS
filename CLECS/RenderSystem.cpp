@@ -67,25 +67,41 @@ void RenderSystem::Update(const SystemContext& Context, float DeltaTime) const
 	SDL_SetRenderDrawColor(&Renderer, 0, 0, 0, 0);
 	SDL_RenderClear(&Renderer);
 
-	const auto RenderEntities = GetRenderEntities(Context);
-
-	for (const auto& [Entity, RenderData] : RenderEntities)
+	auto RenderGroup = Admin.GetGroup<TransformComponent, RenderComponent>();
+	if (RenderGroup.Empty())
 	{
-		const auto& [Transform, Render] = RenderData;
+		SDL_RenderPresent(&Renderer);
+		return;
+	}
+
+	RenderGroup.Sort([&Admin](const Entity& EntityA, const Entity& EntityB)
+	{
+		const auto& RenderA = Admin.GetComponent<RenderComponent>(EntityA);
+		const auto& RenderB = Admin.GetComponent<RenderComponent>(EntityB);
+		return RenderA.Layer < RenderB.Layer;
+	});
+
+	for (const auto& Entity : RenderGroup)
+	{
+		const auto& Render = Admin.GetComponent<RenderComponent>(Entity);
+		if (!Render.Visible)
+			continue;
+
+		const auto& Transform = Admin.GetComponent<TransformComponent>(Entity);
 		DecideColor(Context, Entity);
 
 		if (Admin.HasComponent<TextureComponent>(Entity))
 		{
-			RenderTexture(Context, Entity, RenderData);
+			RenderTexture(Context, Entity, std::make_pair(Transform, Render));
 		}
 		else
 		{
-			RenderShape(Context, Entity, RenderData);
+			RenderShape(Context, Entity, std::make_pair(Transform, Render));
 		}
 
 		if (Admin.HasComponent<TextComponent>(Entity))
 		{
-			RenderText(Context, Entity, RenderData);
+			RenderText(Context, Entity, std::make_pair(Transform, Render));
 		}
 	}
 
@@ -105,28 +121,6 @@ void RenderSystem::DecideColor(const SystemContext& Context, const Entity& Entit
 	{
 		SDL_SetRenderDrawColor(&Renderer, 255, 255, 255, 0);
 	}
-}
-
-std::vector<std::pair<Entity, RenderData>> RenderSystem::GetRenderEntities(const SystemContext& Context) const
-{
-	auto& Admin = Context.EntityAdmin;
-	auto RenderGroup = Admin.GetGroup<TransformComponent, RenderComponent>();
-	std::vector<std::pair<Entity, RenderData>> SortedEntities;
-	SortedEntities.reserve(RenderGroup.Size());
-	for (const auto& Entity : RenderGroup)
-	{
-		const auto& Render = Admin.GetComponent<RenderComponent>(Entity);
-		if (!Render.Visible)
-			continue;
-
-		const auto& Transform = Admin.GetComponent<TransformComponent>(Entity);
-		SortedEntities.emplace_back(Entity, std::make_pair(Transform, Render));
-	}
-	std::sort(SortedEntities.begin(), SortedEntities.end(), [](const auto& A, const auto& B)
-	{
-		return A.second.second.Layer < B.second.second.Layer;
-	});
-	return SortedEntities;
 }
 
 void RenderSystem::RenderCircle(SDL_Renderer* Renderer, const Vector2D<float>& Center, float Radius, bool Filled, const SDL_FColor& Color) const

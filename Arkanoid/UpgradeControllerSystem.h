@@ -20,7 +20,7 @@ private:
 	// UI management.
 	void InitializeUpgradeSelection(const SystemContext& Context) const;
 	void AddUpgradeTitle(const SystemContext& Context) const;
-	void PresentUpgradesToPlayer(const SystemContext& Context, const std::vector<UpgradeDefinition>& Upgrades) const;
+	void PresentUpgradesToPlayer(const SystemContext& Context, std::vector<UpgradeDefinition>&& Upgrades) const;
 	void CleanupUpgradeSelection(const SystemContext& Context) const;
 
 	// Upgrade management.
