@@ -123,7 +123,7 @@ void HealthIndicatorSystem::AddHealthIndicators(const SystemContext& Context, in
 
 	for (size_t i = 0; i < Count; ++i)
 	{
-		auto HealthIndicatorEntity = Context.EntityAdmin.CreateEntity();
+		const auto HealthIndicatorEntity = Context.EntityAdmin.CreateEntity();
 		Context.EntityAdmin.AddComponent<RenderComponent>(HealthIndicatorEntity, RenderConstants::UILayer);
 		Context.EntityAdmin.AddComponent<TextureComponent>(HealthIndicatorEntity, TextureComponent{ Context.Managers.TextureManager.GetTexture(HealthIndicatorTexturePath), HealthIndicatorTextureRect });
 		Context.EntityAdmin.AddComponent<RectComponent>(HealthIndicatorEntity, SDL_FRect{ -HealthIndicatorSpacing * 0.5f, -HealthIndicatorSpacing * 0.5f, HealthIndicatorSpacing, HealthIndicatorSpacing });

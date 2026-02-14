@@ -67,7 +67,7 @@ void SummaryControllerSystem::AddSummaryText(const SystemContext& Context, const
 	const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
 
 	auto& Admin = Context.EntityAdmin;
-	auto SummaryTextEntity = Admin.CreateEntity();
+	const auto SummaryTextEntity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(SummaryTextEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.25f });
 	Admin.AddComponent<RectComponent>(SummaryTextEntity, SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y });
 	Admin.AddComponent<ColorComponent>(SummaryTextEntity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
@@ -81,7 +81,7 @@ void SummaryControllerSystem::AddMainMenuButton(const SystemContext& Context) co
 	const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
 
 	auto& Admin = Context.EntityAdmin;
-	auto MainMenuButtonEntity = Admin.CreateEntity();
+	const auto MainMenuButtonEntity = Admin.CreateEntity();
 	Admin.AddComponent<ClickableComponent>(MainMenuButtonEntity, ClickableTag::MainMenuButton);
 	Admin.AddComponent<TransformComponent>(MainMenuButtonEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.75f });
 	Admin.AddComponent<RectComponent>(MainMenuButtonEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });

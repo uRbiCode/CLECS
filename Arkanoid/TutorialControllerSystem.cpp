@@ -60,7 +60,7 @@ void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) con
 	const Vector2D<float> TitleRectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
 
 	auto& Admin = Context.EntityAdmin;
-	auto TitleTextEntity = Admin.CreateEntity();
+	const auto TitleTextEntity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(TitleTextEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.25f });
 	Admin.AddComponent<RectComponent>(TitleTextEntity, SDL_FRect{ -TitleRectSize.X * 0.5f, -TitleRectSize.Y * 0.5f, TitleRectSize.X, TitleRectSize.Y });
 	Admin.AddComponent<ColorComponent>(TitleTextEntity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
@@ -70,7 +70,7 @@ void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) con
 	// Looks awkward but does its job for the centered text visuals. I'm taking the blame.
 	// Text Line 1.
 	const Vector2D<float> TextRectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.08f };
-	auto TextLine1Entity = Admin.CreateEntity();
+	const auto TextLine1Entity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(TextLine1Entity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.42f });
 	Admin.AddComponent<RectComponent>(TextLine1Entity, SDL_FRect{ -TextRectSize.X * 0.5f, -TextRectSize.Y * 0.5f, TextRectSize.X, TextRectSize.Y });
 	Admin.AddComponent<ColorComponent>(TextLine1Entity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
@@ -78,7 +78,7 @@ void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) con
 	Admin.AddComponent<RenderComponent>(TextLine1Entity, RenderConstants::UILayer);
 
 	// Text Line 2.
-	auto TextLine2Entity = Admin.CreateEntity();
+	const auto TextLine2Entity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(TextLine2Entity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.52f });
 	Admin.AddComponent<RectComponent>(TextLine2Entity, SDL_FRect{ -TextRectSize.X * 0.5f, -TextRectSize.Y * 0.5f, TextRectSize.X, TextRectSize.Y });
 	Admin.AddComponent<ColorComponent>(TextLine2Entity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
@@ -86,7 +86,7 @@ void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) con
 	Admin.AddComponent<RenderComponent>(TextLine2Entity, RenderConstants::UILayer);
 
 	// Text Line 3.
-	auto TextLine3Entity = Admin.CreateEntity();
+	const auto TextLine3Entity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(TextLine3Entity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.62f });
 	Admin.AddComponent<RectComponent>(TextLine3Entity, SDL_FRect{ -TextRectSize.X * 0.5f, -TextRectSize.Y * 0.5f, TextRectSize.X, TextRectSize.Y });
 	Admin.AddComponent<ColorComponent>(TextLine3Entity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
@@ -94,7 +94,7 @@ void TutorialControllerSystem::AddTutorialText(const SystemContext& Context) con
 	Admin.AddComponent<RenderComponent>(TextLine3Entity, RenderConstants::UILayer);
 
 	// Text Line 4.
-	auto TextLine4Entity = Admin.CreateEntity();
+	const auto TextLine4Entity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(TextLine4Entity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.72f });
 	Admin.AddComponent<RectComponent>(TextLine4Entity, SDL_FRect{ -TextRectSize.X * 0.5f, -TextRectSize.Y * 0.5f, TextRectSize.X, TextRectSize.Y });
 	Admin.AddComponent<ColorComponent>(TextLine4Entity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
@@ -108,7 +108,7 @@ void TutorialControllerSystem::AddMainMenuButton(const SystemContext& Context) c
 	const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
 
 	auto& Admin = Context.EntityAdmin;
-	auto MainMenuButtonEntity = Admin.CreateEntity();
+	const auto MainMenuButtonEntity = Admin.CreateEntity();
 	Admin.AddComponent<ClickableComponent>(MainMenuButtonEntity, ClickableTag::MainMenuButton);
 	Admin.AddComponent<TransformComponent>(MainMenuButtonEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.85f });
 	Admin.AddComponent<RectComponent>(MainMenuButtonEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });

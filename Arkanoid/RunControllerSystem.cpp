@@ -91,7 +91,7 @@ void RunControllerSystem::CleanupRun(const SystemContext& Context) const
 void RunControllerSystem::AddRunStateComponent(const SystemContext& Context) const
 {
 	auto& Admin = Context.EntityAdmin;
-	auto RunStateEntity = Admin.CreateEntity();
+	const auto RunStateEntity = Admin.CreateEntity();
 	Admin.AddComponent<RunStateComponent>(RunStateEntity, RunStateComponent { RunState::PlayerPrepare });
 	Admin.AddComponent<HealthComponent>(RunStateEntity, HealthComponent{ InitialPlayerHealth });
 	Admin.AddComponent<AvailableUpgradesComponent>(RunStateEntity, std::move(UpgradeLoader::LoadUpgradeDefinitions()));
@@ -102,7 +102,7 @@ void RunControllerSystem::AddStageDataComponent(const SystemContext& Context) co
 {
 	auto& Admin = Context.EntityAdmin;
 
-	auto StageDataEntity = Admin.CreateEntity();
+	const auto StageDataEntity = Admin.CreateEntity();
 	Admin.AddComponent<StageDataComponent>(StageDataEntity);
 }
 

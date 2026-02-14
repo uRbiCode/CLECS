@@ -107,7 +107,7 @@ void UpgradeControllerSystem::AddUpgradeTitle(const SystemContext& Context) cons
 	const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
 
 	auto& Admin = Context.EntityAdmin;
-	auto UpgradeTitleEntity = Admin.CreateEntity();
+	const auto UpgradeTitleEntity = Admin.CreateEntity();
 	Admin.AddComponent<TransformComponent>(UpgradeTitleEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.25f });
 	Admin.AddComponent<RectComponent>(UpgradeTitleEntity, SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y });
 	Admin.AddComponent<ColorComponent>(UpgradeTitleEntity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
@@ -136,7 +136,7 @@ void UpgradeControllerSystem::PresentUpgradesToPlayer(const SystemContext& Conte
 	{
 		const float XPosition = StartX + Spacing * (static_cast<float>(i) + 1.f) + ButtonSize.X * (static_cast<float>(i) + 0.5f);
 
-		auto UpgradeButtonEntity = Admin.CreateEntity();
+		const auto UpgradeButtonEntity = Admin.CreateEntity();
 		Admin.AddComponent<ClickableComponent>(UpgradeButtonEntity, ClickableTag::Upgrade);
 		Admin.AddComponent<TransformComponent>(UpgradeButtonEntity, Vector2D<float>{ XPosition, LogicalPresentation.Y * 0.55f });
 		Admin.AddComponent<RectComponent>(UpgradeButtonEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });

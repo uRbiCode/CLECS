@@ -62,6 +62,6 @@ RendererInitializationData Arkanoid::GetRendererConfig() const
 
 void Arkanoid::AddGameStateComponent(EntityAdmin& Admin) const
 {
-	auto GameStateEntity = Admin.CreateEntity();
+	const auto GameStateEntity = Admin.CreateEntity();
 	Admin.AddComponent<GameStateComponent>(GameStateEntity, GameState::MainMenu);
 }
