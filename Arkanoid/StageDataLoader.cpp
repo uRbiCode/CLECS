@@ -129,16 +129,18 @@ StageData StageDataLoader::ParseStageData(const Json& Json)
 	Stage.BallData = ParseBallData(Json["ball"]);
 	Stage.Trigger = ParseTriggerData(Json["trigger"]);
 	
-	if (Json.contains("walls"))
+	if (Json.contains("walls") && Json["walls"].is_array())
 	{
+		Stage.Walls.reserve(Json["walls"].size());
 		for (const auto& WallJson : Json["walls"])
 		{
 			Stage.Walls.push_back(ParseWallData(WallJson));
 		}
 	}
 	
-	if (Json.contains("bricks"))
+	if (Json.contains("bricks") && Json["bricks"].is_array())
 	{
+		Stage.Bricks.reserve(Json["bricks"].size());
 		for (const auto& BrickJson : Json["bricks"])
 		{
 			Stage.Bricks.push_back(ParseBrickData(BrickJson));

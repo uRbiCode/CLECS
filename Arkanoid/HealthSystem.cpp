@@ -28,10 +28,10 @@ void HealthSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
 	Context.EntityAdmin.GetGroup<HealthComponent>().ForEach([&Context](const Entity& Entity, const HealthComponent& Health)
 	{
-		if (Health.CurrentHealth <= 0)
-		{
-			Context.EntityAdmin.DestroyEntity(Entity);
-		}
+		if (Health.CurrentHealth > 0)
+			return;
+
+		Context.EntityAdmin.DestroyEntity(Entity);
 	});
 }
 

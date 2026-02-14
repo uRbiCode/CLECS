@@ -110,7 +110,7 @@ void RenderSystem::DecideColor(const SystemContext& Context, const Entity& Entit
 std::vector<std::pair<Entity, RenderData>> RenderSystem::GetRenderEntities(const SystemContext& Context) const
 {
 	auto& Admin = Context.EntityAdmin;
-	auto RenderGroup = Admin.GetGroup<TransformComponent, RenderComponent>();
+	const auto RenderGroup = Admin.GetGroup<TransformComponent, RenderComponent>();
 	std::vector<std::pair<Entity, RenderData>> SortedEntities;
 	SortedEntities.reserve(RenderGroup.Size());
 	for (const auto& Entity : RenderGroup)

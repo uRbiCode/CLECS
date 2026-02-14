@@ -51,7 +51,7 @@ void AudioSystem::Initialize(const SystemContext& Context) const
 
 void AudioSystem::Update(const SystemContext& Context, float DeltaTime) const
 {
-	auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
+	const auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
 	assert(AudioRequestsGroup.Size() == 1 && "Expected exactly one AudioRequestsComponent in the world");
 	if (AudioRequestsGroup.Empty())
 		return;
@@ -117,7 +117,7 @@ void AudioSystem::OnGameStateBegin(const SystemContext& Context, GameState State
 
 void AudioSystem::EnqueueAudioRequest(const SystemContext& Context, AudioRequest&& Request) const
 {
-	auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
+	const auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
 	assert(AudioRequestsGroup.Size() == 1 && "Expected exactly one AudioRequestsComponent in the world");
 	if (AudioRequestsGroup.Empty())
 		return;
@@ -128,7 +128,7 @@ void AudioSystem::EnqueueAudioRequest(const SystemContext& Context, AudioRequest
 
 void AudioSystem::ConsumeAudioRequests(const SystemContext& Context) const
 {
-	auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
+	const auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
 	assert(AudioRequestsGroup.Size() == 1 && "Expected exactly one AudioRequestsComponent in the world");
 	if (AudioRequestsGroup.Empty())
 		return;

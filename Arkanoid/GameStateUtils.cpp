@@ -13,8 +13,7 @@ void GameStateUtils::RequestStateChange(const SystemContext& Context, GameState 
 
 GameState GameStateUtils::GetCurrentGameState(const SystemContext& Context)
 {
-	auto& Admin = Context.EntityAdmin;
-	auto GameStateGroup = Admin.GetGroup<GameStateComponent>();
+	const auto GameStateGroup = Context.EntityAdmin.GetGroup<GameStateComponent>();
 	assert(GameStateGroup.Size() == 1 && "Expected exactly one GameStateComponent in the world");
 
 	if (GameStateGroup.Empty())

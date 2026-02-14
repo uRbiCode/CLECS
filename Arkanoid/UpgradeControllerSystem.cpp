@@ -52,7 +52,7 @@ void UpgradeControllerSystem::OnUpgradeSelected(const SystemContext& Context, co
 		return;
 	}
 
-	const auto SelectedUpgradeDefinition = Context.EntityAdmin.GetComponent<UpgradeComponent>(Entity).UpgradeDefinition;
+	const auto& SelectedUpgradeDefinition = Context.EntityAdmin.GetComponent<UpgradeComponent>(Entity).UpgradeDefinition;
 	const auto OwnedUpgradesGroup = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
 	assert(OwnedUpgradesGroup.Size() == 1 && "Expected exactly one OwnedUpgradesComponent in the world");
 	if (OwnedUpgradesGroup.Empty())

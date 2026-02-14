@@ -7,15 +7,16 @@
 
 enum class AudioType : uint8_t
 {
+    Invalid = 0,
     Sfx,
     Music
 };
 
 struct AudioRequest
 {
-    AudioType Type;
+    AudioType Type = AudioType::Invalid;
     std::string Name;
-    float Volume;
+    float Volume = 1.f;
 };
 
 /* Specialized RingBuffer for AudioRequests.

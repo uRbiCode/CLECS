@@ -26,14 +26,15 @@ namespace
 			&& TextureComponent.SourceRect.y == HealthIndicatorTextureRect.y
 			&& TextureComponent.SourceRect.w == HealthIndicatorTextureRect.w 
 			&& TextureComponent.SourceRect.h == HealthIndicatorTextureRect.h
-			&& TextureComponent.Texture == TextureManager.GetTexture(HealthIndicatorTexturePath);
+			&& TextureComponent.Texture == HealthIndicatorTexture;
 	}
 
-	SDL_Texture* GetHealthIndicatorTexture(TextureManager& TextureManager)
+	SDL_Texture* GetHealthIndicatorTexture(const TextureManager& TextureManager)
 	{
 		return TextureManager.GetTexture(HealthIndicatorTexturePath);
 	}
 
+	// Entities are sorted by their X position.
 	std::vector<std::pair<Entity, float>> GetHealthIndicatorEntitiesSorted(const SystemContext& Context)
 	{
 		std::vector<std::pair<Entity, float>> HealthIndicatorEntities;
@@ -147,9 +148,8 @@ void HealthIndicatorSystem::CleanupHealthIndicators(const SystemContext& Context
 	const auto HealthIndicatorTexture = GetHealthIndicatorTexture(Context.Managers.TextureManager);
 	Context.EntityAdmin.GetGroup<TextureComponent, TransformComponent>().ForEach([&HealthIndicatorTexture, &Context](const Entity& Entity, const TextureComponent& TextureComponent, const TransformComponent& TransformComponent)
 	{
-		if (IsHealthIndicatorTextureComponent(Context.Managers.TextureManager, TextureComponent, HealthIndicatorTexture))
-		{
-			Context.EntityAdmin.DestroyEntity(Entity);
-		}
+		if (!IsHealthIndicatorTextureComponent(Context.Managers.TextureManager, TextureComponent, HealthIndicatorTexture))
+			return;
+		Context.EntityAdmin.DestroyEntity(Entity);
 	});
 }
