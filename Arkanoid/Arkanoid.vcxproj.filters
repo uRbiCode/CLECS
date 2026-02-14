@@ -83,6 +83,9 @@
     <Filter Include="Source\Utils\HealthUtils">
       <UniqueIdentifier>{fa0eb49c-ad83-42fe-8f79-ff5988e0096d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\PlayerPrepareSystem">
+      <UniqueIdentifier>{0a9978bb-2dbb-4759-be79-a5ae8df1cfe0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -153,6 +156,9 @@
     </ClCompile>
     <ClCompile Include="HealthUtils.cpp">
       <Filter>Source\Utils\HealthUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerPrepareSystem.cpp">
+      <Filter>Source\Systems\PlayerPrepareSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -275,6 +281,15 @@
     </ClInclude>
     <ClInclude Include="HealthUtils.h">
       <Filter>Source\Utils\HealthUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerPrepareComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerPrepareSystem.h">
+      <Filter>Source\Systems\PlayerPrepareSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerReadyEvent.h">
+      <Filter>Source\Events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

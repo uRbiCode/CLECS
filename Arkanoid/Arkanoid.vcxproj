@@ -159,6 +159,7 @@
     <ClCompile Include="HealthIndicatorSystem.cpp" />
     <ClCompile Include="HealthUtils.cpp" />
     <ClCompile Include="MainMenuControllerSystem.cpp" />
+    <ClCompile Include="PlayerPrepareSystem.cpp" />
     <ClCompile Include="RunControllerSystem.cpp" />
     <ClCompile Include="HealthSystem.cpp" />
     <ClCompile Include="main.cpp" />
@@ -190,6 +191,9 @@
     <ClInclude Include="GameStateSystem.h" />
     <ClInclude Include="GameStateUtils.h" />
     <ClInclude Include="HealthUtils.h" />
+    <ClInclude Include="PlayerPrepareComponent.h" />
+    <ClInclude Include="PlayerPrepareSystem.h" />
+    <ClInclude Include="PlayerReadyEvent.h" />
     <ClInclude Include="TutorialControllerSystem.h" />
     <ClInclude Include="UpgradeEvent.h" />
     <ClInclude Include="HealthIndicatorSystem.h" />

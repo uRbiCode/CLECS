@@ -5,7 +5,7 @@ struct SystemContext;
 struct StageData;
 enum class RunState : uint8_t;
 
-/* Top-level controller for Run. Manages internal state machnies between stages and upgrades.
+/* Top-level controller for Run. Manages internal state machine of the ongoing run.
  * Determines when and with what resolution end the run.
  */
 class RunControllerSystem : public System
@@ -41,4 +41,7 @@ private:
 
 	// Upgrades management.
 	bool AreUpgradesAvailable(const SystemContext& Context) const;
+
+	// PlayerPrepare management.
+	void OnPlayerReady(const SystemContext& Context) const;
 };

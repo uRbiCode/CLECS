@@ -18,6 +18,7 @@
 #include "StageInfoSystem.h"
 #include "UpgradeControllerSystem.h"
 #include "TutorialControllerSystem.h"
+#include "PlayerPrepareSystem.h"
 
 namespace
 {
@@ -37,6 +38,7 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 	Data.AddSystem<MovementSystem>();
 	Data.AddSystem<CurrentStageSystem>();
 	Data.AddSystem<UpgradeControllerSystem>();
+	Data.AddSystem<PlayerPrepareSystem>();
 	Data.AddSystem<MainMenuControllerSystem>();
 	Data.AddSystem<RunControllerSystem>();
 	Data.AddSystem<TutorialControllerSystem>();

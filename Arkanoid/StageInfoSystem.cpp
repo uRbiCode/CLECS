@@ -45,7 +45,7 @@ void StageInfoSystem::Initialize(const SystemContext& Context) const
 
 	Context.EventBus.Subscribe<ChangeRunStateEvent>(this, [this](const SystemContext& Context, const ChangeRunStateEvent& Event)
 	{
-		if (Event.NewState != RunState::Stage)
+		if (Event.NewState != RunState::PlayerPrepare)
 			return;
 
 		RefreshStageInfo(Context);
