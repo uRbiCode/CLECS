@@ -89,9 +89,9 @@ void UpgradeControllerSystem::InitializeUpgradeSelection(const SystemContext& Co
 		return;
 	}
 
-	const auto& SampledUpgrades = std::move(SampleUpgrades(Context, AvailableUpgrades));
+	auto SampledUpgrades = std::move(SampleUpgrades(Context, AvailableUpgrades));
 	AddUpgradeTitle(Context);
-	PresentUpgradesToPlayer(Context, SampledUpgrades);
+	PresentUpgradesToPlayer(Context, std::move(SampledUpgrades));
 
 	Context.EventBus.Subscribe<ClickableUsedEvent>(this, [this](const SystemContext& Context, const ClickableUsedEvent& Event)
 	{
@@ -119,7 +119,7 @@ void UpgradeControllerSystem::AddUpgradeTitle(const SystemContext& Context) cons
 	Admin.AddComponent<UpgradeComponent>(UpgradeTitleEntity);
 }
 
-void UpgradeControllerSystem::PresentUpgradesToPlayer(const SystemContext& Context, const std::vector<UpgradeDefinition>& Upgrades) const
+void UpgradeControllerSystem::PresentUpgradesToPlayer(const SystemContext& Context, std::vector<UpgradeDefinition>&& Upgrades) const
 {
 	auto& Admin = Context.EntityAdmin;
 	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
