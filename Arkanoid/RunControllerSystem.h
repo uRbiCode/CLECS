@@ -41,4 +41,7 @@ private:
 
 	// Upgrades management.
 	bool AreUpgradesAvailable(const SystemContext& Context) const;
+
+	// PlayerPrepare management.
+	void OnPlayerReady(const SystemContext& Context) const;
 };

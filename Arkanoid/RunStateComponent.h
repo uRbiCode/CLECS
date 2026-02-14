@@ -4,6 +4,7 @@
 enum class RunState : uint8_t
 {
 	Invalid = 0,
+	PlayerPrepare,
 	Stage,
 	UpgradeSelection
 };

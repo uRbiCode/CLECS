@@ -21,6 +21,7 @@
 #include "UpgradeLoader.h"
 #include "UpgradeEvent.h"
 #include "UpgradeUtils.h"
+#include "PlayerReadyEvent.h"
 #include <cassert>
 
 namespace
@@ -53,6 +54,11 @@ void RunControllerSystem::Initialize(const SystemContext& Context) const
 	{
 		TryStartNextStage(Context);
 	});
+
+	Context.EventBus.Subscribe<PlayerReadyEvent>(this, [this](const SystemContext& Context, const PlayerReadyEvent& Event)
+	{
+		OnPlayerReady(Context);
+	});
 }
 
 void RunControllerSystem::BeginRun(const SystemContext& Context) const
@@ -65,6 +71,13 @@ void RunControllerSystem::BeginRun(const SystemContext& Context) const
 
 void RunControllerSystem::ChangeRunState(const SystemContext& Context, RunState NewState) const
 {
+	const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
+	assert(RunStateGroup.Size() == 1 && "Expected exactly one RunStateComponent in the world");
+	if (RunStateGroup.Empty())
+		return;
+
+	auto& RunStateComp = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
+	RunStateComp.State = NewState;
 	Context.EventBus.Notify(Context, ChangeRunStateEvent{ NewState });
 }
 
@@ -79,7 +92,7 @@ void RunControllerSystem::AddRunStateComponent(const SystemContext& Context) con
 {
 	auto& Admin = Context.EntityAdmin;
 	auto RunStateEntity = Admin.CreateEntity();
-	Admin.AddComponent<RunStateComponent>(RunStateEntity, RunStateComponent { RunState::Stage });
+	Admin.AddComponent<RunStateComponent>(RunStateEntity, RunStateComponent { RunState::PlayerPrepare });
 	Admin.AddComponent<HealthComponent>(RunStateEntity, HealthComponent{ InitialPlayerHealth });
 	Admin.AddComponent<AvailableUpgradesComponent>(RunStateEntity, std::move(UpgradeLoader::LoadUpgradeDefinitions()));
 	Admin.AddComponent<OwnedUpgradesComponent>(RunStateEntity);
@@ -116,7 +129,11 @@ void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
 	const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
 	assert(RunStateGroup.Size() == 1 && "Expected exactly one RunStateComponent in the world");
 	if (RunStateGroup.Empty())
+	{
+		// Prevent softlocking the game.
+		HandleRunVictory(Context);
 		return;
+	}
 
 	auto& RunStateComp = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
 	const auto NextStageNumber = RunStateComp.CurrentStage + 1;
@@ -153,7 +170,7 @@ void RunControllerSystem::TryStartNextStage(const SystemContext& Context) const
 	if (AdvanceToNextStage(Context, RunStateComp.CurrentStage))
 	{
 		RunStateComp.CurrentStage++;
-		ChangeRunState(Context, RunState::Stage);
+		ChangeRunState(Context, RunState::PlayerPrepare);
 	}
 	else
 	{
@@ -224,4 +241,9 @@ bool RunControllerSystem::AreUpgradesAvailable(const SystemContext& Context) con
 		return false;
 
 	return !Context.EntityAdmin.AccessComponent<AvailableUpgradesComponent>(AvailableUpgradesGroup[0]).AvailableUpgrades.empty();
+}
+
+void RunControllerSystem::OnPlayerReady(const SystemContext& Context) const
+{
+	ChangeRunState(Context, RunState::Stage);
 }
