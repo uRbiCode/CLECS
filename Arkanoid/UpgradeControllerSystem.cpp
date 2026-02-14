@@ -89,9 +89,8 @@ void UpgradeControllerSystem::InitializeUpgradeSelection(const SystemContext& Co
 		return;
 	}
 
-	auto SampledUpgrades = std::move(SampleUpgrades(Context, AvailableUpgrades));
 	AddUpgradeTitle(Context);
-	PresentUpgradesToPlayer(Context, std::move(SampledUpgrades));
+	PresentUpgradesToPlayer(Context, SampleUpgrades(Context, AvailableUpgrades));
 
 	Context.EventBus.Subscribe<ClickableUsedEvent>(this, [this](const SystemContext& Context, const ClickableUsedEvent& Event)
 	{
