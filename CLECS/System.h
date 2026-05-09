@@ -1,20 +1,17 @@
 #pragma once
-#include <concepts>
+#include <functional>
 
 struct SystemContext;
 
 /* System is a fundamental concept in CLECS architecture. 
  * It represents a piece of logic that operates on entities that have specific components attached to them.
- * Systems are to be stateless, and they should not store any data themselves. Instead, they should operate on the data stored in components.
+ * Systems are stateless, and they do not store any data themselves. Instead, they operate on the data stored in components.
  */
-class System
+struct SystemDescriptor
 {
-public:
-	virtual ~System() = default;
+	using UpdateFn = void(*)(const SystemContext&, float);
+	using InitializeFn = void(*)(const SystemContext&);
 
-	virtual void Initialize(const SystemContext& Context) const {}
-	virtual void Update(const SystemContext& Context, float DeltaTime) const {}
+	InitializeFn Initialize = nullptr;
+	UpdateFn Update = nullptr;
 };
-
-template<class T>
-concept SystemType = std::derived_from<T, System>;

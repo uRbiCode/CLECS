@@ -30,23 +30,23 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 {
 	AddGameStateComponent(Data.AccessEntityAdmin());
 
-	Data.AddSystem<AudioSystem>();
-	Data.AddSystem<PlayerInputSystem>();
-	Data.AddSystem<CollisionDetectionSystem>();
-	Data.AddSystem<CollisionKinematicResolverSystem>();
-	Data.AddSystem<HealthSystem>();
-	Data.AddSystem<MovementSystem>();
-	Data.AddSystem<CurrentStageSystem>();
-	Data.AddSystem<UpgradeControllerSystem>();
-	Data.AddSystem<PlayerPrepareSystem>();
-	Data.AddSystem<MainMenuControllerSystem>();
-	Data.AddSystem<RunControllerSystem>();
-	Data.AddSystem<TutorialControllerSystem>();
-	Data.AddSystem<SummaryControllerSystem>();
-	Data.AddSystem<GameStateSystem>();
-	Data.AddSystem<HealthIndicatorSystem>();
-	Data.AddSystem<StageInfoSystem>();
-	Data.AddSystem<RenderSystem>();
+	Data.AddSystem({ AudioSystem::Initialize, AudioSystem::Update });
+	Data.AddSystem({ PlayerInputSystem::Initialize, PlayerInputSystem::Update });
+	Data.AddSystem({ nullptr, CollisionDetectionSystem::Update });
+	Data.AddSystem({ CollisionKinematicResolverSystem::Initialize, nullptr });
+	Data.AddSystem({ HealthSystem::Initialize, HealthSystem::Update });
+	Data.AddSystem({ nullptr, MovementSystem::Update });
+	Data.AddSystem({ CurrentStageSystem::Initialize, nullptr });
+	Data.AddSystem({ UpgradeControllerSystem::Initialize, nullptr });
+	Data.AddSystem({ PlayerPrepareSystem::Initialize, PlayerPrepareSystem::Update });
+	Data.AddSystem({ MainMenuControllerSystem::Initialize, nullptr });
+	Data.AddSystem({ RunControllerSystem::Initialize, nullptr });
+	Data.AddSystem({ TutorialControllerSystem::Initialize, nullptr });
+	Data.AddSystem({ SummaryControllerSystem::Initialize, nullptr });
+	Data.AddSystem({ GameStateSystem::Initialize, nullptr });
+	Data.AddSystem({ HealthIndicatorSystem::Initialize, nullptr });
+	Data.AddSystem({ StageInfoSystem::Initialize, nullptr });
+	Data.AddSystem({ nullptr, RenderSystem::Update });
 
 	return true;
 }

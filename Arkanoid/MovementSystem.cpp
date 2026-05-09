@@ -6,7 +6,20 @@
 #include "RunStateComponent.h"
 #include <cassert>
 
-void MovementSystem::Update(const SystemContext& Context, float DeltaTime) const
+namespace
+{
+	bool ShouldUpdateMovement(const SystemContext& Context)
+	{
+		const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
+		if (RunStateGroup.Empty())
+			return false;
+
+		auto& RunStateComp = Context.EntityAdmin.GetComponent<RunStateComponent>(RunStateGroup[0]);
+		return RunStateComp.State == RunState::Stage;
+	}
+}
+
+void MovementSystem::Update(const SystemContext& Context, float DeltaTime)
 {
 	if (!ShouldUpdateMovement(Context))
 		return;
@@ -16,14 +29,4 @@ void MovementSystem::Update(const SystemContext& Context, float DeltaTime) const
 		Transform.Position.X += Velocity.Velocity.X * DeltaTime;
 		Transform.Position.Y += Velocity.Velocity.Y * DeltaTime;
 	});
-}
-
-bool MovementSystem::ShouldUpdateMovement(const SystemContext& Context) const
-{
-	const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
-	if (RunStateGroup.Empty())
-		return false;
-
-	auto& RunStateComp = Context.EntityAdmin.GetComponent<RunStateComponent>(RunStateGroup[0]);
-	return RunStateComp.State == RunState::Stage;
 }

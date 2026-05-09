@@ -18,12 +18,50 @@
 namespace
 {
 	constexpr const char* PrepareMessageText = "PRESS SPACE TO START";
-	constexpr const float PrepareMessageDisplayDuration = 0.75f;
+	constexpr float PrepareMessageDisplayDuration = 0.75f;
+
+	bool ShouldCleanupPrepareMessage(const SystemContext& Context)
+	{
+		return Context.Input.IsKeyJustPressed(SDLK_SPACE);
+	}
+
+	void ChangeMessageVisibility(const SystemContext& Context, const Entity& Entity)
+	{
+		if (!Context.EntityAdmin.HasComponent<RenderComponent>(Entity))
+			return;
+
+		auto& RenderComp  = Context.EntityAdmin.AccessComponent<RenderComponent>(Entity);
+		RenderComp.Visible = !RenderComp.Visible;
+	}
+
+	void CleanupPrepareMessage(const SystemContext& Context)
+	{
+		Context.EntityAdmin.GetGroup<PlayerPrepareComponent>().ForEach([&Context](const Entity& Entity, const PlayerPrepareComponent& PlayerPrepare)
+		{
+			Context.EntityAdmin.DestroyEntity(Entity);
+		});
+	}
+
+	void AddPrepareMessage(const SystemContext& Context)
+	{
+		const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+		const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
+		auto& Admin                    = Context.EntityAdmin;
+		const auto PrepareMessageEntity = Admin.CreateEntity();
+		Admin.AddComponent<TransformComponent>(PrepareMessageEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.75f });
+		Admin.AddComponent<RectComponent>(PrepareMessageEntity, SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y });
+		Admin.AddComponent<ColorComponent>(PrepareMessageEntity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
+		Admin.AddComponent<TextComponent>(PrepareMessageEntity, PrepareMessageText, Constants::FontFilePath, 50);
+		Admin.AddComponent<RenderComponent>(PrepareMessageEntity, RenderConstants::UILayer);
+		Admin.AddComponent<PlayerPrepareComponent>(PrepareMessageEntity, PlayerPrepareComponent{ PrepareMessageDisplayDuration });
+	}
 }
 
-void PlayerPrepareSystem::Initialize(const SystemContext& Context) const
+void PlayerPrepareSystem::Initialize(const SystemContext& Context)
 {
-	Context.EventBus.Subscribe<ChangeRunStateEvent>(this, [this](const SystemContext& Context, const ChangeRunStateEvent& Event)
+	const void* const Id = reinterpret_cast<const void*>(&Initialize);
+
+	Context.EventBus.Subscribe<ChangeRunStateEvent>(Id, [](const SystemContext& Context, const ChangeRunStateEvent& Event)
 	{
 		if (Event.NewState != RunState::PlayerPrepare)
 			return;
@@ -32,7 +70,7 @@ void PlayerPrepareSystem::Initialize(const SystemContext& Context) const
 	});
 }
 
-void PlayerPrepareSystem::Update(const SystemContext& Context, float DeltaTime) const
+void PlayerPrepareSystem::Update(const SystemContext& Context, float DeltaTime)
 {
 	const auto PrepareMessageGroup = Context.EntityAdmin.GetGroup<PlayerPrepareComponent>();
 	if (PrepareMessageGroup.Empty())
@@ -52,40 +90,4 @@ void PlayerPrepareSystem::Update(const SystemContext& Context, float DeltaTime) 
 
 	PlayerPrepareComp.DisplayTimer = PrepareMessageDisplayDuration;
 	ChangeMessageVisibility(Context, PrepareMessageGroup[0]);
-}
-
-void PlayerPrepareSystem::AddPrepareMessage(const SystemContext& Context) const
-{
-	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-	const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
-	auto& Admin = Context.EntityAdmin;
-	const auto PrepareMessageEntity = Admin.CreateEntity();
-	Admin.AddComponent<TransformComponent>(PrepareMessageEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.75f });
-	Admin.AddComponent<RectComponent>(PrepareMessageEntity, SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y });
-	Admin.AddComponent<ColorComponent>(PrepareMessageEntity, SDL_FColor{0.f, 0.f, 0.f, 0.f});
-	Admin.AddComponent<TextComponent>(PrepareMessageEntity, PrepareMessageText, Constants::FontFilePath, 50);
-	Admin.AddComponent<RenderComponent>(PrepareMessageEntity, RenderConstants::UILayer);
-	Admin.AddComponent<PlayerPrepareComponent>(PrepareMessageEntity, PlayerPrepareComponent{ PrepareMessageDisplayDuration });
-}
-
-void PlayerPrepareSystem::CleanupPrepareMessage(const SystemContext& Context) const
-{
-	Context.EntityAdmin.GetGroup<PlayerPrepareComponent>().ForEach([&Context](const Entity& Entity, const PlayerPrepareComponent& PlayerPrepare)
-	{
-		Context.EntityAdmin.DestroyEntity(Entity);
-	});
-}
-
-void PlayerPrepareSystem::ChangeMessageVisibility(const SystemContext& Context, const Entity& Entity) const
-{
-	if (!Context.EntityAdmin.HasComponent<RenderComponent>(Entity))
-		return;
-
-	auto& RenderComp = Context.EntityAdmin.AccessComponent<RenderComponent>(Entity);
-	RenderComp.Visible = !RenderComp.Visible;
-}
-
-bool PlayerPrepareSystem::ShouldCleanupPrepareMessage(const SystemContext& Context) const
-{
-	return Context.Input.IsKeyJustPressed(SDLK_SPACE);
 }

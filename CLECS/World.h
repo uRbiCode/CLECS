@@ -6,16 +6,15 @@
 #include "EventBus.h"
 #include "TextureManager.h"
 #include "AudioManager.h"
+#include "FontManager.h"
 #include <vector>
 #include <memory>
-#include "FontManager.h"
 
 class WorldInitializationData;
 struct SDL_Window;
 struct SDL_Renderer;
 struct RendererInitializationData;
-
-using SystemCollection = std::vector<std::unique_ptr<System>>;
+struct SystemContext;
 
 /* World is the heart of CLECS architecture.
  * It owns the SDL and CLECS resources and manages their lifecycle.
@@ -41,11 +40,10 @@ private:
 	void InitializeAudioManager();
 	void InitializeFontManager();
 	void SendInputEvents(const SystemContext& Context);
-
 	SystemContext MakeSystemContext();
 
 	std::unique_ptr<EntityAdmin> EntityAdminPtr;
-	SystemCollection Systems;
+	std::vector<SystemDescriptor> Systems;
 	InputState Input;
 	EventBus EventBus;
 	std::unique_ptr<TextureManager> TextureManagerPtr;

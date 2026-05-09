@@ -3,16 +3,14 @@
 #include <unordered_map>
 #include <vector>
 #include <typeindex>
-#include <memory>
 #include <algorithm>
 
-class System;
 struct SystemContext;
 
 /* Responsible for managing event subscriptions and notifications in CLECS.
  * Systems may subscribe to events by type, and the EventBus will notify them when events of that type are emitted.
  * Notifications are synchronous and happen immediately.
- * This means that an event sent in response to another will be processed first.
+ * SubscriberId is the address of the system's Update function cast to const void*, providing a stable unique key without requiring a System base class instance.
  */
 class EventBus
 {
@@ -23,30 +21,30 @@ public:
 	EventBus& operator=(const EventBus&) = delete;
 
 	template<typename EventType>
-	void Subscribe(const System* Subscriber, std::function<void(const SystemContext&, const EventType&)> Callback)
+	void Subscribe(const void* SubscriberId, std::function<void(const SystemContext&, const EventType&)> Callback)
 	{
-		const auto TypeId = std::type_index(typeid(EventType));
+		const auto TypeId  = std::type_index(typeid(EventType));
 		const auto Wrapper = [Callback](const SystemContext& Context, const void* EventData)
 		{
 			Callback(Context, *static_cast<const EventType*>(EventData));
 		};
-		Subscribers[TypeId].push_back({ Subscriber, Wrapper });
+		Subscribers[TypeId].push_back({ SubscriberId, Wrapper });
 	}
 
 	template<typename EventType>
-	void Unsubscribe(const System* Subscriber)
+	void Unsubscribe(const void* SubscriberId)
 	{
 		const auto TypeId = std::type_index(typeid(EventType));
-		const auto It = Subscribers.find(TypeId);
+		const auto It     = Subscribers.find(TypeId);
 		if (It == Subscribers.end())
 			return;
 
 		auto& Callbacks = It->second;
 		Callbacks.erase(
 			std::remove_if(Callbacks.begin(), Callbacks.end(),
-				[Subscriber](const SubscriptionEntry& Entry)
+				[SubscriberId](const SubscriptionEntry& Entry)
 				{
-					return Entry.Subscriber == Subscriber;
+					return Entry.SubscriberId == SubscriberId;
 				}),
 			Callbacks.end()
 		);
@@ -56,25 +54,22 @@ public:
 	void Notify(const SystemContext& Context, const EventType& Event) const
 	{
 		const auto TypeId = std::type_index(typeid(EventType));
-		auto It = Subscribers.find(TypeId);
+		const auto It     = Subscribers.find(TypeId);
 		if (It == Subscribers.end())
 			return;
 
 		// Prevent invalidating iterators if someone unsubscribes in response.
-		std::vector<SubscriptionEntry> CallbacksCopy = It->second;
-
+		const std::vector<SubscriptionEntry> CallbacksCopy = It->second;
 		for (const auto& Entry : CallbacksCopy)
-		{
 			Entry.Callback(Context, &Event);
-		}
 	}
 
 private:
 	using EventCallback = std::function<void(const SystemContext&, const void*)>;
-	
+
 	struct SubscriptionEntry
 	{
-		const System* Subscriber;
+		const void* SubscriberId;
 		EventCallback Callback;
 	};
 

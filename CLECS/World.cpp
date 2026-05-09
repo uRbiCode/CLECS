@@ -38,12 +38,15 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 	InitializeFontManager();
 
 	EntityAdminPtr = std::move(Data.EntityAdminPtr);
-	Systems = std::move(Data.Systems);
+	Systems = std::move(Data.Descriptors);
 
 	const auto Context = MakeSystemContext();
-	for (const auto& System : Systems)
+	for (const auto& Descriptor : Systems)
 	{
-		System->Initialize(Context);
+		if (Descriptor.Initialize == nullptr)
+			continue;
+		
+		Descriptor.Initialize(Context);
 	}
 
 	return CLECS::ResultType::Success;
@@ -65,9 +68,12 @@ CLECS::ResultType World::Update(float DeltaTime)
 	const auto Context = MakeSystemContext();
 	SendInputEvents(Context);
 
-	for (const auto& CurrentSystem : Systems)
+	for (const auto& Descriptor : Systems)
 	{
-		CurrentSystem->Update(Context, DeltaTime);
+		if (Descriptor.Update == nullptr)
+			continue;
+
+		Descriptor.Update(Context, DeltaTime);
 	}
 
 	return CLECS::ResultType::Success;

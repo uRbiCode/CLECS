@@ -91,12 +91,49 @@ namespace
 			const float Penetration = RadiusSum - Distance;
 			return { -(DX / Distance) * Penetration, -(DY / Distance) * Penetration };
 		}
-		
+
 		return { -(CircleA.Radius + CircleB.Radius), 0.f };
+	}
+
+	bool CheckAABB(const SDL_FRect& A, const SDL_FRect& B)
+	{
+		return !(A.x + A.w < B.x || B.x + B.w < A.x || A.y + A.h < B.y || B.y + B.h < A.y);
+	}
+
+	bool CheckCircleRect(const TransformComponent& CircleTransform, const CircleComponent& Circle,
+	                     const TransformComponent& RectTransform, const RectComponent& Rect)
+	{
+		const float CircleCenterX = CircleTransform.Position.X;
+		const float CircleCenterY = CircleTransform.Position.Y;
+
+		const float RectLeft   = RectTransform.Position.X + Rect.Rect.x;
+		const float RectRight  = RectLeft + Rect.Rect.w;
+		const float RectTop    = RectTransform.Position.Y + Rect.Rect.y;
+		const float RectBottom = RectTop + Rect.Rect.h;
+
+		const float ClosestX = std::max(RectLeft, std::min(CircleCenterX, RectRight));
+		const float ClosestY = std::max(RectTop, std::min(CircleCenterY, RectBottom));
+
+		const float DistX           = CircleCenterX - ClosestX;
+		const float DistY           = CircleCenterY - ClosestY;
+		const float DistanceSquared = DistX * DistX + DistY * DistY;
+
+		return DistanceSquared < (Circle.Radius * Circle.Radius);
+	}
+
+	bool CheckCircleCircle(const TransformComponent& TransformA, const CircleComponent& CircleA,
+	                       const TransformComponent& TransformB, const CircleComponent& CircleB)
+	{
+		const float DX              = TransformB.Position.X - TransformA.Position.X;
+		const float DY              = TransformB.Position.Y - TransformA.Position.Y;
+		const float DistanceSquared = DX * DX + DY * DY;
+		const float RadiusSum       = CircleA.Radius + CircleB.Radius;
+
+		return DistanceSquared < (RadiusSum * RadiusSum);
 	}
 }
 
-void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaTime) const
+void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaTime)
 {
 	auto& Admin = Context.EntityAdmin;
 	const auto CollisionGroup = Admin.GetGroup<TransformComponent, CollisionComponent>();
@@ -111,10 +148,10 @@ void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaT
 
 		const auto& CollisionA = Admin.GetComponent<CollisionComponent>(EntityA);
 		const auto& TransformA = Admin.GetComponent<TransformComponent>(EntityA);
-		
-		const bool AHasRect = Admin.HasComponent<RectComponent>(EntityA);
+
+		const bool AHasRect   = Admin.HasComponent<RectComponent>(EntityA);
 		const bool AHasCircle = Admin.HasComponent<CircleComponent>(EntityA);
-		
+
 		if (!AHasRect && !AHasCircle)
 			continue;
 
@@ -125,33 +162,33 @@ void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaT
 				continue;
 
 			const auto& CollisionB = Admin.GetComponent<CollisionComponent>(EntityB);
-			
+
 			const auto ResponseA = CollisionA.ResponseTable[ChannelToIndex(CollisionB.Channel)];
 			const auto ResponseB = CollisionB.ResponseTable[ChannelToIndex(CollisionA.Channel)];
-			
+
 			if (ResponseA != CollisionResponse::Block && ResponseB != CollisionResponse::Block)
 				continue;
 
 			const auto& TransformB = Admin.GetComponent<TransformComponent>(EntityB);
-			const bool BHasRect = Admin.HasComponent<RectComponent>(EntityB);
-			const bool BHasCircle = Admin.HasComponent<CircleComponent>(EntityB);
-			
+			const bool BHasRect    = Admin.HasComponent<RectComponent>(EntityB);
+			const bool BHasCircle  = Admin.HasComponent<CircleComponent>(EntityB);
+
 			if (!BHasRect && !BHasCircle)
 				continue;
 
-			bool Colliding = false;
+			bool Colliding            = false;
 			Vector2D<float> Separation = { 0.f, 0.f };
 
 			if (AHasRect && BHasRect)
 			{
-				const auto& RectA = Admin.GetComponent<RectComponent>(EntityA);
-				const auto& RectB = Admin.GetComponent<RectComponent>(EntityB);
+				const auto& RectA  = Admin.GetComponent<RectComponent>(EntityA);
+				const auto& RectB  = Admin.GetComponent<RectComponent>(EntityB);
 				const SDL_FRect BoundsA = GetWorldAABB(TransformA, RectA);
 				const SDL_FRect BoundsB = GetWorldAABB(TransformB, RectB);
-				
+
 				if (CheckAABB(BoundsA, BoundsB))
 				{
-					Colliding = true;
+					Colliding  = true;
 					Separation = GetSeparationRectRect(BoundsA, BoundsB);
 				}
 			}
@@ -159,33 +196,33 @@ void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaT
 			{
 				const auto& CircleA = Admin.GetComponent<CircleComponent>(EntityA);
 				const auto& CircleB = Admin.GetComponent<CircleComponent>(EntityB);
-				
+
 				if (CheckCircleCircle(TransformA, CircleA, TransformB, CircleB))
 				{
-					Colliding = true;
+					Colliding  = true;
 					Separation = GetSeparationCircleCircle(TransformA, CircleA, TransformB, CircleB);
 				}
 			}
 			else if (AHasCircle && BHasRect)
 			{
 				const auto& CircleA = Admin.GetComponent<CircleComponent>(EntityA);
-				const auto& RectB = Admin.GetComponent<RectComponent>(EntityB);
-				
+				const auto& RectB   = Admin.GetComponent<RectComponent>(EntityB);
+
 				if (CheckCircleRect(TransformA, CircleA, TransformB, RectB))
 				{
-					Colliding = true;
+					Colliding  = true;
 					Separation = GetSeparationCircleRect(TransformA, CircleA, TransformB, RectB);
 				}
 			}
 			else if (AHasRect && BHasCircle)
 			{
-				const auto& RectA = Admin.GetComponent<RectComponent>(EntityA);
+				const auto& RectA   = Admin.GetComponent<RectComponent>(EntityA);
 				const auto& CircleB = Admin.GetComponent<CircleComponent>(EntityB);
-				
+
 				if (CheckCircleRect(TransformB, CircleB, TransformA, RectA))
 				{
-					Colliding = true;
-					Separation = GetSeparationCircleRect(TransformB, CircleB, TransformA, RectA);
+					Colliding    = true;
+					Separation   = GetSeparationCircleRect(TransformB, CircleB, TransformA, RectA);
 					Separation.X = -Separation.X;
 					Separation.Y = -Separation.Y;
 				}
@@ -197,42 +234,4 @@ void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaT
 			}
 		}
 	}
-}
-
-bool CollisionDetectionSystem::CheckAABB(const SDL_FRect& A, const SDL_FRect& B) const
-{
-	return !(A.x + A.w < B.x || B.x + B.w < A.x || A.y + A.h < B.y || B.y + B.h < A.y);
-}
-
-bool CollisionDetectionSystem::CheckCircleRect(const TransformComponent& CircleTransform, 
-												const CircleComponent& Circle,
-												const TransformComponent& RectTransform, 
-												const RectComponent& Rect) const
-{
-	const float CircleCenterX = CircleTransform.Position.X;
-	const float CircleCenterY = CircleTransform.Position.Y;
-	
-	const float RectLeft = RectTransform.Position.X + Rect.Rect.x;
-	const float RectRight = RectLeft + Rect.Rect.w;
-	const float RectTop = RectTransform.Position.Y + Rect.Rect.y;
-	const float RectBottom = RectTop + Rect.Rect.h;
-	
-	const float ClosestX = std::max(RectLeft, std::min(CircleCenterX, RectRight));
-	const float ClosestY = std::max(RectTop, std::min(CircleCenterY, RectBottom));
-	
-	const float DistX = CircleCenterX - ClosestX;
-	const float DistY = CircleCenterY - ClosestY;
-	const float DistanceSquared = DistX * DistX + DistY * DistY;
-	
-	return DistanceSquared < (Circle.Radius * Circle.Radius);
-}
-
-bool CollisionDetectionSystem::CheckCircleCircle(const TransformComponent& TransformA, const CircleComponent& CircleA, const TransformComponent& TransformB, const CircleComponent& CircleB) const
-{
-	const float DX = TransformB.Position.X - TransformA.Position.X;
-	const float DY = TransformB.Position.Y - TransformA.Position.Y;
-	const float DistanceSquared = DX * DX + DY * DY;
-	const float RadiusSum = CircleA.Radius + CircleB.Radius;
-	
-	return DistanceSquared < (RadiusSum * RadiusSum);
 }

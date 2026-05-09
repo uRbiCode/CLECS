@@ -27,11 +27,194 @@
 namespace
 {
 	constexpr int InitialPlayerHealth = 3;
+
+	void ChangeRunState(const SystemContext& Context, RunState NewState)
+	{
+		const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
+		assert(RunStateGroup.Size() == 1 && "Expected exactly one RunStateComponent in the world");
+		if (RunStateGroup.Empty())
+			return;
+
+		auto& RunStateComp = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
+		RunStateComp.State = NewState;
+		Context.EventBus.Notify(Context, ChangeRunStateEvent{ NewState });
+	}
+
+	void RemoveRunStateComponent(const SystemContext& Context)
+	{
+		Context.EntityAdmin.GetGroup<RunStateComponent>().ForEach([&Context](const Entity& Entity, const RunStateComponent& RunState)
+		{
+			Context.EntityAdmin.DestroyEntity(Entity);
+		});
+	}
+
+	void RemoveStageDataComponent(const SystemContext& Context)
+	{
+		Context.EntityAdmin.GetGroup<StageDataComponent>().ForEach([&Context](const Entity& Entity, const StageDataComponent& StageData)
+		{
+			Context.EntityAdmin.DestroyEntity(Entity);
+		});
+	}
+
+	void CleanupCurrentStage(const SystemContext& Context)
+	{
+		Context.EntityAdmin.GetGroup<CollisionComponent>().ForEach([&Context](const Entity& Entity, const CollisionComponent& Collision)
+		{
+			Context.EntityAdmin.DestroyEntity(Entity);
+		});
+	}
+
+	void CleanupRun(const SystemContext& Context)
+	{
+		CleanupCurrentStage(Context);
+		RemoveRunStateComponent(Context);
+		RemoveStageDataComponent(Context);
+	}
+
+	void SpawnStageEntities(const SystemContext& Context, const StageData& StageData)
+	{
+		for (const auto& WallData : StageData.Walls)
+		{
+			StageUtils::AddWall(Context, WallData);
+		}
+
+		for (const auto& BrickData : StageData.Bricks)
+		{
+			StageUtils::AddBrick(Context, BrickData);
+		}
+
+		StageUtils::AddTrigger(Context, StageData.Trigger);
+		StageUtils::AddPlayer(Context, UpgradeUtils::GetModifiedPlayerData(Context, StageData.PlayerData));
+		StageUtils::AddBall(Context, UpgradeUtils::GetModifiedBallData(Context, StageData.BallData));
+	}
+
+	void SetStageData(const SystemContext& Context, const StageData& StageData)
+	{
+		const auto StageDataGroup = Context.EntityAdmin.GetGroup<StageDataComponent>();
+		assert(StageDataGroup.Size() == 1 && "Expected exactly one StageDataComponent in the world");
+		if (StageDataGroup.Empty())
+			return;
+
+		auto& StageDataComp = Context.EntityAdmin.AccessComponent<StageDataComponent>(StageDataGroup[0]);
+		StageDataComp.CurrentStageData = StageData;
+	}
+
+	bool AreUpgradesAvailable(const SystemContext& Context)
+	{
+		const auto AvailableUpgradesGroup = Context.EntityAdmin.GetGroup<AvailableUpgradesComponent>();
+		assert(AvailableUpgradesGroup.Size() == 1 && "Expected exactly one AvailableUpgradesComponent in the world");
+		if (AvailableUpgradesGroup.Empty())
+			return false;
+
+		return !Context.EntityAdmin.AccessComponent<AvailableUpgradesComponent>(AvailableUpgradesGroup[0]).AvailableUpgrades.empty();
+	}
+
+	// Returns whether advancement was successful or was it the last stage already.
+	bool AdvanceToNextStage(const SystemContext& Context, int CurrentStageId)
+	{
+		const auto NextStageNumber = CurrentStageId + 1;
+		const auto StageDataOpt    = StageDataLoader::LoadStageDataByNumber(NextStageNumber);
+		if (!StageDataOpt.has_value())
+		{
+			SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "RunControllerSystem::AdvanceToNextStage -> No more stages found. Victory!");
+			return false;
+		}
+
+		SpawnStageEntities(Context, StageDataOpt.value());
+		SetStageData(Context, StageDataOpt.value());
+		return true;
+	}
+
+	void HandleRunVictory(const SystemContext& Context)
+	{
+		CleanupRun(Context);
+		GameStateUtils::RequestStateChange(Context, GameState::Victory);
+	}
+
+	void HandleRunDefeat(const SystemContext& Context)
+	{
+		CleanupRun(Context);
+		GameStateUtils::RequestStateChange(Context, GameState::Defeat);
+	}
+
+	void TryStartNextStage(const SystemContext& Context)
+	{
+		const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
+		assert(RunStateGroup.Size() == 1 && "Expected exactly one RunStateComponent in the world");
+		if (RunStateGroup.Empty())
+			return;
+
+		auto& RunStateComp = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
+		if (AdvanceToNextStage(Context, RunStateComp.CurrentStage))
+		{
+			RunStateComp.CurrentStage++;
+			ChangeRunState(Context, RunState::PlayerPrepare);
+		}
+		else
+		{
+			HandleRunVictory(Context);
+		}
+	}
+
+	void HandleStageCleared(const SystemContext& Context)
+	{
+		CleanupCurrentStage(Context);
+
+		const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
+		assert(RunStateGroup.Size() == 1 && "Expected exactly one RunStateComponent in the world");
+		if (RunStateGroup.Empty())
+		{
+			HandleRunVictory(Context);
+			return;
+		}
+
+		auto& RunStateComp       = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
+		const auto NextStageNumber = RunStateComp.CurrentStage + 1;
+
+		if (StageDataLoader::IsStageDataAvailable(NextStageNumber) && AreUpgradesAvailable(Context))
+		{
+			ChangeRunState(Context, RunState::UpgradeSelection);
+			return;
+		}
+
+		TryStartNextStage(Context);
+	}
+
+	void AddRunStateComponent(const SystemContext& Context)
+	{
+		auto& Admin           = Context.EntityAdmin;
+		const auto RunStateEntity = Admin.CreateEntity();
+		Admin.AddComponent<RunStateComponent>(RunStateEntity, RunStateComponent{ RunState::PlayerPrepare });
+		Admin.AddComponent<HealthComponent>(RunStateEntity, HealthComponent{ InitialPlayerHealth });
+		Admin.AddComponent<AvailableUpgradesComponent>(RunStateEntity, std::move(UpgradeLoader::LoadUpgradeDefinitions()));
+		Admin.AddComponent<OwnedUpgradesComponent>(RunStateEntity);
+	}
+
+	void AddStageDataComponent(const SystemContext& Context)
+	{
+		auto& Admin             = Context.EntityAdmin;
+		const auto StageDataEntity = Admin.CreateEntity();
+		Admin.AddComponent<StageDataComponent>(StageDataEntity);
+	}
+
+	void BeginRun(const SystemContext& Context)
+	{
+		AddRunStateComponent(Context);
+		AddStageDataComponent(Context);
+		TryStartNextStage(Context);
+	}
+
+	void OnPlayerReady(const SystemContext& Context)
+	{
+		ChangeRunState(Context, RunState::Stage);
+	}
 }
 
-void RunControllerSystem::Initialize(const SystemContext& Context) const
+void RunControllerSystem::Initialize(const SystemContext& Context)
 {
-	Context.EventBus.Subscribe<GameStateBeginEvent>(this, [this](const SystemContext& Context, const GameStateBeginEvent& Event)
+	const void* const Id = reinterpret_cast<const void*>(&Initialize);
+
+	Context.EventBus.Subscribe<GameStateBeginEvent>(Id, [](const SystemContext& Context, const GameStateBeginEvent& Event)
 	{
 		if (Event.BeginningState != GameState::Run)
 			return;
@@ -39,7 +222,7 @@ void RunControllerSystem::Initialize(const SystemContext& Context) const
 		BeginRun(Context);
 	});
 
-	Context.EventBus.Subscribe<StageEndEvent>(this, [this](const SystemContext& Context, const StageEndEvent& Event)
+	Context.EventBus.Subscribe<StageEndEvent>(Id, [](const SystemContext& Context, const StageEndEvent& Event)
 	{
 		if (!Event.Victory)
 		{
@@ -50,200 +233,13 @@ void RunControllerSystem::Initialize(const SystemContext& Context) const
 		HandleStageCleared(Context);
 	});
 
-	Context.EventBus.Subscribe<UpgradeSelectedEvent>(this, [this](const SystemContext& Context, const UpgradeSelectedEvent& Event)
+	Context.EventBus.Subscribe<UpgradeSelectedEvent>(Id, [](const SystemContext& Context, const UpgradeSelectedEvent& Event)
 	{
 		TryStartNextStage(Context);
 	});
 
-	Context.EventBus.Subscribe<PlayerReadyEvent>(this, [this](const SystemContext& Context, const PlayerReadyEvent& Event)
+	Context.EventBus.Subscribe<PlayerReadyEvent>(Id, [](const SystemContext& Context, const PlayerReadyEvent& Event)
 	{
 		OnPlayerReady(Context);
 	});
-}
-
-void RunControllerSystem::BeginRun(const SystemContext& Context) const
-{
-	AddRunStateComponent(Context);
-	AddStageDataComponent(Context);
-
-	TryStartNextStage(Context);
-}
-
-void RunControllerSystem::ChangeRunState(const SystemContext& Context, RunState NewState) const
-{
-	const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
-	assert(RunStateGroup.Size() == 1 && "Expected exactly one RunStateComponent in the world");
-	if (RunStateGroup.Empty())
-		return;
-
-	auto& RunStateComp = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
-	RunStateComp.State = NewState;
-	Context.EventBus.Notify(Context, ChangeRunStateEvent{ NewState });
-}
-
-void RunControllerSystem::CleanupRun(const SystemContext& Context) const
-{
-	CleanupCurrentStage(Context);
-	RemoveRunStateComponent(Context);
-	RemoveStageDataComponent(Context);
-}
-
-void RunControllerSystem::AddRunStateComponent(const SystemContext& Context) const
-{
-	auto& Admin = Context.EntityAdmin;
-	const auto RunStateEntity = Admin.CreateEntity();
-	Admin.AddComponent<RunStateComponent>(RunStateEntity, RunStateComponent { RunState::PlayerPrepare });
-	Admin.AddComponent<HealthComponent>(RunStateEntity, HealthComponent{ InitialPlayerHealth });
-	Admin.AddComponent<AvailableUpgradesComponent>(RunStateEntity, std::move(UpgradeLoader::LoadUpgradeDefinitions()));
-	Admin.AddComponent<OwnedUpgradesComponent>(RunStateEntity);
-}
-
-void RunControllerSystem::AddStageDataComponent(const SystemContext& Context) const
-{
-	auto& Admin = Context.EntityAdmin;
-
-	const auto StageDataEntity = Admin.CreateEntity();
-	Admin.AddComponent<StageDataComponent>(StageDataEntity);
-}
-
-void RunControllerSystem::RemoveRunStateComponent(const SystemContext& Context) const
-{
-	Context.EntityAdmin.GetGroup<RunStateComponent>().ForEach([&Context](const Entity& Entity, const RunStateComponent& RunState)
-	{
-		Context.EntityAdmin.DestroyEntity(Entity);
-	});
-}
-
-void RunControllerSystem::RemoveStageDataComponent(const SystemContext& Context) const
-{
-	Context.EntityAdmin.GetGroup<StageDataComponent>().ForEach([&Context](const Entity& Entity, const StageDataComponent& StageData)
-	{
-		Context.EntityAdmin.DestroyEntity(Entity);
-	});
-}
-
-void RunControllerSystem::HandleStageCleared(const SystemContext& Context) const
-{
-	CleanupCurrentStage(Context);
-
-	const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
-	assert(RunStateGroup.Size() == 1 && "Expected exactly one RunStateComponent in the world");
-	if (RunStateGroup.Empty())
-	{
-		// Prevent softlocking the game.
-		HandleRunVictory(Context);
-		return;
-	}
-
-	auto& RunStateComp = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
-	const auto NextStageNumber = RunStateComp.CurrentStage + 1;
-
-	if (StageDataLoader::IsStageDataAvailable(NextStageNumber) && AreUpgradesAvailable(Context))
-	{
-		ChangeRunState(Context, RunState::UpgradeSelection);
-		return;
-	}
-
-	TryStartNextStage(Context);
-}
-
-void RunControllerSystem::HandleRunVictory(const SystemContext& Context) const
-{
-	CleanupRun(Context);
-	GameStateUtils::RequestStateChange(Context, GameState::Victory);
-}
-
-void RunControllerSystem::HandleRunDefeat(const SystemContext& Context) const
-{
-	CleanupRun(Context);
-	GameStateUtils::RequestStateChange(Context, GameState::Defeat);
-}
-
-void RunControllerSystem::TryStartNextStage(const SystemContext& Context) const
-{
-	const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent>();
-	assert(RunStateGroup.Size() == 1 && "Expected exactly one RunStateComponent in the world");
-	if (RunStateGroup.Empty())
-		return;
-
-	auto& RunStateComp = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
-	if (AdvanceToNextStage(Context, RunStateComp.CurrentStage))
-	{
-		RunStateComp.CurrentStage++;
-		ChangeRunState(Context, RunState::PlayerPrepare);
-	}
-	else
-	{
-		HandleRunVictory(Context);
-	}
-}
-
-void RunControllerSystem::SpawnStageEntities(const SystemContext& Context, const StageData& StageData) const
-{
-	auto& Admin = Context.EntityAdmin;
-	auto& TexManager = Context.Managers.TextureManager;
-	
-	for (const auto& WallData : StageData.Walls)
-	{
-		StageUtils::AddWall(Context, WallData);
-	}
-	
-	for (const auto& BrickData : StageData.Bricks)
-	{
-		StageUtils::AddBrick(Context, BrickData);
-	}
-	
-	StageUtils::AddTrigger(Context, StageData.Trigger);
-	StageUtils::AddPlayer(Context, UpgradeUtils::GetModifiedPlayerData(Context, StageData.PlayerData));
-	StageUtils::AddBall(Context, UpgradeUtils::GetModifiedBallData(Context, StageData.BallData));
-}
-
-void RunControllerSystem::SetStageData(const SystemContext& Context, const StageData& StageData) const
-{
-	const auto StageDataGroup = Context.EntityAdmin.GetGroup<StageDataComponent>();
-	assert(StageDataGroup.Size() == 1 && "Expected exactly one StageDataComponent in the world");
-	if (StageDataGroup.Empty())
-		return;
-
-	auto& StageDataComp = Context.EntityAdmin.AccessComponent<StageDataComponent>(StageDataGroup[0]);
-	StageDataComp.CurrentStageData = StageData;
-}
-
-void RunControllerSystem::CleanupCurrentStage(const SystemContext& Context) const
-{
-	Context.EntityAdmin.GetGroup<CollisionComponent>().ForEach([&Context](const Entity& Entity, const CollisionComponent& Collision)
-	{
-		Context.EntityAdmin.DestroyEntity(Entity);
-	});
-}
-
-bool RunControllerSystem::AdvanceToNextStage(const SystemContext& Context, int CurrentStageId) const
-{
-	const auto NextStageNumber = CurrentStageId + 1;
-	const auto StageDataOpt = StageDataLoader::LoadStageDataByNumber(NextStageNumber);
-	if (!StageDataOpt.has_value())
-	{
-		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "RunControllerSystem::AdvanceToNextStage -> No more stages found. Victory!");
-		return false;
-	}
-
-	SpawnStageEntities(Context, StageDataOpt.value());
-	SetStageData(Context, StageDataOpt.value());
-	return true;
-}
-
-
-bool RunControllerSystem::AreUpgradesAvailable(const SystemContext& Context) const
-{
-	const auto AvailableUpgradesGroup = Context.EntityAdmin.GetGroup<AvailableUpgradesComponent>();
-	assert(AvailableUpgradesGroup.Size() == 1 && "Expected exactly one AvailableUpgradesComponent in the world");
-	if (AvailableUpgradesGroup.Empty())
-		return false;
-
-	return !Context.EntityAdmin.AccessComponent<AvailableUpgradesComponent>(AvailableUpgradesGroup[0]).AvailableUpgrades.empty();
-}
-
-void RunControllerSystem::OnPlayerReady(const SystemContext& Context) const
-{
-	ChangeRunState(Context, RunState::Stage);
 }

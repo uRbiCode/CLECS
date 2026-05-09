@@ -42,17 +42,35 @@ namespace
 
 		return ClickedPair;
 	}
+
+	void OnMouseClick(const SystemContext& Context, const MouseClickEvent& Event)
+	{
+		const auto ClickedPair = GetClickableFromEvent(Context, Event);
+		if (!ClickedPair.has_value())
+			return;
+
+		const auto& [ClickedEntity, ClickedTagValue] = ClickedPair.value();
+		if (ClickedTagValue == ClickableTag::Invalid)
+		{
+			SDL_LogWarn(SDL_LOG_CATEGORY_INPUT, "PlayerInputSystem::OnMouseClick -> Clickable has invalid tag");
+			return;
+		}
+
+		Context.EventBus.Notify(Context, ClickableUsedEvent{ ClickedEntity, ClickedTagValue });
+	}
 }
 
-void PlayerInputSystem::Initialize(const SystemContext& Context) const
+void PlayerInputSystem::Initialize(const SystemContext& Context)
 {
-	Context.EventBus.Subscribe<MouseClickEvent>(this, [this](const SystemContext& Context, const MouseClickEvent& Event)
+	const void* const Id = reinterpret_cast<const void*>(&Initialize);
+
+	Context.EventBus.Subscribe<MouseClickEvent>(Id, [](const SystemContext& Context, const MouseClickEvent& Event)
 	{
 		OnMouseClick(Context, Event);
 	});
 }
 
-void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime) const
+void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime)
 {
 	const auto& Input = Context.Input;
 	Context.EntityAdmin.GetGroup<VelocityComponent, PlayerControllerComponent>().ForEach([&Input](const Entity& Entity, VelocityComponent& Velocity, const PlayerControllerComponent& Controller)
@@ -68,20 +86,4 @@ void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime) co
 			Velocity.Velocity.X += Controller.MoveSpeed;
 		}
 	});
-}
-
-void PlayerInputSystem::OnMouseClick(const SystemContext& Context, const MouseClickEvent& Event) const
-{
-	const auto ClickedPair = GetClickableFromEvent(Context, Event);
-	if (!ClickedPair.has_value())
-		return;
-
-	const auto& [ClickedEntity, ClickedTagValue] = ClickedPair.value();
-	if (ClickedTagValue == ClickableTag::Invalid)
-	{
-		SDL_LogWarn(SDL_LOG_CATEGORY_INPUT, "PlayerInputSystem::OnMouseClick -> Clickable has invalid tag");
-		return;
-	}
-
-	Context.EventBus.Notify(Context, ClickableUsedEvent{ ClickedEntity, ClickedTagValue });
 }
