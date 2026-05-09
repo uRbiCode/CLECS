@@ -8,7 +8,6 @@
 #include "GameStateEvents.h"
 #include "HealthChangedEvent.h"
 #include "RunStateComponent.h"
-#include "AudioRequestsComponent.h"
 #include <cassert>
 
 namespace
@@ -136,7 +135,7 @@ void AudioSystem::Initialize(const SystemContext& Context)
 	});
 }
 
-void AudioSystem::Update(const SystemContext& Context, float DeltaTime)
+void AudioSystem::Update(SystemQuery<Writes<AudioRequestsComponent>, Reads<>>& Query, const SystemContext& Context, float DeltaTime)
 {
 	const auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
 	assert(AudioRequestsGroup.Size() == 1 && "Expected exactly one AudioRequestsComponent in the world");

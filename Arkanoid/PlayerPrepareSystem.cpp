@@ -9,7 +9,6 @@
 #include "TextComponent.h"
 #include "Constants.h"
 #include "RenderConstants.h"
-#include "PlayerPrepareComponent.h"
 #include "EntityAdmin.h"
 #include "InputState.h"
 #include "PlayerReadyEvent.h"
@@ -70,12 +69,8 @@ void PlayerPrepareSystem::Initialize(const SystemContext& Context)
 	});
 }
 
-void PlayerPrepareSystem::Update(const SystemContext& Context, float DeltaTime)
+void PlayerPrepareSystem::Update(SystemQuery<Writes<PlayerPrepareComponent>, Reads<>>& Query, const SystemContext& Context, float DeltaTime)
 {
-	const auto PrepareMessageGroup = Context.EntityAdmin.GetGroup<PlayerPrepareComponent>();
-	if (PrepareMessageGroup.Empty())
-		return;
-
 	if (ShouldCleanupPrepareMessage(Context))
 	{
 		CleanupPrepareMessage(Context);
@@ -83,11 +78,13 @@ void PlayerPrepareSystem::Update(const SystemContext& Context, float DeltaTime)
 		return;
 	}
 
-	auto& PlayerPrepareComp = Context.EntityAdmin.AccessComponent<PlayerPrepareComponent>(PrepareMessageGroup[0]);
-	PlayerPrepareComp.DisplayTimer -= DeltaTime;
-	if (PlayerPrepareComp.DisplayTimer > 0.f)
-		return;
+	Query.ForEach([&Context, DeltaTime](const Entity& Entity, PlayerPrepareComponent& PlayerPrepare)
+	{
+		PlayerPrepare.DisplayTimer -= DeltaTime;
+		if (PlayerPrepare.DisplayTimer > 0.f)
+			return;
 
-	PlayerPrepareComp.DisplayTimer = PrepareMessageDisplayDuration;
-	ChangeMessageVisibility(Context, PrepareMessageGroup[0]);
+		PlayerPrepare.DisplayTimer = PrepareMessageDisplayDuration;
+		ChangeMessageVisibility(Context, Entity);
+	});
 }

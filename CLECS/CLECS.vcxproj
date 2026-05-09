@@ -188,6 +188,7 @@
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemContext.h" />
     <ClInclude Include="SystemCollection.h" />
+    <ClInclude Include="SystemQuery.h" />
     <ClInclude Include="TextComponent.h" />
     <ClInclude Include="TextureComponent.h" />
     <ClInclude Include="TextureManager.h" />

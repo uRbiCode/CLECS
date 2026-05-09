@@ -1,6 +1,6 @@
 #pragma once
-
-struct SystemContext;
+#include "SystemQuery.h"
+#include "AudioRequestsComponent.h"
 
 /* Manages audio playback in the entire game.
  * Listens to various events and determines whether to play a sound in response.
@@ -9,5 +9,5 @@ struct SystemContext;
 namespace AudioSystem
 {
 	void Initialize(const SystemContext& Context);
-	void Update(const SystemContext& Context, float DeltaTime);
+	void Update(SystemQuery<Writes<AudioRequestsComponent>, Reads<>>& Query, const SystemContext& Context, float DeltaTime);
 }

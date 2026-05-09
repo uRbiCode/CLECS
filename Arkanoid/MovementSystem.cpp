@@ -1,8 +1,6 @@
 #include "MovementSystem.h"
 #include "SystemContext.h"
 #include "EntityAdmin.h"
-#include "VelocityComponent.h"
-#include "TransformComponent.h"
 #include "RunStateComponent.h"
 #include <cassert>
 
@@ -19,12 +17,12 @@ namespace
 	}
 }
 
-void MovementSystem::Update(const SystemContext& Context, float DeltaTime)
+void MovementSystem::Update(SystemQuery<Writes<TransformComponent>, Reads<VelocityComponent>>& Query, const SystemContext& Context, float DeltaTime)
 {
 	if (!ShouldUpdateMovement(Context))
 		return;
 
-	Context.EntityAdmin.GetGroup<TransformComponent, VelocityComponent>().ForEach([DeltaTime](const Entity& Entity, TransformComponent& Transform, const VelocityComponent& Velocity)
+	Query.ForEach([DeltaTime](const Entity& Entity, TransformComponent& Transform, const VelocityComponent& Velocity)
 	{
 		Transform.Position.X += Velocity.Velocity.X * DeltaTime;
 		Transform.Position.Y += Velocity.Velocity.Y * DeltaTime;

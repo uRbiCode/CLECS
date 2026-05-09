@@ -2,7 +2,6 @@
 #include "SystemContext.h"
 #include "EventBus.h"
 #include "CollisionEvent.h"
-#include "HealthComponent.h"
 #include "EntityAdmin.h"
 #include "CollisionComponent.h"
 #include "RunStateComponent.h"
@@ -64,7 +63,7 @@ void HealthSystem::Initialize(const SystemContext& Context)
 	});
 }
 
-void HealthSystem::Update(const SystemContext& Context, float DeltaTime)
+void HealthSystem::Update(SystemQuery<Writes<HealthComponent>, Reads<HealthComponent>>&, const SystemContext& Context, float DeltaTime)
 {
 	Context.EntityAdmin.GetGroup<HealthComponent>().ForEach([&Context](const Entity& Entity, const HealthComponent& Health)
 	{

@@ -30,23 +30,23 @@ bool Arkanoid::Initialize(WorldInitializationData& Data)
 {
 	AddGameStateComponent(Data.AccessEntityAdmin());
 
-	Data.AddSystem({ AudioSystem::Initialize, AudioSystem::Update });
-	Data.AddSystem({ PlayerInputSystem::Initialize, PlayerInputSystem::Update });
-	Data.AddSystem({ nullptr, CollisionDetectionSystem::Update });
-	Data.AddSystem({ CollisionKinematicResolverSystem::Initialize, nullptr });
-	Data.AddSystem({ HealthSystem::Initialize, HealthSystem::Update });
-	Data.AddSystem({ nullptr, MovementSystem::Update });
-	Data.AddSystem({ CurrentStageSystem::Initialize, nullptr });
-	Data.AddSystem({ UpgradeControllerSystem::Initialize, nullptr });
-	Data.AddSystem({ PlayerPrepareSystem::Initialize, PlayerPrepareSystem::Update });
-	Data.AddSystem({ MainMenuControllerSystem::Initialize, nullptr });
-	Data.AddSystem({ RunControllerSystem::Initialize, nullptr });
-	Data.AddSystem({ TutorialControllerSystem::Initialize, nullptr });
-	Data.AddSystem({ SummaryControllerSystem::Initialize, nullptr });
-	Data.AddSystem({ GameStateSystem::Initialize, nullptr });
-	Data.AddSystem({ HealthIndicatorSystem::Initialize, nullptr });
-	Data.AddSystem({ StageInfoSystem::Initialize, nullptr });
-	Data.AddSystem({ nullptr, RenderSystem::Update });
+	Data.AddSystem(AudioSystem::Initialize, AudioSystem::Update);
+	Data.AddSystem(PlayerInputSystem::Initialize, PlayerInputSystem::Update);
+	Data.AddSystem(nullptr, CollisionDetectionSystem::Update);
+	Data.AddSystem(CollisionKinematicResolverSystem::Initialize);
+	Data.AddSystem(HealthSystem::Initialize, HealthSystem::Update);
+	Data.AddSystem(nullptr, MovementSystem::Update);
+	Data.AddSystem(CurrentStageSystem::Initialize);
+	Data.AddSystem(UpgradeControllerSystem::Initialize);
+	Data.AddSystem(PlayerPrepareSystem::Initialize, PlayerPrepareSystem::Update);
+	Data.AddSystem(MainMenuControllerSystem::Initialize);
+	Data.AddSystem(RunControllerSystem::Initialize);
+	Data.AddSystem(TutorialControllerSystem::Initialize);
+	Data.AddSystem(SummaryControllerSystem::Initialize);
+	Data.AddSystem(GameStateSystem::Initialize);
+	Data.AddSystem(HealthIndicatorSystem::Initialize);
+	Data.AddSystem(StageInfoSystem::Initialize);
+	Data.AddSystem(nullptr, RenderSystem::Update);
 
 	return true;
 }

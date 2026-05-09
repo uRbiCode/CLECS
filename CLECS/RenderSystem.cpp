@@ -323,7 +323,7 @@ namespace
 	}
 }
 
-void RenderSystem::Update(const SystemContext& Context, float DeltaTime)
+void RenderSystem::Update(SystemQuery<Writes<>,Reads<TransformComponent, RenderComponent>>& Query, const SystemContext& Context, float DeltaTime)
 {
 	auto& Renderer = Context.Renderer;
 	auto& Admin = Context.EntityAdmin;

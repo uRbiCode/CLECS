@@ -1,6 +1,7 @@
 #pragma once
+#include "SDL3/SDL.h"
 
-// Usde by RenderSystem to set SDL_Renderer color.
+// Used by RenderSystem to set SDL_Renderer color.
 struct ColorComponent
 {
     SDL_FColor Color = {1.f, 1.f, 1.f, 1.f};

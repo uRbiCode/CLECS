@@ -1,6 +1,7 @@
 #pragma once
-#include "System.h"
+#include "SystemQuery.h"
 #include "RendererInitializationData.h"
+#include "SystemContext.h"
 #include <vector>
 #include <memory>
 
@@ -14,8 +15,29 @@ class WorldInitializationData
 public:
 	static WorldInitializationData Create();
 
-	void AddSystem(SystemDescriptor&& Descriptor)
+	template<typename... WriteTypes, typename... ReadTypes>
+	void AddSystem(
+		void(*Initialize)(const SystemContext&),
+		void(*Update)(SystemQuery<Writes<WriteTypes...>, Reads<ReadTypes...>>&, const SystemContext&, float))
 	{
+		SystemDescriptor Descriptor;
+		Descriptor.Initialize = Initialize;
+		Descriptor.ComponentAccesses = SystemQuery<Writes<WriteTypes...>, Reads<ReadTypes...>>::GetAccess();
+
+		Descriptor.Update = [Update](const SystemContext& Context, float DeltaTime)
+		{
+			SystemQuery<Writes<WriteTypes...>, Reads<ReadTypes...>> Query(Context.EntityAdmin);
+			Update(Query, Context, DeltaTime);
+		};
+
+		Descriptors.emplace_back(std::move(Descriptor));
+	}
+
+	// TODO: DELETE AFTER GAMEPLAY SYSTEMS REFACTOR
+	void AddSystem(void(*Initialize)(const SystemContext&))
+	{
+		SystemDescriptor Descriptor;
+		Descriptor.Initialize = Initialize;
 		Descriptors.emplace_back(std::move(Descriptor));
 	}
 

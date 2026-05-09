@@ -3,8 +3,6 @@
 #include "EntityAdmin.h"
 #include "InputState.h"
 #include "SDL3/SDL.h"
-#include "PlayerControllerComponent.h"
-#include "VelocityComponent.h"
 #include "EventBus.h"
 #include "MouseClickEvent.h"
 #include "ClickableComponent.h"
@@ -70,10 +68,10 @@ void PlayerInputSystem::Initialize(const SystemContext& Context)
 	});
 }
 
-void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime)
+void PlayerInputSystem::Update(SystemQuery<Writes<VelocityComponent>, Reads<PlayerControllerComponent>>& Query, const SystemContext& Context, float DeltaTime)
 {
 	const auto& Input = Context.Input;
-	Context.EntityAdmin.GetGroup<VelocityComponent, PlayerControllerComponent>().ForEach([&Input](const Entity& Entity, VelocityComponent& Velocity, const PlayerControllerComponent& Controller)
+	Query.ForEach([&Input](const Entity& Entity, VelocityComponent& Velocity, const PlayerControllerComponent& Controller)
 	{
 		Velocity.Velocity = { 0.f, 0.f };
 

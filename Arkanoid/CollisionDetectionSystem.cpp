@@ -1,8 +1,6 @@
 #include "CollisionDetectionSystem.h"
 #include "SystemContext.h"
 #include "EntityAdmin.h"
-#include "CollisionComponent.h"
-#include "TransformComponent.h"
 #include "ShapeComponents.h"
 #include "CollisionEvent.h"
 #include "EventBus.h"
@@ -133,7 +131,7 @@ namespace
 	}
 }
 
-void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaTime)
+void CollisionDetectionSystem::Update(SystemQuery<Writes<>, Reads<TransformComponent, CollisionComponent>>& Query, const SystemContext& Context, float DeltaTime)
 {
 	auto& Admin = Context.EntityAdmin;
 	const auto CollisionGroup = Admin.GetGroup<TransformComponent, CollisionComponent>();
