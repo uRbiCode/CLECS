@@ -23,7 +23,7 @@ public:
 	template<typename EventType>
 	void Subscribe(const void* SubscriberId, std::function<void(const SystemContext&, const EventType&)> Callback)
 	{
-		const auto TypeId  = std::type_index(typeid(EventType));
+		const auto TypeId = std::type_index(typeid(EventType));
 		const auto Wrapper = [Callback](const SystemContext& Context, const void* EventData)
 		{
 			Callback(Context, *static_cast<const EventType*>(EventData));
@@ -35,7 +35,7 @@ public:
 	void Unsubscribe(const void* SubscriberId)
 	{
 		const auto TypeId = std::type_index(typeid(EventType));
-		const auto It     = Subscribers.find(TypeId);
+		const auto It = Subscribers.find(TypeId);
 		if (It == Subscribers.end())
 			return;
 
@@ -54,7 +54,7 @@ public:
 	void Notify(const SystemContext& Context, const EventType& Event) const
 	{
 		const auto TypeId = std::type_index(typeid(EventType));
-		const auto It     = Subscribers.find(TypeId);
+		const auto It = Subscribers.find(TypeId);
 		if (It == Subscribers.end())
 			return;
 

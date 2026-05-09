@@ -85,9 +85,9 @@ namespace
 
 		auto& Velocity = Admin.AccessComponent<VelocityComponent>(Ball);
 
-		const Vector2D<float> PlayerCenter   = GetEntityCenter(Admin, Player);
-		const Vector2D<float> BallCenter     = GetEntityCenter(Admin, Ball);
-		const Vector2D<float> NewDirection   = GetDirection(PlayerCenter, BallCenter);
+		const Vector2D<float> PlayerCenter = GetEntityCenter(Admin, Player);
+		const Vector2D<float> BallCenter = GetEntityCenter(Admin, Ball);
+		const Vector2D<float> NewDirection = GetDirection(PlayerCenter, BallCenter);
 
 		const float CurrentSpeed = std::sqrt(Velocity.Velocity.X * Velocity.Velocity.X +
 		                                     Velocity.Velocity.Y * Velocity.Velocity.Y);

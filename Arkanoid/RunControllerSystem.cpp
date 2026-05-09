@@ -113,7 +113,7 @@ namespace
 	bool AdvanceToNextStage(const SystemContext& Context, int CurrentStageId)
 	{
 		const auto NextStageNumber = CurrentStageId + 1;
-		const auto StageDataOpt    = StageDataLoader::LoadStageDataByNumber(NextStageNumber);
+		const auto StageDataOpt = StageDataLoader::LoadStageDataByNumber(NextStageNumber);
 		if (!StageDataOpt.has_value())
 		{
 			SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "RunControllerSystem::AdvanceToNextStage -> No more stages found. Victory!");
@@ -168,7 +168,7 @@ namespace
 			return;
 		}
 
-		auto& RunStateComp       = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
+		auto& RunStateComp = Context.EntityAdmin.AccessComponent<RunStateComponent>(RunStateGroup[0]);
 		const auto NextStageNumber = RunStateComp.CurrentStage + 1;
 
 		if (StageDataLoader::IsStageDataAvailable(NextStageNumber) && AreUpgradesAvailable(Context))
@@ -182,7 +182,7 @@ namespace
 
 	void AddRunStateComponent(const SystemContext& Context)
 	{
-		auto& Admin           = Context.EntityAdmin;
+		auto& Admin = Context.EntityAdmin;
 		const auto RunStateEntity = Admin.CreateEntity();
 		Admin.AddComponent<RunStateComponent>(RunStateEntity, RunStateComponent{ RunState::PlayerPrepare });
 		Admin.AddComponent<HealthComponent>(RunStateEntity, HealthComponent{ InitialPlayerHealth });
@@ -192,7 +192,7 @@ namespace
 
 	void AddStageDataComponent(const SystemContext& Context)
 	{
-		auto& Admin             = Context.EntityAdmin;
+		auto& Admin = Context.EntityAdmin;
 		const auto StageDataEntity = Admin.CreateEntity();
 		Admin.AddComponent<StageDataComponent>(StageDataEntity);
 	}

@@ -30,7 +30,7 @@ namespace
 		if (!Context.EntityAdmin.HasComponent<RenderComponent>(Entity))
 			return;
 
-		auto& RenderComp  = Context.EntityAdmin.AccessComponent<RenderComponent>(Entity);
+		auto& RenderComp = Context.EntityAdmin.AccessComponent<RenderComponent>(Entity);
 		RenderComp.Visible = !RenderComp.Visible;
 	}
 
@@ -46,7 +46,7 @@ namespace
 	{
 		const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 		const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
-		auto& Admin                    = Context.EntityAdmin;
+		auto& Admin = Context.EntityAdmin;
 		const auto PrepareMessageEntity = Admin.CreateEntity();
 		Admin.AddComponent<TransformComponent>(PrepareMessageEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.75f });
 		Admin.AddComponent<RectComponent>(PrepareMessageEntity, SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y });

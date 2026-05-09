@@ -38,15 +38,15 @@ namespace
 		{
 			if (Collision.Channel == CollisionChannel::Player)
 			{
-				auto& Transform   = Context.EntityAdmin.AccessComponent<TransformComponent>(Entity);
+				auto& Transform = Context.EntityAdmin.AccessComponent<TransformComponent>(Entity);
 				Transform.Position = CurrentStageData.PlayerData.PositionSize.Position;
 			}
 			else if (Collision.Channel == CollisionChannel::Ball)
 			{
-				auto& Transform   = Context.EntityAdmin.AccessComponent<TransformComponent>(Entity);
+				auto& Transform = Context.EntityAdmin.AccessComponent<TransformComponent>(Entity);
 				Transform.Position = CurrentStageData.BallData.Position;
-				auto& Velocity    = Context.EntityAdmin.AccessComponent<VelocityComponent>(Entity);
-				Velocity.Velocity  = CurrentStageData.BallData.Velocity * UpgradeUtils::GetBallVelocityModifier(Context);
+				auto& Velocity = Context.EntityAdmin.AccessComponent<VelocityComponent>(Entity);
+				Velocity.Velocity = CurrentStageData.BallData.Velocity * UpgradeUtils::GetBallVelocityModifier(Context);
 			}
 		});
 	}

@@ -41,9 +41,9 @@ int GameRunner::Run(std::unique_ptr<Game> GameInstance)
 
 	World GameWorld;
 
-	if (!InitializeWorld(GameWorld, WorldInitializationData))
+	if (!InitializeWorld(GameWorld, std::move(WorldInitializationData)))
 	{
-		Shutdown(*GameInstance,GameWorld);
+		Shutdown(*GameInstance, GameWorld);
 		return 1;
 	}
 
@@ -63,9 +63,9 @@ bool GameRunner::InitializeSDL()
 	}
 	return true;
 }
-bool GameRunner::InitializeWorld(World& GameWorld, WorldInitializationData& Data)
+bool GameRunner::InitializeWorld(World& GameWorld, WorldInitializationData&& Data)
 {
-	const CLECS::ResultType Result = GameWorld.InitializeWorld(Data);
+	const CLECS::ResultType Result = GameWorld.InitializeWorld(std::move(Data));
 	if (Result != CLECS::ResultType::Success)
 	{
 		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "GameRunner::InitializeWorld -> World failed to initialize");

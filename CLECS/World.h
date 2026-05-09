@@ -1,13 +1,12 @@
 #pragma once
 #include "CoreTypes.h"
-#include "System.h"
+#include "SystemCollection.h"
 #include "EntityAdmin.h"
 #include "InputState.h"
 #include "EventBus.h"
 #include "TextureManager.h"
 #include "AudioManager.h"
 #include "FontManager.h"
-#include <vector>
 #include <memory>
 
 class WorldInitializationData;
@@ -29,7 +28,7 @@ public:
 	World(const World&) = delete;
 	World& operator=(const World&) = delete;
 
-	CLECS::ResultType InitializeWorld(WorldInitializationData& Data);
+	CLECS::ResultType InitializeWorld(WorldInitializationData&& Data);
 	CLECS::ResultType Update(float DeltaTime);
 	void Shutdown();
 
@@ -43,12 +42,14 @@ private:
 	SystemContext MakeSystemContext();
 
 	std::unique_ptr<EntityAdmin> EntityAdminPtr;
-	std::vector<SystemDescriptor> Systems;
+	SystemCollection Systems;
 	InputState Input;
 	EventBus EventBus;
+
 	std::unique_ptr<TextureManager> TextureManagerPtr;
 	std::unique_ptr<AudioManager> AudioManagerPtr;
 	std::unique_ptr<FontManager> FontManagerPtr;
+
 	SDL_Window* Window = nullptr;
 	SDL_Renderer* Renderer = nullptr;
 };

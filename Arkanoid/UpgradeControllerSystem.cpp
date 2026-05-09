@@ -81,12 +81,12 @@ namespace
 
 		const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.4f };
 
-		const float UpgradeCount     = static_cast<float>(Upgrades.size());
-		const float TotalWidth       = LogicalPresentation.X * 0.8f;
+		const float UpgradeCount = static_cast<float>(Upgrades.size());
+		const float TotalWidth = LogicalPresentation.X * 0.8f;
 		const float TotalButtonWidth = ButtonSize.X * UpgradeCount;
 		const float AvailableSpacing = TotalWidth - TotalButtonWidth;
-		const float Spacing          = AvailableSpacing / (UpgradeCount + 1.f);
-		const float StartX           = LogicalPresentation.X * 0.1f;
+		const float Spacing = AvailableSpacing / (UpgradeCount + 1.f);
+		const float StartX = LogicalPresentation.X * 0.1f;
 
 		for (size_t i = 0; i < Upgrades.size(); ++i)
 		{
@@ -114,7 +114,7 @@ namespace
 		}
 
 		const auto& SelectedUpgradeDefinition = Context.EntityAdmin.GetComponent<UpgradeComponent>(Entity).UpgradeDefinition;
-		const auto OwnedUpgradesGroup         = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
+		const auto OwnedUpgradesGroup = Context.EntityAdmin.GetGroup<OwnedUpgradesComponent>();
 		assert(OwnedUpgradesGroup.Size() == 1 && "Expected exactly one OwnedUpgradesComponent in the world");
 		if (OwnedUpgradesGroup.Empty())
 		{

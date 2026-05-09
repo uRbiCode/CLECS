@@ -171,5 +171,8 @@
     <ClInclude Include="RingBuffer.h">
       <Filter>Source\Core\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="SystemCollection.h">
+      <Filter>Source\Core\System</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

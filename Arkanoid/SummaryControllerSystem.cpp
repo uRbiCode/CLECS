@@ -44,8 +44,8 @@ namespace
 
 	void AddMainMenuButton(const SystemContext& Context)
 	{
-		const auto LogicalPresentation       = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-		const Vector2D<float> ButtonSize     = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
+		const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+		const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
 
 		auto& Admin = Context.EntityAdmin;
 		const auto MainMenuButtonEntity = Admin.CreateEntity();

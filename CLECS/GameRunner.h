@@ -15,7 +15,7 @@ public:
 
 private:
 	static bool InitializeSDL();
-	static bool InitializeWorld(World& GameWorld, WorldInitializationData& Data);
+	static bool InitializeWorld(World& GameWorld, WorldInitializationData&& Data);
 	static int RunGameLoop(World& GameWorld);
 	static void Shutdown(Game& GameInstance, World& GameWorld);
 };
