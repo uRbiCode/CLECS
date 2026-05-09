@@ -40,9 +40,6 @@ void EntityAdmin::DestroyEntity(const Entity& Entity)
 
 bool EntityAdmin::IsEntityValid(const Entity& Entity) const
 {
-	if (!Entity.IsValid())
-		return false;
-
 	const auto EntityId = Entity.GetId();
 	if (EntityId >= EntityVersions.size())
 		return false;

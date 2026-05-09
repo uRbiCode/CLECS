@@ -2,33 +2,15 @@
 #include <cstdint>
 #include <functional>
 
-constexpr uint32_t EntityMask = 0xFFFFF;   
-constexpr uint32_t VersionMask = 0xFFF;
-constexpr uint32_t EntityShift = 0;
-constexpr uint32_t VersionShift = 20;
-
 /* Entity is a fundmanetal concept in CLECS architecture.
  * Represents a unique instance in a world that we can attach components to.
- * It consists of an Id and a version, both packed into a single uint32_t for memory efficiency.
+ * Consits of and id and version number.
  */
 struct Entity
 {
-	Entity() = default;
+	[[nodiscard]] uint32_t GetId() const { return Identifier; }
 
-	[[nodiscard]] uint32_t GetId() const
-	{
-		return (Identifier >> EntityShift) & EntityMask;
-	}
-
-	[[nodiscard]] uint32_t GetVersion() const
-	{
-		return (Identifier >> VersionShift) & VersionMask;
-	}
-
-	[[nodiscard]] bool IsValid() const
-	{
-		return Identifier != 0;
-	}
+	[[nodiscard]] uint32_t GetVersion() const { return Version; }
 
 	bool operator==(const Entity& Other) const
 	{
@@ -41,29 +23,17 @@ struct Entity
 	}
 
 private:
-	uint32_t Identifier = 0;
-
+	Entity() = default;
 	static Entity Create(uint32_t Id, uint32_t Version)
 	{
 		Entity NewEntity;
-		const auto MaskedId = Id & EntityMask;
-		const auto MaskedVersion = Version & VersionMask;
-		NewEntity.Identifier = static_cast<uint32_t>((MaskedId << EntityShift) | (MaskedVersion << VersionShift));
+		NewEntity.Identifier = Id;
+		NewEntity.Version = Version;
 		return NewEntity;
 	}
 
-	friend class EntityAdmin;
-	friend struct std::hash<Entity>;
-};
+	uint32_t Identifier = 0;
+	uint32_t Version = 0;
 
-namespace std
-{
-	template <>
-	struct hash<Entity>
-	{
-		size_t operator()(const Entity& Entity) const noexcept
-		{
-			return hash<uint32_t>()(Entity.Identifier);
-		}
-	};
-}
+	friend class EntityAdmin;
+};
