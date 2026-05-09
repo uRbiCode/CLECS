@@ -1,14 +1,12 @@
 #pragma once
-#include "System.h"
+#include "SystemQuery.h"
+#include "VelocityComponent.h"
+#include "TransformComponent.h"
 
 /* Responsible for updating the movement of entities.
  * So basically applies velocity to transform.
  */
-class MovementSystem : public System
+namespace MovementSystem
 {
-public:
-	void Update(const SystemContext& Context, float DeltaTime) const override;
-
-private:
-	bool ShouldUpdateMovement(const SystemContext& Context) const;
-};
+	void Update(SystemQuery<Writes<TransformComponent>, Reads<VelocityComponent>>& Query, const SystemContext& Context, float DeltaTime);
+}

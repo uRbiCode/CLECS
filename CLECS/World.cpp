@@ -8,7 +8,7 @@ World::~World()
 	Shutdown();
 }
 
-CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
+CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
 {
 	if (!CreateWindow(Data.RendererConfig))
 	{
@@ -38,12 +38,23 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData& Data)
 	InitializeFontManager();
 
 	EntityAdminPtr = std::move(Data.EntityAdminPtr);
-	Systems = std::move(Data.Systems);
 
+	// Build the stage graph from declared component access.
+	// The scheduler determines which systems can share a stage and which must be separated.
+	Systems.Initialize(std::move(Data.Descriptors));
+
+	// Initialize all systems in stage order, serially.
+	// Registration order within each stage is preserved.
 	const auto Context = MakeSystemContext();
-	for (const auto& System : Systems)
+	for (const auto& Stage : Systems.GetStages())
 	{
-		System->Initialize(Context);
+		for (const auto& Descriptor : Stage)
+		{
+			if (Descriptor.Initialize == nullptr)
+				continue;
+
+			Descriptor.Initialize(Context);
+		}
 	}
 
 	return CLECS::ResultType::Success;
@@ -65,9 +76,15 @@ CLECS::ResultType World::Update(float DeltaTime)
 	const auto Context = MakeSystemContext();
 	SendInputEvents(Context);
 
-	for (const auto& CurrentSystem : Systems)
+	for (const auto& Stage : Systems.GetStages())
 	{
-		CurrentSystem->Update(Context, DeltaTime);
+		for (const auto& Descriptor : Stage)
+		{
+			if (Descriptor.Update == nullptr)
+				continue;
+
+			Descriptor.Update(Context, DeltaTime);
+		}
 	}
 
 	return CLECS::ResultType::Success;

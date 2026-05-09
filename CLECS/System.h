@@ -1,20 +1,32 @@
 #pragma once
-#include <concepts>
+#include <functional>
+#include <typeindex>
+#include <vector>
 
 struct SystemContext;
 
-/* System is a fundamental concept in CLECS architecture. 
- * It represents a piece of logic that operates on entities that have specific components attached to them.
- * Systems are to be stateless, and they should not store any data themselves. Instead, they should operate on the data stored in components.
- */
-class System
-{
-public:
-	virtual ~System() = default;
-
-	virtual void Initialize(const SystemContext& Context) const {}
-	virtual void Update(const SystemContext& Context, float DeltaTime) const {}
+enum class ComponentAccessMode 
+{ 
+	Read,
+	Write 
 };
 
-template<class T>
-concept SystemType = std::derived_from<T, System>;
+struct ComponentAccess
+{
+	std::type_index ComponentType;
+	ComponentAccessMode AccessMode;
+};
+
+/* System is a fundamental concept in CLECS architecture.
+ * It represents a piece of logic that operates on entities that have specific components attached to them.
+ * Systems are stateless, and they do not store any data themselves. Instead, they operate on the data stored in components.
+ */
+struct SystemDescriptor
+{
+	using UpdateFunction = std::function<void(const SystemContext&, float)>;
+	using InitializeFunction = std::function<void(const SystemContext&)>;
+
+	InitializeFunction Initialize;
+	UpdateFunction Update;
+	std::vector<ComponentAccess> ComponentAccesses;
+};

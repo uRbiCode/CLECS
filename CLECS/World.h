@@ -1,21 +1,19 @@
 #pragma once
 #include "CoreTypes.h"
-#include "System.h"
+#include "SystemCollection.h"
 #include "EntityAdmin.h"
 #include "InputState.h"
 #include "EventBus.h"
 #include "TextureManager.h"
 #include "AudioManager.h"
-#include <vector>
-#include <memory>
 #include "FontManager.h"
+#include <memory>
 
 class WorldInitializationData;
 struct SDL_Window;
 struct SDL_Renderer;
 struct RendererInitializationData;
-
-using SystemCollection = std::vector<std::unique_ptr<System>>;
+struct SystemContext;
 
 /* World is the heart of CLECS architecture.
  * It owns the SDL and CLECS resources and manages their lifecycle.
@@ -30,7 +28,7 @@ public:
 	World(const World&) = delete;
 	World& operator=(const World&) = delete;
 
-	CLECS::ResultType InitializeWorld(WorldInitializationData& Data);
+	CLECS::ResultType InitializeWorld(WorldInitializationData&& Data);
 	CLECS::ResultType Update(float DeltaTime);
 	void Shutdown();
 
@@ -41,16 +39,17 @@ private:
 	void InitializeAudioManager();
 	void InitializeFontManager();
 	void SendInputEvents(const SystemContext& Context);
-
 	SystemContext MakeSystemContext();
 
 	std::unique_ptr<EntityAdmin> EntityAdminPtr;
 	SystemCollection Systems;
 	InputState Input;
 	EventBus EventBus;
+
 	std::unique_ptr<TextureManager> TextureManagerPtr;
 	std::unique_ptr<AudioManager> AudioManagerPtr;
 	std::unique_ptr<FontManager> FontManagerPtr;
+
 	SDL_Window* Window = nullptr;
 	SDL_Renderer* Renderer = nullptr;
 };
