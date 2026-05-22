@@ -88,6 +88,9 @@
     <ClCompile Include="SDLUtils.cpp">
       <Filter>Source\Core\Utils\SDLUtils</Filter>
     </ClCompile>
+    <ClCompile Include="SystemCollection.cpp">
+      <Filter>Source\Core\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="World.h">
