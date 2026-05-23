@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -157,8 +157,10 @@
     <ClCompile Include="Archetype.cpp" />
     <ClCompile Include="ArchetypeStorage.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="CoreModule.cpp" />
     <ClCompile Include="EntityAdmin.cpp" />
     <ClCompile Include="FontManager.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameRunner.cpp" />
     <ClCompile Include="InputState.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
@@ -173,7 +175,9 @@
     <ClInclude Include="ArchetypeStorage.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Column.h" />
+    <ClInclude Include="ComponentsInitializationData.h" />
     <ClInclude Include="ComponentPool.h" />
+    <ClInclude Include="CoreModule.h" />
     <ClInclude Include="EventBus.h" />
     <ClInclude Include="CoreTypes.h" />
     <ClInclude Include="Entity.h" />
@@ -183,6 +187,8 @@
     <ClInclude Include="GameRunner.h" />
     <ClInclude Include="InputState.h" />
     <ClInclude Include="MathTypes.h" />
+    <ClInclude Include="ModuleBase.h" />
+    <ClInclude Include="ModulesInitializationData.h" />
     <ClInclude Include="MouseClickEvent.h" />
     <ClInclude Include="RenderConstants.h" />
     <ClInclude Include="RenderComponent.h" />
@@ -191,10 +197,12 @@
     <ClInclude Include="RingBuffer.h" />
     <ClInclude Include="SDLUtils.h" />
     <ClInclude Include="ShapeComponents.h" />
+    <ClInclude Include="StartupSystemsInitializationData.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemContext.h" />
     <ClInclude Include="SystemCollection.h" />
     <ClInclude Include="SystemQuery.h" />
+    <ClInclude Include="SystemsInitializationData.h" />
     <ClInclude Include="Table.h" />
     <ClInclude Include="TextComponent.h" />
     <ClInclude Include="TextureComponent.h" />

@@ -4,6 +4,7 @@
 class Game;
 class World;
 class WorldInitializationData;
+class RendererInitializationData;
 
 /* GameRunner manages the lifecycle of a CLECS game.
  * It handles SDL initialization and the main game loop.
@@ -15,7 +16,7 @@ public:
 
 private:
 	static bool InitializeSDL();
-	static bool InitializeWorld(World& GameWorld, WorldInitializationData&& Data);
+	static bool InitializeWorld(World& GameWorld, WorldInitializationData&& WorldData, RendererInitializationData&& RendererData);
 	static int RunGameLoop(World& GameWorld);
 	static void Shutdown(Game& GameInstance, World& GameWorld);
 };

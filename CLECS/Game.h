@@ -1,28 +1,25 @@
 #pragma once
-#include <memory>
+#include "RendererInitializationData.h"
 
-class WorldInitializationData;
-struct RendererInitializationData;
+struct ModulesInitializationData;
 
 /* Game is the main entry point for CLECS games.
- * You must inherit from this class and use CLECS_DEFINE_GAME_ENTRY macro to define the entry point of the game.
+ * You must inherit from this class to define the entry point of the game.
  */
 class Game
 {
 public:
 	virtual ~Game() = default;
 
-	virtual bool Initialize(WorldInitializationData& Data) = 0;
+	void InitializeModules(ModulesInitializationData& Data) const;
 
-	virtual void Shutdown() = 0;
+	virtual void Shutdown() const = 0;
 
 	virtual RendererInitializationData GetRendererConfig() const = 0;
+
+protected:
+	virtual void RegisterGameModules(ModulesInitializationData& Data) const = 0;
+
+private:
+	void RegisterCoreModules(ModulesInitializationData& Data) const;
 };
-
-std::unique_ptr<Game> CreateGame();
-
-#define CLECS_DEFINE_GAME_ENTRY(GameClass) \
-	std::unique_ptr<Game> CreateGame() \
-	{ \
-		return std::make_unique<GameClass>(); \
-	}

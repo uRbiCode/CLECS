@@ -59,6 +59,15 @@
     <Filter Include="Source\Core\Archetype">
       <UniqueIdentifier>{8545b04a-a761-4260-a1dd-67a616d4cce9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Module">
+      <UniqueIdentifier>{ece7377f-5d95-49ca-b876-f9e90408243e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\World\InitializationData">
+      <UniqueIdentifier>{6557ca33-3b2a-4d7b-b104-c504c4dd6e2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Module\Modules">
+      <UniqueIdentifier>{a8a234f9-0677-45cc-8703-678d3e73bf31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -69,9 +78,6 @@
     </ClCompile>
     <ClCompile Include="GameRunner.cpp">
       <Filter>Source\GameEntry</Filter>
-    </ClCompile>
-    <ClCompile Include="WorldInitializationData.cpp">
-      <Filter>Source\Core\World</Filter>
     </ClCompile>
     <ClCompile Include="InputState.cpp">
       <Filter>Source\Core\World\InputState</Filter>
@@ -98,7 +104,16 @@
       <Filter>Source\Core\Archetype</Filter>
     </ClCompile>
     <ClCompile Include="ArchetypeStorage.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Core\Archetype</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldInitializationData.cpp">
+      <Filter>Source\Core\World\InitializationData</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source\GameEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreModule.cpp">
+      <Filter>Source\Module\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -128,9 +143,6 @@
     </ClInclude>
     <ClInclude Include="GameRunner.h">
       <Filter>Source\GameEntry</Filter>
-    </ClInclude>
-    <ClInclude Include="WorldInitializationData.h">
-      <Filter>Source\Core\World</Filter>
     </ClInclude>
     <ClInclude Include="RendererInitializationData.h">
       <Filter>Source\GameEntry</Filter>
@@ -198,6 +210,29 @@
     <ClInclude Include="Archetype.h">
       <Filter>Source\Core\Archetype</Filter>
     </ClInclude>
-    <ClInclude Include="ArchetypeStorage.h" />
+    <ClInclude Include="ModuleBase.h">
+      <Filter>Source\Module</Filter>
+    </ClInclude>
+    <ClInclude Include="ArchetypeStorage.h">
+      <Filter>Source\Core\Archetype</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldInitializationData.h">
+      <Filter>Source\Core\World\InitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentsInitializationData.h">
+      <Filter>Source\Core\World\InitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemsInitializationData.h">
+      <Filter>Source\Core\World\InitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="StartupSystemsInitializationData.h">
+      <Filter>Source\Core\World\InitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="ModulesInitializationData.h">
+      <Filter>Source\Core\World\InitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreModule.h">
+      <Filter>Source\Module\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -203,25 +203,6 @@ namespace
 			RenderCircle(&Renderer, Center, Circle.Radius * std::max(Transform.Scale.X, Transform.Scale.Y),
 				IsFilled(Context, Entity), { 1.f, 1.f, 1.f, 1.f });
 		}
-
-		if (Admin.HasComponent<LineComponent>(Entity))
-		{
-			const auto& Line = Admin.GetComponent<LineComponent>(Entity);
-			Vector2D<float> Point1 = {
-				Transform.Position.X + Line.Start.X * Transform.Scale.X,
-				Transform.Position.Y + Line.Start.Y * Transform.Scale.Y
-			};
-			Vector2D<float> Point2 = {
-				Transform.Position.X + Line.End.X * Transform.Scale.X,
-				Transform.Position.Y + Line.End.Y * Transform.Scale.Y
-			};
-			if (Transform.Rotation != 0.f)
-			{
-				Point1 = RotatePoint(Point1, Transform.Position, Transform.Rotation);
-				Point2 = RotatePoint(Point2, Transform.Position, Transform.Rotation);
-			}
-			SDL_RenderLine(&Renderer, Point1.X, Point1.Y, Point2.X, Point2.Y);
-		}
 	}
 
 	void RenderText(const SystemContext& Context, const Entity& Entity, const RenderData& RenderData)

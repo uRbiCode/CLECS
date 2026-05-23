@@ -86,6 +86,9 @@
     <Filter Include="Source\Systems\PlayerPrepareSystem">
       <UniqueIdentifier>{0a9978bb-2dbb-4759-be79-a5ae8df1cfe0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Modules">
+      <UniqueIdentifier>{f9f5f13b-2504-4777-9976-35b7491f934e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -159,6 +162,9 @@
     </ClCompile>
     <ClCompile Include="PlayerPrepareSystem.cpp">
       <Filter>Source\Systems\PlayerPrepareSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidModule.cpp">
+      <Filter>Source\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -290,6 +296,9 @@
     </ClInclude>
     <ClInclude Include="PlayerReadyEvent.h">
       <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidModule.h">
+      <Filter>Source\Modules</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

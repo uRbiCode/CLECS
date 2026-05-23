@@ -83,6 +83,9 @@ void GameStateSystem::Initialize(const SystemContext& Context)
 		ChangeGameState(Context, Event.NewState);
 	});
 
+	const auto GameStateEntity = Context.EntityAdmin.CreateEntity();
+	Context.EntityAdmin.AddComponent<GameStateComponent>(GameStateEntity, GameState::MainMenu);
+
 	AddBackgroundRenderEntity(Context);
 	InitializeCurrentState(Context);
 }

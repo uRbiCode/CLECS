@@ -3,6 +3,9 @@
 #include <vector>
 
 using SystemStage = std::vector<SystemDescriptor>;
+struct SystemsInitializationData;
+
+// TODO: REFACTOR STAGING SYSTEMS, REMEMBER MOVE FOR INITIALIZE
 
 /* Holds an ordered list of stages.
  *
@@ -14,8 +17,7 @@ using SystemStage = std::vector<SystemDescriptor>;
 class SystemCollection
 {
 public:
-    void Initialize(std::vector<SystemDescriptor>&& Descriptors);
-    
+    void Initialize(SystemsInitializationData&& Data);
 
     const std::vector<SystemStage>& GetStages() const { return Stages; }
 

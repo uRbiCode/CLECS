@@ -8,9 +8,9 @@ World::~World()
 	Shutdown();
 }
 
-CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
+CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data, RendererInitializationData&& RendererData)
 {
-	if (!CreateWindow(Data.RendererConfig))
+	if (!CreateWindow(RendererData))
 	{
 		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeWorld -> Failed to create window");
 		return CLECS::ResultType::Failure;
@@ -24,8 +24,8 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
 
 	if (!SDL_SetRenderLogicalPresentation(
 		Renderer,
-		Data.RendererConfig.WindowWidth,
-		Data.RendererConfig.WindowHeight,
+		RendererData.WindowWidth,
+		RendererData.WindowHeight,
 		SDL_LOGICAL_PRESENTATION_LETTERBOX
 	))
 	{
@@ -37,11 +37,11 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
 	InitializeAudioManager();
 	InitializeFontManager();
 
-	EntityAdminPtr = std::move(Data.EntityAdminPtr);
+	EntityAdminPtr = std::make_unique<EntityAdmin>();
 
 	// Build the stage graph from declared component access.
 	// The scheduler determines which systems can share a stage and which must be separated.
-	Systems.Initialize(std::move(Data.Descriptors));
+	Systems.Initialize(std::move(Data.SystemsData));
 
 	// Initialize all systems in stage order, serially.
 	// Registration order within each stage is preserved.

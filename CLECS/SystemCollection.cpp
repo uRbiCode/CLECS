@@ -1,11 +1,12 @@
 #include "SystemCollection.h"
+#include "SystemsInitializationData.h"
 #include <optional>
 
-void SystemCollection::Initialize(std::vector<SystemDescriptor>&& Descriptors)
+void SystemCollection::Initialize(SystemsInitializationData&& Data)
 {
 	Stages.clear();
 
-	for (SystemDescriptor& Descriptor : Descriptors)
+	for (SystemDescriptor& Descriptor : Data.AccessRegisteredSystems())
 	{
 		std::optional<size_t> LastConflict = std::nullopt;
 		for (size_t i = 0; i < Stages.size(); ++i)

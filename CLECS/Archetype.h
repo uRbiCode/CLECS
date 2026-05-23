@@ -1,7 +1,6 @@
 #pragma once
 #include "Table.h"
 #include "Entity.h"
-#include <set>
 #include <typeindex>
 #include <vector>
 #include <cstddef>

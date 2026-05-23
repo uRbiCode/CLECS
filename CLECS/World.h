@@ -28,7 +28,7 @@ public:
 	World(const World&) = delete;
 	World& operator=(const World&) = delete;
 
-	CLECS::ResultType InitializeWorld(WorldInitializationData&& Data);
+	CLECS::ResultType InitializeWorld(WorldInitializationData&& Data, RendererInitializationData&& RendererData);
 	CLECS::ResultType Update(float DeltaTime);
 	void Shutdown();
 
