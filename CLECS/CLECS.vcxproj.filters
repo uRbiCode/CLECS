@@ -56,6 +56,9 @@
     <Filter Include="Source\Core\Utils\SDLUtils">
       <UniqueIdentifier>{45a5158f-64cb-4955-b7e7-9a9b6e7acf9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\Archetype">
+      <UniqueIdentifier>{8545b04a-a761-4260-a1dd-67a616d4cce9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -90,6 +93,9 @@
     </ClCompile>
     <ClCompile Include="SystemCollection.cpp">
       <Filter>Source\Core\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Archetype.cpp">
+      <Filter>Source\Core\Archetype</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +185,15 @@
     </ClInclude>
     <ClInclude Include="SystemQuery.h">
       <Filter>Source\Core\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Column.h">
+      <Filter>Source\Core\Archetype</Filter>
+    </ClInclude>
+    <ClInclude Include="Table.h">
+      <Filter>Source\Core\Archetype</Filter>
+    </ClInclude>
+    <ClInclude Include="Archetype.h">
+      <Filter>Source\Core\Archetype</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
