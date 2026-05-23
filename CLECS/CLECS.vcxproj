@@ -155,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Archetype.cpp" />
+    <ClCompile Include="ArchetypeStorage.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="EntityAdmin.cpp" />
     <ClCompile Include="FontManager.cpp" />
@@ -169,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Archetype.h" />
+    <ClInclude Include="ArchetypeStorage.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Column.h" />
     <ClInclude Include="ComponentPool.h" />

@@ -1,8 +1,6 @@
 #pragma once
-
 #include "Table.h"
 #include "Entity.h"
-
 #include <set>
 #include <typeindex>
 #include <vector>
@@ -14,8 +12,7 @@ class ArchetypeBase
 {
 public:
 	virtual ~ArchetypeBase() = default;
-
-	virtual void SwapRemoveRow(const Entity& Entity) = 0;
+	virtual void SwapRemoveRow(Entity Entity) = 0;
 };
 
 template<typename... Components>
@@ -31,7 +28,7 @@ public:
 		InternalTable.SwapRemoveRow(Entity);
 	}
 
-	void EmplaceBack(const Entity& Entity, Components&&... Args)
+	void EmplaceBack(Entity Entity, Components&&... Args)
 	{
 		InternalTable.EmplaceBack(Entity, std::forward(Args)...);
 	}

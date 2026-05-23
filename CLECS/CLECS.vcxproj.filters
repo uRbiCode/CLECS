@@ -97,6 +97,9 @@
     <ClCompile Include="Archetype.cpp">
       <Filter>Source\Core\Archetype</Filter>
     </ClCompile>
+    <ClCompile Include="ArchetypeStorage.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="World.h">
@@ -195,5 +198,6 @@
     <ClInclude Include="Archetype.h">
       <Filter>Source\Core\Archetype</Filter>
     </ClInclude>
+    <ClInclude Include="ArchetypeStorage.h" />
   </ItemGroup>
 </Project>
