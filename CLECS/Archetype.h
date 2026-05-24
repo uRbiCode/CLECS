@@ -12,6 +12,7 @@ class ArchetypeBase
 public:
 	virtual ~ArchetypeBase() = default;
 	virtual void SwapRemoveRow(Entity Entity) = 0;
+	virtual void Reserve(size_t EntityCount) = 0;
 };
 
 template<typename... Components>
@@ -22,7 +23,7 @@ public:
 	Archetype(const Archetype&) = delete;
 	Archetype& operator=(const Archetype&) = delete;
 
-	void Reserve(size_t EntityCount)
+	void Reserve(size_t EntityCount) override
 	{
 		InternalTable.Reserve(EntityCount);
 	}
