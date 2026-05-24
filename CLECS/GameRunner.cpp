@@ -59,12 +59,20 @@ bool GameRunner::InitializeSDL()
 
 bool GameRunner::InitializeWorld(World& GameWorld, WorldInitializationData&& WorldData, RendererInitializationData&& RendererData)
 {
-	const CLECS::ResultType Result = GameWorld.InitializeWorld(std::move(WorldData), std::move(RendererData));
+	CLECS::ResultType Result = GameWorld.InitializeRenderer(std::move(RendererData));
+	if (Result != CLECS::ResultType::Success)
+	{
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "GameRunner::InitializeWorld -> World failed to initialize renderer");
+		return false;
+	}
+
+	Result = GameWorld.InitializeWorld(std::move(WorldData));
 	if (Result != CLECS::ResultType::Success)
 	{
 		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "GameRunner::InitializeWorld -> World failed to initialize");
 		return false;
 	}
+
 	return true;
 }
 

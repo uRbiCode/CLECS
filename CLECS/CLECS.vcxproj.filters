@@ -97,7 +97,7 @@
     <ClCompile Include="SDLUtils.cpp">
       <Filter>Source\Core\Utils\SDLUtils</Filter>
     </ClCompile>
-    <ClCompile Include="SystemCollection.cpp">
+    <ClCompile Include="SystemsCollection.cpp">
       <Filter>Source\Core\System</Filter>
     </ClCompile>
     <ClCompile Include="Archetype.cpp">
@@ -114,6 +114,9 @@
     </ClCompile>
     <ClCompile Include="CoreModule.cpp">
       <Filter>Source\Module\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentTypesCollection.cpp">
+      <Filter>Source\Core\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -195,7 +198,7 @@
     <ClInclude Include="RingBuffer.h">
       <Filter>Source\Core\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="SystemCollection.h">
+    <ClInclude Include="SystemsCollection.h">
       <Filter>Source\Core\System</Filter>
     </ClInclude>
     <ClInclude Include="SystemQuery.h">
@@ -233,6 +236,9 @@
     </ClInclude>
     <ClInclude Include="CoreModule.h">
       <Filter>Source\Module\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentTypesCollection.h">
+      <Filter>Source\Core\Component</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

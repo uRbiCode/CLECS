@@ -5,7 +5,7 @@
 using SystemStage = std::vector<SystemDescriptor>;
 struct SystemsInitializationData;
 
-// TODO: REFACTOR STAGING SYSTEMS, REMEMBER MOVE FOR INITIALIZE
+// TODO: REFACTOR STAGING SYSTEMS
 
 /* Holds an ordered list of stages.
  *
@@ -14,16 +14,16 @@ struct SystemsInitializationData;
  * Two systems conflict when they share a component type and at least one writes it.
  * Each stage is safe to run concurrently.
  */
-class SystemCollection
+class SystemsCollection
 {
 public:
-    void Initialize(SystemsInitializationData&& Data);
+	static SystemsCollection Create(SystemsInitializationData&& Data);
 
     const std::vector<SystemStage>& GetStages() const { return Stages; }
 
 private:
-    bool ConflictsWithStage(const SystemDescriptor& Candidate, const SystemStage& Stage) const;
-    bool HasAccessConflict(const std::vector<ComponentAccess>& A, const std::vector<ComponentAccess>& B) const;
+    static bool ConflictsWithStage(const SystemDescriptor& Candidate, const SystemStage& Stage);
+    static bool HasAccessConflict(const std::vector<ComponentAccess>& A, const std::vector<ComponentAccess>& B);
 
     std::vector<SystemStage> Stages;
 };

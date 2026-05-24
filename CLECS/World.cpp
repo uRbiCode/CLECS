@@ -8,43 +8,40 @@ World::~World()
 	Shutdown();
 }
 
-CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data, RendererInitializationData&& RendererData)
+CLECS::ResultType World::InitializeRenderer(RendererInitializationData&& RendererData)
 {
 	if (!CreateWindow(RendererData))
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeWorld -> Failed to create window");
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeRenderer -> Failed to create window");
 		return CLECS::ResultType::Failure;
 	}
 
 	if (!CreateRenderer())
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeWorld -> Failed to create renderer");
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeRenderer -> Failed to create renderer");
 		return CLECS::ResultType::Failure;
 	}
 
-	if (!SDL_SetRenderLogicalPresentation(
-		Renderer,
-		RendererData.WindowWidth,
-		RendererData.WindowHeight,
-		SDL_LOGICAL_PRESENTATION_LETTERBOX
-	))
+	if (!SDL_SetRenderLogicalPresentation(Renderer, RendererData.WindowWidth, RendererData.WindowHeight, SDL_LOGICAL_PRESENTATION_LETTERBOX))
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeWorld -> Failed to set logical presentation: %s", SDL_GetError());
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeRenderer -> Failed to set logical presentation: %s", SDL_GetError());
 		return CLECS::ResultType::Failure;
 	}
 
+	return CLECS::ResultType::Success;
+}
+
+CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
+{
 	InitializeTextureManager();
 	InitializeAudioManager();
 	InitializeFontManager();
 
 	EntityAdminPtr = std::make_unique<EntityAdmin>();
 
-	// Build the stage graph from declared component access.
-	// The scheduler determines which systems can share a stage and which must be separated.
-	Systems.Initialize(std::move(Data.SystemsData));
+	Archetypes = ArchetypeStorage::Create(std::move(ComponentTypesCollection::Create(Data.ComponentsData)));
+	Systems = SystemsCollection::Create(std::move(Data.SystemsData));
 
-	// Initialize all systems in stage order, serially.
-	// Registration order within each stage is preserved.
 	const auto Context = MakeSystemContext();
 	for (const auto& Stage : Systems.GetStages())
 	{
@@ -122,12 +119,7 @@ void World::Shutdown()
 
 bool World::CreateWindow(const RendererInitializationData& Data)
 {
-	Window = SDL_CreateWindow(
-		Data.WindowTitle,
-		Data.WindowWidth,
-		Data.WindowHeight,
-		SDL_WINDOW_FULLSCREEN
-	);
+	Window = SDL_CreateWindow(Data.WindowTitle,	Data.WindowWidth, Data.WindowHeight, SDL_WINDOW_FULLSCREEN);
 
 	if (Window == nullptr)
 	{

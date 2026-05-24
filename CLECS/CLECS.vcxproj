@@ -157,6 +157,7 @@
     <ClCompile Include="Archetype.cpp" />
     <ClCompile Include="ArchetypeStorage.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="ComponentTypesCollection.cpp" />
     <ClCompile Include="CoreModule.cpp" />
     <ClCompile Include="EntityAdmin.cpp" />
     <ClCompile Include="FontManager.cpp" />
@@ -165,7 +166,7 @@
     <ClCompile Include="InputState.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="SDLUtils.cpp" />
-    <ClCompile Include="SystemCollection.cpp" />
+    <ClCompile Include="SystemsCollection.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldInitializationData.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Column.h" />
     <ClInclude Include="ComponentsInitializationData.h" />
     <ClInclude Include="ComponentPool.h" />
+    <ClInclude Include="ComponentTypesCollection.h" />
     <ClInclude Include="CoreModule.h" />
     <ClInclude Include="EventBus.h" />
     <ClInclude Include="CoreTypes.h" />
@@ -200,7 +202,7 @@
     <ClInclude Include="StartupSystemsInitializationData.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemContext.h" />
-    <ClInclude Include="SystemCollection.h" />
+    <ClInclude Include="SystemsCollection.h" />
     <ClInclude Include="SystemQuery.h" />
     <ClInclude Include="SystemsInitializationData.h" />
     <ClInclude Include="Table.h" />

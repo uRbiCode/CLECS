@@ -1,33 +1,33 @@
-#include "SystemCollection.h"
+#include "SystemsCollection.h"
 #include "SystemsInitializationData.h"
 #include <optional>
 
-void SystemCollection::Initialize(SystemsInitializationData&& Data)
+SystemsCollection SystemsCollection::Create(SystemsInitializationData&& Data)
 {
-	Stages.clear();
-
+	SystemsCollection Systems;
 	for (SystemDescriptor& Descriptor : Data.AccessRegisteredSystems())
 	{
 		std::optional<size_t> LastConflict = std::nullopt;
-		for (size_t i = 0; i < Stages.size(); ++i)
+		for (size_t i = 0; i < Systems.Stages.size(); ++i)
 		{
-			if (ConflictsWithStage(Descriptor, Stages[i]))
+			if (ConflictsWithStage(Descriptor, Systems.Stages[i]))
 			{
 				LastConflict = i;
 			}
 		}
 
 		const size_t TargetStageIndex = LastConflict.has_value() ? LastConflict.value() + 1 : 0;
-		if (TargetStageIndex >= Stages.size())
+		if (TargetStageIndex >= Systems.Stages.size())
 		{
-			Stages.push_back({});
+			Systems.Stages.push_back({});
 		}
 
-		Stages[TargetStageIndex].push_back(std::move(Descriptor));
+		Systems.Stages[TargetStageIndex].push_back(std::move(Descriptor));
 	}
+	return Systems;
 }
 
-bool SystemCollection::ConflictsWithStage(const SystemDescriptor& Candidate, const SystemStage& Stage) const
+bool SystemsCollection::ConflictsWithStage(const SystemDescriptor& Candidate, const SystemStage& Stage)
 {
 	for (const SystemDescriptor& Existing : Stage)
 	{
@@ -38,7 +38,7 @@ bool SystemCollection::ConflictsWithStage(const SystemDescriptor& Candidate, con
 	return false;
 }
 
-bool SystemCollection::HasAccessConflict(const std::vector<ComponentAccess>& A, const std::vector<ComponentAccess>& B) const
+bool SystemsCollection::HasAccessConflict(const std::vector<ComponentAccess>& A, const std::vector<ComponentAccess>& B)
 {
 	for (const ComponentAccess& AccessA : A)
 	{
