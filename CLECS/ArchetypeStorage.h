@@ -1,6 +1,8 @@
 #pragma once
 #include "Archetype.h"
 #include "ComponentTypesCollection.h"
+#include "EntityStorage.h"
+#include "AddEntitiesCommand.h"
 #include <unordered_map>
 #include <memory>
 
@@ -10,6 +12,21 @@ class ArchetypeStorage
 {
 public:
 	static ArchetypeStorage Create(ComponentTypesCollection&& Data);
+
+	template<typename... Components>
+	void EmplaceEntities(AddEntitiesCommand<Components...>&& Command)
+	{
+		Archetype<Components...>* TargetArchetype = static_cast<Archetype<Components...>*>(GetArchetype<Components...>());
+		TargetArchetype->Reserve(Command.AccessEntries().size());
+		for (auto& Row : Command.AccessEntries())
+		{
+			const Entity NewEntity = Entities.CreateEntity();
+			std::apply([TargetArchetype, NewEntity](Components&&... Args)
+			{
+				TargetArchetype->EmplaceBack(NewEntity, std::forward<Components>(Args)...);
+			}, std::move(Row));
+		}
+	}
 
 	template<typename... Components>
 	ArchetypeBase* GetArchetype()
@@ -38,27 +55,22 @@ public:
 
 		std::unordered_map<ArchetypeId, size_t> HitCount;
 
-		(void)std::initializer_list<int>{([&]()
-		{
-			const ComponentTypeId ComponentType = ComponentTypes.GetComponentTypeId<Components>();
-			const auto It = ComponentsToArchetypes.find(ComponentType);
-			if (It == ComponentsToArchetypes.end())
-				return;
-
-			for (const ArchetypeId Id : It->second)
+		([&]()
 			{
-				++HitCount[Id];
-			}
-		}(), 0)...
-		};
+				const ComponentTypeId ComponentType = ComponentTypes.GetComponentTypeId<Components>();
+				const auto It = ComponentsToArchetypes.find(ComponentType);
+				if (It == ComponentsToArchetypes.end())
+					return;
+
+				for (const ArchetypeId Id : It->second)
+					++HitCount[Id];
+			}(), ...);
 
 		std::vector<ArchetypeBase*> Result;
 		for (const auto& [Id, Count] : HitCount)
 		{
 			if (Count == ComponentCount)
-			{
 				Result.push_back(Archetypes[Id].get());
-			}
 		}
 		return Result;
 	}
@@ -91,12 +103,13 @@ private:
 	};
 
 	ComponentTypesCollection ComponentTypes;
+	EntityStorage Entities;
 
 	std::vector<std::unique_ptr<ArchetypeBase>> Archetypes;
 
-	// Find Archetype of exact components set
+	// Find Archetype of exact Components set
 	std::unordered_map<ArchetypeKey, ArchetypeId, ArchetypeKeyHash> ArchetypeKeyToId;
 
-	// Filter Archetypes by component type held
+	// Filter Archetypes by Component type held
 	std::unordered_map<ComponentTypeId, std::vector<ArchetypeId>> ComponentsToArchetypes;
 };

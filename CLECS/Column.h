@@ -4,6 +4,11 @@
 template <typename Component>
 struct Column
 {
+	void Reserve(size_t EntityCount)
+	{
+		Data.reserve(EntityCount);
+	}
+
 	template<typename... Args>
 	Component& EmplaceBack(Args&&... args)
 	{

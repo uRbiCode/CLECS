@@ -68,6 +68,9 @@
     <Filter Include="Source\Module\Modules">
       <UniqueIdentifier>{a8a234f9-0677-45cc-8703-678d3e73bf31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\Archetype\Commands">
+      <UniqueIdentifier>{0f8a81c6-c2ea-4b4a-9dd8-3d1c2385b7c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -117,6 +120,9 @@
     </ClCompile>
     <ClCompile Include="ComponentTypesCollection.cpp">
       <Filter>Source\Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityStorage.cpp">
+      <Filter>Source\Core\Entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +245,12 @@
     </ClInclude>
     <ClInclude Include="ComponentTypesCollection.h">
       <Filter>Source\Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="AddEntitiesCommand.h">
+      <Filter>Source\Core\Archetype\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityStorage.h">
+      <Filter>Source\Core\Entity</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

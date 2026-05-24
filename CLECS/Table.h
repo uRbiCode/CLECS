@@ -5,15 +5,25 @@
 #include <memory>
 #include <typeindex>
 
+template<typename... Args, typename... Components>
+concept ValidTableArgs = requires { sizeof...(Components) == sizeof...(Args) && (HasColumn<Args>() && ...); };
+
 template <typename... Components>
 class Table
 {
 public:
-	void EmplaceBack(Entity Entity, Components&&... Args)
+	void Reserve(size_t EntityCount)
+	{
+		Entities.reserve(EntityCount);
+		(std::get<Column<Components>>(Columns).Reserve(EntityCount), ...);
+	}
+
+	template<typename... Args>
+	requires ValidTableArgs<Args..., Components...>
+	void EmplaceBack(Entity Entity, Args&&... ArgValues)
 	{
 		Entities.push_back(Entity);
-
-		((std::get<Column<Components>>(Columns).EmplaceBack(std::move(Args)), 0), ...);
+		(std::get<Column<std::decay_t<Args>>>(Columns).EmplaceBack(std::forward<Args>(ArgValues)), ...);
 	}
 	
 	void SwapRemoveRow(const Entity& Entity)

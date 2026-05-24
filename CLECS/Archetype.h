@@ -22,14 +22,21 @@ public:
 	Archetype(const Archetype&) = delete;
 	Archetype& operator=(const Archetype&) = delete;
 
+	void Reserve(size_t EntityCount)
+	{
+		InternalTable.Reserve(EntityCount);
+	}
+
 	void SwapRemoveRow(Entity Entity) override
 	{
 		InternalTable.SwapRemoveRow(Entity);
 	}
 
-	void EmplaceBack(Entity Entity, Components&&... Args)
+	template<typename... Args>
+	requires ValidTableArgs<Args..., Components...>
+	void EmplaceBack(Entity Entity, Args&&... ArgValues)
 	{
-		InternalTable.EmplaceBack(Entity, std::forward(Args)...);
+		InternalTable.EmplaceBack(Entity, std::forward<Args>(ArgValues)...);
 	}
 
 	template<typename T>
@@ -39,6 +46,7 @@ public:
 	}
 
 	template<typename T>
+	requires (HasColumn<T>())
 	const Column<T>& GetColumn() const
 	{
 		return InternalTable.template GetColumn<T>();
