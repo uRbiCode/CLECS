@@ -1,7 +1,7 @@
 #pragma once
 #include "Archetype.h"
 #include "ComponentTypesCollection.h"
-#include "EntityStorage.h"
+#include "EntitySpawner.h"
 #include "AddEntitiesCommand.h"
 #include <unordered_map>
 #include <memory>
@@ -20,12 +20,12 @@ public:
 		const ArchetypeKey Key = CreateArchetypeKeyFromComponents<Components...>();
 
 		GetArchetype<Components...>()->Reserve(Command.AccessEntries().size());
-		const auto InserterIt = ArchetypeKeyToInserter.find(Key);
-		const RowInserter& Inserter = InserterIt->second;
+		const ArchetypeDescription& ArchetypeDesc = ArchetypeDescriptions.find(Key)->second;
+		const RowInserter& Inserter = ArchetypeDesc.Inserter;
 
 		for (const std::tuple<Components...>& Row : Command.AccessEntries())
 		{
-			const Entity NewEntity = Entities.CreateEntity();
+			const Entity NewEntity = Spawner.CreateEntity();
 			Inserter(NewEntity, Row);
 		}
 	}
@@ -34,26 +34,25 @@ public:
 	ArchetypeBase* GetArchetype()
 	{
 		const ArchetypeKey Key = CreateArchetypeKeyFromComponents<Components...>();
-		if (const auto It = ArchetypeKeyToId.find(Key); It != ArchetypeKeyToId.end())
-			return Archetypes[It->second].get();
+		if (const auto It = ArchetypeDescriptions.find(Key); It != ArchetypeDescriptions.end())
+			return Archetypes[It->second.Id].get();
 
 		const size_t NewId = Archetypes.size();
 		std::unique_ptr<ArchetypeBase> NewArchetype = std::make_unique<Archetype<Components...>>();
 		Archetypes.emplace_back(std::move(NewArchetype));
-		ArchetypeKeyToId.insert({ Key, NewId });
 		for (const ComponentTypeId ComponentType : Key)
 		{
 			ComponentsToArchetypes[ComponentType].push_back(NewId);
 		}
 
 		Archetype<Components...>* ConcreteArchetype = static_cast<Archetype<Components...>*>(Archetypes.back().get());
-		ArchetypeKeyToInserter.emplace(Key, [ConcreteArchetype](Entity NewEntity, const std::tuple<Components...>& Row)
+		ArchetypeDescriptions.insert({ Key, { NewId, [ConcreteArchetype](Entity NewEntity, const std::tuple<Components...>& Row)
 		{
 			std::apply([ConcreteArchetype, NewEntity](const Components&... Values)
 			{
 				ConcreteArchetype->EmplaceBack(NewEntity, Values...);
 			}, Row);
-		});
+		}}});
 
 		return Archetypes.back().get();
 	}
@@ -92,6 +91,11 @@ private:
 	using ArchetypeId = size_t;
 	using ArchetypeKey = std::vector<ComponentTypeId>;
 	using RowInserter = std::function<void(Entity, const void*)>;
+	struct ArchetypeDescription
+	{
+		ArchetypeId Id;
+		RowInserter Inserter;
+	};
 
 	template<typename ... Components>
 	ArchetypeKey CreateArchetypeKeyFromComponents()
@@ -103,12 +107,14 @@ private:
 		return Key;
 	}
 
-	struct ArchetypeKeyHash {
+	struct ArchetypeKeyHash 
+	{
 		std::size_t operator()(const ArchetypeKey& Key) const noexcept
 		{
 			std::size_t Seed = 0xcbf29ce484222325ULL;
 			constexpr std::size_t GoldenRatio = sizeof(std::size_t) == 8 ? 0x9e3779b97f4a7c15ULL : 0x9e3779b9UL;
-			for (uint32_t ComponentId : Key) {
+			for (const ComponentTypeId ComponentId : Key) 
+			{
 				Seed ^= static_cast<std::size_t>(ComponentId) + GoldenRatio	+ (Seed << 6) + (Seed >> 2);
 			}
 
@@ -117,12 +123,12 @@ private:
 	};
 
 	ComponentTypesCollection ComponentTypes;
-	EntityStorage Entities;
+	EntitySpawner Spawner;
 
 	std::vector<std::unique_ptr<ArchetypeBase>> Archetypes;
 
 	// Find Archetype of exact Components set
-	std::unordered_map<ArchetypeKey, ArchetypeId, ArchetypeKeyHash> ArchetypeKeyToId;
+	std::unordered_map<ArchetypeKey, ArchetypeDescription, ArchetypeKeyHash> ArchetypeDescriptions;
 
 	// Filter Archetypes by Component type held
 	std::unordered_map<ComponentTypeId, std::vector<ArchetypeId>> ComponentsToArchetypes;

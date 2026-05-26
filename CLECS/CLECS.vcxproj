@@ -160,7 +160,7 @@
     <ClCompile Include="ComponentTypesCollection.cpp" />
     <ClCompile Include="CoreModule.cpp" />
     <ClCompile Include="EntityAdmin.cpp" />
-    <ClCompile Include="EntityStorage.cpp" />
+    <ClCompile Include="EntitySpawner.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameRunner.cpp" />
@@ -173,16 +173,18 @@
     <ClCompile Include="WorldInitializationData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddComponentsCommand.h" />
     <ClInclude Include="AddEntitiesCommand.h" />
     <ClInclude Include="Archetype.h" />
     <ClInclude Include="ArchetypeStorage.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Column.h" />
+    <ClInclude Include="CommandTypes.h" />
     <ClInclude Include="ComponentsInitializationData.h" />
     <ClInclude Include="ComponentPool.h" />
     <ClInclude Include="ComponentTypesCollection.h" />
     <ClInclude Include="CoreModule.h" />
-    <ClInclude Include="EntityStorage.h" />
+    <ClInclude Include="EntitySpawner.h" />
     <ClInclude Include="EventBus.h" />
     <ClInclude Include="CoreTypes.h" />
     <ClInclude Include="Entity.h" />

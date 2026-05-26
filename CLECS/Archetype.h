@@ -11,6 +11,7 @@ class ArchetypeBase
 {
 public:
 	virtual ~ArchetypeBase() = default;
+	// TODO: TRY TO REMOVE VIRTUALS AND USE TEMPLATED STATIC POLYMORPHISM INSTEAD
 	virtual void SwapRemoveRow(Entity Entity) = 0;
 	virtual void Reserve(size_t EntityCount) = 0;
 };

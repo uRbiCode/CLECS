@@ -4,7 +4,7 @@
 
 /* Stores information about entities.
  */
-class EntityStorage
+class EntitySpawner
 {
 public:
 	Entity CreateEntity();

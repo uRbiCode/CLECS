@@ -1,6 +1,6 @@
-#include "EntityStorage.h"
+#include "EntitySpawner.h"
 
-Entity EntityStorage::CreateEntity()
+Entity EntitySpawner::CreateEntity()
 {
 	uint32_t Id;
 	if (!FreeEntityIds.empty())
@@ -15,7 +15,7 @@ Entity EntityStorage::CreateEntity()
 	return Entity(Id);
 }
 
-void EntityStorage::DestroyEntity(Entity E)
+void EntitySpawner::DestroyEntity(Entity E)
 {
 	FreeEntityIds.push(E.GetId());
 }

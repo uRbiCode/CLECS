@@ -71,6 +71,9 @@
     <Filter Include="Source\Core\Archetype\Commands">
       <UniqueIdentifier>{0f8a81c6-c2ea-4b4a-9dd8-3d1c2385b7c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\Archetype\Commands\Utils">
+      <UniqueIdentifier>{59d69404-bdc7-415a-ad49-36fb3890ceca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -121,7 +124,7 @@
     <ClCompile Include="ComponentTypesCollection.cpp">
       <Filter>Source\Core\Component</Filter>
     </ClCompile>
-    <ClCompile Include="EntityStorage.cpp">
+    <ClCompile Include="EntitySpawner.cpp">
       <Filter>Source\Core\Entity</Filter>
     </ClCompile>
   </ItemGroup>
@@ -249,8 +252,14 @@
     <ClInclude Include="AddEntitiesCommand.h">
       <Filter>Source\Core\Archetype\Commands</Filter>
     </ClInclude>
-    <ClInclude Include="EntityStorage.h">
+    <ClInclude Include="EntitySpawner.h">
       <Filter>Source\Core\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="AddComponentsCommand.h">
+      <Filter>Source\Core\Archetype\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandTypes.h">
+      <Filter>Source\Core\Archetype\Commands\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
