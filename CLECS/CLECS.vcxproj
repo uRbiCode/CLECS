@@ -176,6 +176,7 @@
     <ClInclude Include="AddComponentsCommand.h" />
     <ClInclude Include="AddEntitiesCommand.h" />
     <ClInclude Include="Archetype.h" />
+    <ClInclude Include="ArchetypeHandle.h" />
     <ClInclude Include="ArchetypeStorage.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Column.h" />
@@ -197,6 +198,7 @@
     <ClInclude Include="ModuleBase.h" />
     <ClInclude Include="ModulesInitializationData.h" />
     <ClInclude Include="MouseClickEvent.h" />
+    <ClInclude Include="Query.h" />
     <ClInclude Include="RenderConstants.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="RendererInitializationData.h" />

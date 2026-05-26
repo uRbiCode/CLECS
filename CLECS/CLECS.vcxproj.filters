@@ -74,6 +74,9 @@
     <Filter Include="Source\Core\Archetype\Commands\Utils">
       <UniqueIdentifier>{59d69404-bdc7-415a-ad49-36fb3890ceca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\Query">
+      <UniqueIdentifier>{07412d86-3471-4155-98b2-b9f48c9a717f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -260,6 +263,12 @@
     </ClInclude>
     <ClInclude Include="CommandTypes.h">
       <Filter>Source\Core\Archetype\Commands\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Query.h">
+      <Filter>Source\Core\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="ArchetypeHandle.h">
+      <Filter>Source\Core\Archetype</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

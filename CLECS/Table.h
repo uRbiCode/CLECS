@@ -1,14 +1,13 @@
 #pragma once
 #include "Column.h"
 #include "Entity.h"
-#include <unordered_map>
-#include <memory>
 #include <typeindex>
+#include <vector>
 
 template<typename... Args, typename... Components>
 concept ValidTableArgs = requires { sizeof...(Components) == sizeof...(Args) && (HasColumn<Args>() && ...); };
 
-template <typename... Components>
+template<typename... Components>
 class Table
 {
 public:
@@ -42,12 +41,41 @@ public:
 		return (std::is_same_v<T, Components> || ...);
 	}
 
-	template <typename T>
+	template<typename T>
+	requires (HasColumn<T>())
+	Column<T>& AccessColumn()
+	{
+		return std::get<Column<T>>(Columns);
+	}
+
+	template<typename T>
 	requires (HasColumn<T>())
 	const Column<T>& GetColumn() const
 	{
 		return std::get<Column<T>>(Columns);
 	}
+
+	void* AccessColumnData(std::type_index Type)
+	{
+		void* Result = nullptr;
+		((std::type_index(typeid(Components)) == Type
+			? (Result = std::get<Column<Components>>(Columns).AccessData().data(), true)
+			: false) || ...);
+		return Result;
+	}
+
+	const void* GetColumnData(std::type_index Type) const
+	{
+		const void* Result = nullptr;
+		((std::type_index(typeid(Components)) == Type
+			? (Result = std::get<Column<Components>>(Columns).GetData().data(), true)
+			: false) || ...);
+		return Result;
+	}
+
+	const std::vector<Entity>& GetEntities() const { return Entities; }
+
+	size_t Size() const { return Entities.size(); }
 
 private:
 	size_t GetColumnIndex(Entity Entity) const

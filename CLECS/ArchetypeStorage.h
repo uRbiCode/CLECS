@@ -3,6 +3,7 @@
 #include "ComponentTypesCollection.h"
 #include "EntitySpawner.h"
 #include "AddEntitiesCommand.h"
+#include "ArchetypeHandle.h"
 #include <unordered_map>
 #include <memory>
 #include <functional>
@@ -57,33 +58,56 @@ public:
 		return Archetypes.back().get();
 	}
 
-	// TODO: OPTIMIZE LOOK FROM SMALLEST PERSPECTIVE
 	template<typename... Components>
-	std::vector<ArchetypeBase*> GetArchetypesWithComponents()
+	std::vector<ArchetypeHandle<Components...>> GetArchetypesWithComponents()
 	{
-		const size_t ComponentCount = sizeof...(Components);
+		constexpr size_t ComponentCount = sizeof...(Components);
 		if (ComponentCount == 0)
 			return {};
 
-		std::unordered_map<ArchetypeId, size_t> HitCount;
+		const std::vector<ArchetypeId>* Lists[ComponentCount];
+		size_t ListIndex = 0;
+		bool AnyMissing = false;
 
 		([&]()
-			{
-				const ComponentTypeId ComponentType = ComponentTypes.GetComponentTypeId<Components>();
-				const auto It = ComponentsToArchetypes.find(ComponentType);
-				if (It == ComponentsToArchetypes.end())
-					return;
-
-				for (const ArchetypeId Id : It->second)
-					++HitCount[Id];
-			}(), ...);
-
-		std::vector<ArchetypeBase*> Result;
-		for (const auto& [Id, Count] : HitCount)
 		{
-			if (Count == ComponentCount)
-				Result.push_back(Archetypes[Id].get());
+			const ComponentTypeId TypeId = ComponentTypes.GetComponentTypeId<Components>();
+			const auto It = ComponentsToArchetypes.find(TypeId);
+			if (It == ComponentsToArchetypes.end())
+			{
+				AnyMissing = true;
+				return;
+			}
+			Lists[ListIndex++] = &It->second;
+		}(), ...);
+
+		if (AnyMissing)
+			return {};
+
+		std::sort(Lists, Lists + ComponentCount, [](const std::vector<ArchetypeId>* A, const std::vector<ArchetypeId>* B)
+		{
+			return A->size() < B->size();
+		});
+
+		std::vector<ArchetypeHandle<Components...>> Result;
+		for (const ArchetypeId Candidate : *Lists[0])
+		{
+			bool FoundInAll = true;
+			for (size_t i = 1; i < ComponentCount; ++i)
+			{
+				if (!std::binary_search(Lists[i]->begin(), Lists[i]->end(), Candidate))
+				{
+					FoundInAll = false;
+					break;
+				}
+			}
+
+			if (FoundInAll && Archetypes[Candidate]->Size() > 0)
+			{
+				Result.emplace_back(*Archetypes[Candidate]);
+			}
 		}
+
 		return Result;
 	}
 

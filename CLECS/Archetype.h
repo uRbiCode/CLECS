@@ -11,9 +11,14 @@ class ArchetypeBase
 {
 public:
 	virtual ~ArchetypeBase() = default;
-	// TODO: TRY TO REMOVE VIRTUALS AND USE TEMPLATED STATIC POLYMORPHISM INSTEAD
 	virtual void SwapRemoveRow(Entity Entity) = 0;
 	virtual void Reserve(size_t EntityCount) = 0;
+	virtual size_t Size() const = 0;
+	virtual const std::vector<Entity>& GetEntities() const = 0;
+
+	//TODO: THINK IF ACCESS BY COMPONENTTYPEID
+	virtual void* AccessColumnData(std::type_index Type) = 0;
+	virtual const void* GetColumnData(std::type_index Type) const = 0;
 };
 
 template<typename... Components>
@@ -34,6 +39,26 @@ public:
 		InternalTable.SwapRemoveRow(Entity);
 	}
 
+	size_t Size() const override
+	{
+		return InternalTable.Size();
+	}
+
+	const std::vector<Entity>& GetEntities() const override
+	{
+		return InternalTable.GetEntities();
+	}
+
+	void* AccessColumnData(std::type_index Type) override
+	{
+		return InternalTable.AccessColumnData(Type);
+	}
+
+	const void* GetColumnData(std::type_index Type) const override
+	{
+		return InternalTable.GetColumnData(Type);
+	}
+
 	template<typename... Args>
 	requires ValidTableArgs<Args..., Components...>
 	void EmplaceBack(Entity Entity, Args&&... ArgValues)
@@ -45,6 +70,13 @@ public:
 	bool HasColumn() const
 	{
 		return InternalTable.template HasColumn<T>();
+	}
+
+	template<typename T>
+	requires (HasColumn<T>())
+	Column<T>& AccessColumn()
+	{
+		return InternalTable.template AccessColumn<T>();
 	}
 
 	template<typename T>

@@ -21,7 +21,8 @@ struct Column
 		Data.pop_back();
 	}
 
-	const std::vector<Component>& GetData() { return Data; }
+	std::vector<Component>& AccessData() { return Data; }
+	const std::vector<Component>& GetData() const { return Data; }
 
 private:
 	std::vector<Component> Data;
