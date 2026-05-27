@@ -31,7 +31,8 @@ namespace
 			return;
 
 		auto& AudioComponent = Context.EntityAdmin.AccessComponent<AudioRequestsComponent>(AudioRequestsGroup[0]);
-		AudioComponent.Requests.Push(std::move(Request));
+			AudioComponent.Requests.Push(std::move(Request));
+		});
 	}
 
 	void ConsumeAudioRequests(const SystemContext& Context)
@@ -61,9 +62,6 @@ namespace
 
 	void OnHealthLost(const SystemContext& Context, const Entity& Entity)
 	{
-		if (!Context.EntityAdmin.HasComponent<RunStateComponent>(Entity))
-			return;
-
 		EnqueueAudioRequest(Context, AudioRequest{ AudioType::Sfx, PlayerHitSoundName, 0.5f });
 	}
 
@@ -135,7 +133,7 @@ void AudioSystem::Initialize(const SystemContext& Context)
 	});
 }
 
-void AudioSystem::Update(SystemQuery<Writes<AudioRequestsComponent>, Reads<>>& Query, const SystemContext& Context, float DeltaTime)
+void AudioSystem::Update(const SystemContext& Context, float DeltaTime)
 {
 	const auto AudioRequestsGroup = Context.EntityAdmin.GetGroup<AudioRequestsComponent>();
 	assert(AudioRequestsGroup.Size() == 1 && "Expected exactly one AudioRequestsComponent in the world");

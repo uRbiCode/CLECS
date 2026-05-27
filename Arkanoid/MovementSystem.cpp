@@ -17,7 +17,7 @@ namespace
 	}
 }
 
-void MovementSystem::Update(SystemQuery<Writes<TransformComponent>, Reads<VelocityComponent>>& Query, const SystemContext& Context, float DeltaTime)
+void MovementSystem::Update(const SystemContext& Context, float DeltaTime)
 {
 	if (!ShouldUpdateMovement(Context))
 		return;

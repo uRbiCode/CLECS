@@ -77,6 +77,9 @@
     <Filter Include="Source\Core\Query">
       <UniqueIdentifier>{07412d86-3471-4155-98b2-b9f48c9a717f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\Archetype\Commands\Commands">
+      <UniqueIdentifier>{ebf02839-0a74-4120-a39b-d6569f773e69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -129,6 +132,9 @@
     </ClCompile>
     <ClCompile Include="EntitySpawner.cpp">
       <Filter>Source\Core\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandRunner.cpp">
+      <Filter>Source\Core\Archetype\Commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,9 +219,6 @@
     <ClInclude Include="SystemsCollection.h">
       <Filter>Source\Core\System</Filter>
     </ClInclude>
-    <ClInclude Include="SystemQuery.h">
-      <Filter>Source\Core\System</Filter>
-    </ClInclude>
     <ClInclude Include="Column.h">
       <Filter>Source\Core\Archetype</Filter>
     </ClInclude>
@@ -252,14 +255,8 @@
     <ClInclude Include="ComponentTypesCollection.h">
       <Filter>Source\Core\Component</Filter>
     </ClInclude>
-    <ClInclude Include="AddEntitiesCommand.h">
-      <Filter>Source\Core\Archetype\Commands</Filter>
-    </ClInclude>
     <ClInclude Include="EntitySpawner.h">
       <Filter>Source\Core\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="AddComponentsCommand.h">
-      <Filter>Source\Core\Archetype\Commands</Filter>
     </ClInclude>
     <ClInclude Include="CommandTypes.h">
       <Filter>Source\Core\Archetype\Commands\Utils</Filter>
@@ -273,7 +270,16 @@
     <ClInclude Include="QueryContext.h">
       <Filter>Source\Core\Query</Filter>
     </ClInclude>
+    <ClInclude Include="AddComponentsCommand.h">
+      <Filter>Source\Core\Archetype\Commands\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="AddEntitiesCommand.h">
+      <Filter>Source\Core\Archetype\Commands\Commands</Filter>
+    </ClInclude>
     <ClInclude Include="RemoveEntitiesCommand.h">
+      <Filter>Source\Core\Archetype\Commands\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandRunner.h">
       <Filter>Source\Core\Archetype\Commands</Filter>
     </ClInclude>
   </ItemGroup>

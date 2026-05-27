@@ -11,7 +11,7 @@
 struct StartupSystemsInitializationData
 {
 	// TODO: REMOVE AFTER GAMEPLAY OVERHAUL
-	void RegisterSystem(void(*Initialize)(const SystemContext&))
+	void RegisterSystem(void(*Initialize)(SystemContext&))
 	{
 		SystemDescriptor Descriptor;
 		Descriptor.Initialize = Initialize;

@@ -63,7 +63,7 @@ void HealthSystem::Initialize(const SystemContext& Context)
 	});
 }
 
-void HealthSystem::Update(SystemQuery<Writes<HealthComponent>, Reads<HealthComponent>>&, const SystemContext& Context, float DeltaTime)
+void HealthSystem::Update(const SystemContext& Context, float DeltaTime)
 {
 	Context.EntityAdmin.GetGroup<HealthComponent>().ForEach([&Context](const Entity& Entity, const HealthComponent& Health)
 	{

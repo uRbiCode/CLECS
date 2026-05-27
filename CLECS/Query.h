@@ -22,7 +22,7 @@ class Query<WritesList<WriteTypes...>, ReadsList<ReadTypes...>>
 public:
     Query(QueryContext& Context)
     {
-        for (auto& Handle : Context.Archetypes.GetArchetypesWithComponents<WriteTypes..., ReadTypes...>())
+        for (auto& Handle : Context.Archetypes->template GetArchetypesWithComponents<WriteTypes..., ReadTypes...>())
         {
             CacheHandle(Handle);
         }
@@ -56,11 +56,11 @@ private:
 
     void CacheHandle(ArchetypeHandle<WriteTypes..., ReadTypes...>& Handle)
     {
-        MatchedArchetype Match;
+        MatchedArchetype Match{};
         Match.Entities = Handle.GetEntities().data();
         Match.EntityCount = Handle.Size();
-        Match.WritePtrs = std::make_tuple(Handle.template AccessColumnPtr<WriteTypes>()...);
-        Match.ReadPtrs = std::make_tuple(Handle.template GetColumnPtr<ReadTypes>()...);
+        Match.WritePtrs = std::make_tuple(Handle.template AccessComponents<WriteTypes>()...);
+        Match.ReadPtrs = std::make_tuple(Handle.template GetComponents<ReadTypes>()...);
 
         MatchedArchetypes.push_back(std::move(Match));
     }
@@ -71,7 +71,7 @@ private:
                               std::index_sequence<WIs...>,
                               std::index_sequence<RIs...>)
     {
-        Function(E, std::get<WIs>(Match.WritePtrs)[i]...,  static_cast<const ReadTypes&>(std::get<RIs>(Match.ReadPtrs)[i])...);
+        Function(E, std::get<WIs>(Match.WritePtrs)[i]..., static_cast<const ReadTypes&>(std::get<RIs>(Match.ReadPtrs)[i])...);
     }
 
     std::vector<MatchedArchetype> MatchedArchetypes;

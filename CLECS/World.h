@@ -9,6 +9,7 @@
 #include "FontManager.h"
 #include "ArchetypeStorage.h"
 #include <memory>
+#include "CommandRunner.h"
 
 class WorldInitializationData;
 struct SDL_Window;
@@ -40,11 +41,14 @@ private:
 	void InitializeTextureManager();
 	void InitializeAudioManager();
 	void InitializeFontManager();
-	void SendInputEvents(const SystemContext& Context);
+	void SendInputEvents(SystemContext& Context);
 	SystemContext MakeSystemContext();
+
+	void FlushCommands();
 
 	SystemsCollection Systems;
 	ArchetypeStorage Archetypes;
+	CommandRunner Commands;
 
 	std::unique_ptr<EntityAdmin> EntityAdminPtr;
 	InputState Input;

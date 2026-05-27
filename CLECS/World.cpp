@@ -2,6 +2,7 @@
 #include "SystemContext.h"
 #include "WorldInitializationData.h"
 #include "MouseClickEvent.h"
+#include "QueryContext.h"
 
 World::~World()
 {
@@ -42,7 +43,7 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
 	Archetypes = ArchetypeStorage::Create(std::move(ComponentTypesCollection::Create(Data.ComponentsData)));
 	Systems = SystemsCollection::Create(std::move(Data.SystemsData));
 
-	const auto Context = MakeSystemContext();
+	auto Context = MakeSystemContext();
 	for (const auto& Stage : Systems.GetStages())
 	{
 		for (const auto& Descriptor : Stage)
@@ -52,6 +53,8 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
 
 			Descriptor.Initialize(Context);
 		}
+
+		FlushCommands();
 	}
 
 	return CLECS::ResultType::Success;
@@ -70,7 +73,7 @@ CLECS::ResultType World::Update(float DeltaTime)
 		Input.ProcessEvent(Event);
 	}
 
-	const auto Context = MakeSystemContext();
+	auto Context = MakeSystemContext();
 	SendInputEvents(Context);
 
 	for (const auto& Stage : Systems.GetStages())
@@ -82,6 +85,8 @@ CLECS::ResultType World::Update(float DeltaTime)
 
 			Descriptor.Update(Context, DeltaTime);
 		}
+
+		FlushCommands();
 	}
 
 	return CLECS::ResultType::Success;
@@ -161,7 +166,7 @@ void World::InitializeFontManager()
 	FontManagerPtr->Initialize();
 }
 
-void World::SendInputEvents(const SystemContext& Context)
+void World::SendInputEvents(SystemContext& Context)
 {
 	const auto& MousePosition = Input.GetMousePosition();
 	for (const auto& MouseButtonClicked : Input.JustPressedMouseButtons)
@@ -173,5 +178,13 @@ void World::SendInputEvents(const SystemContext& Context)
 SystemContext World::MakeSystemContext()
 {
 	const Managers Managers{ *TextureManagerPtr, *AudioManagerPtr, *FontManagerPtr };
-	return SystemContext{ *EntityAdminPtr, *Window, *Renderer, Input, EventBus, Managers };
+	return SystemContext{ QueryContext::Create(&Archetypes), Commands, *Window, *Renderer, Input, EventBus, Managers };
+}
+
+void World::FlushCommands()
+{
+	for (auto& Command : Commands.PendingCommands)
+		Command(Archetypes);
+
+	Commands.PendingCommands.clear();
 }

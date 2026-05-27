@@ -69,7 +69,7 @@ void PlayerPrepareSystem::Initialize(const SystemContext& Context)
 	});
 }
 
-void PlayerPrepareSystem::Update(SystemQuery<Writes<PlayerPrepareComponent>, Reads<>>& Query, const SystemContext& Context, float DeltaTime)
+void PlayerPrepareSystem::Update(const SystemContext& Context, float DeltaTime)
 {
 	if (ShouldCleanupPrepareMessage(Context))
 	{

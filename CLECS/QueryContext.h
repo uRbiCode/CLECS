@@ -1,17 +1,19 @@
 #pragma once
 
 class ArchetypeStorage;
-template<typename, typename> class Query;
 
 /* QueryContext provides controlled access to ArchetypeStorage for Systems.
  */
 class QueryContext
 {
 public:
-    QueryContext(ArchetypeStorage& Storage) : Archetypes(Storage) {}
+    static QueryContext Create(ArchetypeStorage* Storage)
+    {
+        QueryContext Context{};
+		Context.Archetypes = Storage;
+        return Context;
+	}
 
-private:
-    template<typename, typename> friend class Query;
-
-    ArchetypeStorage& Archetypes;
+    // TODO: TRY TO PRIVATE ARCHETYPESTORAGE AND DO SOME FRIEND MAGIC OR SOMETHING
+    ArchetypeStorage* Archetypes = nullptr;
 };

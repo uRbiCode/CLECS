@@ -68,7 +68,7 @@ void PlayerInputSystem::Initialize(const SystemContext& Context)
 	});
 }
 
-void PlayerInputSystem::Update(SystemQuery<Writes<VelocityComponent>, Reads<PlayerControllerComponent>>& Query, const SystemContext& Context, float DeltaTime)
+void PlayerInputSystem::Update(const SystemContext& Context, float DeltaTime)
 {
 	const auto& Input = Context.Input;
 	Query.ForEach([&Input](const Entity& Entity, VelocityComponent& Velocity, const PlayerControllerComponent& Controller)

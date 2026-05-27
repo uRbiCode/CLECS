@@ -21,10 +21,10 @@ public:
 	EventBus& operator=(const EventBus&) = delete;
 
 	template<typename EventType>
-	void Subscribe(const void* SubscriberId, std::function<void(const SystemContext&, const EventType&)> Callback)
+	void Subscribe(const void* SubscriberId, std::function<void(SystemContext&, const EventType&)> Callback)
 	{
 		const auto TypeId = std::type_index(typeid(EventType));
-		const auto Wrapper = [Callback](const SystemContext& Context, const void* EventData)
+		const auto Wrapper = [Callback](SystemContext& Context, const void* EventData)
 		{
 			Callback(Context, *static_cast<const EventType*>(EventData));
 		};
@@ -51,7 +51,7 @@ public:
 	}
 
 	template<typename EventType>
-	void Notify(const SystemContext& Context, const EventType& Event) const
+	void Notify(SystemContext& Context, const EventType& Event) const
 	{
 		const auto TypeId = std::type_index(typeid(EventType));
 		const auto It = Subscribers.find(TypeId);
@@ -65,7 +65,7 @@ public:
 	}
 
 private:
-	using EventCallback = std::function<void(const SystemContext&, const void*)>;
+	using EventCallback = std::function<void(SystemContext&, const void*)>;
 
 	struct SubscriptionEntry
 	{

@@ -13,7 +13,7 @@ public:
 	AddEntitiesCommand(size_t EntityCount) { Entries.reserve(EntityCount); }
 
 	template<typename... Args>
-	requires ValidCommandArgs<Components..., Args...>
+	requires ValidCommandArgs<TypeList<Components...>, Args...>
 	AddEntitiesCommand& WithEntry(Args&&... ComponentData)
 	{
 		Entries.emplace_back(std::decay_t<Args>(std::forward<Args>(ComponentData))...);

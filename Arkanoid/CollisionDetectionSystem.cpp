@@ -131,7 +131,7 @@ namespace
 	}
 }
 
-void CollisionDetectionSystem::Update(SystemQuery<Writes<>, Reads<TransformComponent, CollisionComponent>>& Query, const SystemContext& Context, float DeltaTime)
+void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaTime)
 {
 	auto& Admin = Context.EntityAdmin;
 	const auto CollisionGroup = Admin.GetGroup<TransformComponent, CollisionComponent>();

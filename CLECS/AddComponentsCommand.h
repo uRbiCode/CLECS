@@ -14,7 +14,7 @@ public:
 	AddComponentsCommand(size_t EntityCount) { Entries.reserve(EntityCount); }
 
 	template<typename... Args>
-	requires ValidCommandArgs<Components..., Args...>
+	requires ValidCommandArgs<TypeList<Components...>, Args...>
 	AddComponentsCommand& WithEntry(Entity E, Args&&... ComponentData)
 	{
 		Entries.emplace_back(E, std::decay_t<Args>(std::forward<Args>(ComponentData))...);

@@ -157,6 +157,7 @@
     <ClCompile Include="Archetype.cpp" />
     <ClCompile Include="ArchetypeStorage.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="CommandRunner.cpp" />
     <ClCompile Include="ComponentTypesCollection.cpp" />
     <ClCompile Include="CoreModule.cpp" />
     <ClCompile Include="EntityAdmin.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="ArchetypeStorage.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Column.h" />
+    <ClInclude Include="CommandRunner.h" />
     <ClInclude Include="CommandTypes.h" />
     <ClInclude Include="ComponentsInitializationData.h" />
     <ClInclude Include="ComponentPool.h" />
@@ -212,7 +214,6 @@
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemContext.h" />
     <ClInclude Include="SystemsCollection.h" />
-    <ClInclude Include="SystemQuery.h" />
     <ClInclude Include="SystemsInitializationData.h" />
     <ClInclude Include="Table.h" />
     <ClInclude Include="TextComponent.h" />

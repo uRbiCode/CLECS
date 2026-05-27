@@ -28,7 +28,7 @@ namespace
 		};
 	}
 
-	bool IsFilled(const SystemContext& Context, const Entity& Entity)
+	bool IsFilled(SystemContext& Context, const Entity& Entity)
 	{
 		auto& Admin = Context.EntityAdmin;
 		if (Admin.HasComponent<ShapeFillComponent>(Entity))
@@ -59,7 +59,7 @@ namespace
 		};
 	}
 
-	void DecideColor(const SystemContext& Context, const Entity& Entity)
+	void DecideColor(SystemContext& Context, const Entity& Entity)
 	{
 		auto& Renderer = Context.Renderer;
 		auto& Admin = Context.EntityAdmin;
@@ -113,7 +113,7 @@ namespace
 		}
 	}
 
-	void RenderTexture(const SystemContext& Context, const Entity& Entity, const RenderData& RenderData)
+	void RenderTexture(SystemContext& Context, const Entity& Entity, const RenderData& RenderData)
 	{
 		auto& Admin = Context.EntityAdmin;
 		auto& Renderer = Context.Renderer;
@@ -168,7 +168,7 @@ namespace
 		}
 	}
 
-	void RenderShape(const SystemContext& Context, const Entity& Entity, const RenderData& RenderData)
+	void RenderShape(SystemContext& Context, const Entity& Entity, const RenderData& RenderData)
 	{
 		auto& Admin = Context.EntityAdmin;
 		auto& Renderer = Context.Renderer;
@@ -205,7 +205,7 @@ namespace
 		}
 	}
 
-	void RenderText(const SystemContext& Context, const Entity& Entity, const RenderData& RenderData)
+	void RenderText(SystemContext& Context, const Entity& Entity, const RenderData& RenderData)
 	{
 		auto& Admin = Context.EntityAdmin;
 		auto& Renderer = Context.Renderer;
@@ -304,7 +304,7 @@ namespace
 	}
 }
 
-void RenderSystem::Update(SystemQuery<Writes<>,Reads<TransformComponent, RenderComponent>>& Query, const SystemContext& Context, float DeltaTime)
+void RenderSystem::Update(SystemContext& Context, float DeltaTime)
 {
 	auto& Renderer = Context.Renderer;
 	auto& Admin = Context.EntityAdmin;

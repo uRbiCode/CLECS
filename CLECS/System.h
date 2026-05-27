@@ -23,8 +23,8 @@ struct ComponentAccess
  */
 struct SystemDescriptor
 {
-	using UpdateFunction = std::function<void(const SystemContext&, float)>;
-	using InitializeFunction = std::function<void(const SystemContext&)>;
+	using UpdateFunction = std::function<void(SystemContext&, float)>;
+	using InitializeFunction = std::function<void(SystemContext&)>;
 
 	InitializeFunction Initialize;
 	UpdateFunction Update;

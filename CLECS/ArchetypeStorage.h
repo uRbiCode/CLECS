@@ -35,7 +35,7 @@ public:
 
 	void RemoveEntities(RemoveEntitiesCommand&& Command)
 	{
-		for (const Entity& EntityToRemove : Command.GetEntities())
+		for (Entity EntityToRemove : Command.GetEntities())
 		{
 			const auto It = EntitiesToArchetypes.find(EntityToRemove.GetId());
 			Archetypes[It->second]->SwapRemoveRow(EntityToRemove);
@@ -45,7 +45,7 @@ public:
 	}
 
 	template<typename... Components>
-	ArchetypeBase* GetArchetype()
+	ArchetypeBase* GetArchetype() const
 	{
 		const ArchetypeKey Key = CreateArchetypeKeyFromComponents<Components...>();
 		if (const auto It = ArchetypeDescriptions.find(Key); It != ArchetypeDescriptions.end())
@@ -72,7 +72,7 @@ public:
 	}
 
 	template<typename... Components>
-	std::vector<ArchetypeHandle<Components...>> GetArchetypesWithComponents()
+	std::vector<ArchetypeHandle<Components...>> GetArchetypesWithComponents() const
 	{
 		constexpr size_t ComponentCount = sizeof...(Components);
 		if (ComponentCount == 0)
@@ -124,6 +124,49 @@ public:
 		return Result;
 	}
 
+	template<typename... NewComponents>
+	void AddComponents(AddComponentsCommand<NewComponents...>&& Command)
+	{
+		const ArchetypeKey NewTypeIds = CreateArchetypeKeyFromComponents<NewComponents...>();
+
+		for (auto& [E, NewComponentTuple] : Command.AccessEntries())
+		{
+			const ArchetypeId OldArchId = EntitiesToArchetypes.at(E.GetId());
+			ArchetypeBase* OldArchetype = Archetypes[OldArchId].get();
+			const ArchetypeKey& OldKey = ArchetypeKeys[OldArchId];
+
+			ArchetypeKey TargetKey;
+			TargetKey.reserve(OldKey.size() + NewTypeIds.size());
+			std::merge(OldKey.begin(), OldKey.end(),
+				NewTypeIds.begin(), NewTypeIds.end(),
+				std::back_inserter(TargetKey));
+			TargetKey.erase(std::unique(TargetKey.begin(), TargetKey.end()), TargetKey.end());
+
+			const auto TargetIt = ArchetypeDescriptions.find(TargetKey);
+			assert(TargetIt != ArchetypeDescriptions.end()
+				&& "Target archetype not pre-registered. Call GetArchetype<OldComponents..., NewComponents...>() first.");
+
+			const ArchetypeId TargetId = TargetIt->second.Id;
+			ArchetypeBase* TargetArchetype = Archetypes[TargetId].get();
+
+			// Extractor built once per entity — captures NewComponents types at compile time,
+			// dispatches by type_index at runtime with no heap allocation per component.
+			const ArchetypeBase::NewComponentExtractor Extractor =
+				[&NewComponentTuple](std::type_index TypeIdx) -> const void*
+			{
+				const void* Result = nullptr;
+				((std::type_index(typeid(NewComponents)) == TypeIdx
+					? (Result = &std::get<NewComponents>(NewComponentTuple), true)
+					: false) || ...);
+				return Result;
+			};
+
+			TargetArchetype->MigrateRowFrom(E, *OldArchetype, Extractor);
+			OldArchetype->SwapRemoveRow(E);
+			EntitiesToArchetypes[E.GetId()] = TargetId;
+		}
+	}
+
 private:
 	using ArchetypeId = size_t;
 	using ArchetypeKey = std::vector<ComponentTypeId>;
@@ -172,7 +215,4 @@ private:
 
 	// Find Archetype for Entity
 	std::unordered_map<EntityId, ArchetypeId> EntitiesToArchetypes;
-
-	// Capture archetype functions at creation time
-	std::unordered_map<ArchetypeKey, RowInserter, ArchetypeKeyHash> ArchetypeKeyToInserter;
 };
