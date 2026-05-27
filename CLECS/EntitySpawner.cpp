@@ -15,7 +15,7 @@ Entity EntitySpawner::CreateEntity()
 	return Entity(Id);
 }
 
-void EntitySpawner::DestroyEntity(Entity E)
+void EntitySpawner::DestroyEntity(Entity EntityToDestroy)
 {
-	FreeEntityIds.push(E.GetId());
+	FreeEntityIds.push(EntityToDestroy.GetId());
 }

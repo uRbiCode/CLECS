@@ -1,15 +1,17 @@
 #pragma once
 #include <cstdint>
 
+using EntityId = uint32_t;
+
 /* Entity is a fundmanetal concept in CLECS architecture.
  * Represents a unique instance in a world that we can attach components to.
  * Under the hood translated to a simple Id;
  */
 struct Entity
 {
-	Entity(uint32_t Id) : Identifier(Id) {}
+	Entity(EntityId Id) : Identifier(Id) {}
 
-	[[nodiscard]] uint32_t GetId() const { return Identifier; }
+	[[nodiscard]] EntityId GetId() const { return Identifier; }
 
 	bool operator==(Entity Other) const
 	{
@@ -22,5 +24,5 @@ struct Entity
 	}
 
 private:
-	uint32_t Identifier = 0;
+	EntityId Identifier = 0;
 };

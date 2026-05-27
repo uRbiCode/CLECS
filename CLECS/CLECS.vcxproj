@@ -200,6 +200,7 @@
     <ClInclude Include="MouseClickEvent.h" />
     <ClInclude Include="Query.h" />
     <ClInclude Include="QueryContext.h" />
+    <ClInclude Include="RemoveEntitiesCommand.h" />
     <ClInclude Include="RenderConstants.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="RendererInitializationData.h" />

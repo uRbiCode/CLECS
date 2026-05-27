@@ -3,6 +3,7 @@
 #include "ComponentTypesCollection.h"
 #include "EntitySpawner.h"
 #include "AddEntitiesCommand.h"
+#include "RemoveEntitiesCommand.h"
 #include "ArchetypeHandle.h"
 #include <unordered_map>
 #include <memory>
@@ -28,6 +29,18 @@ public:
 		{
 			const Entity NewEntity = Spawner.CreateEntity();
 			Inserter(NewEntity, Row);
+			EntitiesToArchetypes[NewEntity.GetId()] = ArchetypeDesc.Id;
+		}
+	}
+
+	void RemoveEntities(RemoveEntitiesCommand&& Command)
+	{
+		for (const Entity& EntityToRemove : Command.GetEntities())
+		{
+			const auto It = EntitiesToArchetypes.find(EntityToRemove.GetId());
+			Archetypes[It->second]->SwapRemoveRow(EntityToRemove);
+			EntitiesToArchetypes.erase(It);
+			Spawner.DestroyEntity(EntityToRemove);
 		}
 	}
 
@@ -114,14 +127,14 @@ public:
 private:
 	using ArchetypeId = size_t;
 	using ArchetypeKey = std::vector<ComponentTypeId>;
-	using RowInserter = std::function<void(Entity, const void*)>;
+	using RowInserter = std::function<void(Entity, const std::tuple<void*>&)>;
 	struct ArchetypeDescription
 	{
 		ArchetypeId Id;
 		RowInserter Inserter;
 	};
 
-	template<typename ... Components>
+	template<typename... Components>
 	ArchetypeKey CreateArchetypeKeyFromComponents()
 	{
 		ArchetypeKey Key;
@@ -131,15 +144,15 @@ private:
 		return Key;
 	}
 
-	struct ArchetypeKeyHash 
+	struct ArchetypeKeyHash
 	{
 		std::size_t operator()(const ArchetypeKey& Key) const noexcept
 		{
 			std::size_t Seed = 0xcbf29ce484222325ULL;
 			constexpr std::size_t GoldenRatio = sizeof(std::size_t) == 8 ? 0x9e3779b97f4a7c15ULL : 0x9e3779b9UL;
-			for (const ComponentTypeId ComponentId : Key) 
+			for (const ComponentTypeId ComponentId : Key)
 			{
-				Seed ^= static_cast<std::size_t>(ComponentId) + GoldenRatio	+ (Seed << 6) + (Seed >> 2);
+				Seed ^= static_cast<std::size_t>(ComponentId) + GoldenRatio + (Seed << 6) + (Seed >> 2);
 			}
 
 			return Seed;
@@ -156,6 +169,9 @@ private:
 
 	// Filter Archetypes by Component type held
 	std::unordered_map<ComponentTypeId, std::vector<ArchetypeId>> ComponentsToArchetypes;
+
+	// Find Archetype for Entity
+	std::unordered_map<EntityId, ArchetypeId> EntitiesToArchetypes;
 
 	// Capture archetype functions at creation time
 	std::unordered_map<ArchetypeKey, RowInserter, ArchetypeKeyHash> ArchetypeKeyToInserter;

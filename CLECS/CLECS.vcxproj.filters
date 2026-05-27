@@ -273,5 +273,8 @@
     <ClInclude Include="QueryContext.h">
       <Filter>Source\Core\Query</Filter>
     </ClInclude>
+    <ClInclude Include="RemoveEntitiesCommand.h">
+      <Filter>Source\Core\Archetype\Commands</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
