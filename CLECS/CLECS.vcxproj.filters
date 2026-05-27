@@ -270,5 +270,8 @@
     <ClInclude Include="ArchetypeHandle.h">
       <Filter>Source\Core\Archetype</Filter>
     </ClInclude>
+    <ClInclude Include="QueryContext.h">
+      <Filter>Source\Core\Query</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

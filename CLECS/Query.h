@@ -1,7 +1,6 @@
 #pragma once
-#include "ArchetypeHandle.h"
+#include "QueryContext.h"
 #include "ArchetypeStorage.h"
-#include "Entity.h"
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -21,9 +20,9 @@ requires (!OverlapsTypes<WriteTypes, ReadTypes...> && ...)
 class Query<WritesList<WriteTypes...>, ReadsList<ReadTypes...>>
 {
 public:
-    Query(ArchetypeStorage& Storage)
+    Query(QueryContext& Context)
     {
-        for (auto& Handle : Storage.GetArchetypesWithComponents<WriteTypes..., ReadTypes...>())
+        for (auto& Handle : Context.Archetypes.GetArchetypesWithComponents<WriteTypes..., ReadTypes...>())
         {
             CacheHandle(Handle);
         }
