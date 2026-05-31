@@ -1,91 +1,125 @@
 #pragma once
-#include "Table.h"
+#include "Column.h"
 #include "Entity.h"
-#include <typeindex>
+#include "ComponentTypesCollection.h"
 #include <vector>
-#include <cstddef>
-#include <type_traits>
+#include <unordered_map>
+#include <functional>
 #include <algorithm>
+#include <ranges>
 
-class ArchetypeBase
+class Archetype
 {
 public:
-	virtual ~ArchetypeBase() = default;
-	virtual void SwapRemoveRow(Entity Entity) = 0;
-	virtual void Reserve(size_t EntityCount) = 0;
-	virtual size_t Size() const = 0;
-	virtual const std::vector<Entity>& GetEntities() const = 0;
-
-	//TODO: THINK IF ACCESS BY COMPONENTTYPEID
-	virtual void* AccessColumnData(std::type_index Type) = 0;
-	virtual const void* GetColumnData(std::type_index Type) const = 0;
-};
-
-template<typename... Components>
-class Archetype : public ArchetypeBase
-{
-public:
-	Archetype() = default;
-	Archetype(const Archetype&) = delete;
-	Archetype& operator=(const Archetype&) = delete;
-
-	void Reserve(size_t EntityCount) override
+	template<typename... Components>
+	static Archetype MakeArchetype(const ComponentTypesCollection& Types)
 	{
-		InternalTable.Reserve(EntityCount);
-	}
+		struct Entry
+		{
+			ComponentTypeId Id;
+			ColumnDescription Description;
+		};
 
-	void SwapRemoveRow(Entity Entity) override
-	{
-		InternalTable.SwapRemoveRow(Entity);
-	}
+		std::array<Entry, sizeof...(Components)> Entries
+		{ 
+            {{ Types.GetComponentTypeId<Components>(), ColumnDescription::Make<Components>() }...}
+		};
 
-	size_t Size() const override
-	{
-		return InternalTable.Size();
-	}
+		std::ranges::sort(Entries, {}, &Entry::Id);
+		constexpr size_t ComponentsSize = sizeof...(Components);
 
-	const std::vector<Entity>& GetEntities() const override
-	{
-		return InternalTable.GetEntities();
-	}
+		Archetype Arch;
+		Arch.ComponentTypes.reserve(ComponentsSize);
+		Arch.Columns.reserve(ComponentsSize);
+		Arch.ColumnIndexCache.reserve(ComponentsSize);
 
-	void* AccessColumnData(std::type_index Type) override
-	{
-		return InternalTable.AccessColumnData(Type);
-	}
+		for (Entry& Ent : Entries)
+		{
+			Arch.ComponentTypes.push_back(Ent.Id);
 
-	const void* GetColumnData(std::type_index Type) const override
-	{
-		return InternalTable.GetColumnData(Type);
-	}
+			Column Col(std::move(Ent.Description));
+			Arch.Columns.emplace_back(std::move(Col));
+		}
 
-	template<typename... Args>
-	requires ValidTableArgs<Args..., Components...>
-	void EmplaceBack(Entity Entity, Args&&... ArgValues)
-	{
-		InternalTable.EmplaceBack(Entity, std::forward<Args>(ArgValues)...);
-	}
+		for (size_t i = 0; i < Arch.ComponentTypes.size(); ++i)
+		{
+			Arch.ColumnIndexCache[Arch.ComponentTypes[i]] = i;
+		}
 
-	template<typename T>
-	bool HasColumn() const
-	{
-		return InternalTable.template HasColumn<T>();
+		return Arch;
 	}
+    size_t GetColumnIndex(ComponentTypeId CompId) const
+    {
+        auto It = ColumnIndexCache.find(CompId);
+        return It != ColumnIndexCache.end() ? It->second : SIZE_MAX;
+    }
 
-	template<typename T>
-	requires (HasColumn<T>())
-	Column<T>& AccessColumn()
-	{
-		return InternalTable.template AccessColumn<T>();
-	}
+    bool HasColumn(ComponentTypeId CompId) const
+    {
+        return ColumnIndexCache.find(CompId) != ColumnIndexCache.end();
+    }
 
-	template<typename T>
-	requires (HasColumn<T>())
-	const Column<T>& GetColumn() const
-	{
-		return InternalTable.template GetColumn<T>();
-	}
+    template<ComponentType T>
+    T* AccessColumn(size_t ColumnIndex)
+    {
+        return Columns[ColumnIndex].AccessData<T>();
+    }
+
+    template<typename... Components>
+    void EmplaceTypedRow(const ComponentTypesCollection& TypeMap, Entity E, Components&&... Values)
+    {
+        Entities.push_back(E);
+        (EmplaceInColumn(TypeMap.GetComponentTypeId<Components>(), std::forward<Components>(Values)), ...);
+    }
+
+    template<ComponentType T>
+    void EmplaceInColumn(ComponentTypeId CompId, T&& Value)
+    {
+        const size_t Idx = GetColumnIndex(CompId);
+        Columns[Idx].EmplaceBack<T>(std::forward<T>(Value));
+    }
+
+    template<ComponentType T>
+    const T* GetColumn(size_t ColumnIndex) const
+    {
+        return Columns[ColumnIndex].GetData<T>();
+    }
+
+    void Reserve(size_t Count)
+    {
+        Entities.reserve(Count);
+        for (Column& Col : Columns)
+        {
+            Col.Reserve(Count);
+        }
+    }
+
+    void SwapRemoveRow(Entity E)
+    {
+        const size_t Row = GetEntityRow(E);
+
+        for (Column& Col : Columns)
+        {
+            Col.SwapRemove(Row);
+        }
+
+		std::swap(Entities[Row], Entities.back());
+        Entities.pop_back();
+    }
+
+    size_t Size() const { return Entities.size(); }
+    const std::vector<Entity>& GetEntities() const { return Entities; }
 
 private:
-	Table<Components...> InternalTable;
+    size_t GetEntityRow(Entity E) const
+    {
+        auto It = std::find(Entities.begin(), Entities.end(), E);
+        return static_cast<size_t>(std::distance(Entities.begin(), It));
+    }
+
+    std::vector<ComponentTypeId> ComponentTypes;
+    std::vector<Column> Columns;
+    std::vector<Entity> Entities;
+
+    std::unordered_map<ComponentTypeId, size_t> ColumnIndexCache;
 };

@@ -1,32 +1,54 @@
 #pragma once
 #include "Archetype.h"
+#include "ComponentTypesCollection.h"
 #include "Entity.h"
-#include <typeindex>
+#include <array>
 #include <vector>
+#include <cstddef>
+
+template<typename Candidate, typename... Components>
+concept MatchingComponent = (std::same_as<Candidate, Components> || ...);
 
 /* Handle that provides access to specific subset of Archtypes data
  */
-template<typename... Components>
+template<ComponentType... Components>
 class ArchetypeHandle
 {
 public:
-    ArchetypeHandle(ArchetypeBase& InArchetype) : Archetype(&InArchetype) {}
+    ArchetypeHandle(Archetype& InArchetype, const ComponentTypesCollection& Types)
+        : CachedArchetype(&InArchetype)
+    {
+        size_t i = 0;
+        (( ResolvedIndices[i++] = InArchetype.GetColumnIndex(Types.GetComponentTypeId<Components>()) ), ...);
+    }
 
-    template<typename T>
+    template<ComponentType T>
+    requires MatchingComponent<T, Components...>
     T* AccessComponents()
     {
-        return static_cast<T*>(Archetype->AccessColumnData(std::type_index(typeid(T))));
+        return CachedArchetype->AccessColumn<T>(ResolvedIndices[SlotOf<T>()]);
     }
 
-    template<typename T>
+    template<ComponentType T>
+    requires MatchingComponent<T, Components...>
     const T* GetComponents() const
     {
-        return static_cast<const T*>(Archetype->GetColumnData(std::type_index(typeid(T))));
+        return CachedArchetype->GetColumn<T>(ResolvedIndices[SlotOf<T>()]);
     }
 
-    const std::vector<Entity>& GetEntities() const { return Archetype->GetEntities(); }
-    size_t Size() const { return Archetype->Size(); }
+    const std::vector<Entity>& GetEntities() const { return CachedArchetype->GetEntities(); }
+    size_t Size() const { return CachedArchetype->Size(); }
 
 private:
-    ArchetypeBase* Archetype;
+    // Compile-time index of T within Components...
+    template<ComponentType T>
+    static consteval size_t SlotOf()
+    {
+        size_t Slot = 0;
+        ((std::same_as<T, Components> || (++Slot, false)), ...);
+        return Slot;
+    }
+
+    Archetype* CachedArchetype = nullptr;
+    std::array<size_t, sizeof...(Components)> ResolvedIndices;
 };

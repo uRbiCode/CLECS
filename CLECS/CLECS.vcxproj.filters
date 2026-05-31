@@ -219,12 +219,6 @@
     <ClInclude Include="SystemsCollection.h">
       <Filter>Source\Core\System</Filter>
     </ClInclude>
-    <ClInclude Include="Column.h">
-      <Filter>Source\Core\Archetype</Filter>
-    </ClInclude>
-    <ClInclude Include="Table.h">
-      <Filter>Source\Core\Archetype</Filter>
-    </ClInclude>
     <ClInclude Include="Archetype.h">
       <Filter>Source\Core\Archetype</Filter>
     </ClInclude>
@@ -282,5 +276,6 @@
     <ClInclude Include="CommandRunner.h">
       <Filter>Source\Core\Archetype\Commands</Filter>
     </ClInclude>
+    <ClInclude Include="Column.h" />
   </ItemGroup>
 </Project>

@@ -215,7 +215,6 @@
     <ClInclude Include="SystemContext.h" />
     <ClInclude Include="SystemsCollection.h" />
     <ClInclude Include="SystemsInitializationData.h" />
-    <ClInclude Include="Table.h" />
     <ClInclude Include="TextComponent.h" />
     <ClInclude Include="TextureComponent.h" />
     <ClInclude Include="TextureManager.h" />
