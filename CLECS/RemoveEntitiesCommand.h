@@ -10,7 +10,7 @@ public:
 	RemoveEntitiesCommand() = default;
 	explicit RemoveEntitiesCommand(size_t EntityCount) { Entities.reserve(EntityCount); }
 
-	RemoveEntitiesCommand& WithEntity(Entity EntityToRemove)
+	RemoveEntitiesCommand& WithEntry(Entity EntityToRemove)
 	{
 		Entities.push_back(EntityToRemove);
 		return *this;

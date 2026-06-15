@@ -9,7 +9,7 @@
 template<typename Candidate, typename... Components>
 concept MatchingComponent = (std::same_as<Candidate, Components> || ...);
 
-/* Handle that provides access to specific subset of Archtypes data
+/* Handle that provides access to specific subset of Archetypes data
  */
 template<ComponentType... Components>
 class ArchetypeHandle

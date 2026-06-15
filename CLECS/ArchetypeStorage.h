@@ -1,13 +1,15 @@
-#pragma once
+﻿#pragma once
 #include "Archetype.h"
 #include "ComponentTypesCollection.h"
 #include "EntitySpawner.h"
 #include "AddEntitiesCommand.h"
+#include "AddComponentsCommand.h"
 #include "RemoveEntitiesCommand.h"
 #include "ArchetypeHandle.h"
 #include <unordered_map>
-#include <memory>
 #include <functional>
+#include <algorithm>
+#include <ranges>
 
 /* Provides communication for World to access and manage Archetypes, and thus components and entities.
  */
@@ -41,9 +43,51 @@ public:
 		for (const Entity EntityToRemove : Command.GetEntities())
 		{
 			const auto It = EntitiesToArchetypes.find(EntityToRemove.GetId());
-			Archetypes[It->second].SwapRemoveRow(EntityToRemove);
+			Archetypes[It->second].Archetype.SwapRemoveRow(EntityToRemove);
 			EntitiesToArchetypes.erase(It);
 			Spawner.DestroyEntity(EntityToRemove);
+		}
+	}
+
+	template<ComponentType... NewComponents>
+	void AddComponents(AddComponentsCommand<NewComponents...>&& Command)
+	{
+		for (auto& [E, NewData] : Command.AccessEntries())
+		{
+			const auto EntityIt = EntitiesToArchetypes.find(E.GetId());
+			const ArchetypeId SrcId = EntityIt->second;
+
+			ArchetypeKey TargetKey = Archetypes[SrcId].Key;
+			([&]()
+			{
+				const ComponentTypeId Id = ComponentTypes.GetComponentTypeId<NewComponents>();
+				const auto Pos = std::lower_bound(TargetKey.begin(), TargetKey.end(), Id);
+				if (Pos == TargetKey.end() || *Pos != Id)
+					TargetKey.insert(Pos, Id);
+			}(), ...);
+
+			if (TargetKey == ArchetypeKeyList[SrcId])
+				continue;
+
+			const ArchetypeId DstId = AccessOrCreateExtendedArchetype<NewComponents...>(TargetKey, SrcId);
+
+			Archetype& SrcArch = Archetypes[SrcId].Archetype;
+			Archetype& DstArch = Archetypes[DstId].Archetype;
+			SrcArch.MigrateRowTo(E, DstArch);
+
+			std::apply([&](NewComponents&&... Values)
+				{
+					([&]()
+						{
+							const ComponentTypeId Id = ComponentTypes.GetComponentTypeId<NewComponents>();
+							if (!SrcArch.HasComponentType(Id))
+							{
+								DstArch.EmplaceInColumn<NewComponents>(Id, std::forward<NewComponents>(Values));
+							}
+						}(), ...);
+				}, std::move(NewData));
+
+			EntityIt->second = DstId;
 		}
 	}
 
@@ -59,9 +103,9 @@ public:
 			{
 				const auto It = ComponentsToArchetypes.find(ComponentTypes.GetComponentTypeId<Components>());
 				if (It == ComponentsToArchetypes.end())
-				{ 
-					AnyMissing = true; 
-					return; 
+				{
+					AnyMissing = true;
+					return;
 				}
 				Lists[ListIndex++] = &It->second;
 			}(), ...);
@@ -83,31 +127,35 @@ public:
 				return std::ranges::binary_search(*List, Candidate);
 			});
 
-			if (FoundInAll && Archetypes[Candidate].Size() > 0)
+			if (FoundInAll && Archetypes[Candidate].Archetype.Size() > 0)
 			{
-				Result.emplace_back(Archetypes[Candidate], ComponentTypes);
+				Result.emplace_back(Archetypes[Candidate].Archetype, ComponentTypes);
 			}
 		}
 
 		return Result;
 	}
 
-	//template<typename... NewComponents>
-	//void AddComponents(AddComponentsCommand<NewComponents...>&& Command)
-	//{
-	//}
-
 private:
+	using ArchetypeId = size_t;
+	using ArchetypeKey = std::vector<ComponentTypeId>;
+
+	struct ArchetypeEntry
+	{
+		Archetype Archetype;
+		ArchetypeKey Key;
+	};
+
 	template<typename... Components>
 	Archetype& AccessArchetype()
 	{
 		const ArchetypeKey Key = CreateArchetypeKeyFromComponents<Components...>();
 		const auto It = KeysToArchetypes.find(Key);
 		if (It != KeysToArchetypes.end())
-			return Archetypes[It->second];
+			return Archetypes[It->second].Archetype;
 
 		const ArchetypeId NewId = Archetypes.size();
-		Archetypes.push_back(Archetype::MakeArchetype<Components...>(ComponentTypes));
+		Archetypes.push_back({ Archetype::MakeArchetype<Components...>(ComponentTypes), Key });
 		KeysToArchetypes[Key] = NewId;
 
 		for (const ComponentTypeId CompId : Key)
@@ -115,12 +163,27 @@ private:
 			ComponentsToArchetypes[CompId].push_back(NewId);
 		}
 
-		return Archetypes.back();
+		return Archetypes.back().Archetype;
 	}
 
-	using ArchetypeId = size_t;
-	using ArchetypeKey = std::vector<ComponentTypeId>;
-	using RowInserter = std::function<void(Entity, const std::tuple<void*>&)>;
+	template<ComponentType... NewComponents>
+	ArchetypeId AccessOrCreateExtendedArchetype(const ArchetypeKey& TargetKey, ArchetypeId SrcId)
+	{
+		const auto It = KeysToArchetypes.find(TargetKey);
+		if (It != KeysToArchetypes.end())
+			return It->second;
+
+		const ArchetypeId NewId = Archetypes.size();
+		Archetypes.push_back({ Archetype::MakeExtended<NewComponents...>(Archetypes[SrcId].Archetype, ComponentTypes), TargetKey });
+		KeysToArchetypes[TargetKey] = NewId;
+
+		for (const ComponentTypeId CompId : TargetKey)
+		{
+			ComponentsToArchetypes[CompId].push_back(NewId);
+		}
+
+		return NewId;
+	}
 
 	template<typename... Components>
 	ArchetypeKey CreateArchetypeKeyFromComponents()
@@ -150,7 +213,7 @@ private:
 	ComponentTypesCollection ComponentTypes;
 	EntitySpawner Spawner;
 
-	std::vector<Archetype> Archetypes;
+	std::vector<ArchetypeEntry> Archetypes;
 
 	// Find Archetype of exact Components set
 	std::unordered_map<ArchetypeKey, ArchetypeId, ArchetypeKeyHash> KeysToArchetypes;

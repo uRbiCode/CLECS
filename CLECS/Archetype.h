@@ -36,9 +36,7 @@ public:
 		for (Entry& Ent : Entries)
 		{
 			Arch.ComponentTypes.push_back(Ent.Id);
-
-			Column Col(std::move(Ent.Description));
-			Arch.Columns.emplace_back(std::move(Col));
+            Arch.Columns.emplace_back(Column(std::move(Ent.Description)));
 		}
 
 		for (size_t i = 0; i < Arch.ComponentTypes.size(); ++i)
@@ -48,16 +46,65 @@ public:
 
 		return Arch;
 	}
+
+    template<ComponentType... NewComponents>
+    static Archetype MakeExtended(const Archetype& Existing, const ComponentTypesCollection& Types)
+    {
+        struct Entry
+        {
+            ComponentTypeId Id;
+            ColumnDescription Description;
+        };
+
+        std::vector<Entry> Entries;
+        Entries.reserve(Existing.ComponentTypes.size() + sizeof...(NewComponents));
+
+        for (size_t i = 0; i < Existing.ComponentTypes.size(); ++i)
+        {
+            Entries.push_back({ Existing.ComponentTypes[i], Existing.Columns[i].GetDescription() });
+        }
+
+        ([&]()
+            {
+                const ComponentTypeId Id = Types.GetComponentTypeId<NewComponents>();
+                const bool AlreadyPresent = std::ranges::any_of(Entries, [Id](const Entry& E) { return E.Id == Id; });
+                if (!AlreadyPresent)
+                {
+                    Entries.push_back({ Id, ColumnDescription::Make<NewComponents>() });
+                }
+            }(), ...);
+
+        std::ranges::sort(Entries, {}, &Entry::Id);
+
+        Archetype Arch;
+        Arch.ComponentTypes.reserve(Entries.size());
+        Arch.Columns.reserve(Entries.size());
+        Arch.ColumnIndexCache.reserve(Entries.size());
+
+        for (Entry& Ent : Entries)
+        {
+            Arch.ComponentTypes.push_back(Ent.Id);
+            Arch.Columns.emplace_back(Column(std::move(Ent.Description)));
+        }
+
+        for (size_t i = 0; i < Arch.ComponentTypes.size(); ++i)
+        {
+            Arch.ColumnIndexCache[Arch.ComponentTypes[i]] = i;
+        }
+
+        return Arch;
+    }
+
     size_t GetColumnIndex(ComponentTypeId CompId) const
     {
         auto It = ColumnIndexCache.find(CompId);
         return It != ColumnIndexCache.end() ? It->second : SIZE_MAX;
     }
 
-    bool HasColumn(ComponentTypeId CompId) const
+    bool HasComponentType(ComponentTypeId CompId) const
     {
         return ColumnIndexCache.find(CompId) != ColumnIndexCache.end();
-    }
+	}
 
     template<ComponentType T>
     T* AccessColumn(size_t ColumnIndex)
@@ -94,10 +141,32 @@ public:
         }
     }
 
-    void SwapRemoveRow(Entity E)
+    void MigrateRowTo(Entity E, Archetype& Target)
     {
         const size_t Row = GetEntityRow(E);
 
+        Target.Entities.push_back(E);
+
+        for (size_t i = 0; i < ComponentTypes.size(); ++i)
+        {
+            const size_t TargetColIdx = Target.GetColumnIndex(ComponentTypes[i]);
+            Target.Columns[TargetColIdx].MoveAppendFrom(Columns[i], Row);
+        }
+
+        SwapRemoveAt(Row);
+    }
+
+    void SwapRemoveRow(Entity E)
+    {
+        SwapRemoveAt(GetEntityRow(E));
+    }
+
+    size_t Size() const { return Entities.size(); }
+    const std::vector<Entity>& GetEntities() const { return Entities; }
+
+private:
+    void SwapRemoveAt(size_t Row)
+    {
         for (Column& Col : Columns)
         {
             Col.SwapRemove(Row);
@@ -107,10 +176,6 @@ public:
         Entities.pop_back();
     }
 
-    size_t Size() const { return Entities.size(); }
-    const std::vector<Entity>& GetEntities() const { return Entities; }
-
-private:
     size_t GetEntityRow(Entity E) const
     {
         auto It = std::find(Entities.begin(), Entities.end(), E);
