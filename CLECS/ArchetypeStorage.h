@@ -4,10 +4,10 @@
 #include "EntitySpawner.h"
 #include "AddEntitiesCommand.h"
 #include "AddComponentsCommand.h"
+#include "RemoveComponentsCommand.h"
 #include "RemoveEntitiesCommand.h"
 #include "ArchetypeHandle.h"
 #include <unordered_map>
-#include <functional>
 #include <algorithm>
 #include <ranges>
 
@@ -40,7 +40,7 @@ public:
 
 	void RemoveEntities(RemoveEntitiesCommand&& Command)
 	{
-		for (const Entity EntityToRemove : Command.GetEntities())
+		for (const Entity EntityToRemove : Command.GetEntries())
 		{
 			const auto It = EntitiesToArchetypes.find(EntityToRemove.GetId());
 			Archetypes[It->second].Archetype.SwapRemoveRow(EntityToRemove);
@@ -66,26 +66,58 @@ public:
 					TargetKey.insert(Pos, Id);
 			}(), ...);
 
-			if (TargetKey == ArchetypeKeyList[SrcId])
+			if (TargetKey == Archetypes[SrcId].Key)
 				continue;
 
 			const ArchetypeId DstId = AccessOrCreateExtendedArchetype<NewComponents...>(TargetKey, SrcId);
 
 			Archetype& SrcArch = Archetypes[SrcId].Archetype;
 			Archetype& DstArch = Archetypes[DstId].Archetype;
+
 			SrcArch.MigrateRowTo(E, DstArch);
 
 			std::apply([&](NewComponents&&... Values)
+			{
+				([&]()
 				{
-					([&]()
-						{
-							const ComponentTypeId Id = ComponentTypes.GetComponentTypeId<NewComponents>();
-							if (!SrcArch.HasComponentType(Id))
-							{
-								DstArch.EmplaceInColumn<NewComponents>(Id, std::forward<NewComponents>(Values));
-							}
-						}(), ...);
-				}, std::move(NewData));
+					const ComponentTypeId Id = ComponentTypes.GetComponentTypeId<NewComponents>();
+					if (!SrcArch.HasComponentType(Id))
+						DstArch.EmplaceInColumn<NewComponents>(Id, std::forward<NewComponents>(Values));
+				}(), ...);
+			}, std::move(NewData));
+
+			EntityIt->second = DstId;
+		}
+	}
+
+	template<ComponentType... RemovedComponents>
+	void RemoveComponents(RemoveComponentsCommand<RemovedComponents...>&& Command)
+	{
+		for (const Entity E : Command.GetEntries())
+		{
+			const auto EntityIt = EntitiesToArchetypes.find(E.GetId());
+			const ArchetypeId SrcId = EntityIt->second;
+
+			ArchetypeKey TargetKey = Archetypes[SrcId].Key;
+			([&]()
+			{
+				const ComponentTypeId Id = ComponentTypes.GetComponentTypeId<RemovedComponents>();
+				const auto Pos = std::lower_bound(TargetKey.begin(), TargetKey.end(), Id);
+				if (Pos != TargetKey.end() && *Pos == Id)
+				{
+					TargetKey.erase(Pos);
+				}
+			}(), ...);
+
+			if (TargetKey == Archetypes[SrcId].Key)
+				continue;
+
+			const ArchetypeId DstId = AccessOrCreateReducedArchetype(TargetKey, SrcId);
+
+			Archetype& SrcArch = Archetypes[SrcId].Archetype;
+			Archetype& DstArch = Archetypes[DstId].Archetype;
+
+			SrcArch.MigrateRowTo(E, DstArch);
 
 			EntityIt->second = DstId;
 		}
@@ -100,15 +132,15 @@ public:
 		bool AnyMissing = false;
 
 		([&]()
+		{
+			const auto It = ComponentsToArchetypes.find(ComponentTypes.GetComponentTypeId<Components>());
+			if (It == ComponentsToArchetypes.end())
 			{
-				const auto It = ComponentsToArchetypes.find(ComponentTypes.GetComponentTypeId<Components>());
-				if (It == ComponentsToArchetypes.end())
-				{
-					AnyMissing = true;
-					return;
-				}
-				Lists[ListIndex++] = &It->second;
-			}(), ...);
+				AnyMissing = true;
+				return;
+			}
+			Lists[ListIndex++] = &It->second;
+		}(), ...);
 
 		if (AnyMissing)
 			return {};
@@ -175,6 +207,24 @@ private:
 
 		const ArchetypeId NewId = Archetypes.size();
 		Archetypes.push_back({ Archetype::MakeExtended<NewComponents...>(Archetypes[SrcId].Archetype, ComponentTypes), TargetKey });
+		KeysToArchetypes[TargetKey] = NewId;
+
+		for (const ComponentTypeId CompId : TargetKey)
+		{
+			ComponentsToArchetypes[CompId].push_back(NewId);
+		}
+
+		return NewId;
+	}
+
+	ArchetypeId AccessOrCreateReducedArchetype(const ArchetypeKey& TargetKey, ArchetypeId SrcId)
+	{
+		const auto It = KeysToArchetypes.find(TargetKey);
+		if (It != KeysToArchetypes.end())
+			return It->second;
+
+		const ArchetypeId NewId = Archetypes.size();
+		Archetypes.push_back({ Archetype::MakeNarrowed(Archetypes[SrcId].Archetype, TargetKey), TargetKey });
 		KeysToArchetypes[TargetKey] = NewId;
 
 		for (const ComponentTypeId CompId : TargetKey)

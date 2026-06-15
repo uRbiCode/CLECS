@@ -277,5 +277,8 @@
       <Filter>Source\Core\Archetype\Commands</Filter>
     </ClInclude>
     <ClInclude Include="Column.h" />
+    <ClInclude Include="RemoveComponentsCommand.h">
+      <Filter>Source\Core\Archetype\Commands\Commands</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,7 +4,6 @@
 #include "ComponentTypesCollection.h"
 #include <vector>
 #include <unordered_map>
-#include <functional>
 #include <algorithm>
 #include <ranges>
 
@@ -88,6 +87,30 @@ public:
         }
 
         for (size_t i = 0; i < Arch.ComponentTypes.size(); ++i)
+            Arch.ColumnIndexCache[Arch.ComponentTypes[i]] = i;
+
+        return Arch;
+    }
+
+    /* Creates a new empty Archetype whose columns are exactly those in TargetKey.
+     * TargetKey must be a sorted subset of Existing's component types.
+     */
+    static Archetype MakeNarrowed(const Archetype& Existing, const std::vector<ComponentTypeId>& TargetKey)
+    {
+        Archetype Arch;
+        Arch.ComponentTypes.reserve(TargetKey.size());
+        Arch.Columns.reserve(TargetKey.size());
+        Arch.ColumnIndexCache.reserve(TargetKey.size());
+
+        for (const ComponentTypeId Id : TargetKey)
+        {
+            const size_t SrcColIdx = Existing.GetColumnIndex(Id);
+            ColumnDescription Desc = Existing.Columns[SrcColIdx].GetDescription();
+            Arch.ComponentTypes.push_back(Id);
+            Arch.Columns.emplace_back(Column(std::move(Desc)));
+        }
+
+        for (size_t i = 0; i < Arch.ComponentTypes.size(); ++i)
         {
             Arch.ColumnIndexCache[Arch.ComponentTypes[i]] = i;
         }
@@ -97,13 +120,13 @@ public:
 
     size_t GetColumnIndex(ComponentTypeId CompId) const
     {
-        auto It = ColumnIndexCache.find(CompId);
+        const auto It = ColumnIndexCache.find(CompId);
         return It != ColumnIndexCache.end() ? It->second : SIZE_MAX;
     }
 
     bool HasComponentType(ComponentTypeId CompId) const
     {
-        return ColumnIndexCache.find(CompId) != ColumnIndexCache.end();
+        return ColumnIndexCache.contains(CompId);
 	}
 
     template<ComponentType T>
@@ -149,6 +172,9 @@ public:
 
         for (size_t i = 0; i < ComponentTypes.size(); ++i)
         {
+            if (!Target.HasComponentType(ComponentTypes[i]))
+				continue;
+
             const size_t TargetColIdx = Target.GetColumnIndex(ComponentTypes[i]);
             Target.Columns[TargetColIdx].MoveAppendFrom(Columns[i], Row);
         }
@@ -178,7 +204,7 @@ private:
 
     size_t GetEntityRow(Entity E) const
     {
-        auto It = std::find(Entities.begin(), Entities.end(), E);
+        const auto It = std::find(Entities.begin(), Entities.end(), E);
         return static_cast<size_t>(std::distance(Entities.begin(), It));
     }
 
