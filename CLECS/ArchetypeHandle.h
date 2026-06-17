@@ -15,8 +15,7 @@ template<ComponentType... Components>
 class ArchetypeHandle
 {
 public:
-    ArchetypeHandle(Archetype& InArchetype, const ComponentTypesCollection& Types)
-        : CachedArchetype(&InArchetype)
+    ArchetypeHandle(Archetype& InArchetype, const ComponentTypesCollection& Types) : CachedArchetype(&InArchetype)
     {
         size_t i = 0;
         (( ResolvedIndices[i++] = InArchetype.GetColumnIndex(Types.GetComponentTypeId<Components>()) ), ...);
@@ -45,7 +44,8 @@ private:
     static consteval size_t SlotOf()
     {
         size_t Slot = 0;
-        ((std::same_as<T, Components> || (++Slot, false)), ...);
+        bool Found = false;
+        ((Found || (std::same_as<T, Components> ? (Found = true, true) : (++Slot, false))), ...);
         return Slot;
     }
 

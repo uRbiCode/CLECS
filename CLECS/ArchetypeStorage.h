@@ -27,27 +27,18 @@ public:
 		const ArchetypeKey Key = CreateArchetypeKeyFromComponents<Components...>();
 		const ArchetypeId ArchId = KeysToArchetypes.find(Key)->second;
 
-		for (const std::tuple<Components...>& Row : Command.AccessEntries())
+		for (std::tuple<Components...>& Row : Command.AccessEntries())
 		{
 			const Entity NewEntity = Spawner.CreateEntity();
 			std::apply([&](Components&&... Values)
 			{
 				Arch.EmplaceTypedRow(ComponentTypes, NewEntity, std::forward<Components>(Values)...);
-			}, Row);
+			}, std::move(Row));
 			EntitiesToArchetypes[NewEntity.GetId()] = ArchId;
 		}
 	}
 
-	void RemoveEntities(RemoveEntitiesCommand&& Command)
-	{
-		for (const Entity EntityToRemove : Command.GetEntries())
-		{
-			const auto It = EntitiesToArchetypes.find(EntityToRemove.GetId());
-			Archetypes[It->second].Archetype.SwapRemoveRow(EntityToRemove);
-			EntitiesToArchetypes.erase(It);
-			Spawner.DestroyEntity(EntityToRemove);
-		}
-	}
+	void RemoveEntities(RemoveEntitiesCommand&& Command);
 
 	template<ComponentType... NewComponents>
 	void AddComponents(AddComponentsCommand<NewComponents...>&& Command)
@@ -63,7 +54,9 @@ public:
 				const ComponentTypeId Id = ComponentTypes.GetComponentTypeId<NewComponents>();
 				const auto Pos = std::lower_bound(TargetKey.begin(), TargetKey.end(), Id);
 				if (Pos == TargetKey.end() || *Pos != Id)
+				{
 					TargetKey.insert(Pos, Id);
+				}
 			}(), ...);
 
 			if (TargetKey == Archetypes[SrcId].Key)
@@ -82,7 +75,9 @@ public:
 				{
 					const ComponentTypeId Id = ComponentTypes.GetComponentTypeId<NewComponents>();
 					if (!SrcArch.HasComponentType(Id))
+					{
 						DstArch.EmplaceInColumn<NewComponents>(Id, std::forward<NewComponents>(Values));
+					}
 				}(), ...);
 			}, std::move(NewData));
 
@@ -124,7 +119,7 @@ public:
 	}
 
 	template<ComponentType... Components>
-	std::vector<ArchetypeHandle<Components...>> GetArchetypesWithComponents() const
+	std::vector<ArchetypeHandle<Components...>> AccessArchetypesWithComponents()
 	{
 		constexpr size_t ComponentCount = sizeof...(Components);
 		std::array<const std::vector<ArchetypeId>*, ComponentCount> Lists{};
@@ -178,6 +173,21 @@ private:
 		ArchetypeKey Key;
 	};
 
+	struct ArchetypeKeyHash
+	{
+		std::size_t operator()(const ArchetypeKey& Key) const noexcept
+		{
+			std::size_t Seed = 0xcbf29ce484222325ULL;
+			constexpr std::size_t GoldenRatio = sizeof(std::size_t) == 8 ? 0x9e3779b97f4a7c15ULL : 0x9e3779b9UL;
+			for (const ComponentTypeId ComponentId : Key)
+			{
+				Seed ^= static_cast<std::size_t>(ComponentId) + GoldenRatio + (Seed << 6) + (Seed >> 2);
+			}
+
+			return Seed;
+		}
+	};
+
 	template<typename... Components>
 	Archetype& AccessArchetype()
 	{
@@ -217,23 +227,7 @@ private:
 		return NewId;
 	}
 
-	ArchetypeId AccessOrCreateReducedArchetype(const ArchetypeKey& TargetKey, ArchetypeId SrcId)
-	{
-		const auto It = KeysToArchetypes.find(TargetKey);
-		if (It != KeysToArchetypes.end())
-			return It->second;
-
-		const ArchetypeId NewId = Archetypes.size();
-		Archetypes.push_back({ Archetype::MakeNarrowed(Archetypes[SrcId].Archetype, TargetKey), TargetKey });
-		KeysToArchetypes[TargetKey] = NewId;
-
-		for (const ComponentTypeId CompId : TargetKey)
-		{
-			ComponentsToArchetypes[CompId].push_back(NewId);
-		}
-
-		return NewId;
-	}
+	ArchetypeId AccessOrCreateReducedArchetype(const ArchetypeKey& TargetKey, ArchetypeId SrcId);
 
 	template<typename... Components>
 	ArchetypeKey CreateArchetypeKeyFromComponents()
@@ -244,21 +238,6 @@ private:
 		std::sort(Key.begin(), Key.end());
 		return Key;
 	}
-
-	struct ArchetypeKeyHash
-	{
-		std::size_t operator()(const ArchetypeKey& Key) const noexcept
-		{
-			std::size_t Seed = 0xcbf29ce484222325ULL;
-			constexpr std::size_t GoldenRatio = sizeof(std::size_t) == 8 ? 0x9e3779b97f4a7c15ULL : 0x9e3779b9UL;
-			for (const ComponentTypeId ComponentId : Key)
-			{
-				Seed ^= static_cast<std::size_t>(ComponentId) + GoldenRatio + (Seed << 6) + (Seed >> 2);
-			}
-
-			return Seed;
-		}
-	};
 
 	ComponentTypesCollection ComponentTypes;
 	EntitySpawner Spawner;

@@ -112,9 +112,6 @@
     <ClCompile Include="SystemsCollection.cpp">
       <Filter>Source\Core\System</Filter>
     </ClCompile>
-    <ClCompile Include="Archetype.cpp">
-      <Filter>Source\Core\Archetype</Filter>
-    </ClCompile>
     <ClCompile Include="ArchetypeStorage.cpp">
       <Filter>Source\Core\Archetype</Filter>
     </ClCompile>
@@ -133,8 +130,8 @@
     <ClCompile Include="EntitySpawner.cpp">
       <Filter>Source\Core\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="CommandRunner.cpp">
-      <Filter>Source\Core\Archetype\Commands</Filter>
+    <ClCompile Include="Archetype.cpp">
+      <Filter>Source\Core\Archetype</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -276,9 +273,11 @@
     <ClInclude Include="CommandRunner.h">
       <Filter>Source\Core\Archetype\Commands</Filter>
     </ClInclude>
-    <ClInclude Include="Column.h" />
     <ClInclude Include="RemoveComponentsCommand.h">
       <Filter>Source\Core\Archetype\Commands\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Column.h">
+      <Filter>Source\Core\Archetype</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

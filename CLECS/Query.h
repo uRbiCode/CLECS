@@ -22,7 +22,7 @@ class Query<WritesList<WriteTypes...>, ReadsList<ReadTypes...>>
 public:
     Query(QueryContext& Context)
     {
-        for (auto& Handle : Context.Archetypes->template GetArchetypesWithComponents<WriteTypes..., ReadTypes...>())
+        for (auto& Handle : Context.Archetypes->template AccessArchetypesWithComponents<WriteTypes..., ReadTypes...>())
         {
             CacheHandle(Handle);
         }
@@ -51,7 +51,7 @@ private:
         const Entity* Entities = nullptr;
         size_t EntityCount = 0;
         std::tuple<WriteTypes*...> WritePtrs;
-        std::tuple<ReadTypes*...>  ReadPtrs;
+        std::tuple<const ReadTypes*...>  ReadPtrs;
     };
 
     void CacheHandle(ArchetypeHandle<WriteTypes..., ReadTypes...>& Handle)

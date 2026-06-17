@@ -20,7 +20,7 @@ public:
 		return *this;
 	}
 
-	const std::vector<std::tuple<Components...>>& AccessEntries() const { return Entries; }
+	std::vector<std::tuple<Components...>>& AccessEntries() { return Entries; }
 
 private:
 	std::vector<std::tuple<Components...>> Entries;

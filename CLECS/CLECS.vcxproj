@@ -157,7 +157,6 @@
     <ClCompile Include="Archetype.cpp" />
     <ClCompile Include="ArchetypeStorage.cpp" />
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="CommandRunner.cpp" />
     <ClCompile Include="ComponentTypesCollection.cpp" />
     <ClCompile Include="CoreModule.cpp" />
     <ClCompile Include="EntityAdmin.cpp" />

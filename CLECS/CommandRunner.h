@@ -1,7 +1,5 @@
 #pragma once
 #include "ArchetypeStorage.h"
-#include "AddEntitiesCommand.h"
-#include "RemoveEntitiesCommand.h"
 #include <functional>
 #include <vector>
 
@@ -27,8 +25,33 @@ public:
 		});
 	}
 
-private:
-	friend class World;
+	template<typename... Components>
+	void Submit(AddComponentsCommand<Components...>&& Command)
+	{
+		PendingCommands.emplace_back([Cmd = std::move(Command)](ArchetypeStorage& Archetypes) mutable
+		{
+			Archetypes.AddComponents(std::move(Cmd));
+		});
+	}
 
+	template<typename... Components>
+	void Submit(RemoveComponentsCommand<Components...>&& Command)
+	{
+		PendingCommands.emplace_back([Cmd = std::move(Command)](ArchetypeStorage& Archetypes) mutable
+		{
+			Archetypes.RemoveComponents(std::move(Cmd));
+		});
+	}
+
+	void Flush(ArchetypeStorage& Archetypes)
+	{
+		for (auto& Command : PendingCommands)
+		{
+			Command(Archetypes);
+		}
+		PendingCommands.clear();
+	}
+
+private:
 	std::vector<std::function<void(ArchetypeStorage&)>> PendingCommands;
 };

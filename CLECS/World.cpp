@@ -183,8 +183,5 @@ SystemContext World::MakeSystemContext()
 
 void World::FlushCommands()
 {
-	for (auto& Command : Commands.PendingCommands)
-		Command(Archetypes);
-
-	Commands.PendingCommands.clear();
+	Commands.Flush(Archetypes);
 }

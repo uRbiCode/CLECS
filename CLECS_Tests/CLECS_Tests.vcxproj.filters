@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="TestsTypes.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Tests">
+      <UniqueIdentifier>{e968934e-61f0-42a0-8906-50e58fc047d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{e0651775-8f07-4636-bee0-3701d4a54e15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\CommandTests">
+      <UniqueIdentifier>{e357e0d2-5bf4-4c88-8789-409153671550}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\ArchetypeTests">
+      <UniqueIdentifier>{82ed8aa5-cfab-4aa8-8d86-96966fad75c7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="AddComponentsCommandTests.cpp">
+      <Filter>Tests\CommandTests</Filter>
+    </ClCompile>
+    <ClCompile Include="AddEntitiesCommandTests.cpp">
+      <Filter>Tests\CommandTests</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoveComponentsCommandTests.cpp">
+      <Filter>Tests\CommandTests</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoveEntitiesCommandTests.cpp">
+      <Filter>Tests\CommandTests</Filter>
+    </ClCompile>
+    <ClCompile Include="ArchetypeHandleTests.cpp">
+      <Filter>Tests\ArchetypeTests</Filter>
+    </ClCompile>
+    <ClCompile Include="ArchetypeTests.cpp">
+      <Filter>Tests\ArchetypeTests</Filter>
+    </ClCompile>
+    <ClCompile Include="ColumnTests.cpp">
+      <Filter>Tests\ArchetypeTests</Filter>
+    </ClCompile>
+    <ClCompile Include="ArchetypeStorageTests.cpp">
+      <Filter>Tests\ArchetypeTests</Filter>
+    </ClCompile>
+    <ClCompile Include="EntitySpawnerTests.cpp">
+      <Filter>Tests\ArchetypeTests</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentTypesCollectionTests.cpp">
+      <Filter>Tests\ArchetypeTests</Filter>
+    </ClCompile>
+    <ClCompile Include="QueryTests.cpp">
+      <Filter>Tests\ArchetypeTests</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandRunnerTests.cpp">
+      <Filter>Tests\CommandTests</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

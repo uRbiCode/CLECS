@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <ranges>
+#include <array>
 
 class Archetype
 {
@@ -95,39 +96,11 @@ public:
     /* Creates a new empty Archetype whose columns are exactly those in TargetKey.
      * TargetKey must be a sorted subset of Existing's component types.
      */
-    static Archetype MakeNarrowed(const Archetype& Existing, const std::vector<ComponentTypeId>& TargetKey)
-    {
-        Archetype Arch;
-        Arch.ComponentTypes.reserve(TargetKey.size());
-        Arch.Columns.reserve(TargetKey.size());
-        Arch.ColumnIndexCache.reserve(TargetKey.size());
+    static Archetype MakeNarrowed(const Archetype& Existing, const std::vector<ComponentTypeId>& TargetKey);
 
-        for (const ComponentTypeId Id : TargetKey)
-        {
-            const size_t SrcColIdx = Existing.GetColumnIndex(Id);
-            ColumnDescription Desc = Existing.Columns[SrcColIdx].GetDescription();
-            Arch.ComponentTypes.push_back(Id);
-            Arch.Columns.emplace_back(Column(std::move(Desc)));
-        }
+    size_t GetColumnIndex(ComponentTypeId CompId) const;
 
-        for (size_t i = 0; i < Arch.ComponentTypes.size(); ++i)
-        {
-            Arch.ColumnIndexCache[Arch.ComponentTypes[i]] = i;
-        }
-
-        return Arch;
-    }
-
-    size_t GetColumnIndex(ComponentTypeId CompId) const
-    {
-        const auto It = ColumnIndexCache.find(CompId);
-        return It != ColumnIndexCache.end() ? It->second : SIZE_MAX;
-    }
-
-    bool HasComponentType(ComponentTypeId CompId) const
-    {
-        return ColumnIndexCache.contains(CompId);
-	}
+    bool HasComponentType(ComponentTypeId CompId) const;
 
     template<ComponentType T>
     T* AccessColumn(size_t ColumnIndex)
@@ -155,59 +128,20 @@ public:
         return Columns[ColumnIndex].GetData<T>();
     }
 
-    void Reserve(size_t Count)
-    {
-        Entities.reserve(Count);
-        for (Column& Col : Columns)
-        {
-            Col.Reserve(Count);
-        }
-    }
+    void Reserve(size_t Count);
 
-    void MigrateRowTo(Entity E, Archetype& Target)
-    {
-        const size_t Row = GetEntityRow(E);
+    void MigrateRowTo(Entity E, Archetype& Target);
 
-        Target.Entities.push_back(E);
-
-        for (size_t i = 0; i < ComponentTypes.size(); ++i)
-        {
-            if (!Target.HasComponentType(ComponentTypes[i]))
-				continue;
-
-            const size_t TargetColIdx = Target.GetColumnIndex(ComponentTypes[i]);
-            Target.Columns[TargetColIdx].MoveAppendFrom(Columns[i], Row);
-        }
-
-        SwapRemoveAt(Row);
-    }
-
-    void SwapRemoveRow(Entity E)
-    {
-        SwapRemoveAt(GetEntityRow(E));
-    }
+    void SwapRemoveRow(Entity E);
 
     size_t Size() const { return Entities.size(); }
     const std::vector<Entity>& GetEntities() const { return Entities; }
 
 private:
-    void SwapRemoveAt(size_t Row)
-    {
-        for (Column& Col : Columns)
-        {
-            Col.SwapRemove(Row);
-        }
+    void SwapRemoveAt(size_t Row);
 
-		std::swap(Entities[Row], Entities.back());
-        Entities.pop_back();
-    }
-
-    size_t GetEntityRow(Entity E) const
-    {
-        const auto It = std::find(Entities.begin(), Entities.end(), E);
-        return static_cast<size_t>(std::distance(Entities.begin(), It));
-    }
-
+    size_t GetEntityRow(Entity E) const;
+    
     std::vector<ComponentTypeId> ComponentTypes;
     std::vector<Column> Columns;
     std::vector<Entity> Entities;

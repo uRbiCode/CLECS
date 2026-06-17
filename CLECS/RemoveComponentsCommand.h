@@ -1,5 +1,6 @@
 #pragma once
-#include "CommandTypes.h"
+#include "Entity.h"
+#include <vector>
 
 /* Command that removes an exact set of Components from Entities
  */

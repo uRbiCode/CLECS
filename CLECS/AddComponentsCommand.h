@@ -17,7 +17,7 @@ public:
 	requires ValidCommandArgs<TypeList<Components...>, Args...>
 	AddComponentsCommand& WithEntry(Entity E, Args&&... ComponentData)
 	{
-		Entries.emplace_back(E, std::decay_t<Args>(std::forward<Args>(ComponentData))...);
+		Entries.emplace_back(E, std::tuple<Components...>(std::decay_t<Args>(std::forward<Args>(ComponentData))...));
 		return *this;
 	}
 
