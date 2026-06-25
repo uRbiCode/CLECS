@@ -26,12 +26,11 @@ public:
     
     bool HasTexture(const std::string& FilePath) const;
     
-    void UnloadTexture(const std::string& FilePath);
-    
     void UnloadAll();
 
 private:
     void LoadTexturesFromAssetsDirectory();
+    void UnloadTexture(const std::string& FilePath);
 
     SDL_Renderer* Renderer = nullptr;
     std::unordered_map<std::string, SDL_Texture*> TextureCache;

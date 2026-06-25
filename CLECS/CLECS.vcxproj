@@ -200,8 +200,8 @@
     <ClInclude Include="QueryContext.h" />
     <ClInclude Include="RemoveComponentsCommand.h" />
     <ClInclude Include="RemoveEntitiesCommand.h" />
+    <ClInclude Include="RenderComponents.h" />
     <ClInclude Include="RenderConstants.h" />
-    <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="RendererInitializationData.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="RingBuffer.h" />
@@ -216,7 +216,7 @@
     <ClInclude Include="TextComponent.h" />
     <ClInclude Include="TextureComponent.h" />
     <ClInclude Include="TextureManager.h" />
-    <ClInclude Include="TransformComponent.h" />
+    <ClInclude Include="PositionComponent.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="WorldInitializationData.h" />
   </ItemGroup>

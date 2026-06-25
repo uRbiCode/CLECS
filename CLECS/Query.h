@@ -29,7 +29,7 @@ public:
     }
 
     template<typename Func>
-    void ForEach(Func&& Function)
+    void ForEach(Func&& Function) const
     {
         for (auto& Match : MatchedArchetypes)
         {

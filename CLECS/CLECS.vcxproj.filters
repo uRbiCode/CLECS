@@ -168,14 +168,11 @@
     <ClInclude Include="ShapeComponents.h">
       <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
-    <ClInclude Include="TransformComponent.h">
+    <ClInclude Include="PositionComponent.h">
       <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
     <ClInclude Include="RenderSystem.h">
       <Filter>Source\Core\System\Systems\RenderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderComponent.h">
-      <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
     <ClInclude Include="TextureComponent.h">
       <Filter>Source\Core\Component\Components</Filter>
@@ -272,6 +269,9 @@
     </ClInclude>
     <ClInclude Include="SystemPhases.h">
       <Filter>Source\Core\System</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderComponents.h">
+      <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

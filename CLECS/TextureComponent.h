@@ -7,5 +7,5 @@ struct SDL_Texture;
 struct TextureComponent
 {
 	SDL_Texture* Texture = nullptr;
-	SDL_FRect SourceRect = {};
+	SDL_FRect SourceRect{};
 };

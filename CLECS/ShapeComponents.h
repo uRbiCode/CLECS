@@ -1,17 +1,16 @@
 #pragma once
-#include "MathTypes.h"
-#include <SDL3/SDL.h>
+#include <SDL3/SDL_rect.h>
 
 // Indicates whether a shape should be filled or just outlined.
+// Shape is only an outline by default. Presence of this component indicates otherwise.
 struct ShapeFillComponent
 {
-	bool Filled = true;
 };
 
 // Represents a rectangle shape.
 struct RectComponent
 {
-    SDL_FRect Rect = {0, 0, 0, 0};
+    SDL_FRect Rect = {0.f, 0.f, 0.f, 0.f};
 };
 
 // Represents a circle shape.

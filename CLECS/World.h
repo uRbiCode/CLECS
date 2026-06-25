@@ -1,15 +1,14 @@
 #pragma once
 #include "CoreTypes.h"
 #include "SystemsCollection.h"
-#include "EntityAdmin.h"
 #include "InputState.h"
 #include "EventBus.h"
 #include "TextureManager.h"
 #include "AudioManager.h"
 #include "FontManager.h"
 #include "ArchetypeStorage.h"
-#include <memory>
 #include "CommandRunner.h"
+#include <memory>
 
 class WorldInitializationData;
 struct SDL_Window;
@@ -33,7 +32,6 @@ public:
 	CLECS::ResultType InitializeRenderer(RendererInitializationData&& RendererData);
 	CLECS::ResultType InitializeWorld(WorldInitializationData&& Data);
 	CLECS::ResultType Update(float DeltaTime);
-	void Shutdown();
 
 private:
 	bool CreateWindow(const RendererInitializationData& Data);
@@ -46,11 +44,12 @@ private:
 
 	void FlushCommands();
 
+	void Shutdown();
+
 	SystemsCollection Systems;
 	ArchetypeStorage Archetypes;
 	CommandRunner Commands;
 
-	std::unique_ptr<EntityAdmin> EntityAdminPtr;
 	InputState Input;
 	EventBus EventBus;
 
