@@ -1,7 +1,6 @@
 #pragma once
 #include "ModuleBase.h"
 
-// TODO: REFACTOR AFTER GAMEPLAY OVERHAUL
 class ArkanoidModule : public ModuleBase
 {
 public:

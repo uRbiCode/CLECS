@@ -19,6 +19,9 @@
     <Filter Include="Tests\ArchetypeTests">
       <UniqueIdentifier>{82ed8aa5-cfab-4aa8-8d86-96966fad75c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tests\SystemsTests">
+      <UniqueIdentifier>{ec164e38-b29e-47b9-b0aa-c23b68ac3c48}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -57,6 +60,15 @@
     </ClCompile>
     <ClCompile Include="CommandRunnerTests.cpp">
       <Filter>Tests\CommandTests</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemsInitializationDataTests.cpp">
+      <Filter>Tests\SystemsTests</Filter>
+    </ClCompile>
+    <ClCompile Include="StartupSystemsInitializationDataTests.cpp">
+      <Filter>Tests\SystemsTests</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemsCollectionTests.cpp">
+      <Filter>Tests\SystemsTests</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

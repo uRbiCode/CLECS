@@ -1,5 +1,5 @@
 #pragma once
-#include "SystemContext.h"
+#include "System.h"
 #include <vector>
 
 /* Part of WorldInitializationData.
@@ -7,26 +7,16 @@
  */
 struct SystemsInitializationData
 {
-	void RegisterSystem(
-		void(*Initialize)(const SystemContext&),
-		void(*Update)(SystemContext&, float))
+	void RegisterSystem(void(*Update)(const SystemContext&, float), SystemPhase Phase)
 	{
 		SystemDescriptor Descriptor;
-		Descriptor.Initialize = Initialize;
 		Descriptor.Update = Update;
-		Descriptors.emplace_back(std::move(Descriptor));
+		Descriptor.Phase = Phase;
+		Systems.emplace_back(std::move(Descriptor));
 	}
 
-	// TODO: REMOVE AFTER GAMEPLAY OVERHAUL
-	void RegisterSystem(void(*Initialize)(SystemContext&))
-	{
-		SystemDescriptor Descriptor;
-		Descriptor.Initialize = Initialize;
-		Descriptors.emplace_back(std::move(Descriptor));
-	}
-
-	std::vector<SystemDescriptor>& AccessRegisteredSystems() { return Descriptors; }
+	std::vector<SystemDescriptor>& AccessRegisteredSystems() { return Systems; }
 
 private:
-	std::vector<SystemDescriptor> Descriptors;
+	std::vector<SystemDescriptor> Systems;
 };

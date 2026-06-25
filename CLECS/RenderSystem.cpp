@@ -304,7 +304,7 @@ namespace
 	}
 }
 
-void RenderSystem::Update(SystemContext& Context, float DeltaTime)
+void RenderSystem::Update(const SystemContext& Context, float DeltaTime)
 {
 	auto& Renderer = Context.Renderer;
 	auto& Admin = Context.EntityAdmin;

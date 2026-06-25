@@ -22,5 +22,5 @@ void CoreModule::RegisterComponentTypes(ComponentsInitializationData& Data)
 
 void CoreModule::RegisterSystems(SystemsInitializationData& Data)
 {
-	Data.RegisterSystem(nullptr, RenderSystem::Update);
+	Data.RegisterSystem(RenderSystem::Update, SystemPhase::Render);
 }

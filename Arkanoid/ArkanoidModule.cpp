@@ -49,24 +49,28 @@ void ArkanoidModule::RegisterComponentTypes(ComponentsInitializationData& Data)
 
 void ArkanoidModule::RegisterStartupSystems(StartupSystemsInitializationData& Data)
 {
-}
-
-void ArkanoidModule::RegisterSystems(SystemsInitializationData& Data)
-{
-	Data.RegisterSystem(AudioSystem::Initialize, AudioSystem::Update);
-	Data.RegisterSystem(PlayerInputSystem::Initialize, PlayerInputSystem::Update);
-	Data.RegisterSystem(nullptr, CollisionDetectionSystem::Update);
+	Data.RegisterSystem(AudioSystem::Initialize);
+	Data.RegisterSystem(PlayerInputSystem::Initialize);
 	Data.RegisterSystem(CollisionKinematicResolverSystem::Initialize);
-	Data.RegisterSystem(HealthSystem::Initialize, HealthSystem::Update);
-	Data.RegisterSystem(nullptr, MovementSystem::Update);
+	Data.RegisterSystem(HealthSystem::Initialize);
 	Data.RegisterSystem(CurrentStageSystem::Initialize);
 	Data.RegisterSystem(UpgradeControllerSystem::Initialize);
-	Data.RegisterSystem(PlayerPrepareSystem::Initialize, PlayerPrepareSystem::Update);
 	Data.RegisterSystem(MainMenuControllerSystem::Initialize);
+	Data.RegisterSystem(PlayerPrepareSystem::Initialize);
 	Data.RegisterSystem(RunControllerSystem::Initialize);
 	Data.RegisterSystem(TutorialControllerSystem::Initialize);
 	Data.RegisterSystem(SummaryControllerSystem::Initialize);
 	Data.RegisterSystem(GameStateSystem::Initialize);
 	Data.RegisterSystem(HealthIndicatorSystem::Initialize);
 	Data.RegisterSystem(StageInfoSystem::Initialize);
+}
+
+void ArkanoidModule::RegisterSystems(SystemsInitializationData& Data)
+{
+	Data.RegisterSystem(AudioSystem::Update, SystemPhase::Update);
+	Data.RegisterSystem(PlayerInputSystem::Update, SystemPhase::Update);
+	Data.RegisterSystem(CollisionDetectionSystem::Update, SystemPhase::Update);
+	Data.RegisterSystem(HealthSystem::Update, SystemPhase::Update);
+	Data.RegisterSystem(MovementSystem::Update, SystemPhase::Update);
+	Data.RegisterSystem(PlayerPrepareSystem::Update, SystemPhase::Update);
 }

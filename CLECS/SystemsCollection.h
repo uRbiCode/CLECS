@@ -1,29 +1,21 @@
 #pragma once
 #include "System.h"
 #include <vector>
+#include <map>
 
-using SystemStage = std::vector<SystemDescriptor>;
+using StagedSystems = std::map<SystemPhase, std::vector<SystemDescriptor::UpdateFunction>>;
 struct SystemsInitializationData;
 
-// TODO: REFACTOR STAGING SYSTEMS
-
-/* Holds an ordered list of stages.
- *
- * Algorithm: for each descriptor, scan all existing stages forward to find the last one it conflicts with, then place it in the stage immediately after.
- *
- * Two systems conflict when they share a component type and at least one writes it.
- * Each stage is safe to run concurrently.
+/* Holds an ordered StagedSystemsCollection.
+ * It's a deterministic collection of Systems that have been registered by Modules.
  */
 class SystemsCollection
 {
 public:
 	static SystemsCollection Create(SystemsInitializationData&& Data);
 
-    const std::vector<SystemStage>& GetStages() const { return Stages; }
+    const StagedSystems& GetStagedSystems() const { return Systems; }
 
 private:
-    static bool ConflictsWithStage(const SystemDescriptor& Candidate, const SystemStage& Stage);
-    static bool HasAccessConflict(const std::vector<ComponentAccess>& A, const std::vector<ComponentAccess>& B);
-
-    std::vector<SystemStage> Stages;
+	StagedSystems Systems;
 };

@@ -279,5 +279,8 @@
     <ClInclude Include="Column.h">
       <Filter>Source\Core\Archetype</Filter>
     </ClInclude>
+    <ClInclude Include="SystemPhases.h">
+      <Filter>Source\Core\System</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

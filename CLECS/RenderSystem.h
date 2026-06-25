@@ -8,5 +8,5 @@ struct SystemContext;
  */
 namespace RenderSystem
 {
-	void Update(SystemContext& Context, float DeltaTime);
+	void Update(const SystemContext& Context, float DeltaTime);
 }
