@@ -85,9 +85,6 @@
     <ClCompile Include="World.cpp">
       <Filter>Source\Core\World</Filter>
     </ClCompile>
-    <ClCompile Include="EntityAdmin.cpp">
-      <Filter>Source\Core\Entity</Filter>
-    </ClCompile>
     <ClCompile Include="GameRunner.cpp">
       <Filter>Source\GameEntry</Filter>
     </ClCompile>
@@ -146,12 +143,6 @@
     </ClInclude>
     <ClInclude Include="CoreTypes.h">
       <Filter>Source\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentPool.h">
-      <Filter>Source\Core\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="EntityAdmin.h">
-      <Filter>Source\Core\Entity</Filter>
     </ClInclude>
     <ClInclude Include="SystemContext.h">
       <Filter>Source\Core\System</Filter>

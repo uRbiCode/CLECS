@@ -159,7 +159,6 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="ComponentTypesCollection.cpp" />
     <ClCompile Include="CoreModule.cpp" />
-    <ClCompile Include="EntityAdmin.cpp" />
     <ClCompile Include="EntitySpawner.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -183,14 +182,12 @@
     <ClInclude Include="CommandRunner.h" />
     <ClInclude Include="CommandTypes.h" />
     <ClInclude Include="ComponentsInitializationData.h" />
-    <ClInclude Include="ComponentPool.h" />
     <ClInclude Include="ComponentTypesCollection.h" />
     <ClInclude Include="CoreModule.h" />
     <ClInclude Include="EntitySpawner.h" />
     <ClInclude Include="EventBus.h" />
     <ClInclude Include="CoreTypes.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="EntityAdmin.h" />
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameRunner.h" />
