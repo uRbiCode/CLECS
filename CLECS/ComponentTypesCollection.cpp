@@ -1,7 +1,7 @@
 #include "ComponentTypesCollection.h"
 #include "ComponentsInitializationData.h"
 
-ComponentTypesCollection ComponentTypesCollection::Create(const ComponentsInitializationData& Data)
+ComponentTypesCollection ComponentTypesCollection::Create(ComponentsInitializationData&& Data)
 {
 	ComponentTypesCollection Collection;
 	Collection.ComponentTypesIds.clear();

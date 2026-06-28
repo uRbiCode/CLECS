@@ -38,24 +38,16 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
 	InitializeAudioManager();
 	InitializeFontManager();
 
-	EntityAdminPtr = std::make_unique<EntityAdmin>();
-
-	Archetypes = ArchetypeStorage::Create(std::move(ComponentTypesCollection::Create(Data.ComponentsData)));
+	Archetypes = ArchetypeStorage::Create(std::move(ComponentTypesCollection::Create(std::move(Data.ComponentsData))));
 	Systems = SystemsCollection::Create(std::move(Data.SystemsData));
 
 	auto Context = MakeSystemContext();
-	for (const auto& Stage : Systems.GetStages())
+	for (const StartupSystemDescriptor& System : Data.StartupSystemsData.GetRegisteredSystems())
 	{
-		for (const auto& Descriptor : Stage)
-		{
-			if (Descriptor.Initialize == nullptr)
-				continue;
-
-			Descriptor.Initialize(Context);
-		}
-
-		FlushCommands();
+		System.Initialize(Context);
 	}
+
+	FlushCommands();
 
 	return CLECS::ResultType::Success;
 }
@@ -73,17 +65,13 @@ CLECS::ResultType World::Update(float DeltaTime)
 		Input.ProcessEvent(Event);
 	}
 
-	auto Context = MakeSystemContext();
-	SendInputEvents(Context);
+	SystemContext Context = MakeSystemContext();
 
-	for (const auto& Stage : Systems.GetStages())
+	for (const auto& [Phase, StagedSystems] : Systems.GetStagedSystems())
 	{
-		for (const auto& Descriptor : Stage)
+		for (const SystemDescriptor::UpdateFunction& Update : StagedSystems)
 		{
-			if (Descriptor.Update == nullptr)
-				continue;
-
-			Descriptor.Update(Context, DeltaTime);
+			Update(Context, DeltaTime);
 		}
 
 		FlushCommands();
@@ -164,15 +152,6 @@ void World::InitializeFontManager()
 {
 	FontManagerPtr = std::make_unique<FontManager>();
 	FontManagerPtr->Initialize();
-}
-
-void World::SendInputEvents(SystemContext& Context)
-{
-	const auto& MousePosition = Input.GetMousePosition();
-	for (const auto& MouseButtonClicked : Input.JustPressedMouseButtons)
-	{
-		EventBus.Notify(Context, MouseClickEvent{ MousePosition, MouseButtonClicked });
-	}
 }
 
 SystemContext World::MakeSystemContext()

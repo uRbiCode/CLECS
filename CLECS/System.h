@@ -10,7 +10,7 @@ struct SystemContext;
  */
 struct SystemDescriptor
 {
-	using UpdateFunction = std::function<void(const SystemContext&, float)>;
+	using UpdateFunction = std::function<void(SystemContext&, float)>;
 
 	UpdateFunction Update;
 	SystemPhase Phase = SystemPhase::Update;

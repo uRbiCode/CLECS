@@ -21,15 +21,13 @@ public:
 
     void Initialize();
     
-    TTF_Font* LoadFont(const std::string& FilePath, float PointSize);
-    
-    // Will try to LoadFont if not present
-    TTF_Font* GetFont(const std::string& FilePath, float PointSize);
+    TTF_Font* GetFont(const std::string& FilePath, float PointSize) const;
     
     void UnloadAll();
 
 private:
     std::string MakeFontKey(const std::string& FilePath, float PointSize) const;
+    TTF_Font* LoadFont(const std::string& FilePath, float PointSize);
     void LoadFontsFromAssetsDirectory();
 	void SetupDefaultFont();
     void UnloadFont(const std::string& FilePath, float PointSize);

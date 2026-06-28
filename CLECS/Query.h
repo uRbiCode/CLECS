@@ -9,21 +9,25 @@ template<typename T, typename... Types>
 concept OverlapsTypes = (std::same_as<T, Types> || ...);
 
 template<typename... Ts> struct WritesList {};
-template<typename... Ts> struct ReadsList  {};
+template<typename... Ts> struct ReadsList {};
+template<typename... Ts> struct ExcludeList {};
 
-template<typename WritesTag, typename ReadsTag>
+template<typename WritesTag, typename ReadsTag, typename ExcludeTag>
 class Query;
 
 // TODO: CHECK UNIQUE TYPES PER WRITE/READ TAG
-template<typename... WriteTypes, typename... ReadTypes>
+template<typename... WriteTypes, typename... ReadTypes, typename... ExcludeTypes>
 requires (!OverlapsTypes<WriteTypes, ReadTypes...> && ...) 
-class Query<WritesList<WriteTypes...>, ReadsList<ReadTypes...>>
+class Query<WritesList<WriteTypes...>, ReadsList<ReadTypes...>, ExcludeList<ExcludeTypes...>>
 {
 public:
     Query(QueryContext& Context)
     {
-        for (auto& Handle : Context.Archetypes->template AccessArchetypesWithComponents<WriteTypes..., ReadTypes...>())
+        for (ArchetypeHandle<WriteTypes..., ReadTypes...>& Handle : Context.Archetypes->template AccessArchetypesWithComponents<WriteTypes..., ReadTypes...>())
         {
+            if ((Handle.template HasComponentType<ExcludeTypes>() || ...))
+				continue;
+
             CacheHandle(Handle);
         }
     }
@@ -31,7 +35,7 @@ public:
     template<typename Func>
     void ForEach(Func&& Function) const
     {
-        for (auto& Match : MatchedArchetypes)
+        for (const MatchedArchetype& Match : MatchedArchetypes)
         {
             const size_t N = Match.EntityCount;
             const Entity* Entities = Match.Entities;

@@ -33,6 +33,8 @@ public:
 	CLECS::ResultType InitializeWorld(WorldInitializationData&& Data);
 	CLECS::ResultType Update(float DeltaTime);
 
+	void Shutdown();
+
 private:
 	bool CreateWindow(const RendererInitializationData& Data);
 	bool CreateRenderer();
@@ -43,8 +45,6 @@ private:
 	SystemContext MakeSystemContext();
 
 	void FlushCommands();
-
-	void Shutdown();
 
 	SystemsCollection Systems;
 	ArchetypeStorage Archetypes;

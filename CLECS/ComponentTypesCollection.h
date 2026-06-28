@@ -13,7 +13,7 @@ struct ComponentsInitializationData;
 class ComponentTypesCollection
 {
 public:
-	static ComponentTypesCollection Create(const ComponentsInitializationData& Data);
+	static ComponentTypesCollection Create(ComponentsInitializationData&& Data);
 
 	template<typename Component>
 	ComponentTypeId GetComponentTypeId() const

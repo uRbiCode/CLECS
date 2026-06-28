@@ -7,7 +7,7 @@
  */
 struct SystemsInitializationData
 {
-	void RegisterSystem(void(*Update)(const SystemContext&, float), SystemPhase Phase)
+	void RegisterSystem(void(*Update)(SystemContext&, float), SystemPhase Phase)
 	{
 		SystemDescriptor Descriptor;
 		Descriptor.Update = Update;

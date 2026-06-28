@@ -37,17 +37,17 @@ TTF_Font* FontManager::LoadFont(const std::string& FilePath, float PointSize)
     TTF_Font* NewFont = TTF_OpenFont(FilePath.c_str(), PointSize);
     if (NewFont == nullptr)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFont -> Failed to load font: %s at size %f. SDL Error: %s", FilePath.c_str(), PointSize, SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFont -> Failed to load font: %s size %f. SDL Error: %s", FilePath.c_str(), PointSize, SDL_GetError());
         return DefaultFont;
     }
 
     FontCache[FontKey] = NewFont;
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFont -> Loaded font: %s at size %f", FilePath.c_str(), PointSize);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFont -> Loaded font: %s size %f", FilePath.c_str(), PointSize);
 
     return NewFont;
 }
 
-TTF_Font* FontManager::GetFont(const std::string& FilePath, float PointSize)
+TTF_Font* FontManager::GetFont(const std::string& FilePath, float PointSize) const
 {
     const std::string FontKey = MakeFontKey(FilePath, PointSize);
     
@@ -55,7 +55,8 @@ TTF_Font* FontManager::GetFont(const std::string& FilePath, float PointSize)
     if (It != FontCache.end())
         return It->second;
 
-    return LoadFont(FilePath, PointSize);
+	SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "FontManager::GetFont -> Font %s size %f not found in cache", FilePath.c_str(), PointSize);
+    return DefaultFont;
 }
 
 void FontManager::UnloadFont(const std::string& FilePath, float PointSize)
@@ -68,7 +69,7 @@ void FontManager::UnloadFont(const std::string& FilePath, float PointSize)
 
     TTF_CloseFont(It->second);
     FontCache.erase(It);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FontManager::UnloadFont -> Unloaded font: %s at size %f", FilePath.c_str(), PointSize);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FontManager::UnloadFont -> Unloaded font %s size %f", FilePath.c_str(), PointSize);
 }
 
 void FontManager::UnloadAll()

@@ -1,5 +1,4 @@
 #include "WorldInitializationData.h"
-#include "EntityAdmin.h"
 
 WorldInitializationData WorldInitializationData::InitializeWithModules(ModulesInitializationData&& ModulesData)
 {

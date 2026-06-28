@@ -23,5 +23,5 @@ struct SystemContext;
  */
 namespace RenderSystem
 {
-	void Update(const SystemContext& Context, float DeltaTime);
+	void Update(SystemContext& Context, float DeltaTime);
 }

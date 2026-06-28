@@ -15,7 +15,7 @@ template<ComponentType... Components>
 class ArchetypeHandle
 {
 public:
-    ArchetypeHandle(Archetype& InArchetype, const ComponentTypesCollection& Types) : CachedArchetype(&InArchetype)
+	ArchetypeHandle(Archetype& InArchetype, const ComponentTypesCollection& Types) : CachedArchetype(&InArchetype), ComponentTypes(&Types)
     {
         size_t i = 0;
         (( ResolvedIndices[i++] = InArchetype.GetColumnIndex(Types.GetComponentTypeId<Components>()) ), ...);
@@ -38,6 +38,12 @@ public:
     const std::vector<Entity>& GetEntities() const { return CachedArchetype->GetEntities(); }
     size_t Size() const { return CachedArchetype->Size(); }
 
+	template<ComponentType T>
+    bool HasComponentType() const
+    {
+        return CachedArchetype->HasComponentType(ComponentTypes->GetComponentTypeId<T>());
+	}
+
 private:
     // Compile-time index of T within Components...
     template<ComponentType T>
@@ -49,6 +55,7 @@ private:
         return Slot;
     }
 
+	const ComponentTypesCollection* ComponentTypes = nullptr;
     Archetype* CachedArchetype = nullptr;
     std::array<size_t, sizeof...(Components)> ResolvedIndices;
 };
