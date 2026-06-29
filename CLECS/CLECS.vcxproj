@@ -157,6 +157,7 @@
     <ClCompile Include="Archetype.cpp" />
     <ClCompile Include="ArchetypeStorage.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="AudioModule.cpp" />
     <ClCompile Include="AudioRequestConsumerSystem.cpp" />
     <ClCompile Include="ComponentTypesCollection.cpp" />
     <ClCompile Include="CoreModule.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="ArchetypeHandle.h" />
     <ClInclude Include="ArchetypeStorage.h" />
     <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="AudioModule.h" />
     <ClInclude Include="AudioRequestComponents.h" />
     <ClInclude Include="AudioRequestConsumerSystem.h" />
     <ClInclude Include="Column.h" />
