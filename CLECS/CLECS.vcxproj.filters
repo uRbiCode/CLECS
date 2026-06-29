@@ -80,6 +80,9 @@
     <Filter Include="Source\Core\Archetype\Commands\Commands">
       <UniqueIdentifier>{ebf02839-0a74-4120-a39b-d6569f773e69}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\System\Systems\AudioSystems">
+      <UniqueIdentifier>{41433b68-b243-4838-923c-7da29a0789ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -129,6 +132,9 @@
     </ClCompile>
     <ClCompile Include="Archetype.cpp">
       <Filter>Source\Core\Archetype</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioRequestConsumerSystem.cpp">
+      <Filter>Source\Core\System\Systems\AudioSystems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,9 +203,6 @@
     </ClInclude>
     <ClInclude Include="SDLUtils.h">
       <Filter>Source\Core\Utils\SDLUtils</Filter>
-    </ClInclude>
-    <ClInclude Include="RingBuffer.h">
-      <Filter>Source\Core\Utils</Filter>
     </ClInclude>
     <ClInclude Include="SystemsCollection.h">
       <Filter>Source\Core\System</Filter>
@@ -271,6 +274,12 @@
       <Filter>Source\Core\System</Filter>
     </ClInclude>
     <ClInclude Include="RenderComponents.h">
+      <Filter>Source\Core\Component\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioRequestConsumerSystem.h">
+      <Filter>Source\Core\System\Systems\AudioSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioRequestComponents.h">
       <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
   </ItemGroup>

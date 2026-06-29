@@ -53,9 +53,6 @@
     <Filter Include="Source\Systems\RunControllerSystem\StageDataLoader">
       <UniqueIdentifier>{5596190a-9ab9-4b5f-bf5f-d805b2cc4d10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\AudioSystem">
-      <UniqueIdentifier>{70f73783-be21-407f-9017-09ea3f6d7c98}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Systems\SummaryControllerSystem">
       <UniqueIdentifier>{157a2de6-4e54-4a43-80bf-891c91174303}</UniqueIdentifier>
     </Filter>
@@ -129,9 +126,6 @@
     </ClCompile>
     <ClCompile Include="StageDataLoader.cpp">
       <Filter>Source\Systems\RunControllerSystem\StageDataLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioSystem.cpp">
-      <Filter>Source\Systems\AudioSystem</Filter>
     </ClCompile>
     <ClCompile Include="SummaryControllerSystem.cpp">
       <Filter>Source\Systems\SummaryControllerSystem</Filter>
@@ -240,9 +234,6 @@
     <ClInclude Include="StageDataLoader.h">
       <Filter>Source\Systems\RunControllerSystem\StageDataLoader</Filter>
     </ClInclude>
-    <ClInclude Include="AudioSystem.h">
-      <Filter>Source\Systems\AudioSystem</Filter>
-    </ClInclude>
     <ClInclude Include="Constants.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
@@ -281,9 +272,6 @@
     </ClInclude>
     <ClInclude Include="UpgradeUtils.h">
       <Filter>Source\Utils\UpgradeUtils</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioRequestsComponent.h">
-      <Filter>Source\Components</Filter>
     </ClInclude>
     <ClInclude Include="HealthUtils.h">
       <Filter>Source\Utils\HealthUtils</Filter>

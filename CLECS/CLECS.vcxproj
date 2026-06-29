@@ -157,6 +157,7 @@
     <ClCompile Include="Archetype.cpp" />
     <ClCompile Include="ArchetypeStorage.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="AudioRequestConsumerSystem.cpp" />
     <ClCompile Include="ComponentTypesCollection.cpp" />
     <ClCompile Include="CoreModule.cpp" />
     <ClCompile Include="EntitySpawner.cpp" />
@@ -178,6 +179,8 @@
     <ClInclude Include="ArchetypeHandle.h" />
     <ClInclude Include="ArchetypeStorage.h" />
     <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="AudioRequestComponents.h" />
+    <ClInclude Include="AudioRequestConsumerSystem.h" />
     <ClInclude Include="Column.h" />
     <ClInclude Include="CommandRunner.h" />
     <ClInclude Include="CommandTypes.h" />
@@ -204,7 +207,6 @@
     <ClInclude Include="RenderConstants.h" />
     <ClInclude Include="RendererInitializationData.h" />
     <ClInclude Include="RenderSystem.h" />
-    <ClInclude Include="RingBuffer.h" />
     <ClInclude Include="SDLUtils.h" />
     <ClInclude Include="ShapeComponents.h" />
     <ClInclude Include="StartupSystemsInitializationData.h" />

@@ -49,6 +49,16 @@ public:
         }
     }
 
+    size_t Size() const
+    {
+        size_t TotalSize = 0;
+        for (const MatchedArchetype& Match : MatchedArchetypes)
+        {
+            TotalSize += Match.EntityCount;
+        }
+        return TotalSize;
+	}
+
 private:
     struct MatchedArchetype
     {

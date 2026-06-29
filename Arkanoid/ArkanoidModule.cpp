@@ -5,7 +5,6 @@
 #include "VelocityComponent.h"
 #include "UpgradeComponent.h"
 #include "StageDataComponent.h"
-#include "AudioRequestsComponent.h"
 #include "ClickableComponent.h"
 #include "CollisionComponent.h"
 #include "GameStateComponent.h"
@@ -13,7 +12,6 @@
 #include "PlayerControllerComponent.h"
 #include "PlayerPrepareComponent.h"
 #include "RunStateComponent.h"
-#include "AudioSystem.h"
 #include "PlayerInputSystem.h"
 #include "CollisionDetectionSystem.h"
 #include "CollisionKinematicResolverSystem.h"
@@ -37,7 +35,6 @@ void ArkanoidModule::RegisterComponentTypes(ComponentsInitializationData& Data)
 	Data.RegisterComponent<OwnedUpgradesComponent>();
 	Data.RegisterComponent<UpgradeComponent>();
 	Data.RegisterComponent<StageDataComponent>();
-	Data.RegisterComponent<AudioRequestsComponent>();
 	Data.RegisterComponent<ClickableComponent>();
 	Data.RegisterComponent<CollisionComponent>();
 	Data.RegisterComponent<GameStateComponent>();
@@ -49,7 +46,6 @@ void ArkanoidModule::RegisterComponentTypes(ComponentsInitializationData& Data)
 
 void ArkanoidModule::RegisterStartupSystems(StartupSystemsInitializationData& Data)
 {
-	Data.RegisterSystem(AudioSystem::Initialize);
 	Data.RegisterSystem(PlayerInputSystem::Initialize);
 	Data.RegisterSystem(CollisionKinematicResolverSystem::Initialize);
 	Data.RegisterSystem(HealthSystem::Initialize);
@@ -67,7 +63,6 @@ void ArkanoidModule::RegisterStartupSystems(StartupSystemsInitializationData& Da
 
 void ArkanoidModule::RegisterSystems(SystemsInitializationData& Data)
 {
-	Data.RegisterSystem(AudioSystem::Update, SystemPhase::Update);
 	Data.RegisterSystem(PlayerInputSystem::Update, SystemPhase::Update);
 	Data.RegisterSystem(CollisionDetectionSystem::Update, SystemPhase::Update);
 	Data.RegisterSystem(HealthSystem::Update, SystemPhase::Update);

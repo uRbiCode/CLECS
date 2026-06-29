@@ -87,7 +87,7 @@ SDL_AudioStream* AudioManager::CreateAndBindAudioStream(const std::string& Name,
     }
 
     const SoundData& SoundData = It->second;
-    
+
     SDL_AudioSpec DeviceSpec;
     if (!SDL_GetAudioDeviceFormat(AudioDeviceId, &DeviceSpec, nullptr))
     {
@@ -121,7 +121,7 @@ SDL_AudioStream* AudioManager::CreateAndBindAudioStream(const std::string& Name,
         }
     }
 
-    SDL_SetAudioStreamGain(Stream, Volume * MasterVolume);
+    SDL_SetAudioStreamGain(Stream, Volume);
     
     if (!SDL_PutAudioStreamData(Stream, SoundData.Buffer, SoundData.Length))
     {
@@ -155,11 +155,6 @@ void AudioManager::PlaySound(const std::string& Name, float Volume)
     Config.Callback = nullptr;
 
     CreateAndBindAudioStream(Name, Volume, Config);
-}
-
-void AudioManager::SetMasterVolume(float Volume)
-{
-	MasterVolume = std::clamp(Volume, 0.f, 1.f);
 }
 
 void AudioManager::PlayMusic(const std::string& Name, float Volume)

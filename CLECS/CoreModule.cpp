@@ -7,6 +7,8 @@
 #include "ShapeComponents.h"
 #include "RenderComponents.h"
 #include "RenderSystem.h"
+#include "AudioRequestComponents.h"
+#include "AudioRequestConsumerSystem.h"
 
 void CoreModule::RegisterComponentTypes(ComponentsInitializationData& Data)
 {
@@ -19,9 +21,13 @@ void CoreModule::RegisterComponentTypes(ComponentsInitializationData& Data)
 	Data.RegisterComponent<BackgroundRenderComponent>();
 	Data.RegisterComponent<GameRenderComponent>();
 	Data.RegisterComponent<UIRenderComponent>();
+
+	Data.RegisterComponent<SfxRequestComponent>();
+	Data.RegisterComponent<MusicRequestComponent>();
 }
 
 void CoreModule::RegisterSystems(SystemsInitializationData& Data)
 {
 	Data.RegisterSystem(RenderSystem::Update, SystemPhase::Render);
+	Data.RegisterSystem(AudioRequestConsumerSystem::Update, SystemPhase::EarlyUpdate);
 }

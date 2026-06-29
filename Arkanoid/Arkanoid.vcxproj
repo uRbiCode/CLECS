@@ -150,7 +150,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArkanoidModule.cpp" />
-    <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="CollisionDetectionSystem.cpp" />
     <ClCompile Include="Arkanoid.cpp" />
     <ClCompile Include="CollisionKinematicResolverSystem.cpp" />
@@ -177,8 +176,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArkanoidModule.h" />
-    <ClInclude Include="AudioRequestsComponent.h" />
-    <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="ClickableComponent.h" />
     <ClInclude Include="ClickableUsedEvent.h" />
     <ClInclude Include="CollisionComponent.h" />
