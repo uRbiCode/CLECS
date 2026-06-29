@@ -86,7 +86,7 @@
     <Filter Include="Source\Module\Modules\AudioModule">
       <UniqueIdentifier>{fda56248-db40-4d74-9c74-b423ca29f9ae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Module\Modules\NewFilter1">
+    <Filter Include="Source\Module\Modules\CoreModule">
       <UniqueIdentifier>{91e8926e-fd21-4178-830e-001fe9bca948}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -127,9 +127,6 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source\GameEntry</Filter>
     </ClCompile>
-    <ClCompile Include="CoreModule.cpp">
-      <Filter>Source\Module\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="ComponentTypesCollection.cpp">
       <Filter>Source\Core\Component</Filter>
     </ClCompile>
@@ -144,6 +141,9 @@
     </ClCompile>
     <ClCompile Include="AudioModule.cpp">
       <Filter>Source\Module\Modules\AudioModule</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreModule.cpp">
+      <Filter>Source\Module\Modules\CoreModule</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -240,9 +240,6 @@
     <ClInclude Include="ModulesInitializationData.h">
       <Filter>Source\Core\World\InitializationData</Filter>
     </ClInclude>
-    <ClInclude Include="CoreModule.h">
-      <Filter>Source\Module\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="ComponentTypesCollection.h">
       <Filter>Source\Core\Component</Filter>
     </ClInclude>
@@ -293,6 +290,9 @@
     </ClInclude>
     <ClInclude Include="AudioModule.h">
       <Filter>Source\Module\Modules\AudioModule</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreModule.h">
+      <Filter>Source\Module\Modules\CoreModule</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

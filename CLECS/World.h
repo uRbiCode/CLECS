@@ -41,7 +41,6 @@ private:
 	void InitializeTextureManager();
 	void InitializeAudioManager();
 	void InitializeFontManager();
-	void SendInputEvents(SystemContext& Context);
 	SystemContext MakeSystemContext();
 
 	void FlushCommands();

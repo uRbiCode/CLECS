@@ -276,3 +276,19 @@ TEST_F(QueryTest, ForEach_ExcludeList_AllExcluded_NoneVisited)
     Q.ForEach([&](Entity, PosComp&) { ++CallCount; });
     EXPECT_EQ(CallCount, 0);
 }
+
+TEST_F(QueryTest, Size_Equal_EmplacedMatching)
+{
+    EmplacePos(1.f, 0.f);
+    EmplacePosVel(1.f, 0.f, 0.f, 0.f);
+    EmplacePosVelTag(3.f, 0.f, 0.f, 0.f, 0);
+
+    PosExcludeTagQuery Q(Context);
+    EXPECT_EQ(Q.Size(), 2);
+}
+
+TEST_F(QueryTest, Size_Zero_NoneEmplaced)
+{
+    PosQuery Q(Context);
+    EXPECT_EQ(Q.Size(), 0);
+}

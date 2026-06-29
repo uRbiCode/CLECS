@@ -17,6 +17,9 @@ void ArchetypeStorage::RemoveEntities(RemoveEntitiesCommand&& Command)
 	for (const Entity EntityToRemove : Command.GetEntries())
 	{
 		const auto It = EntitiesToArchetypes.find(EntityToRemove.GetId());
+		if (It == EntitiesToArchetypes.end())
+			continue;
+
 		Archetypes[It->second].Archetype.SwapRemoveRow(EntityToRemove);
 		EntitiesToArchetypes.erase(It);
 		Spawner.DestroyEntity(EntityToRemove);
