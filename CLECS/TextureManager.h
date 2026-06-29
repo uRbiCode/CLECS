@@ -20,15 +20,12 @@ public:
 
     void Initialize(SDL_Renderer& Renderer);
     
-    SDL_Texture* LoadTexture(const std::string& FilePath);
-    
     SDL_Texture* GetTexture(const std::string& FilePath) const;
-    
-    bool HasTexture(const std::string& FilePath) const;
     
     void UnloadAll();
 
 private:
+    SDL_Texture* LoadTexture(const std::string& FilePath);
     void LoadTexturesFromAssetsDirectory();
     void UnloadTexture(const std::string& FilePath);
 

@@ -31,7 +31,7 @@ private:
         Data.RegisterComponent<PosComp>();
         Data.RegisterComponent<VelComp>();
         Data.RegisterComponent<TagComp>();
-        return ArchetypeStorage::Create(ComponentTypesCollection::Create(Data));
+        return ArchetypeStorage::Create(ComponentTypesCollection::Create(std::move(Data)));
     }
 };
 

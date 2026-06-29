@@ -17,7 +17,7 @@ protected:
         Data.RegisterComponent<PosComp>();
         Data.RegisterComponent<VelComp>();
         Data.RegisterComponent<TagComp>();
-        Types = ComponentTypesCollection::Create(Data);
+        Types = ComponentTypesCollection::Create(std::move(Data));
     }
 };
 

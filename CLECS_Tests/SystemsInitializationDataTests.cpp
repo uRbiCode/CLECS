@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "../CLECS/SystemsInitializationData.h"
 
-static void SystemA(const SystemContext&, float) {}
-static void SystemB(const SystemContext&, float) {}
+void SystemA(SystemContext&, float) {}
+void SystemB(SystemContext&, float) {}
 
-using FnPtr = void(*)(const SystemContext&, float);
+using FunctionPtr = void(*)(SystemContext&, float);
 
 TEST(SystemsInitializationDataTest, Default_AccessRegisteredSystems_IsEmpty)
 {
@@ -32,7 +32,7 @@ TEST(SystemsInitializationDataTest, RegisterSystem_StoredFunctionIsCorrect)
     Data.RegisterSystem(SystemA, SystemPhase::Update);
 
     const auto& Fn = Data.AccessRegisteredSystems()[0].Update;
-    auto StoredFn = Fn.target<FnPtr>();
+    auto StoredFn = Fn.target<FunctionPtr>();
     ASSERT_NE(StoredFn, nullptr);
     EXPECT_EQ(*StoredFn, &SystemA);
 }
@@ -45,8 +45,8 @@ TEST(SystemsInitializationDataTest, RegisterSystem_MultipleSystems_AllPresent)
 
     const auto& Systems = Data.AccessRegisteredSystems();
     ASSERT_EQ(Systems.size(), 2u);
-    auto StoredFn0 = Systems[0].Update.target<FnPtr>();
-    auto StoredFn1 = Systems[1].Update.target<FnPtr>();
+    auto StoredFn0 = Systems[0].Update.target<FunctionPtr>();
+    auto StoredFn1 = Systems[1].Update.target<FunctionPtr>();
     ASSERT_NE(StoredFn0, nullptr);
     ASSERT_NE(StoredFn1, nullptr);
     EXPECT_EQ(*StoredFn0, &SystemA);

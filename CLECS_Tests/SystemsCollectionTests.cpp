@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "../CLECS/SystemsCollection.cpp"
 
-static void SystemUpdate(const SystemContext&, float) {}
-static void SystemEarly(const SystemContext&, float) {}
-static void SystemRender(const SystemContext&, float) {}
-static void SystemLate(const SystemContext&, float) {}
+void SystemUpdate(SystemContext&, float) {}
+void SystemEarly(SystemContext&, float) {}
+void SystemRender(SystemContext&, float) {}
+void SystemLate(SystemContext&, float) {}
 
-using FnPtr = void(*)(const SystemContext&, float);
+using FunctionPtr = void(*)(SystemContext&, float);
 
 TEST(SystemsCollectionTest, Create_EmptyData_StagedSystemsIsEmpty)
 {
@@ -33,7 +33,7 @@ TEST(SystemsCollectionTest, Create_SingleSystem_StoredFunctionIsCorrect)
     auto Collection = SystemsCollection::Create(std::move(Data));
 
     const auto& Fn = Collection.GetStagedSystems().at(SystemPhase::Update)[0];
-    auto StoredFn = Fn.target<FnPtr>();
+    auto StoredFn = Fn.target<FunctionPtr>();
     ASSERT_NE(StoredFn, nullptr);
     EXPECT_EQ(*StoredFn, &SystemUpdate);
 }

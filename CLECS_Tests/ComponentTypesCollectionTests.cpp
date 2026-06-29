@@ -60,7 +60,7 @@ protected:
 TEST_F(ComponentTypesCollectionTest, Create_EmptyData_SizeIsZero)
 {
     auto Data = MakeData();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
     EXPECT_EQ(Collection.GetSize(), 0u);
 }
 
@@ -68,7 +68,7 @@ TEST_F(ComponentTypesCollectionTest, Create_OneType_SizeIsOne)
 {
     auto Data = MakeData();
     Data.RegisterComponent<CompA>();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
     EXPECT_EQ(Collection.GetSize(), 1u);
 }
 
@@ -78,7 +78,7 @@ TEST_F(ComponentTypesCollectionTest, Create_MultipleTypes_SizeMatchesRegisteredC
     Data.RegisterComponent<CompA>();
     Data.RegisterComponent<CompB>();
     Data.RegisterComponent<CompC>();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
     EXPECT_EQ(Collection.GetSize(), 3u);
 }
 
@@ -87,7 +87,7 @@ TEST_F(ComponentTypesCollectionTest, Create_DuplicateRegistration_SizeIsOne)
     auto Data = MakeData();
     Data.RegisterComponent<CompA>();
     Data.RegisterComponent<CompA>();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
     EXPECT_EQ(Collection.GetSize(), 1u);
 }
 
@@ -95,7 +95,7 @@ TEST_F(ComponentTypesCollectionTest, GetComponentTypeId_RegisteredType_DoesNotTh
 {
     auto Data = MakeData();
     Data.RegisterComponent<CompA>();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
     EXPECT_NO_THROW(Collection.GetComponentTypeId<CompA>());
 }
 
@@ -103,14 +103,14 @@ TEST_F(ComponentTypesCollectionTest, GetComponentTypeId_UnregisteredType_Throws)
 {
     auto Data = MakeData();
     Data.RegisterComponent<CompA>();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
     EXPECT_THROW(Collection.GetComponentTypeId<CompB>(), std::out_of_range);
 }
 
 TEST_F(ComponentTypesCollectionTest, GetComponentTypeId_EmptyCollection_Throws)
 {
     auto Data = MakeData();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
     EXPECT_THROW(Collection.GetComponentTypeId<CompA>(), std::out_of_range);
 }
 
@@ -120,7 +120,7 @@ TEST_F(ComponentTypesCollectionTest, GetComponentTypeId_AllIdsAreUnique)
     Data.RegisterComponent<CompA>();
     Data.RegisterComponent<CompB>();
     Data.RegisterComponent<CompC>();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
 
     const auto IdA = Collection.GetComponentTypeId<CompA>();
     const auto IdB = Collection.GetComponentTypeId<CompB>();
@@ -137,7 +137,7 @@ TEST_F(ComponentTypesCollectionTest, GetComponentTypeId_AllIdsAreInRange)
     Data.RegisterComponent<CompA>();
     Data.RegisterComponent<CompB>();
     Data.RegisterComponent<CompC>();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
     const auto Size = static_cast<ComponentTypeId>(Collection.GetSize());
 
     EXPECT_LT(Collection.GetComponentTypeId<CompA>(), Size);
@@ -149,7 +149,7 @@ TEST_F(ComponentTypesCollectionTest, GetComponentTypeId_SameTypeReturnsSameId)
 {
     auto Data = MakeData();
     Data.RegisterComponent<CompA>();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
 
     EXPECT_EQ(Collection.GetComponentTypeId<CompA>(), Collection.GetComponentTypeId<CompA>());
 }
@@ -157,7 +157,7 @@ TEST_F(ComponentTypesCollectionTest, GetComponentTypeId_SameTypeReturnsSameId)
 TEST_F(ComponentTypesCollectionTest, GetRegisteredComponents_EmptyCollection_IsEmpty)
 {
     auto Data = MakeData();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
     EXPECT_TRUE(Collection.GetRegisteredComponents().empty());
 }
 
@@ -166,7 +166,7 @@ TEST_F(ComponentTypesCollectionTest, GetRegisteredComponents_ContainsAllRegister
     auto Data = MakeData();
     Data.RegisterComponent<CompA>();
     Data.RegisterComponent<CompB>();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
 
     const auto& Map = Collection.GetRegisteredComponents();
     EXPECT_EQ(Map.count(typeid(CompA)), 1u);
@@ -178,7 +178,7 @@ TEST_F(ComponentTypesCollectionTest, GetRegisteredComponents_SizeMatchesGetSize)
     auto Data = MakeData();
     Data.RegisterComponent<CompA>();
     Data.RegisterComponent<CompB>();
-    const auto Collection = ComponentTypesCollection::Create(Data);
+    const auto Collection = ComponentTypesCollection::Create(std::move(Data));
 
     EXPECT_EQ(Collection.GetRegisteredComponents().size(), Collection.GetSize());
 }

@@ -4,7 +4,7 @@
 static void StartupA(const SystemContext&) {}
 static void StartupB(const SystemContext&) {}
 
-using StartupFnPtr = void(*)(const SystemContext&);
+using StartupFunctionPtr = void(*)(const SystemContext&);
 
 TEST(StartupSystemsInitializationDataTest, Default_GetRegisteredSystems_IsEmpty)
 {
@@ -25,7 +25,7 @@ TEST(StartupSystemsInitializationDataTest, RegisterSystem_StoredFunctionIsCorrec
     Data.RegisterSystem(StartupA);
 
     const auto& Fn = Data.GetRegisteredSystems()[0].Initialize;
-    auto StoredFn = Fn.target<StartupFnPtr>();
+    auto StoredFn = Fn.target<StartupFunctionPtr>();
     ASSERT_NE(StoredFn, nullptr);
     EXPECT_EQ(*StoredFn, &StartupA);
 }
@@ -38,8 +38,8 @@ TEST(StartupSystemsInitializationDataTest, RegisterSystem_MultipleSystems_AllPre
 
     const auto& Systems = Data.GetRegisteredSystems();
     ASSERT_EQ(Systems.size(), 2u);
-    auto StoredFn0 = Systems[0].Initialize.target<StartupFnPtr>();
-    auto StoredFn1 = Systems[1].Initialize.target<StartupFnPtr>();
+    auto StoredFn0 = Systems[0].Initialize.target<StartupFunctionPtr>();
+    auto StoredFn1 = Systems[1].Initialize.target<StartupFunctionPtr>();
     ASSERT_NE(StoredFn0, nullptr);
     ASSERT_NE(StoredFn1, nullptr);
     EXPECT_EQ(*StoredFn0, &StartupA);
@@ -53,8 +53,8 @@ TEST(StartupSystemsInitializationDataTest, RegisterSystem_PreservesInsertionOrde
     Data.RegisterSystem(StartupA);
 
     const auto& Systems = Data.GetRegisteredSystems();
-    auto StoredFn0 = Systems[0].Initialize.target<StartupFnPtr>();
-    auto StoredFn1 = Systems[1].Initialize.target<StartupFnPtr>();
+    auto StoredFn0 = Systems[0].Initialize.target<StartupFunctionPtr>();
+    auto StoredFn1 = Systems[1].Initialize.target<StartupFunctionPtr>();
     ASSERT_NE(StoredFn0, nullptr);
     ASSERT_NE(StoredFn1, nullptr);
     EXPECT_EQ(*StoredFn0, &StartupB);

@@ -19,7 +19,7 @@ protected:
         Data.RegisterComponent<VelComp>();
         Data.RegisterComponent<TagComp>();
         Data.RegisterComponent<TrackedComp>();
-        Types = ComponentTypesCollection::Create(Data);
+        Types = ComponentTypesCollection::Create(std::move(Data));
     }
 };
 

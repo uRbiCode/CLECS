@@ -6,11 +6,13 @@ struct PosComp { float X = 0.f; float Y = 0.f; };
 struct VelComp { float DX = 0.f; float DY = 0.f; };
 struct TagComp { int Tag = 0; };
 
-using PosQuery = Query<WritesList<PosComp>, ReadsList<>>;
-using VelQuery = Query<WritesList<VelComp>, ReadsList<>>;
-using PosVelQuery = Query<WritesList<PosComp, VelComp>, ReadsList<>>;
-using PosReadQuery = Query<WritesList<>, ReadsList<PosComp>>;
-using PosWriteVelReadQuery = Query<WritesList<PosComp>, ReadsList<VelComp>>;
+using PosQuery = Query<WritesList<PosComp>, ReadsList<>, ExcludeList<>>;
+using VelQuery = Query<WritesList<VelComp>, ReadsList<>, ExcludeList<>>;
+using PosVelQuery = Query<WritesList<PosComp, VelComp>, ReadsList<>, ExcludeList<>>;
+using PosReadQuery = Query<WritesList<>, ReadsList<PosComp>, ExcludeList<>>;
+using PosWriteVelReadQuery = Query<WritesList<PosComp>, ReadsList<VelComp>, ExcludeList<>>;
+using PosExcludeTagQuery = Query<WritesList<PosComp>, ReadsList<>, ExcludeList<TagComp>>;
+using PosExcludeBothQuery = Query<WritesList<PosComp>, ReadsList<>, ExcludeList<VelComp, TagComp>>;
 
 class QueryTest : public ::testing::Test
 {
@@ -32,6 +34,20 @@ protected:
         Storage.EmplaceEntities(std::move(Cmd));
     }
 
+    void EmplacePosTag(float X, float Y, int Tag)
+    {
+        auto Cmd = AddEntitiesCommand<PosComp, TagComp>(1);
+        Cmd.WithEntry(PosComp{X, Y}, TagComp{Tag});
+        Storage.EmplaceEntities(std::move(Cmd));
+    }
+
+    void EmplacePosVelTag(float X, float Y, float DX, float DY, int Tag)
+    {
+        auto Cmd = AddEntitiesCommand<PosComp, VelComp, TagComp>(1);
+        Cmd.WithEntry(PosComp{X, Y}, VelComp{DX, DY}, TagComp{Tag});
+        Storage.EmplaceEntities(std::move(Cmd));
+    }
+
 private:
     static ArchetypeStorage MakeStorage()
     {
@@ -39,7 +55,7 @@ private:
         Data.RegisterComponent<PosComp>();
         Data.RegisterComponent<VelComp>();
         Data.RegisterComponent<TagComp>();
-        ComponentTypesCollection Types = ComponentTypesCollection::Create(Data);
+        ComponentTypesCollection Types = ComponentTypesCollection::Create(std::move(Data));
         return ArchetypeStorage::Create(std::move(Types));
     }
 };
@@ -190,4 +206,73 @@ TEST_F(QueryTest, ForEach_SubsetQuery_ValuesCorrectAcrossArchetypes)
     float SumX = 0.f;
     Q.ForEach([&](Entity, PosComp& Pos) { SumX += Pos.X; });
     EXPECT_FLOAT_EQ(SumX, 30.f);
+}
+
+TEST_F(QueryTest, ForEach_ExcludeList_ExcludedTypeAbsent_AllEntitiesVisited)
+{
+    EmplacePos(1.f, 0.f);
+    EmplacePos(2.f, 0.f);
+
+    PosExcludeTagQuery Q(Context);
+    int CallCount = 0;
+    Q.ForEach([&](Entity, PosComp&) { ++CallCount; });
+    EXPECT_EQ(CallCount, 2);
+}
+
+TEST_F(QueryTest, ForEach_ExcludeList_ArchetypeWithExcludedComponent_IsSkipped)
+{
+    EmplacePos(1.f, 0.f);
+    EmplacePosTag(2.f, 0.f, 99);
+
+    PosExcludeTagQuery Q(Context);
+    int CallCount = 0;
+    Q.ForEach([&](Entity, PosComp&) { ++CallCount; });
+    EXPECT_EQ(CallCount, 1);
+}
+
+TEST_F(QueryTest, ForEach_ExcludeList_OnlyExcludedEntities_NoneVisited)
+{
+    EmplacePosTag(1.f, 0.f, 1);
+    EmplacePosTag(2.f, 0.f, 2);
+
+    PosExcludeTagQuery Q(Context);
+    int CallCount = 0;
+    Q.ForEach([&](Entity, PosComp&) { ++CallCount; });
+    EXPECT_EQ(CallCount, 0);
+}
+
+TEST_F(QueryTest, ForEach_ExcludeList_NonExcludedValuesAreCorrect)
+{
+    EmplacePos(42.f, 0.f);
+    EmplacePosTag(99.f, 0.f, 1);
+
+    PosExcludeTagQuery Q(Context);
+    float SeenX = -1.f;
+    Q.ForEach([&](Entity, PosComp& Pos) { SeenX = Pos.X; });
+    EXPECT_FLOAT_EQ(SeenX, 42.f);
+}
+
+
+TEST_F(QueryTest, ForEach_ExcludeList_MultipleExcludedTypes_EitherExcludesArchetype)
+{
+    EmplacePos(1.f, 0.f);
+    EmplacePosVel(2.f, 0.f, 0.f, 0.f);
+    EmplacePosTag(3.f, 0.f, 0);
+
+    PosExcludeBothQuery Q(Context);
+    int CallCount = 0;
+    Q.ForEach([&](Entity, PosComp&) { ++CallCount; });
+    EXPECT_EQ(CallCount, 1);
+}
+
+TEST_F(QueryTest, ForEach_ExcludeList_AllExcluded_NoneVisited)
+{
+    EmplacePosVel(1.f, 0.f, 0.f, 0.f);
+    EmplacePosTag(2.f, 0.f, 0);
+    EmplacePosVelTag(3.f, 0.f, 0.f, 0.f, 0);
+
+    PosExcludeBothQuery Q(Context);
+    int CallCount = 0;
+    Q.ForEach([&](Entity, PosComp&) { ++CallCount; });
+    EXPECT_EQ(CallCount, 0);
 }
