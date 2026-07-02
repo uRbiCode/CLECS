@@ -9,7 +9,7 @@
  */
 struct StartupSystemsInitializationData
 {
-	void RegisterSystem(void(*Initialize)(const SystemContext&))
+	void RegisterSystem(void(*Initialize)(SystemContext&))
 	{
 		StartupSystemDescriptor Descriptor;
 		Descriptor.Initialize = Initialize;

@@ -9,8 +9,15 @@ struct SfxRequestComponent
 };
 
 // Used by AudioRequestConsumerSystem to request music to be played
+// Entities with this component will be removed after the request is processed
 struct MusicRequestComponent
 {
     std::string Name;
     float Volume = 1.f;
+};
+
+// Used by AudioRequestConsumerSystem to request music to be stopped
+// Entities with this component will be removed after the request is processed
+struct StopMusicComponent
+{
 };

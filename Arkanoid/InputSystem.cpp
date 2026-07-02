@@ -3,6 +3,14 @@
 #include "InputState.h"
 #include "Query.h"
 #include "PlayerMoveSpeedComponent.h"
+#include "ClickableComponent.h"
+#include "SDLUtils.h"
+#include "PositionComponent.h"
+#include "ShapeComponents.h"
+#include "CollisionUtils.h"
+#include "ComponentUtils.h"
+#include "TransisitonUtils.h"
+#include "RenderComponents.h"
 
 namespace PlayerMoveConstants
 {
@@ -25,6 +33,63 @@ namespace
 		}
 		return PlayerMoveSpeedInputMultiplier;
 	}
+
+	void OnQuitButtonClicked()
+	{
+		SDL_Event Event{};
+		Event.type = SDL_EVENT_QUIT;
+		SDL_PushEvent(&Event);
+	}
+
+	void OnTutorialButtonClicked(SystemContext& Context)
+	{
+		ComponentUtils::RemoveAllEntitiesWithComponent<UIRenderComponent>(Context);
+		TransitionUtils::InitializeTutorial(Context);
+	}
+
+	void OnMainMenuButtonClicked(SystemContext& Context)
+	{
+		ComponentUtils::RemoveAllEntitiesWithComponent<UIRenderComponent>(Context);
+		TransitionUtils::InitializeMainMenu(Context);
+	}
+}
+
+void InputSystem::UpdateClickables(SystemContext& Context, float DeltaTime)
+{
+	if (!Context.Input.IsMouseButtonJustPressed(SDL_BUTTON_LEFT))
+		return;
+
+	const Vector2D<float> MousePosition = SDLUtils::TranslateCoordinatesFromWindowToLogical(&Context.Renderer, &Context.Window, Context.Input.GetMousePosition());
+	const Query<WritesList<>, ReadsList<PositionComponent, RectComponent, ClickableComponent>, ExcludeList<>> ClickableQuery(Context.QueryContext);
+	ClickableQuery.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, const ClickableComponent& Clickable)
+	{
+		const SDL_FRect MouseRect = SDL_FRect{ MousePosition.X, MousePosition.Y, 0.f, 0.f };
+		if (!CollisionUtils::CheckAABB(MouseRect,{ CollisionUtils::GetWorldAABB(Position, Rect)}))
+			return;
+
+		switch (Clickable.Tag)
+		{
+			case ClickableTag::PlayButton:
+				//
+				break;
+			case ClickableTag::QuitButton:
+				OnQuitButtonClicked();
+				break;
+			case ClickableTag::MainMenuButton:
+				OnMainMenuButtonClicked(Context);
+				break;
+			case ClickableTag::TutorialButton:
+				OnTutorialButtonClicked(Context);
+				break;
+			case ClickableTag::Upgrade:
+				//
+				break;
+			case ClickableTag::Invalid:
+			default:
+				SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "RunControllerSystem::AdvanceToNextStage -> No more stages found. Victory!");
+				break;
+		}
+	});
 }
 
 void InputSystem::TranslateRawInput(SystemContext& Context, float DeltaTime)

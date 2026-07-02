@@ -6,5 +6,6 @@ struct SystemContext;
  */
 namespace InputSystem
 {
+	void UpdateClickables(SystemContext& Context, float DeltaTime);
 	void TranslateRawInput(SystemContext& Context, float DeltaTime);
 }

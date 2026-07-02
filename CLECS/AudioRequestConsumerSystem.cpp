@@ -35,7 +35,7 @@ namespace
 		if (MusicRequestQuery.Size() == 0)
 			return;
 
-		RemoveComponentsCommand<MusicRequestComponent> RemoveComponentsCommand(MusicRequestQuery.Size());
+		RemoveEntitiesCommand RemoveComponentsCommand(MusicRequestQuery.Size());
 		std::unordered_map<std::string, float> FilteredRequests;
 		MusicRequestQuery.ForEach([&](Entity Entity, const MusicRequestComponent& MusicRequest)
 		{
@@ -49,10 +49,27 @@ namespace
 			Context.Managers.AudioManager.PlayMusic(Name, Volume);
 		}
 	}
+
+	void UpdateStopMusicRequests(SystemContext& Context)
+	{
+		const Query<WritesList<>, ReadsList<StopMusicComponent>, ExcludeList<>> StopMusicRequestQuery(Context.QueryContext);
+		if (StopMusicRequestQuery.Size() == 0)
+			return;
+
+		RemoveEntitiesCommand RemoveComponentsCommand(StopMusicRequestQuery.Size());
+		StopMusicRequestQuery.ForEach([&](Entity Entity, const StopMusicComponent& StopMusicRequest)
+		{
+			RemoveComponentsCommand.WithEntry(Entity);
+		});
+		Context.Commands.Submit(std::move(RemoveComponentsCommand));
+
+		Context.Managers.AudioManager.StopMusic();
+	}
 }
 
 void AudioRequestConsumerSystem::Update(SystemContext& Context, float DeltaTime)
 {
 	UpdateSfxRequests(Context);
 	UpdateMusicRequests(Context);
+	UpdateStopMusicRequests(Context);
 }

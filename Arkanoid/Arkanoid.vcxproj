@@ -152,13 +152,14 @@
     <ClCompile Include="ArkanoidCollisionModule.cpp" />
     <ClCompile Include="ArkanoidHealthModule.cpp" />
     <ClCompile Include="ArkanoidInputModule.cpp" />
-    <ClCompile Include="ArkanoidModule.cpp" />
+    <ClCompile Include="ArkanoidCoreModule.cpp" />
     <ClCompile Include="ArkanoidMovementModule.cpp" />
     <ClCompile Include="CollisionDetectionSystem.cpp" />
     <ClCompile Include="Arkanoid.cpp" />
     <ClCompile Include="CollisionKinematicResolverSystem.cpp" />
     <ClCompile Include="CollisionUtils.cpp" />
     <ClCompile Include="CurrentStageSystem.cpp" />
+    <ClCompile Include="GameStartSystem.cpp" />
     <ClCompile Include="GameStateSystem.cpp" />
     <ClCompile Include="GameStateUtils.cpp" />
     <ClCompile Include="HealthIndicatorSystem.cpp" />
@@ -174,6 +175,7 @@
     <ClCompile Include="StageInfoSystem.cpp" />
     <ClCompile Include="StageUtils.cpp" />
     <ClCompile Include="SummaryControllerSystem.cpp" />
+    <ClCompile Include="TransisitonUtils.cpp" />
     <ClCompile Include="TutorialControllerSystem.cpp" />
     <ClCompile Include="UpgradeLoader.cpp" />
     <ClCompile Include="UpgradeControllerSystem.cpp" />
@@ -183,7 +185,7 @@
     <ClInclude Include="ArkanoidCollisionModule.h" />
     <ClInclude Include="ArkanoidHealthModule.h" />
     <ClInclude Include="ArkanoidInputModule.h" />
-    <ClInclude Include="ArkanoidModule.h" />
+    <ClInclude Include="ArkanoidCoreModule.h" />
     <ClInclude Include="ArkanoidMovementModule.h" />
     <ClInclude Include="CollisionUtils.h" />
     <ClInclude Include="ComponentUtils.h" />
@@ -195,8 +197,9 @@
     <ClInclude Include="Arkanoid.h" />
     <ClInclude Include="CollisionEvent.h" />
     <ClInclude Include="CollisionKinematicResolverSystem.h" />
-    <ClInclude Include="Constants.h" />
+    <ClInclude Include="GlobalConstants.h" />
     <ClInclude Include="CurrentStageSystem.h" />
+    <ClInclude Include="GameStartSystem.h" />
     <ClInclude Include="GameStateComponent.h" />
     <ClInclude Include="GameStateEvents.h" />
     <ClInclude Include="GameStateSystem.h" />
@@ -205,6 +208,7 @@
     <ClInclude Include="PlayerPrepareComponent.h" />
     <ClInclude Include="PlayerPrepareSystem.h" />
     <ClInclude Include="PlayerReadyEvent.h" />
+    <ClInclude Include="TransisitonUtils.h" />
     <ClInclude Include="TutorialControllerSystem.h" />
     <ClInclude Include="UpgradeEvent.h" />
     <ClInclude Include="HealthIndicatorSystem.h" />

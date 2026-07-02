@@ -20,4 +20,20 @@ namespace ComponentUtils
 
 		Context.Commands.Submit(std::move(RemoveCommand));
 	}
+
+	template<ComponentType T>
+	void RemoveAllEntitiesWithComponent(SystemContext& Context)
+	{
+		const Query<WritesList<>, ReadsList<T>, ExcludeList<>> RemoveQuery(Context.QueryContext);
+		if (RemoveQuery.Size() < 1)
+			return;
+
+		RemoveEntitiesCommand RemoveCommand(RemoveQuery.Size());
+		RemoveQuery.ForEach([&](Entity Entity, const T& Component)
+		{
+			RemoveCommand.WithEntry(Entity);
+		});
+
+		Context.Commands.Submit(std::move(RemoveCommand));
+	}
 }

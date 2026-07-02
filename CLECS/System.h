@@ -18,7 +18,7 @@ struct SystemDescriptor
 
 struct StartupSystemDescriptor
 {
-	using InitializeFunction = std::function<void(const SystemContext&)>;
+	using InitializeFunction = std::function<void(SystemContext&)>;
 
 	InitializeFunction Initialize;
 };

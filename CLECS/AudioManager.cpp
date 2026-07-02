@@ -159,6 +159,9 @@ void AudioManager::PlaySound(const std::string& Name, float Volume)
 
 void AudioManager::PlayMusic(const std::string& Name, float Volume)
 {
+    if (IsMusicPlaying() && CurrentMusicName == Name)
+        return;
+
     StopMusic();
 
     StreamConfig Config;

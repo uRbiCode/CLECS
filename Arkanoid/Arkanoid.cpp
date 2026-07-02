@@ -1,5 +1,5 @@
 #include "Arkanoid.h"
-#include "ArkanoidModule.h"
+#include "ArkanoidCoreModule.h"
 #include "ModulesInitializationData.h"
 #include "ArkanoidMovementModule.h"
 #include "ArkanoidInputModule.h"
@@ -23,6 +23,7 @@ RendererInitializationData Arkanoid::GetRendererConfig() const
 
 void Arkanoid::RegisterGameModules(ModulesInitializationData& Data) const
 {
+	Data.RegisterModule<ArkanoidCoreModule>();
 	Data.RegisterModule<ArkanoidInputModule>();
 	Data.RegisterModule<ArkanoidCollisionModule>();
 	Data.RegisterModule<ArkanoidMovementModule>();

@@ -8,6 +8,7 @@ void AudioModule::RegisterComponentTypes(ComponentsInitializationData& Data)
 {
 	Data.RegisterComponent<SfxRequestComponent>();
 	Data.RegisterComponent<MusicRequestComponent>();
+	Data.RegisterComponent<StopMusicComponent>();
 }
 
 void AudioModule::RegisterSystems(SystemsInitializationData& Data)

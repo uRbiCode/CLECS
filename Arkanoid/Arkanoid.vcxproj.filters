@@ -104,6 +104,15 @@
     <Filter Include="Source\Modules\CollisionModule">
       <UniqueIdentifier>{ca079ef7-d4b2-42b4-9215-7ffd2bddfdd2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Modules\CoreModule">
+      <UniqueIdentifier>{9fd5e45a-80da-4219-ba55-e08c39857f07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\GameStartSystem">
+      <UniqueIdentifier>{9ec68328-be8c-4c22-ac71-9efa78f4bc60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils\TransitionUtils">
+      <UniqueIdentifier>{ea9770e6-db93-4f8e-a078-295cbe8829ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -175,9 +184,6 @@
     <ClCompile Include="PlayerPrepareSystem.cpp">
       <Filter>Source\Systems\PlayerPrepareSystem</Filter>
     </ClCompile>
-    <ClCompile Include="ArkanoidModule.cpp">
-      <Filter>Source\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="ArkanoidInputModule.cpp">
       <Filter>Source\Modules\InputModule</Filter>
     </ClCompile>
@@ -190,8 +196,17 @@
     <ClCompile Include="ArkanoidHealthModule.cpp">
       <Filter>Source\Modules\HealthModule</Filter>
     </ClCompile>
+    <ClCompile Include="ArkanoidCoreModule.cpp">
+      <Filter>Source\Modules\CoreModule</Filter>
+    </ClCompile>
+    <ClCompile Include="TransisitonUtils.cpp">
+      <Filter>Source\Utils\TransitionUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStartSystem.cpp">
+      <Filter>Source\Systems\GameStartSystem</Filter>
+    </ClCompile>
     <ClCompile Include="ArkanoidCollisionModule.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Modules\CollisionModule</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -267,7 +282,7 @@
     <ClInclude Include="StageDataLoader.h">
       <Filter>Source\Systems\RunControllerSystem\StageDataLoader</Filter>
     </ClInclude>
-    <ClInclude Include="Constants.h">
+    <ClInclude Include="GlobalConstants.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
     <ClInclude Include="SummaryControllerSystem.h">
@@ -318,9 +333,6 @@
     <ClInclude Include="PlayerReadyEvent.h">
       <Filter>Source\Events</Filter>
     </ClInclude>
-    <ClInclude Include="ArkanoidModule.h">
-      <Filter>Source\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="ArkanoidInputModule.h">
       <Filter>Source\Modules\InputModule</Filter>
     </ClInclude>
@@ -339,6 +351,17 @@
     <ClInclude Include="ComponentUtils.h">
       <Filter>Source\Utils\ComponentUtils</Filter>
     </ClInclude>
-    <ClInclude Include="ArkanoidCollisionModule.h" />
+    <ClInclude Include="ArkanoidCoreModule.h">
+      <Filter>Source\Modules\CoreModule</Filter>
+    </ClInclude>
+    <ClInclude Include="TransisitonUtils.h">
+      <Filter>Source\Utils\TransitionUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStartSystem.h">
+      <Filter>Source\Systems\GameStartSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidCollisionModule.h">
+      <Filter>Source\Modules\CollisionModule</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
