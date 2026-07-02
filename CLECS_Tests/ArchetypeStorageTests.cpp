@@ -165,7 +165,7 @@ TEST_F(ArchetypeStorageTest, AddComponents_OldArchetypeBecomesEmpty)
     EXPECT_EQ(TotalPosEntities, 1u);
 }
 
-TEST_F(ArchetypeStorageTest, AddComponents_ExistingComponentIgnored_EntityStaysInSameArchetype)
+TEST_F(ArchetypeStorageTest, AddComponents_ExistingComponentIgnored_EntityRemainsUnchanged)
 {
     auto EmplaceCmd = AddEntitiesCommand<PosComp, VelComp>(1);
     EmplaceCmd.WithEntry(PosComp{1.f, 2.f}, VelComp{3.f, 4.f});
@@ -180,6 +180,8 @@ TEST_F(ArchetypeStorageTest, AddComponents_ExistingComponentIgnored_EntityStaysI
     auto Handles = Storage.AccessArchetypesWithComponents<PosComp, VelComp>();
     ASSERT_EQ(Handles.size(), 1u);
     EXPECT_EQ(Handles[0].Size(), 1u);
+	EXPECT_FLOAT_EQ(Handles[0].GetComponents<VelComp>()[0].DX, 3.f);
+	EXPECT_FLOAT_EQ(Handles[0].GetComponents<VelComp>()[0].DY, 4.f);
 }
 
 TEST_F(ArchetypeStorageTest, RemoveComponents_EntityMovesToReducedArchetype)

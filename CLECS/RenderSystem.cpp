@@ -11,6 +11,51 @@
 #include "SDL3/SDL.h"
 #include "SDL3_ttf/SDL_ttf.h"
 
+template<ComponentType T>
+using RegularRectsQuery = Query<WritesList<>,
+								ReadsList<T, PositionComponent, RectComponent>, 
+								ExcludeList<ShapeFillComponent, TextureComponent>>;
+
+template<ComponentType T>
+using FilledRectsQuery = Query<WritesList<>,
+								ReadsList<T, PositionComponent, RectComponent, ShapeFillComponent>,
+								ExcludeList<TextureComponent>>;
+
+template <ComponentType T>
+using RegularCirclesQuery = Query<WritesList<>,
+								ReadsList<T, PositionComponent, CircleComponent>,
+								ExcludeList<ShapeFillComponent, TextureComponent>>;
+
+template <ComponentType T>
+using FilledCirclesQuery = Query<WritesList<>,
+								ReadsList<T, PositionComponent, CircleComponent, ShapeFillComponent>,
+								ExcludeList<TextureComponent>>;
+
+template <ComponentType T>
+using RectsTextureQuery = Query<WritesList<>,
+								ReadsList<T, PositionComponent, TextureComponent, RectComponent>,
+								ExcludeList<>>;
+
+template <ComponentType T>
+using CirclesTextureQuery = Query<WritesList<>,
+								ReadsList<T, PositionComponent, TextureComponent, CircleComponent>,
+								ExcludeList<>>;
+
+template <ComponentType T>
+using RectsTextQuery = Query<WritesList<>,
+								ReadsList<T, PositionComponent, TextComponent, RectComponent>,
+								ExcludeList<>>;
+
+template <ComponentType T>
+using CirclesTextQuery = Query<WritesList<>,
+								ReadsList<T, PositionComponent, TextComponent, CircleComponent>,
+								ExcludeList<>>;
+
+template <ComponentType T>
+using UnwrappedTextQuery = Query<WritesList<>,
+								ReadsList<T, PositionComponent, TextComponent>,
+								ExcludeList<RectComponent, CircleComponent>>;
+
 namespace RenderConstants
 {
 	constexpr int CircleSegments = 32;
@@ -19,7 +64,7 @@ namespace RenderConstants
 
 namespace RenderUtils
 {
-	template <typename T>
+	template <ComponentType T>
 	void SetRendererColor(SDL_Renderer& Renderer, const T& RenderLayerComponent)
 	{
 		SDL_SetRenderDrawColorFloat(&Renderer, RenderLayerComponent.Color.r, RenderLayerComponent.Color.g, RenderLayerComponent.Color.b, RenderLayerComponent.Color.a);
@@ -82,7 +127,7 @@ namespace
 		SDL_RenderFillRect(&Renderer, &RenderRect);
 	}
 
-	template<typename T>
+	template<ComponentType T>
 	void RenderCircle(const T& RenderLayerComponent, const PositionComponent& Position, const CircleComponent& Circle, SDL_Renderer& Renderer)
 	{
 		constexpr size_t VerticesCount = 3;
@@ -123,7 +168,7 @@ namespace
 		}
 	}
 
-	template<typename T>
+	template<ComponentType T>
 	void RenderTexture(const T& RenderLayerComponent, const TextureComponent& Texture, const SDL_FRect& RenderRect, SDL_Renderer& Renderer)
 	{
 		SDL_SetTextureColorModFloat(Texture.Texture, RenderLayerComponent.Color.r, RenderLayerComponent.Color.g, RenderLayerComponent.Color.b);
@@ -132,7 +177,7 @@ namespace
 		SDL_RenderTexture(&Renderer, Texture.Texture, &Texture.SourceRect, &RenderRect);
 	}
 
-	template<typename T>
+	template<ComponentType T>
 	void RenderWrappedText(const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const SDL_FRect& RenderRect, int WrapWidth, const FontManager& FontMgr, SDL_Renderer& Renderer)
 	{
 		TTF_Font* Font = FontMgr.GetFont(Text.FontFilePath, Text.FontPointSize);
@@ -160,7 +205,7 @@ namespace
 		SDL_DestroyTexture(TextTexture);
 	}
 
-	template<typename T>
+	template<ComponentType T>
 	void RenderText(const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const FontManager& FontMgr, SDL_Renderer& Renderer)
 	{
 		TTF_Font* Font = FontMgr.GetFont(Text.FontFilePath, Text.FontPointSize);
@@ -184,14 +229,12 @@ namespace
 		SDL_DestroyTexture(TextTexture);
 	}
 
-	template<typename T>
+	template<ComponentType T>
 	void RenderLayer(SystemContext& Context)
 	{
 		{
-			const auto RectsQuery = Query<WritesList<>,
-										ReadsList<T, PositionComponent, RectComponent>,
-										ExcludeList<ShapeFillComponent, TextureComponent>>(Context.QueryContext);
-			RectsQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const RectComponent& Rect)
+			const RegularRectsQuery<T> RenderRegularRectsQuery(Context.QueryContext);
+			RenderRegularRectsQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const RectComponent& Rect)
 			{
 				RenderUtils::SetRendererColor(Context.Renderer, RenderLayerComponent);
 				RenderRect(Position, Rect, Context.Renderer);
@@ -199,10 +242,8 @@ namespace
 		}
 
 		{
-			const auto FilledRectsQuery = Query<WritesList<>, 
-												ReadsList<T, PositionComponent, RectComponent, ShapeFillComponent>, 
-												ExcludeList<TextureComponent>>(Context.QueryContext);
-			FilledRectsQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const RectComponent& Rect, const ShapeFillComponent& ShapeFillComponent)
+			const FilledRectsQuery<T> RenderFilledRectsQuery(Context.QueryContext);
+			RenderFilledRectsQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const RectComponent& Rect, const ShapeFillComponent& ShapeFillComponent)
 			{
 				RenderUtils::SetRendererColor(Context.Renderer, RenderLayerComponent);
 				RenderFilledRect(Position, Rect, Context.Renderer);
@@ -210,20 +251,16 @@ namespace
 		}
 
 		{
-			const auto CirclesQuery = Query<WritesList<>, 
-											ReadsList<T, PositionComponent, CircleComponent>,
-											ExcludeList<ShapeFillComponent, TextureComponent>>(Context.QueryContext);
-			CirclesQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const CircleComponent& Circle)
+			const RegularCirclesQuery<T> RenderRegularCirclesQuery(Context.QueryContext);
+			RenderRegularCirclesQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const CircleComponent& Circle)
 			{
 				RenderCircle(RenderLayerComponent, Position, Circle, Context.Renderer);
 			});
 		}
 
 		{
-			const auto FilledCirclesQuery = Query<WritesList<>, 
-												ReadsList<T, PositionComponent, CircleComponent, ShapeFillComponent>,
-												ExcludeList<TextureComponent>>(Context.QueryContext);
-			FilledCirclesQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const CircleComponent& Circle, const ShapeFillComponent& ShapeFillComponent)
+			const FilledCirclesQuery<T> RenderFilledCirclesQuery(Context.QueryContext);
+			RenderFilledCirclesQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const CircleComponent& Circle, const ShapeFillComponent& ShapeFillComponent)
 			{
 				RenderUtils::SetRendererColor(Context.Renderer, RenderLayerComponent);
 				RenderFilledCircle(Position, Circle, Context.Renderer);
@@ -231,50 +268,40 @@ namespace
 		}
 
 		{
-			const auto RectsTextureQuery = Query<WritesList<>,
-												ReadsList<T, PositionComponent, TextureComponent, RectComponent>,
-												ExcludeList<>>(Context.QueryContext);
-			RectsTextureQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextureComponent& Texture, const RectComponent& Rect)
+			const RectsTextureQuery<T> RenderRectsTextureQuery(Context.QueryContext);
+			RenderRectsTextureQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextureComponent& Texture, const RectComponent& Rect)
 			{
 				RenderTexture(RenderLayerComponent, Texture, RenderUtils::CalcRenderRect(Position, Rect), Context.Renderer);
 			});
 		}
 
 		{
-			const auto CirclesTextureQuery = Query<WritesList<>, 
-											ReadsList<T, PositionComponent, TextureComponent, CircleComponent>,
-											ExcludeList<>>(Context.QueryContext);
-			CirclesTextureQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextureComponent& Texture, const CircleComponent& Circle)
+			const CirclesTextureQuery<T> RenderCirclesTextureQuery(Context.QueryContext);
+			RenderCirclesTextureQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextureComponent& Texture, const CircleComponent& Circle)
 			{
 				RenderTexture(RenderLayerComponent, Texture, RenderUtils::CalcRenderRectFromCircle(Position, Circle), Context.Renderer);
 			});
 		}
 
 		{
-			const auto RectTextQuery = Query<WritesList<>, 
-											ReadsList<T, PositionComponent, TextComponent, RectComponent>,
-											ExcludeList<>>(Context.QueryContext);
-			RectTextQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const RectComponent& Rect)
+			const RectsTextQuery<T> RenderRectsTextQuery(Context.QueryContext);
+			RenderRectsTextQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const RectComponent& Rect)
 			{
 				RenderWrappedText(RenderLayerComponent, Position, Text, RenderUtils::CalcRenderRect(Position, Rect), RenderUtils::CalcWrapWidth(Rect), Context.Managers.FontManager, Context.Renderer);
 			});
 		}
 
 		{
-			const auto CircleTextQuery = Query<WritesList<>, 
-												ReadsList<T, PositionComponent, TextComponent, CircleComponent>,
-												ExcludeList<>>(Context.QueryContext);
-			CircleTextQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const CircleComponent& Circle)
+			const CirclesTextQuery<T> RenderCirclesTextQuery(Context.QueryContext);
+			RenderCirclesTextQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const CircleComponent& Circle)
 			{
 				RenderWrappedText(RenderLayerComponent, Position, Text, RenderUtils::CalcRenderRectFromCircle(Position, Circle), RenderUtils::CalcWrapWidthFromCircle(Circle), Context.Managers.FontManager, Context.Renderer);
 			});
 		}
 
 		{
-			const auto UnwrappedTextQuery = Query<WritesList<>, 
-												ReadsList<T, PositionComponent, TextComponent>,
-												ExcludeList<RectComponent, CircleComponent>>(Context.QueryContext);
-			UnwrappedTextQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text)
+			const UnwrappedTextQuery<T> RenderUnwrappedTextQuery(Context.QueryContext);
+			RenderUnwrappedTextQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text)
 			{
 				RenderText(RenderLayerComponent, Position, Text, Context.Managers.FontManager, Context.Renderer);
 			});

@@ -65,29 +65,29 @@ TEST(SystemsCollectionTest, Create_TwoSystemsDifferentPhases_StoredInSeparateBuc
     EXPECT_EQ(Staged.at(SystemPhase::Render).size(), 1u);
 }
 
-TEST(SystemsCollectionTest, Create_AllPhases_PhasesOrderedByEnum)
+TEST(SystemsCollectionTest, Create_TwoSystemsSamePhase_RegistrationOrder)
 {
     SystemsInitializationData Data;
-    Data.RegisterSystem(SystemRender, SystemPhase::Render);
-    Data.RegisterSystem(SystemEarly, SystemPhase::EarlyUpdate);
-    Data.RegisterSystem(SystemUpdate, SystemPhase::Update);
-    Data.RegisterSystem(SystemLate, SystemPhase::LateUpdate);
+    Data.RegisterSystem(SystemEarly, SystemPhase::Update);
+    Data.RegisterSystem(SystemLate, SystemPhase::Update);
     auto Collection = SystemsCollection::Create(std::move(Data));
 
-    const auto& Staged = Collection.GetStagedSystems();
-    ASSERT_EQ(Staged.size(), 4u);
+    const auto& StagedSystems = Collection.GetStagedSystems();
+    ASSERT_EQ(StagedSystems.size(), 1u);
 
-    auto It = Staged.begin();
-    EXPECT_EQ(It->first, SystemPhase::EarlyUpdate); 
+	const auto& UpdateStage = StagedSystems.at(SystemPhase::Update);
+    ASSERT_EQ(UpdateStage.size(), 2u);
 
-    ++It;
-    EXPECT_EQ(It->first, SystemPhase::Update);      
+    const auto& EarlyFn = UpdateStage[0];
+    auto StoredFn = EarlyFn.target<FunctionPtr>();
+    ASSERT_NE(StoredFn, nullptr);
+    EXPECT_EQ(*StoredFn, &SystemEarly);
 
-    ++It;
-    EXPECT_EQ(It->first, SystemPhase::LateUpdate);  
 
-    ++It;
-    EXPECT_EQ(It->first, SystemPhase::Render);
+    const auto& LateFn = UpdateStage[1];
+    StoredFn = LateFn.target<FunctionPtr>();
+    ASSERT_NE(StoredFn, nullptr);
+    EXPECT_EQ(*StoredFn, &SystemLate);
 }
 
 TEST(SystemsCollectionTest, Create_AbsentPhase_NotPresentInMap)

@@ -149,10 +149,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ArkanoidCollisionModule.cpp" />
+    <ClCompile Include="ArkanoidHealthModule.cpp" />
+    <ClCompile Include="ArkanoidInputModule.cpp" />
     <ClCompile Include="ArkanoidModule.cpp" />
+    <ClCompile Include="ArkanoidMovementModule.cpp" />
     <ClCompile Include="CollisionDetectionSystem.cpp" />
     <ClCompile Include="Arkanoid.cpp" />
     <ClCompile Include="CollisionKinematicResolverSystem.cpp" />
+    <ClCompile Include="CollisionUtils.cpp" />
     <ClCompile Include="CurrentStageSystem.cpp" />
     <ClCompile Include="GameStateSystem.cpp" />
     <ClCompile Include="GameStateUtils.cpp" />
@@ -164,7 +169,7 @@
     <ClCompile Include="HealthSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovementSystem.cpp" />
-    <ClCompile Include="PlayerInputSystem.cpp" />
+    <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="StageDataLoader.cpp" />
     <ClCompile Include="StageInfoSystem.cpp" />
     <ClCompile Include="StageUtils.cpp" />
@@ -175,10 +180,17 @@
     <ClCompile Include="UpgradeUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArkanoidCollisionModule.h" />
+    <ClInclude Include="ArkanoidHealthModule.h" />
+    <ClInclude Include="ArkanoidInputModule.h" />
     <ClInclude Include="ArkanoidModule.h" />
+    <ClInclude Include="ArkanoidMovementModule.h" />
+    <ClInclude Include="CollisionUtils.h" />
+    <ClInclude Include="ComponentUtils.h" />
+    <ClInclude Include="DamageComponent.h" />
     <ClInclude Include="ClickableComponent.h" />
     <ClInclude Include="ClickableUsedEvent.h" />
-    <ClInclude Include="CollisionComponent.h" />
+    <ClInclude Include="CollisionComponents.h" />
     <ClInclude Include="CollisionDetectionSystem.h" />
     <ClInclude Include="Arkanoid.h" />
     <ClInclude Include="CollisionEvent.h" />
@@ -202,8 +214,8 @@
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="HealthSystem.h" />
     <ClInclude Include="MovementSystem.h" />
-    <ClInclude Include="PlayerControllerComponent.h" />
-    <ClInclude Include="PlayerInputSystem.h" />
+    <ClInclude Include="PlayerMoveSpeedComponent.h" />
+    <ClInclude Include="InputSystem.h" />
     <ClInclude Include="RunStateComponent.h" />
     <ClInclude Include="ChangeRunStateEvent.h" />
     <ClInclude Include="StageDataComponent.h" />

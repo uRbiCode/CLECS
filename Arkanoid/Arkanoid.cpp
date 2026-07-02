@@ -1,7 +1,10 @@
 #include "Arkanoid.h"
 #include "ArkanoidModule.h"
 #include "ModulesInitializationData.h"
-#include "EntityAdmin.h"
+#include "ArkanoidMovementModule.h"
+#include "ArkanoidInputModule.h"
+#include "ArkanoidCollisionModule.h"
+#include "ArkanoidHealthModule.h"
 
 namespace
 {
@@ -20,5 +23,8 @@ RendererInitializationData Arkanoid::GetRendererConfig() const
 
 void Arkanoid::RegisterGameModules(ModulesInitializationData& Data) const
 {
-	Data.RegisterModule<ArkanoidModule>();
+	Data.RegisterModule<ArkanoidInputModule>();
+	Data.RegisterModule<ArkanoidCollisionModule>();
+	Data.RegisterModule<ArkanoidMovementModule>();
+	Data.RegisterModule<ArkanoidHealthModule>();
 }

@@ -1,9 +1,13 @@
 #pragma once
 
-/* Detects whether two entities with CollisionComponents are colliding and publishes CollisionEvents.
- * Uses AABB and rect-circle checks.
+struct SystemContext;
+
+/* Detects collision between entities.
+ * Recognizes Paddle, Ball, Bricks, Trigger, and Wall entities.
  */
 namespace CollisionDetectionSystem
 {
-	void Update(const SystemContext& Context, float DeltaTime);
+	void CleanupCollisionComponents(SystemContext& Context, float DeltaTime);
+	void UpdateBallCollision(SystemContext& Context, float DeltaTime);
+	void UpdatePaddleCollision(SystemContext& Context, float DeltaTime);
 }

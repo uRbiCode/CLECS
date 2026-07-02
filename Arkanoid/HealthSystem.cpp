@@ -1,75 +1,33 @@
 #include "HealthSystem.h"
 #include "SystemContext.h"
-#include "EventBus.h"
-#include "CollisionEvent.h"
-#include "EntityAdmin.h"
-#include "CollisionComponent.h"
-#include "RunStateComponent.h"
-#include "HealthUtils.h"
-#include <cassert>
+#include "Query.h"
+#include "HealthComponent.h"
+#include "CommandRunner.h"
+#include "ComponentUtils.h"
 
-namespace
+void HealthSystem::CleanupHealthDeltaComponents(SystemContext& Context, float DeltaTime)
 {
-	constexpr int DamageOnCollision = 1;
+	ComponentUtils::RemoveAllComponentsTyped<HealthDeltaComponent>(Context);
+}
 
-	void DealDamage(const SystemContext& Context, const Entity& Entity, int Damage)
+void HealthSystem::ApplyHealthChanges(SystemContext& Context, float DeltaTime)
+{
+	Query<WritesList<HealthComponent>, ReadsList<HealthDeltaComponent>, ExcludeList<>> HealthQuery(Context.QueryContext);
+	if (HealthQuery.Size() < 1)
+		return;
+
+	RemoveEntitiesCommand RemoveDeadEntitiesCommand(0);
+	HealthQuery.ForEach([&](Entity Entity, HealthComponent& Health, const HealthDeltaComponent& HealthDelta)
 	{
-		HealthUtils::ApplyHealthChange(Context, Entity, -Damage);
-	}
-
-	void ResolveTriggerHit(const SystemContext& Context)
-	{
-		const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent, HealthComponent>();
-		assert(RunStateGroup.Size() == 1 && "Expected exactly one RunStateComponent with HealthComponent in the world");
-		if (RunStateGroup.Empty())
-			return;
-
-		DealDamage(Context, RunStateGroup[0], DamageOnCollision);
-	}
-
-	bool WasTriggerHit(const SystemContext& Context, const Entity& Entity)
-	{
-		if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Entity))
-			return false;
-
-		return Context.EntityAdmin.GetComponent<CollisionComponent>(Entity).Channel == CollisionChannel::Trigger;
-	}
-
-	void HandleCollision(const SystemContext& Context, const Entity& Entity)
-	{
-		if (WasTriggerHit(Context, Entity))
+		Health.CurrentHealth += HealthDelta.Delta;
+		if (Health.CurrentHealth <= 0)
 		{
-			ResolveTriggerHit(Context);
-			return;
+			RemoveDeadEntitiesCommand.WithEntry(Entity);
 		}
-
-		DealDamage(Context, Entity, DamageOnCollision);
-	}
-
-	void OnCollision(const SystemContext& Context, const CollisionEvent& Event)
-	{
-		HandleCollision(Context, Event.EntityA);
-		HandleCollision(Context, Event.EntityB);
-	}
-}
-
-void HealthSystem::Initialize(const SystemContext& Context)
-{
-	const void* const Id = reinterpret_cast<const void*>(&Initialize);
-
-	Context.EventBus.Subscribe<CollisionEvent>(Id, [](const SystemContext& Context, const CollisionEvent& Event)
-	{
-		OnCollision(Context, Event);
 	});
-}
 
-void HealthSystem::Update(const SystemContext& Context, float DeltaTime)
-{
-	Context.EntityAdmin.GetGroup<HealthComponent>().ForEach([&Context](const Entity& Entity, const HealthComponent& Health)
+	if (!RemoveDeadEntitiesCommand.GetEntries().empty())
 	{
-		if (Health.CurrentHealth > 0)
-			return;
-
-		Context.EntityAdmin.DestroyEntity(Entity);
-	});
+		Context.Commands.Submit(std::move(RemoveDeadEntitiesCommand));
+	}
 }

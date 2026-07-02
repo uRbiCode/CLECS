@@ -10,7 +10,10 @@ namespace
 {
 	void UpdateSfxRequests(SystemContext& Context)
 	{
-		const auto SfxRequestQuery = Query<WritesList<>, ReadsList<SfxRequestComponent>, ExcludeList<>>(Context.QueryContext);
+		const Query<WritesList<>, ReadsList<SfxRequestComponent>, ExcludeList<>> SfxRequestQuery(Context.QueryContext);
+		if (SfxRequestQuery.Size() == 0)
+			return;
+
 		RemoveComponentsCommand<SfxRequestComponent> RemoveComponentsCommand(SfxRequestQuery.Size());
 		std::unordered_map<std::string, float> FilteredRequests;
 		SfxRequestQuery.ForEach([&](Entity Entity, const SfxRequestComponent& SfxRequest)
@@ -28,7 +31,10 @@ namespace
 
 	void UpdateMusicRequests(SystemContext& Context)
 	{
-		const auto MusicRequestQuery = Query<WritesList<>, ReadsList<MusicRequestComponent>, ExcludeList<>>(Context.QueryContext);
+		const Query<WritesList<>, ReadsList<MusicRequestComponent>, ExcludeList<>> MusicRequestQuery(Context.QueryContext);
+		if (MusicRequestQuery.Size() == 0)
+			return;
+
 		RemoveComponentsCommand<MusicRequestComponent> RemoveComponentsCommand(MusicRequestQuery.Size());
 		std::unordered_map<std::string, float> FilteredRequests;
 		MusicRequestQuery.ForEach([&](Entity Entity, const MusicRequestComponent& MusicRequest)

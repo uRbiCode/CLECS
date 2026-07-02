@@ -2,8 +2,7 @@
 #include "MathTypes.h"
 
 /* Tracks velocity of an entity.
- * Velocity is applied to position by MovementSystem.
- * CollisionKinematicResolverSystem may modify velocity as part of resolving collisions.
+ * Velocity is applied directly to Position.
  */
 struct VelocityComponent
 {

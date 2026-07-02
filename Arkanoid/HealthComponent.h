@@ -1,9 +1,17 @@
 #pragma once
 
 /* Stores health of an entity.
- * HealthSystem utilizes this component to determine if an entity should be destroyed.
+ * If Health drops to 0 an entity is destroyed.
  */
 struct HealthComponent
 {
-	int CurrentHealth = 1;
+	int CurrentHealth = 0;
+};
+
+/* Stores health delta of an entity.
+ * This component is used to track changes in health.
+ */
+struct HealthDeltaComponent
+{
+	int Delta = 0;
 };

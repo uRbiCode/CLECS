@@ -17,9 +17,6 @@
     <Filter Include="Source\Systems\MovementSystem">
       <UniqueIdentifier>{59b0305b-6b0d-4df5-9b22-804a500a68c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\PlayerInputSystem">
-      <UniqueIdentifier>{12e763f4-8188-424f-b635-31a16fee4479}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Systems\CollisionDetectionSystem">
       <UniqueIdentifier>{abdff57a-6b04-43eb-9f7d-f60b98384039}</UniqueIdentifier>
     </Filter>
@@ -86,6 +83,27 @@
     <Filter Include="Source\Modules">
       <UniqueIdentifier>{f9f5f13b-2504-4777-9976-35b7491f934e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Modules\InputModule">
+      <UniqueIdentifier>{31717a54-a116-4b21-b7d1-1db04d317cbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Modules\MovementModule">
+      <UniqueIdentifier>{19a7b8cb-d8e7-43fe-9b71-42be16d9d0d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\InputSystem">
+      <UniqueIdentifier>{12e763f4-8188-424f-b635-31a16fee4479}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils\CollisionUtils">
+      <UniqueIdentifier>{a710ab33-c779-45f6-bf56-000ef65cee50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Modules\HealthModule">
+      <UniqueIdentifier>{a578a0c1-1f8f-4a80-a99b-90fff174ef8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils\ComponentUtils">
+      <UniqueIdentifier>{2419b9c0-b768-4a35-b096-563cf9c09d5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Modules\CollisionModule">
+      <UniqueIdentifier>{ca079ef7-d4b2-42b4-9215-7ffd2bddfdd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -94,8 +112,8 @@
     <ClCompile Include="MovementSystem.cpp">
       <Filter>Source\Systems\MovementSystem</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerInputSystem.cpp">
-      <Filter>Source\Systems\PlayerInputSystem</Filter>
+    <ClCompile Include="InputSystem.cpp">
+      <Filter>Source\Systems\InputSystem</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source</Filter>
@@ -160,15 +178,30 @@
     <ClCompile Include="ArkanoidModule.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
+    <ClCompile Include="ArkanoidInputModule.cpp">
+      <Filter>Source\Modules\InputModule</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidMovementModule.cpp">
+      <Filter>Source\Modules\MovementModule</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionUtils.cpp">
+      <Filter>Source\Utils\CollisionUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidHealthModule.cpp">
+      <Filter>Source\Modules\HealthModule</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidCollisionModule.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arkanoid.h">
       <Filter>Source\GameEntry</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionComponent.h">
+    <ClInclude Include="CollisionComponents.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerControllerComponent.h">
+    <ClInclude Include="PlayerMoveSpeedComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
     <ClInclude Include="VelocityComponent.h">
@@ -177,8 +210,8 @@
     <ClInclude Include="MovementSystem.h">
       <Filter>Source\Systems\MovementSystem</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerInputSystem.h">
-      <Filter>Source\Systems\PlayerInputSystem</Filter>
+    <ClInclude Include="InputSystem.h">
+      <Filter>Source\Systems\InputSystem</Filter>
     </ClInclude>
     <ClInclude Include="CollisionDetectionSystem.h">
       <Filter>Source\Systems\CollisionDetectionSystem</Filter>
@@ -288,5 +321,24 @@
     <ClInclude Include="ArkanoidModule.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="ArkanoidInputModule.h">
+      <Filter>Source\Modules\InputModule</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidMovementModule.h">
+      <Filter>Source\Modules\MovementModule</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionUtils.h">
+      <Filter>Source\Utils\CollisionUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidHealthModule.h">
+      <Filter>Source\Modules\HealthModule</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentUtils.h">
+      <Filter>Source\Utils\ComponentUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidCollisionModule.h" />
   </ItemGroup>
 </Project>

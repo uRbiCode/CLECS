@@ -1,235 +1,162 @@
 #include "CollisionDetectionSystem.h"
 #include "SystemContext.h"
-#include "EntityAdmin.h"
 #include "ShapeComponents.h"
-#include "CollisionEvent.h"
-#include "EventBus.h"
-#include <cmath>
-#include <algorithm>
+#include "MathTypes.h"
+#include "PositionComponent.h"
+#include "Query.h"
+#include "DamageComponent.h"
+#include "HealthComponent.h"
+#include "RenderComponents.h"
+#include "PlayerMoveSpeedComponent.h"
+#include "CommandRunner.h"
+#include "CollisionComponents.h"
+#include "VelocityComponent.h"
+#include "CollisionUtils.h"
+#include "ComponentUtils.h"
 
 namespace
 {
-	SDL_FRect GetWorldAABB(const TransformComponent& Transform, const RectComponent& Rect)
+	void UpdateBallRegularCollision(SystemContext& Context, const BallQuery& BallQuery)
 	{
-		SDL_FRect Result = {};
-		Result.x = Transform.Position.X + Rect.Rect.x;
-		Result.y = Transform.Position.Y + Rect.Rect.y;
-		Result.w = Rect.Rect.w;
-		Result.h = Rect.Rect.h;
-		return Result;
-	}
+		AddComponentsCommand<CollisionComponent> AddCollisionCommand(0);
+		AddComponentsCommand<HealthDeltaComponent> AddHealthDeltaCommand(0);
 
-	Vector2D<float> GetSeparationRectRect(const SDL_FRect& A, const SDL_FRect& B)
-	{
-		const float OverlapLeft = (A.x + A.w) - B.x;
-		const float OverlapRight = (B.x + B.w) - A.x;
-		const float OverlapTop = (A.y + A.h) - B.y;
-		const float OverlapBottom = (B.y + B.h) - A.y;
+		const BricksQuery BricksQuery(Context.QueryContext);
+		const WallsQuery WallsQuery(Context.QueryContext);
 
-		const float MinOverlapX = std::min(OverlapLeft, OverlapRight);
-		const float MinOverlapY = std::min(OverlapTop, OverlapBottom);
-
-		if (MinOverlapX < MinOverlapY)
-			return { (OverlapLeft < OverlapRight) ? -MinOverlapX : MinOverlapX, 0.f };
-
-		return { 0.f, (OverlapTop < OverlapBottom) ? -MinOverlapY : MinOverlapY };
-	}
-
-	Vector2D<float> GetSeparationCircleRect(const TransformComponent& CircleTransform, const CircleComponent& Circle,
-	                                        const TransformComponent& RectTransform, const RectComponent& Rect)
-	{
-		const float CircleCenterX = CircleTransform.Position.X;
-		const float CircleCenterY = CircleTransform.Position.Y;
-		
-		const float RectLeft = RectTransform.Position.X + Rect.Rect.x;
-		const float RectRight = RectLeft + Rect.Rect.w;
-		const float RectTop = RectTransform.Position.Y + Rect.Rect.y;
-		const float RectBottom = RectTop + Rect.Rect.h;
-		
-		const float ClosestX = std::max(RectLeft, std::min(CircleCenterX, RectRight));
-		const float ClosestY = std::max(RectTop, std::min(CircleCenterY, RectBottom));
-		
-		const float DX = CircleCenterX - ClosestX;
-		const float DY = CircleCenterY - ClosestY;
-		const float Distance = std::sqrt(DX * DX + DY * DY);
-		
-		if (Distance > 0.f)
+		BallQuery.ForEach([&](Entity BallEntity, const PositionComponent& BallPosition, const CircleComponent& BallCircle, const DamageComponent& BallDamage)
 		{
-			const float Penetration = Circle.Radius - Distance;
-			return { (DX / Distance) * Penetration, (DY / Distance) * Penetration };
+			Vector2D<float> TotalSeparation{ 0.f, 0.f };
+			BricksQuery.ForEach([&](Entity BrickEntity, const PositionComponent& BrickPosition, const RectComponent& BrickRect, const HealthComponent& BrickHealth, const GameRenderComponent& BrickRender)
+			{
+				if (!CollisionUtils::CheckCircleRect(BallPosition, BallCircle, BrickPosition, BrickRect))
+					return;
+				
+				AddHealthDeltaCommand.WithEntry(BrickEntity, HealthDeltaComponent{ -BallDamage.Damage });
+				TotalSeparation += CollisionUtils::GetSeparationCircleRect(BallPosition, BallCircle, BrickPosition, BrickRect);
+			});
+
+			WallsQuery.ForEach([&](Entity WallEntity, const PositionComponent& WallPosition, const RectComponent& WallRect, const GameRenderComponent& WallRender)
+			{
+				if (!CollisionUtils::CheckCircleRect(BallPosition, BallCircle, WallPosition, WallRect))
+					return;
+
+				TotalSeparation += CollisionUtils::GetSeparationCircleRect(BallPosition, BallCircle, WallPosition, WallRect);
+			});
+
+			if (std::abs(TotalSeparation.X) < FLT_EPSILON && std::abs(TotalSeparation.Y) < FLT_EPSILON)
+				return;
+
+			AddCollisionCommand.WithEntry(BallEntity, CollisionComponent{ TotalSeparation });
+		});
+
+		if (!AddCollisionCommand.AccessEntries().empty())
+		{
+			Context.Commands.Submit(std::move(AddCollisionCommand));
 		}
 		
-		const float DistLeft = CircleCenterX - RectLeft;
-		const float DistRight = RectRight - CircleCenterX;
-		const float DistTop = CircleCenterY - RectTop;
-		const float DistBottom = RectBottom - CircleCenterY;
-		
-		const float MinDist = std::min({DistLeft, DistRight, DistTop, DistBottom});
-		
-		if (MinDist == DistLeft)
-			return { -DistLeft - Circle.Radius, 0.f };
-		if (MinDist == DistRight)
-			return { DistRight + Circle.Radius, 0.f };
-		if (MinDist == DistTop)
-			return { 0.f, -DistTop - Circle.Radius };
-
-		return { 0.f, DistBottom + Circle.Radius };
-	}
-
-	Vector2D<float> GetSeparationCircleCircle(const TransformComponent& TransformA, const CircleComponent& CircleA,
-	                                          const TransformComponent& TransformB, const CircleComponent& CircleB)
-	{
-		const float DX = TransformB.Position.X - TransformA.Position.X;
-		const float DY = TransformB.Position.Y - TransformA.Position.Y;
-		const float Distance = std::sqrt(DX * DX + DY * DY);
-		
-		if (Distance > 0.f)
+		if (!AddHealthDeltaCommand.AccessEntries().empty())
 		{
-			const float RadiusSum = CircleA.Radius + CircleB.Radius;
-			const float Penetration = RadiusSum - Distance;
-			return { -(DX / Distance) * Penetration, -(DY / Distance) * Penetration };
+			Context.Commands.Submit(std::move(AddHealthDeltaCommand));
 		}
-
-		return { -(CircleA.Radius + CircleB.Radius), 0.f };
 	}
 
-	bool CheckAABB(const SDL_FRect& A, const SDL_FRect& B)
+	void UpdateBallPaddleCollision(SystemContext& Context, const BallQuery& BallQuery)
 	{
-		return !(A.x + A.w < B.x || B.x + B.w < A.x || A.y + A.h < B.y || B.y + B.h < A.y);
+		const PaddleQuery PaddleQuery(Context.QueryContext);
+		AddComponentsCommand<DirectionCollisionComponent> AddDirectionCollisionCommand(0);
+		BallQuery.ForEach([&](Entity BallEntity, const PositionComponent& BallPosition, const CircleComponent& BallCircle, const DamageComponent& BallDamage)
+		{
+			Vector2D<float> PaddleCenter{ 0.f, 0.f };
+			Vector2D<float> Separation{ 0.f, 0.f };
+			PaddleQuery.ForEach([&](Entity PaddleEntity, const PositionComponent& PaddlePosition, const RectComponent& PaddleRect, const PlayerMoveSpeedComponent& PaddleMoveSpeed)
+			{
+				if (!CollisionUtils::CheckCircleRect(BallPosition, BallCircle, PaddlePosition, PaddleRect))
+					return;
+
+				Separation = CollisionUtils::GetSeparationCircleRect(BallPosition, BallCircle, PaddlePosition, PaddleRect);
+				PaddleCenter = { PaddlePosition.Position.X + PaddleRect.Rect.x + PaddleRect.Rect.w * 0.5f,
+								PaddlePosition.Position.Y + PaddleRect.Rect.y + PaddleRect.Rect.h * 0.5f };
+			});
+
+			if (std::abs(Separation.X) < FLT_EPSILON && std::abs(Separation.Y) < FLT_EPSILON)
+				return;
+
+			AddDirectionCollisionCommand.WithEntry(BallEntity, DirectionCollisionComponent{ Separation, PaddleCenter });
+		});
+
+		if (AddDirectionCollisionCommand.AccessEntries().empty())
+			return;
+
+		Context.Commands.Submit(std::move(AddDirectionCollisionCommand));
 	}
 
-	bool CheckCircleRect(const TransformComponent& CircleTransform, const CircleComponent& Circle,
-	                     const TransformComponent& RectTransform, const RectComponent& Rect)
+	void UpdateBallTriggersCollision(SystemContext& Context, const BallQuery& BallQuery)
 	{
-		const float CircleCenterX = CircleTransform.Position.X;
-		const float CircleCenterY = CircleTransform.Position.Y;
+		const TriggerQuery TriggerQuery(Context.QueryContext);
+		AddComponentsCommand<HealthDeltaComponent> AddHealthDeltaCommand(0);
+		BallQuery.ForEach([&](Entity BallEntity, const PositionComponent& BallPosition, const CircleComponent& BallCircle, const DamageComponent& BallDamage)
+		{
+			int TotalHealthDelta = 0;
+			TriggerQuery.ForEach([&](Entity TriggerEntity, const PositionComponent& TriggerPosition, const RectComponent& TriggerRect, const DamageComponent& TriggerDamage)
+			{
+				if (!CollisionUtils::CheckCircleRect(BallPosition, BallCircle, TriggerPosition, TriggerRect))
+					return;
 
-		const float RectLeft = RectTransform.Position.X + Rect.Rect.x;
-		const float RectRight = RectLeft + Rect.Rect.w;
-		const float RectTop = RectTransform.Position.Y + Rect.Rect.y;
-		const float RectBottom = RectTop + Rect.Rect.h;
+				TotalHealthDelta -= TriggerDamage.Damage;
+			});
 
-		const float ClosestX = std::max(RectLeft, std::min(CircleCenterX, RectRight));
-		const float ClosestY = std::max(RectTop, std::min(CircleCenterY, RectBottom));
+			AddHealthDeltaCommand.WithEntry(BallEntity, HealthDeltaComponent{ TotalHealthDelta });
+		});
 
-		const float DistX = CircleCenterX - ClosestX;
-		const float DistY = CircleCenterY - ClosestY;
-		const float DistanceSquared = DistX * DistX + DistY * DistY;
-
-		return DistanceSquared < (Circle.Radius * Circle.Radius);
-	}
-
-	bool CheckCircleCircle(const TransformComponent& TransformA, const CircleComponent& CircleA,
-	                       const TransformComponent& TransformB, const CircleComponent& CircleB)
-	{
-		const float DX = TransformB.Position.X - TransformA.Position.X;
-		const float DY = TransformB.Position.Y - TransformA.Position.Y;
-		const float DistanceSquared = DX * DX + DY * DY;
-		const float RadiusSum = CircleA.Radius + CircleB.Radius;
-
-		return DistanceSquared < (RadiusSum * RadiusSum);
+		if (!AddHealthDeltaCommand.AccessEntries().empty())
+		{
+			Context.Commands.Submit(std::move(AddHealthDeltaCommand));
+		}
 	}
 }
 
-void CollisionDetectionSystem::Update(const SystemContext& Context, float DeltaTime)
+void CollisionDetectionSystem::CleanupCollisionComponents(SystemContext& Context, float DeltaTime)
 {
-	auto& Admin = Context.EntityAdmin;
-	const auto CollisionGroup = Admin.GetGroup<TransformComponent, CollisionComponent>();
-	if (CollisionGroup.Empty())
-		return;
+	ComponentUtils::RemoveAllComponentsTyped<CollisionComponent>(Context);
+	ComponentUtils::RemoveAllComponentsTyped<DirectionCollisionComponent>(Context);
+}
 
-	for (size_t i = 0; i < CollisionGroup.Size(); ++i)
+void CollisionDetectionSystem::UpdateBallCollision(SystemContext& Context, float DeltaTime)
+{
+	const BallQuery BallQuery(Context.QueryContext);
+
+	UpdateBallRegularCollision(Context, BallQuery);
+	UpdateBallPaddleCollision(Context, BallQuery);
+	UpdateBallTriggersCollision(Context, BallQuery);
+}
+
+void CollisionDetectionSystem::UpdatePaddleCollision(SystemContext& Context, float DeltaTime)
+{
+	const PaddleQuery PaddleQuery(Context.QueryContext);
+	const WallsQuery WallsQuery(Context.QueryContext);
+	AddComponentsCommand<CollisionComponent> AddCollisionCommand(0);
+	PaddleQuery.ForEach([&](Entity PaddleEntity, const PositionComponent& PaddlePosition, const RectComponent& PaddleRect, const PlayerMoveSpeedComponent& PaddleMoveSpeed)
 	{
-		const Entity& EntityA = CollisionGroup[i];
-		if (!Admin.HasComponent<CollisionComponent>(EntityA))
-			continue;
-
-		const auto& CollisionA = Admin.GetComponent<CollisionComponent>(EntityA);
-		const auto& TransformA = Admin.GetComponent<TransformComponent>(EntityA);
-
-		const bool AHasRect = Admin.HasComponent<RectComponent>(EntityA);
-		const bool AHasCircle = Admin.HasComponent<CircleComponent>(EntityA);
-
-		if (!AHasRect && !AHasCircle)
-			continue;
-
-		for (size_t j = i + 1; j < CollisionGroup.Size(); ++j)
+		Vector2D<float> TotalSeparation{ 0.f, 0.f };
+		WallsQuery.ForEach([&](Entity WallEntity, const PositionComponent& WallPosition, const RectComponent& WallRect, const GameRenderComponent& WallRender)
 		{
-			const Entity& EntityB = CollisionGroup[j];
-			if (!Admin.HasComponent<CollisionComponent>(EntityB))
-				continue;
+			if (!CollisionUtils::CheckAABB(CollisionUtils::GetWorldAABB(PaddlePosition, PaddleRect), CollisionUtils::GetWorldAABB(WallPosition, WallRect)))
+				return;
 
-			const auto& CollisionB = Admin.GetComponent<CollisionComponent>(EntityB);
+			TotalSeparation += CollisionUtils::GetSeparationRectRect(
+				CollisionUtils::GetWorldAABB(PaddlePosition, PaddleRect),
+				CollisionUtils::GetWorldAABB(WallPosition, WallRect));
+		});
 
-			const auto ResponseA = CollisionA.ResponseTable[ChannelToIndex(CollisionB.Channel)];
-			const auto ResponseB = CollisionB.ResponseTable[ChannelToIndex(CollisionA.Channel)];
+		if (std::abs(TotalSeparation.X) < FLT_EPSILON && std::abs(TotalSeparation.Y) < FLT_EPSILON)
+			return;
 
-			if (ResponseA != CollisionResponse::Block && ResponseB != CollisionResponse::Block)
-				continue;
+		AddCollisionCommand.WithEntry(PaddleEntity, CollisionComponent{ TotalSeparation });
+	});
 
-			const auto& TransformB = Admin.GetComponent<TransformComponent>(EntityB);
-			const bool BHasRect = Admin.HasComponent<RectComponent>(EntityB);
-			const bool BHasCircle = Admin.HasComponent<CircleComponent>(EntityB);
-
-			if (!BHasRect && !BHasCircle)
-				continue;
-
-			bool Colliding = false;
-			Vector2D<float> Separation = { 0.f, 0.f };
-
-			if (AHasRect && BHasRect)
-			{
-				const auto& RectA = Admin.GetComponent<RectComponent>(EntityA);
-				const auto& RectB = Admin.GetComponent<RectComponent>(EntityB);
-				const SDL_FRect BoundsA = GetWorldAABB(TransformA, RectA);
-				const SDL_FRect BoundsB = GetWorldAABB(TransformB, RectB);
-
-				if (CheckAABB(BoundsA, BoundsB))
-				{
-					Colliding = true;
-					Separation = GetSeparationRectRect(BoundsA, BoundsB);
-				}
-			}
-			else if (AHasCircle && BHasCircle)
-			{
-				const auto& CircleA = Admin.GetComponent<CircleComponent>(EntityA);
-				const auto& CircleB = Admin.GetComponent<CircleComponent>(EntityB);
-
-				if (CheckCircleCircle(TransformA, CircleA, TransformB, CircleB))
-				{
-					Colliding = true;
-					Separation = GetSeparationCircleCircle(TransformA, CircleA, TransformB, CircleB);
-				}
-			}
-			else if (AHasCircle && BHasRect)
-			{
-				const auto& CircleA = Admin.GetComponent<CircleComponent>(EntityA);
-				const auto& RectB = Admin.GetComponent<RectComponent>(EntityB);
-
-				if (CheckCircleRect(TransformA, CircleA, TransformB, RectB))
-				{
-					Colliding = true;
-					Separation = GetSeparationCircleRect(TransformA, CircleA, TransformB, RectB);
-				}
-			}
-			else if (AHasRect && BHasCircle)
-			{
-				const auto& RectA = Admin.GetComponent<RectComponent>(EntityA);
-				const auto& CircleB = Admin.GetComponent<CircleComponent>(EntityB);
-
-				if (CheckCircleRect(TransformB, CircleB, TransformA, RectA))
-				{
-					Colliding = true;
-					Separation = GetSeparationCircleRect(TransformB, CircleB, TransformA, RectA);
-					Separation.X = -Separation.X;
-					Separation.Y = -Separation.Y;
-				}
-			}
-
-			if (Colliding)
-			{
-				Context.EventBus.Notify(Context, CollisionEvent{ EntityA, EntityB, Separation });
-			}
-		}
+	if (!AddCollisionCommand.AccessEntries().empty())
+	{
+		Context.Commands.Submit(std::move(AddCollisionCommand));
 	}
 }
