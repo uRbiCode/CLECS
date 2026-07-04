@@ -10,12 +10,13 @@ struct PlayerMoveSpeedComponent;
 struct GameRenderComponent;
 struct HealthComponent;
 struct DamageComponent;
+struct BackgroundRenderComponent;
 
 using BallQuery = Query<WritesList<>, ReadsList<PositionComponent, CircleComponent, DamageComponent>, ExcludeList<>>;
 using BricksQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, HealthComponent, GameRenderComponent>, ExcludeList<>>;
 using PaddleQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, PlayerMoveSpeedComponent>, ExcludeList<>>;
 using WallsQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, GameRenderComponent>, ExcludeList<HealthComponent>>;
-using TriggerQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, HealthComponent>, ExcludeList<GameRenderComponent>>;
+using TriggerQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, HealthComponent>, ExcludeList<GameRenderComponent, BackgroundRenderComponent>>;
 
 namespace CollisionUtils
 {

@@ -1,10 +1,11 @@
 #include "ArkanoidCollisionModule.h"
 #include "SystemsInitializationData.h"
-#include "CollisionDetectionSystem.h"
+#include "CollisionSystem.h"
 
 void ArkanoidCollisionModule::RegisterSystems(SystemsInitializationData& Data)
 {
-	Data.RegisterSystem(CollisionDetectionSystem::CleanupCollisionComponents, SystemPhase::EarlyUpdate);
-	Data.RegisterSystem(CollisionDetectionSystem::UpdateBallCollision, SystemPhase::Update);
-	Data.RegisterSystem(CollisionDetectionSystem::UpdatePaddleCollision, SystemPhase::Update);
+	Data.RegisterSystem(CollisionSystem::CleanupCollisionComponents, SystemPhase::EarlyUpdate);
+	Data.RegisterSystem(CollisionSystem::UpdateBallCollision, SystemPhase::Update);
+	Data.RegisterSystem(CollisionSystem::UpdatePaddleCollision, SystemPhase::Update);
+	Data.RegisterSystem(CollisionSystem::UpdateBallVelocity, SystemPhase::LateUpdate);
 }

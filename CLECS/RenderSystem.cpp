@@ -178,7 +178,7 @@ namespace
 	}
 
 	template<ComponentType T>
-	void RenderWrappedText(const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const SDL_FRect& RenderRect, int WrapWidth, const FontManager& FontMgr, SDL_Renderer& Renderer)
+	void RenderWrappedText(const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const SDL_FRect& RenderRect, int WrapWidth, FontManager& FontMgr, SDL_Renderer& Renderer)
 	{
 		TTF_Font* Font = FontMgr.GetFont(Text.FontFilePath, Text.FontPointSize);
 
@@ -206,7 +206,7 @@ namespace
 	}
 
 	template<ComponentType T>
-	void RenderText(const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const FontManager& FontMgr, SDL_Renderer& Renderer)
+	void RenderText(const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, FontManager& FontMgr, SDL_Renderer& Renderer)
 	{
 		TTF_Font* Font = FontMgr.GetFont(Text.FontFilePath, Text.FontPointSize);
 

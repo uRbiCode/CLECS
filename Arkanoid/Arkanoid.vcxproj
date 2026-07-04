@@ -156,11 +156,10 @@
     <ClCompile Include="ArkanoidMovementModule.cpp" />
     <ClCompile Include="ArkanoidUIBlinkModule.cpp" />
     <ClCompile Include="ArkanoidUpgradeModule.cpp" />
-    <ClCompile Include="CollisionDetectionSystem.cpp" />
+    <ClCompile Include="CollisionSystem.cpp" />
     <ClCompile Include="Arkanoid.cpp" />
     <ClCompile Include="CollisionUtils.cpp" />
     <ClCompile Include="GameStartSystem.cpp" />
-    <ClCompile Include="HealthIndicatorSystem.cpp" />
     <ClCompile Include="HealthSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovementSystem.cpp" />
@@ -188,7 +187,7 @@
     <ClInclude Include="DamageComponent.h" />
     <ClInclude Include="ClickableComponent.h" />
     <ClInclude Include="CollisionComponents.h" />
-    <ClInclude Include="CollisionDetectionSystem.h" />
+    <ClInclude Include="CollisionSystem.h" />
     <ClInclude Include="Arkanoid.h" />
     <ClInclude Include="GlobalConstants.h" />
     <ClInclude Include="GameStartSystem.h" />
@@ -197,7 +196,6 @@
     <ClInclude Include="RunUtils.h" />
     <ClInclude Include="TransitionComponents.h" />
     <ClInclude Include="TransitionUtils.h" />
-    <ClInclude Include="HealthIndicatorSystem.h" />
     <ClInclude Include="HealthComponent.h" />
     <ClInclude Include="HealthSystem.h" />
     <ClInclude Include="MovementSystem.h" />

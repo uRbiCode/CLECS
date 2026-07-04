@@ -91,6 +91,9 @@ public:
 		for (const Entity E : Command.GetEntries())
 		{
 			const auto EntityIt = EntitiesToArchetypes.find(E.GetId());
+			if (EntityIt == EntitiesToArchetypes.end())
+				continue;
+
 			const ArchetypeId SrcId = EntityIt->second;
 
 			ArchetypeKey TargetKey = Archetypes[SrcId].Key;

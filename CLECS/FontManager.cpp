@@ -23,7 +23,6 @@ void FontManager::Initialize()
     }
 
     LoadFontsFromAssetsDirectory();
-	SetupDefaultFont();
 }
 
 TTF_Font* FontManager::LoadFont(const std::string& FilePath, float PointSize)
@@ -38,7 +37,7 @@ TTF_Font* FontManager::LoadFont(const std::string& FilePath, float PointSize)
     if (NewFont == nullptr)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFont -> Failed to load font: %s size %f. SDL Error: %s", FilePath.c_str(), PointSize, SDL_GetError());
-        return DefaultFont;
+        return nullptr;
     }
 
     FontCache[FontKey] = NewFont;
@@ -47,7 +46,7 @@ TTF_Font* FontManager::LoadFont(const std::string& FilePath, float PointSize)
     return NewFont;
 }
 
-TTF_Font* FontManager::GetFont(const std::string& FilePath, float PointSize) const
+TTF_Font* FontManager::GetFont(const std::string& FilePath, float PointSize)
 {
     const std::string FontKey = MakeFontKey(FilePath, PointSize);
     
@@ -56,7 +55,7 @@ TTF_Font* FontManager::GetFont(const std::string& FilePath, float PointSize) con
         return It->second;
 
 	SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "FontManager::GetFont -> Font %s size %f not found in cache", FilePath.c_str(), PointSize);
-    return DefaultFont;
+    return LoadFont(FilePath, PointSize);
 }
 
 void FontManager::UnloadFont(const std::string& FilePath, float PointSize)
@@ -79,7 +78,6 @@ void FontManager::UnloadAll()
         TTF_CloseFont(Font);
     }
     FontCache.clear();
-	TTF_CloseFont(DefaultFont);
     TTF_Quit();
 }
 
@@ -115,9 +113,4 @@ void FontManager::LoadFontsFromAssetsDirectory()
 
         LoadFont(FilePath, RenderConstants::DefaultFontSize);
     }
-}
-
-void FontManager::SetupDefaultFont()
-{
-    DefaultFont = LoadFont(FontConstants::DefaultFont, RenderConstants::DefaultFontSize);
 }

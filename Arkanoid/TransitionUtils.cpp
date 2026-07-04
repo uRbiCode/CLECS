@@ -16,12 +16,15 @@
 #include "CollisionUtils.h"
 #include "HealthComponent.h"
 #include "UIBlinkComponent.h"
+#include "TextureManager.h"
+#include "TextureComponent.h"
 
 namespace
 {
 	namespace TransitionConstants
 	{
 		constexpr const char* MainMenuButtonText = "Main Menu";
+
 		constexpr const char* PrepareMessageText = "PRESS SPACE TO START";
 		constexpr float PrepareMessageDisplayDuration = 0.75f;
 	}
@@ -99,17 +102,15 @@ namespace
 		{
 			AddEntitiesCommand<MusicRequestComponent> AddMusicRequestCommand(1);
 			AddMusicRequestCommand.WithEntry(MusicRequestComponent{ MainMenu::Constants::MainMenuMusicName, 0.5f });
+			Context.Commands.Submit(std::move(AddMusicRequestCommand));
 		}
 
 		void AddTitleText(SystemContext& Context)
 		{
-
 			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-			const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
 
-			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> AddTitleTextCommand(1);
-			AddTitleTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.25f} },
-				RectComponent{ SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y } },
+			AddEntitiesCommand<PositionComponent, UIRenderComponent, TextComponent> AddTitleTextCommand(1);
+			AddTitleTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.20f, LogicalPresentation.Y * 0.15f} },
 				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 				TextComponent{ MainMenu::Constants::TitleText, GlobalConstants::FontFilePath, MainMenu::Constants::TitleFontSize });
 
@@ -120,13 +121,29 @@ namespace
 		{
 			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 			const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.4f, LogicalPresentation.Y * 0.1f };
-			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> AddButtonsCommand(3);
+			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, ClickableComponent, TextComponent> AddButtonsCommand(3);
+
+			const auto IndexToClickableTag = [](size_t Index) -> ClickableTag
+			{
+				switch (Index)
+				{
+					case 0:
+						return ClickableTag::PlayButton;
+					case 1:
+						return ClickableTag::TutorialButton;
+					case 2:
+						return ClickableTag::QuitButton;
+					default:
+						return ClickableTag::Invalid;
+				}
+			};
 
 			for (size_t i = 0; i < std::size(MainMenu::Constants::ButtonsTexts); ++i)
 			{
 				AddButtonsCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * (0.5f + i * 0.15f)} },
 					RectComponent{ SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y } },
 					UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
+					ClickableComponent{ IndexToClickableTag(i) },
 					TextComponent{ MainMenu::Constants::ButtonsTexts[i], GlobalConstants::FontFilePath, 32.f });
 			}
 
@@ -139,12 +156,21 @@ namespace
 		namespace Constants
 		{
 			constexpr const char* StageText = "STAGE ";
+
+			constexpr const char* HealthIndicatorTexturePath = "../Assets/Textures/Hearts.png";
+			constexpr const SDL_FRect HealthIndicatorTextureRect = {115.f, 3.f, 11.f, 10.f};
+			constexpr float HealthIndicatorSpacing = 20.f;
 		}
 
 		std::string BuildStageText(SystemContext& Context)
 		{
 			const int StageNumber = RunUtils::GetCurrentStageNumber(Context);
 			return Constants::StageText + std::to_string(StageNumber);
+		}
+
+		SDL_Texture* GetHealthIndicatorTexture(const TextureManager& TextureManager)
+		{
+			return TextureManager.GetTexture(Constants::HealthIndicatorTexturePath);
 		}
 
 		void StopBackgroundMusic(SystemContext& Context)
@@ -176,6 +202,32 @@ namespace
 			RunUtils::SpawnTrigger(Context, std::move(StageData.Trigger));
 			RunUtils::SpawnPlayer(Context, std::move(StageData.PlayerData));
 			RunUtils::SpawnBall(Context, std::move(StageData.BallData));
+		}
+
+		void InitializeHealthIndicators(SystemContext& Context)
+		{
+			int PlayerHealth = GlobalConstants::InitialPlayerHealth;
+			const Query<WritesList<>, ReadsList<HealthComponent, BackgroundRenderComponent>, ExcludeList<>> HealthQuery(Context.QueryContext);
+			HealthQuery.ForEach([&](Entity Entity, const HealthComponent& Health, const BackgroundRenderComponent& BackgroundRender)
+			{
+				PlayerHealth = Health.CurrentHealth;
+			});
+
+			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+			const Vector2D<float> RectSize = { LogicalPresentation.X * 0.05f, LogicalPresentation.Y * 0.05f };
+			const float PositionY = LogicalPresentation.Y * 0.95f;
+
+			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextureComponent> AddHealthIndicatorsCommand(GlobalConstants::InitialPlayerHealth);
+			for (int i = 0; i < PlayerHealth; ++i)
+			{
+				const float PositionX = LogicalPresentation.X * 0.07f + i * (RectSize.X + Run::Constants::HealthIndicatorSpacing);
+				AddHealthIndicatorsCommand.WithEntry(PositionComponent{ {PositionX, PositionY} },
+					RectComponent{ SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y } },
+					UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
+					TextureComponent{ GetHealthIndicatorTexture(Context.Managers.TextureManager), Run::Constants::HealthIndicatorTextureRect});
+			}
+
+			Context.Commands.Submit(std::move(AddHealthIndicatorsCommand));
 		}
 	}
 
@@ -250,7 +302,7 @@ void TransitionUtils::TravelToRun(SystemContext& Context)
 	Run::InitializeStageInfo(Context);
 	Run::InitializeStageEntities(Context);
 	InitializeBlinkingMessage(Context);
-	// Initialize health indicator
+	Run::InitializeHealthIndicators(Context);
 }
 
 void TransitionUtils::TravelToSummary(SystemContext& Context, const std::string& Message)
@@ -267,6 +319,7 @@ void TransitionUtils::TravelToUpgrades(SystemContext& Context)
 void TransitionUtils::CleanupRunStage(SystemContext& Context)
 {
 	ComponentUtils::RemoveAllEntitiesWithComponent<GameRenderComponent>(Context);
+	ComponentUtils::RemoveAllEntitiesWithComponent<UIRenderComponent>(Context);
 
 	const TriggerQuery TriggerQuery(Context.QueryContext);
 	RemoveEntitiesCommand RemoveTriggerCommand(TriggerQuery.Size());

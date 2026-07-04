@@ -1,4 +1,4 @@
-#include "CollisionDetectionSystem.h"
+#include "CollisionSystem.h"
 #include "SystemContext.h"
 #include "ShapeComponents.h"
 #include "MathTypes.h"
@@ -116,13 +116,13 @@ namespace
 	}
 }
 
-void CollisionDetectionSystem::CleanupCollisionComponents(SystemContext& Context, float DeltaTime)
+void CollisionSystem::CleanupCollisionComponents(SystemContext& Context, float DeltaTime)
 {
 	ComponentUtils::RemoveAllComponentsTyped<CollisionComponent>(Context);
 	ComponentUtils::RemoveAllComponentsTyped<DirectionCollisionComponent>(Context);
 }
 
-void CollisionDetectionSystem::UpdateBallCollision(SystemContext& Context, float DeltaTime)
+void CollisionSystem::UpdateBallCollision(SystemContext& Context, float DeltaTime)
 {
 	const BallQuery BallQuery(Context.QueryContext);
 
@@ -131,7 +131,7 @@ void CollisionDetectionSystem::UpdateBallCollision(SystemContext& Context, float
 	UpdateBallTriggersCollision(Context, BallQuery);
 }
 
-void CollisionDetectionSystem::UpdatePaddleCollision(SystemContext& Context, float DeltaTime)
+void CollisionSystem::UpdatePaddleCollision(SystemContext& Context, float DeltaTime)
 {
 	const PaddleQuery PaddleQuery(Context.QueryContext);
 	const WallsQuery WallsQuery(Context.QueryContext);
@@ -159,4 +159,13 @@ void CollisionDetectionSystem::UpdatePaddleCollision(SystemContext& Context, flo
 	{
 		Context.Commands.Submit(std::move(AddCollisionCommand));
 	}
+}
+
+void CollisionSystem::UpdateBallVelocity(SystemContext& Context, float DeltaTime)
+{
+	const Query<WritesList<VelocityComponent>, ReadsList<CircleComponent, CollisionComponent>, ExcludeList<>> VelocityQuery(Context.QueryContext);
+	VelocityQuery.ForEach([&](Entity Entity, VelocityComponent& Velocity, const CircleComponent& Circle, const CollisionComponent& Collision)
+	{
+		Velocity.Velocity *= 1.05f;
+	});
 }

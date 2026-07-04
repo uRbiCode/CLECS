@@ -11,6 +11,40 @@
 #include "RenderComponents.h"
 #include "ShapeComponents.h"
 #include "PositionComponent.h"
+#include "TextureComponent.h"
+
+void HealthSystem::UpdateDisplayedHealth(SystemContext& Context, float DeltaTime)
+{
+	int TotalHealthChange = 0;
+
+	const Query<WritesList<>, ReadsList<HealthDeltaComponent>, ExcludeList<BackgroundRenderComponent, GameRenderComponent>> HealthQuery(Context.QueryContext);
+	HealthQuery.ForEach([&](Entity Entity, const HealthDeltaComponent& HealthDelta)
+	{
+		TotalHealthChange += HealthDelta.Delta;
+	});
+
+	if (TotalHealthChange >= 0)
+		return;
+
+	const Query<WritesList<>, ReadsList<PositionComponent, RectComponent, UIRenderComponent, TextureComponent>, ExcludeList<BackgroundRenderComponent, GameRenderComponent>> HealthIndicatorQuery(Context.QueryContext);
+	std::vector<Entity> HealthIndicatorsToRemove;
+	HealthIndicatorsToRemove.reserve(HealthIndicatorQuery.Size());
+	HealthIndicatorQuery.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, const UIRenderComponent& Render, const TextureComponent& Texture)
+	{
+		HealthIndicatorsToRemove.push_back(Entity);
+	});
+
+	std::ranges::sort(HealthIndicatorsToRemove, [](Entity A, Entity B) { return A.GetId() < B.GetId(); });
+
+	TotalHealthChange = std::abs(TotalHealthChange);
+	RemoveEntitiesCommand RemoveHealthIndicatorsCommand(TotalHealthChange);
+	for (int i = 0; i < TotalHealthChange; ++i)
+	{
+		RemoveHealthIndicatorsCommand.WithEntry(HealthIndicatorsToRemove[i]);
+	}
+
+	Context.Commands.Submit(std::move(RemoveHealthIndicatorsCommand));
+}
 
 void HealthSystem::RemoveDeadEntities(SystemContext& Context, float DeltaTime)
 {

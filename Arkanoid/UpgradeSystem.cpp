@@ -32,23 +32,23 @@ namespace
 		return Upgrade.Name + "\n\n" + Upgrade.Description;
 	}
 
-	std::vector<std::pair<EntityId, UpgradeDescriptionComponent>> SampleAvailableUpgradeEntities(SystemContext& Context)
+	std::vector<std::pair<Entity, UpgradeDescriptionComponent>> SampleAvailableUpgradeEntities(SystemContext& Context)
 	{
-		std::vector<std::pair<EntityId, UpgradeDescriptionComponent>> AvailableUpgradeEntitites;
+		std::vector<std::pair<Entity, UpgradeDescriptionComponent>> AvailableUpgradeEntitites;
 		const Query<WritesList<>, ReadsList<AvailableUpgradeComponent, UpgradeDescriptionComponent>, ExcludeList<>> AvailableUpgradesQuery(Context.QueryContext);
 		AvailableUpgradeEntitites.reserve(AvailableUpgradesQuery.Size());
 		AvailableUpgradesQuery.ForEach([&](Entity Entity, const AvailableUpgradeComponent& AvailableUpgrade, const UpgradeDescriptionComponent& UpgradeDescription)
 		{
-			AvailableUpgradeEntitites.push_back({ Entity.GetId(), UpgradeDescription });
+			AvailableUpgradeEntitites.push_back({ Entity, UpgradeDescription });
 		});
 
-		std::vector<std::pair<EntityId, UpgradeDescriptionComponent>> SampledEntities;
+		std::vector<std::pair<Entity, UpgradeDescriptionComponent>> SampledEntities;
 		SampledEntities.reserve(UpgradesToPresent);
 		std::ranges::sample(AvailableUpgradeEntitites, std::back_inserter(SampledEntities), UpgradesToPresent, std::mt19937{ std::random_device{}() });
 		return SampledEntities;
 	}
 
-	void PresentUpgradesChoice(SystemContext& Context, std::vector<std::pair<EntityId, UpgradeDescriptionComponent>>&& Upgrades)
+	void PresentUpgradesChoice(SystemContext& Context, std::vector<std::pair<Entity, UpgradeDescriptionComponent>>&& Upgrades)
 	{
 		if (Upgrades.empty())
 		{

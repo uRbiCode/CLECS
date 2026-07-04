@@ -70,14 +70,14 @@ void InputSystem::UpdateClickables(SystemContext& Context, float DeltaTime)
 
 	const Vector2D<float> MousePosition = SDLUtils::TranslateCoordinatesFromWindowToLogical(&Context.Renderer, &Context.Window, Context.Input.GetMousePosition());
 	const Query<WritesList<>, ReadsList<PositionComponent, RectComponent, ClickableComponent>, ExcludeList<>> ClickableQuery(Context.QueryContext);
-	AddEntitiesCommand<ClickableUsedComponent> AddClickableUsedCommand(0);
+	AddComponentsCommand<ClickableUsedComponent> AddClickableUsedCommand(0);
 	ClickableQuery.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, const ClickableComponent& Clickable)
 	{
 		const SDL_FRect MouseRect = SDL_FRect{ MousePosition.X, MousePosition.Y, 0.f, 0.f };
 		if (!CollisionUtils::CheckAABB(MouseRect,{ CollisionUtils::GetWorldAABB(Position, Rect)}))
 			return;
 
-		AddClickableUsedCommand.WithEntry(ClickableUsedComponent{});
+		AddClickableUsedCommand.WithEntry(Entity, ClickableUsedComponent{});
 	});
 
 	if (AddClickableUsedCommand.AccessEntries().size() > 0)

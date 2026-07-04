@@ -21,7 +21,8 @@ public:
 
     void Initialize();
     
-    TTF_Font* GetFont(const std::string& FilePath, float PointSize) const;
+    // Will try to LoadFont if not present
+    TTF_Font* GetFont(const std::string& FilePath, float PointSize);
     
     void UnloadAll();
 
@@ -29,9 +30,7 @@ private:
     std::string MakeFontKey(const std::string& FilePath, float PointSize) const;
     TTF_Font* LoadFont(const std::string& FilePath, float PointSize);
     void LoadFontsFromAssetsDirectory();
-	void SetupDefaultFont();
     void UnloadFont(const std::string& FilePath, float PointSize);
 
     std::unordered_map<std::string, TTF_Font*> FontCache;
-    TTF_Font* DefaultFont = nullptr;
 };

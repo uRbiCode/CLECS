@@ -160,7 +160,7 @@ void TransitionSystem::UpdateClickableTransitions(SystemContext& Context, float 
 
 void TransitionSystem::UpdateTransitionsFromRun(SystemContext& Context, float DeltaTime)
 {
-	auto SignalSummaryTransition = [](SystemContext& Context, const char* SummaryText)
+	const auto SignalSummaryTransition = [](SystemContext& Context, const char* SummaryText)
 	{
 		AddEntitiesCommand<SummaryTransitionComponent> AddSummaryTransitionCommand(1);
 		AddSummaryTransitionCommand.WithEntry(SummaryTransitionComponent{ SummaryText });
