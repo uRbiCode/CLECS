@@ -32,21 +32,6 @@ namespace
 		return Upgrade.Name + "\n\n" + Upgrade.Description;
 	}
 
-	std::vector<UpgradeDefinition> SampleUpgrades(const SystemContext& Context, const std::vector<UpgradeDefinition>& AvailableUpgrades)
-	{
-		if (AvailableUpgrades.size() <= UpgradesToPresent)
-			return AvailableUpgrades;
-
-		auto SampledUpgrades = AvailableUpgrades;
-
-		std::random_device rd;
-		std::mt19937 g(rd());
-
-		std::shuffle(SampledUpgrades.begin(), SampledUpgrades.end(), g);
-		SampledUpgrades.resize(UpgradesToPresent);
-		return SampledUpgrades;
-	}
-
 	std::vector<std::pair<EntityId, UpgradeDescriptionComponent>> SampleAvailableUpgradeEntities(SystemContext& Context)
 	{
 		std::vector<std::pair<EntityId, UpgradeDescriptionComponent>> AvailableUpgradeEntitites;
@@ -186,11 +171,9 @@ void UpgradeSystem::UpdateOwnedUpgrades(SystemContext& Context, float DeltaTime)
 
 void UpgradeSystem::UpdateImmediateUpgrades(SystemContext& Context, float DeltaTime)
 {
-	const Query<WritesList<>, ReadsList<ClickableUsedComponent, HealUpgradeComponent>, ExcludeList<>> HealQuery(Context.QueryContext);
-	if (HealQuery.Size() < 1)
-		return;
-
 	int TotalHealAmount = 0;
+
+	const Query<WritesList<>, ReadsList<ClickableUsedComponent, HealUpgradeComponent>, ExcludeList<>> HealQuery(Context.QueryContext);
 	HealQuery.ForEach([&](Entity Entity, const ClickableUsedComponent& ClickableUsed, const HealUpgradeComponent& HealUpgrade)
 	{
 		TotalHealAmount += HealUpgrade.Heal;
@@ -225,8 +208,8 @@ void UpgradeSystem::ResetUpgrades(SystemContext& Context, float DeltaTime)
 void UpgradeSystem::UpdateUpgradesChoice(SystemContext& Context, float DeltaTime)
 {
 	const Query<WritesList<>, ReadsList<UpgradesTransitionComponent>, ExcludeList<>> UpgradesTransitionQuery(Context.QueryContext);
-	if (UpgradesTransitionQuery.Size() < 1)
-		return;
-
-	PresentUpgradesChoice(Context, SampleAvailableUpgradeEntities(Context));
+	UpgradesTransitionQuery.ForEach([&](Entity Entity, const UpgradesTransitionComponent& UpgradesTransition)
+	{
+		PresentUpgradesChoice(Context, SampleAvailableUpgradeEntities(Context));
+	});
 }

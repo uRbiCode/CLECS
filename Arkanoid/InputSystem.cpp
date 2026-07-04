@@ -9,6 +9,8 @@
 #include "ShapeComponents.h"
 #include "CollisionUtils.h"
 #include "CommandRunner.h"
+#include "BeginStageComponent.h"
+#include "ComponentUtils.h"
 
 namespace PlayerMoveConstants
 {
@@ -47,6 +49,16 @@ namespace
 
 		Context.Commands.Submit(std::move(RemoveCommand));
 	}
+
+	bool ShouldBeginStage(const InputState& Input)
+	{
+		return Input.IsKeyJustPressed(SDLK_SPACE);
+	}
+
+	void CleanupInput(SystemContext& Context)
+	{
+		ComponentUtils::RemoveAllEntitiesWithComponent<BeginStageComponent>(Context);
+	}
 }
 
 void InputSystem::UpdateClickables(SystemContext& Context, float DeltaTime)
@@ -76,10 +88,19 @@ void InputSystem::UpdateClickables(SystemContext& Context, float DeltaTime)
 
 void InputSystem::TranslateRawInput(SystemContext& Context, float DeltaTime)
 {
+	CleanupInput(Context);
+
 	const float PlayerMoveSpeedInputMultiplier = TranslateInputToPlayerMoveSpeedInputMultiplier(Context.Input);
 	const Query<WritesList<PlayerMoveSpeedComponent>, ReadsList<>, ExcludeList<>> PlayerMoveQuery(Context.QueryContext);
 	PlayerMoveQuery.ForEach([PlayerMoveSpeedInputMultiplier](Entity Entity, PlayerMoveSpeedComponent& MoveSpeed)
 	{
 		MoveSpeed.MoveSpeedInputMultiplier = PlayerMoveSpeedInputMultiplier;
 	});
+
+	if (!ShouldBeginStage(Context.Input))
+		return;
+
+	AddEntitiesCommand<BeginStageComponent> AddBeginStageCommand(1);
+	AddBeginStageCommand.WithEntry(BeginStageComponent{});
+	Context.Commands.Submit(std::move(AddBeginStageCommand));
 }

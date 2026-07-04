@@ -114,10 +114,11 @@ void RunUtils::SpawnPlayer(SystemContext& Context, PlayerData&& Data)
 {
 	Data.PositionSize.Size.X *= GetPaddleWidthMultiplier(Context);
 
-	AddEntitiesCommand<PositionComponent, PositionResetComponent, RectComponent, PlayerMoveSpeedComponent, GameRenderComponent, TextureComponent> AddPlayerCommand(1);
+	AddEntitiesCommand<PositionComponent, PositionResetComponent, RectComponent, VelocityResetComponent, PlayerMoveSpeedComponent, GameRenderComponent, TextureComponent> AddPlayerCommand(1);
 	AddPlayerCommand.WithEntry(PositionComponent{ Data.PositionSize.Position },
 		PositionResetComponent{ Data.PositionSize.Position },
 		RectComponent{ SDL_FRect{ -Data.PositionSize.Size.X * 0.5f, -Data.PositionSize.Size.Y * 0.5f, Data.PositionSize.Size.X, Data.PositionSize.Size.Y } },
+		VelocityResetComponent{ { 0.f, 0.f } },
 		PlayerMoveSpeedComponent{ Constants::PlayerMoveSpeed, 0.f },
 		GameRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 		TextureComponent{ Context.Managers.TextureManager.GetTexture(Data.TextureData.Path), Data.TextureData.SourceRect });
@@ -137,4 +138,13 @@ void RunUtils::SpawnBall(SystemContext& Context, BallData&& Data)
 		TextureComponent{ Context.Managers.TextureManager.GetTexture(Data.TextureData.Path), Data.TextureData.SourceRect },
 		DamageComponent{ Constants::Damage });
 	Context.Commands.Submit(std::move(AddBallCommand));
+}
+
+void RunUtils::ResetStage(SystemContext& Context)
+{
+	const Query<WritesList<PositionComponent>, ReadsList<PositionResetComponent>, ExcludeList<>> ResetQuery(Context.QueryContext);
+	ResetQuery.ForEach([&](Entity Entity, PositionComponent& Position, const PositionResetComponent& PositionReset)
+	{
+		Position.Position = PositionReset.ResetPosition;
+	});
 }

@@ -13,6 +13,9 @@
 #include "PositionComponent.h"
 #include "PlayerMoveSpeedComponent.h"
 #include "ShapeComponents.h"
+#include "BeginStageComponent.h"
+#include "VelocityComponent.h"
+#include "ResetComponents.h"
 
 namespace
 {
@@ -38,6 +41,17 @@ namespace
 			IsTriggerDead &= Health.CurrentHealth < 1;
 		});
 		return IsTriggerDead;
+	}
+
+	bool ShouldResetStage(SystemContext& Context)
+	{
+		int TotalHealthDelta = 0;
+		const Query<WritesList<>, ReadsList<HealthDeltaComponent>, ExcludeList<GameRenderComponent>> TriggerHealthDeltaQuery(Context.QueryContext);
+		TriggerHealthDeltaQuery.ForEach([&](Entity Entity, const HealthDeltaComponent& HealthDelta)
+		{
+			TotalHealthDelta += HealthDelta.Delta;
+		});
+		return TotalHealthDelta < 0;
 	}
 
 	void OnQuitButtonClicked()
@@ -97,6 +111,21 @@ void TransitionSystem::UpdateDynamicTransitions(SystemContext& Context, float De
 		Context.Commands.Submit(std::move(RemoveUpgradesTransitionCommand));
 		return;
 	}
+
+	const Query<WritesList<>, ReadsList<BeginStageComponent>, ExcludeList<>> BeginStageQuery(Context.QueryContext);
+	if (BeginStageQuery.Size() > 0)
+	{
+		const Query<WritesList<>, ReadsList<VelocityResetComponent>, ExcludeList<VelocityComponent>> VelocityQuery(Context.QueryContext);
+		if (VelocityQuery.Size() > 0)
+		{
+			AddComponentsCommand<VelocityComponent> AddVelocityCommand(VelocityQuery.Size());
+			VelocityQuery.ForEach([&](Entity Entity, const VelocityResetComponent& VelocityReset)
+			{
+				AddVelocityCommand.WithEntry(Entity, VelocityComponent{ VelocityReset.ResetVelocity });
+			});
+			Context.Commands.Submit(std::move(AddVelocityCommand));
+		}
+	}
 }
 
 void TransitionSystem::UpdateClickableTransitions(SystemContext& Context, float DeltaTime)
@@ -155,5 +184,12 @@ void TransitionSystem::UpdateTransitionsFromRun(SystemContext& Context, float De
 	else if (IsRunLost(Context))
 	{
 		SignalSummaryTransition(Context, Constants::DefeatText);
+	}
+
+	else if (ShouldResetStage(Context))
+	{
+		ComponentUtils::RemoveAllComponentsTyped<VelocityComponent>(Context);
+		TransitionUtils::InitializeBlinkingMessage(Context);
+		RunUtils::ResetStage(Context);
 	}
 }

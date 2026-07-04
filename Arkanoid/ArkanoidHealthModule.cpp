@@ -14,6 +14,6 @@ void ArkanoidHealthModule::RegisterSystems(SystemsInitializationData& Data)
 {
 	Data.RegisterSystem(HealthSystem::CleanupHealthDeltaComponents, SystemPhase::EarlyUpdate);
 	Data.RegisterSystem(HealthSystem::RemoveDeadEntities, SystemPhase::EarlyUpdate);
-	Data.RegisterSystem(HealthSystem::UpdatePersistentHealth, SystemPhase::LateUpdate);
+	Data.RegisterSystem(HealthSystem::UpdatePersistentHealth, SystemPhase::EarlyUpdate);
 	Data.RegisterSystem(HealthSystem::ApplyHealthChanges, SystemPhase::LateUpdate);
 }

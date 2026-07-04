@@ -154,13 +154,13 @@
     <ClCompile Include="ArkanoidInputModule.cpp" />
     <ClCompile Include="ArkanoidCoreModule.cpp" />
     <ClCompile Include="ArkanoidMovementModule.cpp" />
+    <ClCompile Include="ArkanoidUIBlinkModule.cpp" />
     <ClCompile Include="ArkanoidUpgradeModule.cpp" />
     <ClCompile Include="CollisionDetectionSystem.cpp" />
     <ClCompile Include="Arkanoid.cpp" />
     <ClCompile Include="CollisionUtils.cpp" />
     <ClCompile Include="GameStartSystem.cpp" />
     <ClCompile Include="HealthIndicatorSystem.cpp" />
-    <ClCompile Include="PlayerPrepareSystem.cpp" />
     <ClCompile Include="HealthSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MovementSystem.cpp" />
@@ -170,6 +170,7 @@
     <ClCompile Include="TransitionUtils.cpp" />
     <ClCompile Include="ArkanoidTransitionModule.cpp" />
     <ClCompile Include="TransitionSystem.cpp" />
+    <ClCompile Include="UIBlinkSystem.cpp" />
     <ClCompile Include="UpgradeLoader.cpp" />
     <ClCompile Include="UpgradeSystem.cpp" />
   </ItemGroup>
@@ -179,7 +180,9 @@
     <ClInclude Include="ArkanoidInputModule.h" />
     <ClInclude Include="ArkanoidCoreModule.h" />
     <ClInclude Include="ArkanoidMovementModule.h" />
+    <ClInclude Include="ArkanoidUIBlinkModule.h" />
     <ClInclude Include="ArkanoidUpgradeModule.h" />
+    <ClInclude Include="BeginStageComponent.h" />
     <ClInclude Include="CollisionUtils.h" />
     <ClInclude Include="ComponentUtils.h" />
     <ClInclude Include="DamageComponent.h" />
@@ -190,7 +193,6 @@
     <ClInclude Include="GlobalConstants.h" />
     <ClInclude Include="GameStartSystem.h" />
     <ClInclude Include="PlayerPrepareComponent.h" />
-    <ClInclude Include="PlayerPrepareSystem.h" />
     <ClInclude Include="ResetComponents.h" />
     <ClInclude Include="RunUtils.h" />
     <ClInclude Include="TransitionComponents.h" />
@@ -204,6 +206,8 @@
     <ClInclude Include="StageDataLoader.h" />
     <ClInclude Include="ArkanoidTransitionModule.h" />
     <ClInclude Include="TransitionSystem.h" />
+    <ClInclude Include="UIBlinkComponent.h" />
+    <ClInclude Include="UIBlinkSystem.h" />
     <ClInclude Include="UpgradeComponents.h" />
     <ClInclude Include="UpgradeLoader.h" />
     <ClInclude Include="UpgradeSystem.h" />

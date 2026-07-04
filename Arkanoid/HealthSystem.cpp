@@ -7,6 +7,10 @@
 #include "TransitionComponents.h"
 #include "RenderComponents.h"
 #include "GlobalConstants.h"
+#include "CollisionUtils.h"
+#include "RenderComponents.h"
+#include "ShapeComponents.h"
+#include "PositionComponent.h"
 
 void HealthSystem::RemoveDeadEntities(SystemContext& Context, float DeltaTime)
 {
@@ -42,13 +46,27 @@ void HealthSystem::ApplyHealthChanges(SystemContext& Context, float DeltaTime)
 
 void HealthSystem::UpdatePersistentHealth(SystemContext& Context, float DeltaTime)
 {
-	const Query<WritesList<>, ReadsList<SummaryTransitionComponent>, ExcludeList<>> SummaryQuery(Context.QueryContext);
-	if (SummaryQuery.Size() < 1)
-		return;
-
-	const Query<WritesList<HealthComponent>, ReadsList<BackgroundRenderComponent>, ExcludeList<>> PersistentHealthQuery(Context.QueryContext);
-	PersistentHealthQuery.ForEach([&](Entity Entity, HealthComponent& Health, const BackgroundRenderComponent& BackgroundRender)
+	int NewHealth = GlobalConstants::InitialPlayerHealth;
+	const Query<WritesList<HealthComponent>, ReadsList<BackgroundRenderComponent>, ExcludeList<>> HealthQuery(Context.QueryContext);
+	HealthQuery.ForEach([&](Entity Entity, HealthComponent& Health, const BackgroundRenderComponent& BackgroundRender)
 	{
-		Health.CurrentHealth = GlobalConstants::InitialPlayerHealth;
+		NewHealth = Health.CurrentHealth;
+	});
+
+	const TriggerQuery Triggers(Context.QueryContext);
+	Triggers.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, const HealthComponent& Health)
+	{
+		NewHealth = Health.CurrentHealth;
+	});
+
+	const Query<WritesList<>, ReadsList<SummaryTransitionComponent>, ExcludeList<>> SummaryQuery(Context.QueryContext);
+	if (SummaryQuery.Size() > 0)
+	{
+		NewHealth = GlobalConstants::InitialPlayerHealth;
+	}
+	
+	HealthQuery.ForEach([&](Entity Entity, HealthComponent& Health, const BackgroundRenderComponent& BackgroundRender)
+	{
+		Health.CurrentHealth = NewHealth;
 	});
 }

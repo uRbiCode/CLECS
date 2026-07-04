@@ -17,4 +17,6 @@ namespace RunUtils
 	void SpawnTrigger(SystemContext& Context, TriggerData&& Data);
 	void SpawnPlayer(SystemContext& Context, PlayerData&& Data);
 	void SpawnBall(SystemContext& Context, BallData&& Data);
+
+	void ResetStage(SystemContext& Context);
 }

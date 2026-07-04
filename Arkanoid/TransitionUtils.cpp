@@ -15,12 +15,15 @@
 #include "ComponentUtils.h"
 #include "CollisionUtils.h"
 #include "HealthComponent.h"
+#include "UIBlinkComponent.h"
 
 namespace
 {
 	namespace TransitionConstants
 	{
 		constexpr const char* MainMenuButtonText = "Main Menu";
+		constexpr const char* PrepareMessageText = "PRESS SPACE TO START";
+		constexpr float PrepareMessageDisplayDuration = 0.75f;
 	}
 
 	namespace Tutorial
@@ -246,7 +249,7 @@ void TransitionUtils::TravelToRun(SystemContext& Context)
 	Run::StopBackgroundMusic(Context);
 	Run::InitializeStageInfo(Context);
 	Run::InitializeStageEntities(Context);
-	// Initialize wait for player to press space to start flow
+	InitializeBlinkingMessage(Context);
 	// Initialize health indicator
 }
 
@@ -273,4 +276,19 @@ void TransitionUtils::CleanupRunStage(SystemContext& Context)
 	});
 	
 	Context.Commands.Submit(std::move(RemoveTriggerCommand));
+}
+
+void TransitionUtils::InitializeBlinkingMessage(SystemContext& Context)
+{
+	const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+	const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
+
+	AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent, UIBlinkComponent> AddBlinkingMessageCommand(1);
+	AddBlinkingMessageCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.75f} },
+		RectComponent{ SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y } },
+		UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
+		TextComponent{ TransitionConstants::PrepareMessageText, GlobalConstants::FontFilePath, 50.f },
+		UIBlinkComponent{ TransitionConstants::PrepareMessageDisplayDuration, TransitionConstants::PrepareMessageDisplayDuration });
+
+	Context.Commands.Submit(std::move(AddBlinkingMessageCommand));
 }

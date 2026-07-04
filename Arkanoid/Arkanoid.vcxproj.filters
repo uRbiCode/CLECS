@@ -29,9 +29,6 @@
     <Filter Include="Source\Systems\HealthIndicatorSystem">
       <UniqueIdentifier>{e4ea1060-ced9-449a-9f59-8c8624ae51ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\PlayerPrepareSystem">
-      <UniqueIdentifier>{0a9978bb-2dbb-4759-be79-a5ae8df1cfe0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Modules">
       <UniqueIdentifier>{f9f5f13b-2504-4777-9976-35b7491f934e}</UniqueIdentifier>
     </Filter>
@@ -86,6 +83,12 @@
     <Filter Include="Source\Utils\StageDataLoader">
       <UniqueIdentifier>{5596190a-9ab9-4b5f-bf5f-d805b2cc4d10}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\UIBlinkSystem">
+      <UniqueIdentifier>{53003363-86db-4ad3-a524-2fe5e1a5c248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Modules\UIBlinkModule">
+      <UniqueIdentifier>{9f12188a-56cd-4e4a-9d4d-11c0075e81a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -117,9 +120,6 @@
     </ClCompile>
     <ClCompile Include="UpgradeLoader.cpp">
       <Filter>Source\Systems\UpgradeSystem\UpgradeLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerPrepareSystem.cpp">
-      <Filter>Source\Systems\PlayerPrepareSystem</Filter>
     </ClCompile>
     <ClCompile Include="ArkanoidInputModule.cpp">
       <Filter>Source\Modules\InputModule</Filter>
@@ -156,6 +156,12 @@
     </ClCompile>
     <ClCompile Include="ArkanoidTransitionModule.cpp">
       <Filter>Source\Modules\TransitionModule</Filter>
+    </ClCompile>
+    <ClCompile Include="UIBlinkSystem.cpp">
+      <Filter>Source\Systems\UIBlinkSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidUIBlinkModule.cpp">
+      <Filter>Source\Modules\UIBlinkModule</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -210,9 +216,6 @@
     <ClInclude Include="PlayerPrepareComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerPrepareSystem.h">
-      <Filter>Source\Systems\PlayerPrepareSystem</Filter>
-    </ClInclude>
     <ClInclude Include="ArkanoidInputModule.h">
       <Filter>Source\Modules\InputModule</Filter>
     </ClInclude>
@@ -259,6 +262,18 @@
       <Filter>Source\Modules\TransitionModule</Filter>
     </ClInclude>
     <ClInclude Include="TransitionComponents.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UIBlinkComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UIBlinkSystem.h">
+      <Filter>Source\Systems\UIBlinkSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidUIBlinkModule.h">
+      <Filter>Source\Modules\UIBlinkModule</Filter>
+    </ClInclude>
+    <ClInclude Include="BeginStageComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
   </ItemGroup>

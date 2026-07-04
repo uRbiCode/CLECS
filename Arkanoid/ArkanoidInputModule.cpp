@@ -3,11 +3,13 @@
 #include "ComponentsInitializationData.h"
 #include "InputSystem.h"
 #include "ClickableComponent.h"
+#include "BeginStageComponent.h"
 
 void ArkanoidInputModule::RegisterComponentTypes(ComponentsInitializationData& Data)
 {
 	Data.RegisterComponent<ClickableComponent>();
 	Data.RegisterComponent<ClickableUsedComponent>();
+	Data.RegisterComponent<BeginStageComponent>();
 }
 
 void ArkanoidInputModule::RegisterSystems(SystemsInitializationData& Data)

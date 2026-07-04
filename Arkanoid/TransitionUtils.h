@@ -11,4 +11,5 @@ namespace TransitionUtils
 	void TravelToSummary(SystemContext& Context, const std::string& Message);
 	void TravelToUpgrades(SystemContext& Context);
 	void CleanupRunStage(SystemContext& Context);
+	void InitializeBlinkingMessage(SystemContext& Context);
 }
