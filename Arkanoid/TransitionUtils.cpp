@@ -283,13 +283,12 @@ namespace
 		{
 			constexpr const char* UpgradeTitleText = "Pick an Upgrade";
 		}
+
 		void AddUpgradesText(SystemContext& Context)
 		{
 			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-			const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
-			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> AddUpgradesTextCommand(1);
-			AddUpgradesTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.25f} },
-				RectComponent{ SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y } },
+			AddEntitiesCommand<PositionComponent, UIRenderComponent, TextComponent> AddUpgradesTextCommand(1);
+			AddUpgradesTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.12f, LogicalPresentation.Y * 0.15f} },
 				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 				TextComponent{ Constants::UpgradeTitleText, GlobalConstants::FontFilePath, 60.f });
 			Context.Commands.Submit(std::move(AddUpgradesTextCommand));

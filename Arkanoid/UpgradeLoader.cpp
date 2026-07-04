@@ -55,10 +55,11 @@ UpgradeDefinition UpgradeLoader::ParseUpgradeDefinition(const Json& Json)
 	UpgradeDefinition Definition;
 	Definition.UpgradeDescription.Name = Json.value("name", "");
 	Definition.UpgradeDescription.Description = Json.value("description", "");
-	Definition.PaddleWidthMultiplierUpgrade = ParsePaddleWidthMultiplierUpgrade(Json);
-	Definition.BallSpeedMultiplierUpgrade = ParseBallSpeedMultiplierUpgrade(Json);
-	Definition.BallSizeMultiplierUpgrade = ParseBallSizeMultiplierUpgrade(Json);
-	Definition.HealUpgrade = ParseHealUpgrade(Json);
+
+	Definition.PaddleWidthMultiplierUpgrade = ParsePaddleWidthMultiplierUpgrade(Json["upgrade"]);
+	Definition.BallSpeedMultiplierUpgrade = ParseBallSpeedMultiplierUpgrade(Json["upgrade"]);
+	Definition.BallSizeMultiplierUpgrade = ParseBallSizeMultiplierUpgrade(Json["upgrade"]);
+	Definition.HealUpgrade = ParseHealUpgrade(Json["upgrade"]);
 	return Definition;
 }
 

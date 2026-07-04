@@ -56,7 +56,7 @@ namespace
 			return;
 		}
 
-		const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+		const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 		const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.4f };
 		const float UpgradeCount = static_cast<float>(Upgrades.size());
 		const float TotalWidth = LogicalPresentation.X * 0.8f;
@@ -65,7 +65,7 @@ namespace
 		const float Spacing = AvailableSpacing / (UpgradeCount + 1.f);
 		const float StartX = LogicalPresentation.X * 0.1f;
 
-		AddComponentsCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent, ClickableComponent> AddUpgradeButtonsCommand(Upgrades.size());
+		AddComponentsCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> AddUpgradeButtonsCommand(Upgrades.size());
 		for (size_t i = 0; i < Upgrades.size(); ++i)
 		{
 			const float XPosition = StartX + Spacing * (static_cast<float>(i) + 1.f) + ButtonSize.X * (static_cast<float>(i) + 0.5f);
@@ -73,19 +73,22 @@ namespace
 				PositionComponent{ {XPosition, LogicalPresentation.Y * 0.55f} },
 				RectComponent{ SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y } },
 				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-				TextComponent{ BuildUpgradeButtonText(Upgrades[i].second), GlobalConstants::FontFilePath, 12},
-				ClickableComponent{ ClickableTag::Upgrade });
+				TextComponent{ BuildUpgradeButtonText(Upgrades[i].second), GlobalConstants::FontFilePath, 12 });
 		}
+
+		Context.Commands.Submit(std::move(AddUpgradeButtonsCommand));
 	}
 }
 
 void UpgradeSystem::SpawnUpgradeEntities(SystemContext& Context)
 {
 	const size_t UpgradeCount = UpgradeLoader::GetUpgradeCount();
-	AddEntitiesCommand<AvailableUpgradeComponent, UpgradeDescriptionComponent> AddAvailableUpgradesCommand(UpgradeCount);
+	AddEntitiesCommand<AvailableUpgradeComponent, UpgradeDescriptionComponent, ClickableComponent> AddAvailableUpgradesCommand(UpgradeCount);
 	for (size_t i = 0; i < UpgradeCount; ++i)
 	{
-		AddAvailableUpgradesCommand.WithEntry(AvailableUpgradeComponent{}, UpgradeDescriptionComponent{});
+		AddAvailableUpgradesCommand.WithEntry(AvailableUpgradeComponent{}, 
+			UpgradeDescriptionComponent{}, 
+			ClickableComponent{ClickableTag::Upgrade});
 	}
 
 	Context.Commands.Submit(std::move(AddAvailableUpgradesCommand));
@@ -161,7 +164,7 @@ void UpgradeSystem::UpdateOwnedUpgrades(SystemContext& Context, float DeltaTime)
 	Context.Commands.Submit(std::move(RemoveAvailableUpgradeCommand));
 
 	const Query<WritesList<>, ReadsList<UIRenderComponent, UpgradeDescriptionComponent>, ExcludeList<>> VisibleUpgrades(Context.QueryContext);
-	RemoveComponentsCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent, ClickableComponent> RemoveUpgradeComponentsCommand(VisibleUpgrades.Size());
+	RemoveComponentsCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> RemoveUpgradeComponentsCommand(VisibleUpgrades.Size());
 	VisibleUpgrades.ForEach([&](Entity Entity, const UIRenderComponent& UIRender, const UpgradeDescriptionComponent& UpgradeDescription)
 	{
 		RemoveUpgradeComponentsCommand.WithEntry(Entity);
