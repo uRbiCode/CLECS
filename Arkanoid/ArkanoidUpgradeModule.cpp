@@ -24,5 +24,7 @@ void ArkanoidUpgradeModule::RegisterStartupSystems(StartupSystemsInitializationD
 void ArkanoidUpgradeModule::RegisterSystems(SystemsInitializationData& Data)
 {
 	Data.RegisterSystem(UpgradeSystem::UpdateOwnedUpgrades, SystemPhase::EarlyUpdate);
+	Data.RegisterSystem(UpgradeSystem::UpdateUpgradesChoice, SystemPhase::EarlyUpdate);
+	Data.RegisterSystem(UpgradeSystem::ResetUpgrades, SystemPhase::EarlyUpdate);
 	Data.RegisterSystem(UpgradeSystem::UpdateImmediateUpgrades, SystemPhase::EarlyUpdate);
 }

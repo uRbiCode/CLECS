@@ -289,7 +289,7 @@ TEST_F(ArchetypeTest, MakeNarrowed_MultipleTypes_AllPresent)
         Types.GetComponentTypeId<PosComp>(),
         Types.GetComponentTypeId<VelComp>()
     };
-    std::sort(Key.begin(), Key.end());
+    std::ranges::sort(Key);
 
     auto Narrowed = Archetype::MakeNarrowed(Base, Key);
     EXPECT_TRUE(Narrowed.HasComponentType(Types.GetComponentTypeId<PosComp>()));

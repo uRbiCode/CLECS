@@ -19,77 +19,79 @@
 #include <Query.h>
 #include "HealthComponent.h"
 #include <RenderComponents.h>
+#include "TransitionComponents.h"
+#include <PositionComponent.h>
+#include "GlobalConstants.h"
 
 namespace
 {
-	constexpr int MaxUpgradesToPresent = 3;
-	constexpr const char* UpgradeTitleText = "Pick an Upgrade";
+	constexpr int UpgradesToPresent = 3;
 
-	//std::string BuildUpgradeButtonText(const UpgradeDefinition& Upgrade)
-	//{
-	//	return Upgrade.Name + "\n\n" + Upgrade.Description;
-	//}
+	std::string BuildUpgradeButtonText(const UpgradeDescriptionComponent& Upgrade)
+	{
+		return Upgrade.Name + "\n\n" + Upgrade.Description;
+	}
 
-	//std::vector<UpgradeDefinition> SampleUpgrades(const SystemContext& Context, const std::vector<UpgradeDefinition>& AvailableUpgrades)
-	//{
-	//	if (AvailableUpgrades.size() <= MaxUpgradesToPresent)
-	//		return AvailableUpgrades;
+	std::vector<UpgradeDefinition> SampleUpgrades(const SystemContext& Context, const std::vector<UpgradeDefinition>& AvailableUpgrades)
+	{
+		if (AvailableUpgrades.size() <= UpgradesToPresent)
+			return AvailableUpgrades;
 
-	//	auto SampledUpgrades = AvailableUpgrades;
+		auto SampledUpgrades = AvailableUpgrades;
 
-	//	std::random_device rd;
-	//	std::mt19937 g(rd());
+		std::random_device rd;
+		std::mt19937 g(rd());
 
-	//	std::shuffle(SampledUpgrades.begin(), SampledUpgrades.end(), g);
-	//	SampledUpgrades.resize(MaxUpgradesToPresent);
-	//	return SampledUpgrades;
-	//}
+		std::shuffle(SampledUpgrades.begin(), SampledUpgrades.end(), g);
+		SampledUpgrades.resize(UpgradesToPresent);
+		return SampledUpgrades;
+	}
 
-	//void AddUpgradeTitle(const SystemContext& Context)
-	//{
-	//	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-	//	const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
+	std::vector<std::pair<EntityId, UpgradeDescriptionComponent>> SampleAvailableUpgradeEntities(SystemContext& Context)
+	{
+		std::vector<std::pair<EntityId, UpgradeDescriptionComponent>> AvailableUpgradeEntitites;
+		const Query<WritesList<>, ReadsList<AvailableUpgradeComponent, UpgradeDescriptionComponent>, ExcludeList<>> AvailableUpgradesQuery(Context.QueryContext);
+		AvailableUpgradeEntitites.reserve(AvailableUpgradesQuery.Size());
+		AvailableUpgradesQuery.ForEach([&](Entity Entity, const AvailableUpgradeComponent& AvailableUpgrade, const UpgradeDescriptionComponent& UpgradeDescription)
+		{
+			AvailableUpgradeEntitites.push_back({ Entity.GetId(), UpgradeDescription });
+		});
 
-	//	auto& Admin = Context.EntityAdmin;
-	//	const auto UpgradeTitleEntity = Admin.CreateEntity();
-	//	Admin.AddComponent<TransformComponent>(UpgradeTitleEntity, Vector2D<float>{ LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.25f });
-	//	Admin.AddComponent<RectComponent>(UpgradeTitleEntity, SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y });
-	//	Admin.AddComponent<ColorComponent>(UpgradeTitleEntity, SDL_FColor{ 0.f, 0.f, 0.f, 0.f });
-	//	Admin.AddComponent<TextComponent>(UpgradeTitleEntity, UpgradeTitleText, Constants::FontFilePath, 60);
-	//	Admin.AddComponent<RenderComponent>(UpgradeTitleEntity, RenderConstants::UILayer);
+		std::vector<std::pair<EntityId, UpgradeDescriptionComponent>> SampledEntities;
+		SampledEntities.reserve(UpgradesToPresent);
+		std::ranges::sample(AvailableUpgradeEntitites, std::back_inserter(SampledEntities), UpgradesToPresent, std::mt19937{ std::random_device{}() });
+		return SampledEntities;
+	}
 
-	//	// Add mock UpgradeComponent to ease cleanup.
-	//	Admin.AddComponent<UpgradeComponent>(UpgradeTitleEntity);
-	//}
+	void PresentUpgradesChoice(SystemContext& Context, std::vector<std::pair<EntityId, UpgradeDescriptionComponent>>&& Upgrades)
+	{
+		if (Upgrades.empty())
+		{
+			SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "No available upgrades to present to the player.");
+			return;
+		}
 
-	//void PresentUpgradesToPlayer(const SystemContext& Context, std::vector<UpgradeDefinition>&& Upgrades)
-	//{
-	//	auto& Admin = Context.EntityAdmin;
-	//	const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+		const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+		const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.4f };
+		const float UpgradeCount = static_cast<float>(Upgrades.size());
+		const float TotalWidth = LogicalPresentation.X * 0.8f;
+		const float TotalButtonWidth = ButtonSize.X * UpgradeCount;
+		const float AvailableSpacing = TotalWidth - TotalButtonWidth;
+		const float Spacing = AvailableSpacing / (UpgradeCount + 1.f);
+		const float StartX = LogicalPresentation.X * 0.1f;
 
-	//	const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.4f };
-
-	//	const float UpgradeCount = static_cast<float>(Upgrades.size());
-	//	const float TotalWidth = LogicalPresentation.X * 0.8f;
-	//	const float TotalButtonWidth = ButtonSize.X * UpgradeCount;
-	//	const float AvailableSpacing = TotalWidth - TotalButtonWidth;
-	//	const float Spacing = AvailableSpacing / (UpgradeCount + 1.f);
-	//	const float StartX = LogicalPresentation.X * 0.1f;
-
-	//	for (size_t i = 0; i < Upgrades.size(); ++i)
-	//	{
-	//		const float XPosition = StartX + Spacing * (static_cast<float>(i) + 1.f) + ButtonSize.X * (static_cast<float>(i) + 0.5f);
-
-	//		const auto UpgradeButtonEntity = Admin.CreateEntity();
-	//		Admin.AddComponent<ClickableComponent>(UpgradeButtonEntity, ClickableTag::Upgrade);
-	//		Admin.AddComponent<TransformComponent>(UpgradeButtonEntity, Vector2D<float>{ XPosition, LogicalPresentation.Y * 0.55f });
-	//		Admin.AddComponent<RectComponent>(UpgradeButtonEntity, SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y });
-	//		Admin.AddComponent<ShapeFillComponent>(UpgradeButtonEntity, false);
-	//		Admin.AddComponent<RenderComponent>(UpgradeButtonEntity, RenderConstants::UILayer);
-	//		Admin.AddComponent<TextComponent>(UpgradeButtonEntity, std::move(BuildUpgradeButtonText(Upgrades[i])), Constants::FontFilePath, 12);
-	//		Admin.AddComponent<UpgradeComponent>(UpgradeButtonEntity, Upgrades[i]);
-	//	}
-	//}
+		AddComponentsCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent, ClickableComponent> AddUpgradeButtonsCommand(Upgrades.size());
+		for (size_t i = 0; i < Upgrades.size(); ++i)
+		{
+			const float XPosition = StartX + Spacing * (static_cast<float>(i) + 1.f) + ButtonSize.X * (static_cast<float>(i) + 0.5f);
+			AddUpgradeButtonsCommand.WithEntry(Upgrades[i].first,
+				PositionComponent{ {XPosition, LogicalPresentation.Y * 0.55f} },
+				RectComponent{ SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y } },
+				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
+				TextComponent{ BuildUpgradeButtonText(Upgrades[i].second), GlobalConstants::FontFilePath, 12},
+				ClickableComponent{ ClickableTag::Upgrade });
+		}
+	}
 }
 
 void UpgradeSystem::SpawnUpgradeEntities(SystemContext& Context)
@@ -172,6 +174,14 @@ void UpgradeSystem::UpdateOwnedUpgrades(SystemContext& Context, float DeltaTime)
 	});
 
 	Context.Commands.Submit(std::move(RemoveAvailableUpgradeCommand));
+
+	const Query<WritesList<>, ReadsList<UIRenderComponent, UpgradeDescriptionComponent>, ExcludeList<>> VisibleUpgrades(Context.QueryContext);
+	RemoveComponentsCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent, ClickableComponent> RemoveUpgradeComponentsCommand(VisibleUpgrades.Size());
+	VisibleUpgrades.ForEach([&](Entity Entity, const UIRenderComponent& UIRender, const UpgradeDescriptionComponent& UpgradeDescription)
+	{
+		RemoveUpgradeComponentsCommand.WithEntry(Entity);
+	});
+	Context.Commands.Submit(std::move(RemoveUpgradeComponentsCommand));
 }
 
 void UpgradeSystem::UpdateImmediateUpgrades(SystemContext& Context, float DeltaTime)
@@ -195,5 +205,28 @@ void UpgradeSystem::UpdateImmediateUpgrades(SystemContext& Context, float DeltaT
 
 void UpgradeSystem::ResetUpgrades(SystemContext& Context, float DeltaTime)
 {
+	const Query<WritesList<>, ReadsList<SummaryTransitionComponent>, ExcludeList<>> SummaryTransitionQuery(Context.QueryContext);
+	if (SummaryTransitionQuery.Size() < 1)
+		return;
 
+	const Query<WritesList<>, ReadsList<UpgradeDescriptionComponent>, ExcludeList<AvailableUpgradeComponent>> OwnedUpgradesQuery(Context.QueryContext);
+	if (OwnedUpgradesQuery.Size() < 1)
+		return;
+
+	AddComponentsCommand<AvailableUpgradeComponent> AddAvailableUpgradeCommand(OwnedUpgradesQuery.Size());
+	OwnedUpgradesQuery.ForEach([&](Entity Entity, const UpgradeDescriptionComponent& UpgradeDescription)
+	{
+		AddAvailableUpgradeCommand.WithEntry(Entity, AvailableUpgradeComponent{});
+	});
+
+	Context.Commands.Submit(std::move(AddAvailableUpgradeCommand));
+}
+
+void UpgradeSystem::UpdateUpgradesChoice(SystemContext& Context, float DeltaTime)
+{
+	const Query<WritesList<>, ReadsList<UpgradesTransitionComponent>, ExcludeList<>> UpgradesTransitionQuery(Context.QueryContext);
+	if (UpgradesTransitionQuery.Size() < 1)
+		return;
+
+	PresentUpgradesChoice(Context, SampleAvailableUpgradeEntities(Context));
 }

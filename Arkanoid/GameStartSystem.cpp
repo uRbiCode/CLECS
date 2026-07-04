@@ -10,13 +10,13 @@
 #include "CommandRunner.h"
 #include "TransitionUtils.h"
 #include "HealthComponent.h"
+#include "GlobalConstants.h"
 
 namespace
 {
 	namespace Constants
 	{
 		constexpr const char* BackgroundTexturePath = "../Assets/Textures/Background_Tiles.png";
-		constexpr int InitialPlayerHealth = 3;
 	}
 
 	void AddBackgroundRenderEntity(SystemContext& Context)
@@ -29,7 +29,7 @@ namespace
 			RectComponent{ SDL_FRect{ 0.f, 0.f, static_cast<float>(RendererLogicalPresentation.X), static_cast<float>(RendererLogicalPresentation.Y) } },
 			BackgroundRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 			TextureComponent{ Texture, SDL_FRect{ 33.f, 23.f, 25.f, 20.f } },
-			HealthComponent{ Constants::InitialPlayerHealth });
+			HealthComponent{ GlobalConstants::InitialPlayerHealth });
 
 		Context.Commands.Submit(std::move(AddBackgroundCommand));
 	}

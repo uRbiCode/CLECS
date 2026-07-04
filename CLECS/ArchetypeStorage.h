@@ -235,7 +235,7 @@ private:
 		ArchetypeKey Key;
 		Key.reserve(sizeof...(Components));
 		((Key.push_back(ComponentTypes.GetComponentTypeId<Components>())), ...);
-		std::sort(Key.begin(), Key.end());
+		std::ranges::sort(Key);
 		return Key;
 	}
 

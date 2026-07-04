@@ -12,4 +12,5 @@ namespace UpgradeSystem
 	void UpdateOwnedUpgrades(SystemContext& Context, float DeltaTime);
 	void UpdateImmediateUpgrades(SystemContext& Context, float DeltaTime);
 	void ResetUpgrades(SystemContext& Context, float DeltaTime);
+	void UpdateUpgradesChoice(SystemContext& Context, float DeltaTime);
 }

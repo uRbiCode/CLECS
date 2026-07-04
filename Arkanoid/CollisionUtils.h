@@ -15,7 +15,7 @@ using BallQuery = Query<WritesList<>, ReadsList<PositionComponent, CircleCompone
 using BricksQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, HealthComponent, GameRenderComponent>, ExcludeList<>>;
 using PaddleQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, PlayerMoveSpeedComponent>, ExcludeList<>>;
 using WallsQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, GameRenderComponent>, ExcludeList<HealthComponent>>;
-using TriggerQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, DamageComponent>, ExcludeList<GameRenderComponent>>;
+using TriggerQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, HealthComponent>, ExcludeList<GameRenderComponent>>;
 
 namespace CollisionUtils
 {

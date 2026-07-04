@@ -23,20 +23,11 @@
     <Filter Include="Source\Systems\HealthSystem">
       <UniqueIdentifier>{2dcc9ca3-0eb4-4e43-949e-def6b4720387}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\RunControllerSystem">
-      <UniqueIdentifier>{a1afb117-2c85-4835-b63c-60e604f72d2b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Utils">
       <UniqueIdentifier>{3469ba66-4a8c-4a48-940f-c94ef57ba53a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Systems\HealthIndicatorSystem">
       <UniqueIdentifier>{e4ea1060-ced9-449a-9f59-8c8624ae51ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Systems\RunControllerSystem\StageDataLoader">
-      <UniqueIdentifier>{5596190a-9ab9-4b5f-bf5f-d805b2cc4d10}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Systems\SummaryControllerSystem">
-      <UniqueIdentifier>{157a2de6-4e54-4a43-80bf-891c91174303}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Systems\PlayerPrepareSystem">
       <UniqueIdentifier>{0a9978bb-2dbb-4759-be79-a5ae8df1cfe0}</UniqueIdentifier>
@@ -92,6 +83,9 @@
     <Filter Include="Source\Modules\TransitionModule">
       <UniqueIdentifier>{9aca47fc-51eb-4c70-a2d7-3333410e2e39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Utils\StageDataLoader">
+      <UniqueIdentifier>{5596190a-9ab9-4b5f-bf5f-d805b2cc4d10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -112,17 +106,11 @@
     <ClCompile Include="HealthSystem.cpp">
       <Filter>Source\Systems\HealthSystem</Filter>
     </ClCompile>
-    <ClCompile Include="RunControllerSystem.cpp">
-      <Filter>Source\Systems\RunControllerSystem</Filter>
-    </ClCompile>
     <ClCompile Include="HealthIndicatorSystem.cpp">
       <Filter>Source\Systems\HealthIndicatorSystem</Filter>
     </ClCompile>
     <ClCompile Include="StageDataLoader.cpp">
-      <Filter>Source\Systems\RunControllerSystem\StageDataLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="SummaryControllerSystem.cpp">
-      <Filter>Source\Systems\SummaryControllerSystem</Filter>
+      <Filter>Source\Utils\StageDataLoader</Filter>
     </ClCompile>
     <ClCompile Include="UpgradeSystem.cpp">
       <Filter>Source\Systems\UpgradeSystem</Filter>
@@ -198,9 +186,6 @@
     <ClInclude Include="HealthSystem.h">
       <Filter>Source\Systems\HealthSystem</Filter>
     </ClInclude>
-    <ClInclude Include="RunControllerSystem.h">
-      <Filter>Source\Systems\RunControllerSystem</Filter>
-    </ClInclude>
     <ClInclude Include="HealthIndicatorSystem.h">
       <Filter>Source\Systems\HealthIndicatorSystem</Filter>
     </ClInclude>
@@ -208,13 +193,10 @@
       <Filter>Source\Components</Filter>
     </ClInclude>
     <ClInclude Include="StageDataLoader.h">
-      <Filter>Source\Systems\RunControllerSystem\StageDataLoader</Filter>
+      <Filter>Source\Utils\StageDataLoader</Filter>
     </ClInclude>
     <ClInclude Include="GlobalConstants.h">
       <Filter>Source\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="SummaryControllerSystem.h">
-      <Filter>Source\Systems\SummaryControllerSystem</Filter>
     </ClInclude>
     <ClInclude Include="UpgradeComponents.h">
       <Filter>Source\Components</Filter>
@@ -275,6 +257,9 @@
     </ClInclude>
     <ClInclude Include="ArkanoidTransitionModule.h">
       <Filter>Source\Modules\TransitionModule</Filter>
+    </ClInclude>
+    <ClInclude Include="TransitionComponents.h">
+      <Filter>Source\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

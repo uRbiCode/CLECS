@@ -12,9 +12,17 @@
 #include "GlobalConstants.h"
 #include "RunUtils.h"
 #include "StageDataLoader.h"
+#include "ComponentUtils.h"
+#include "CollisionUtils.h"
+#include "HealthComponent.h"
 
 namespace
 {
+	namespace TransitionConstants
+	{
+		constexpr const char* MainMenuButtonText = "Main Menu";
+	}
+
 	namespace Tutorial
 	{
 		namespace Constants
@@ -62,7 +70,7 @@ namespace
 			AddButtonCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.85f} },
 				RectComponent{ SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y } },
 				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-				TextComponent{ GlobalConstants::MainMenuButtonText, GlobalConstants::FontFilePath, Constants::ButtonFontSize },
+				TextComponent{ TransitionConstants::MainMenuButtonText, GlobalConstants::FontFilePath, Constants::ButtonFontSize },
 				ClickableComponent{ ClickableTag::MainMenuButton });
 
 			Context.Commands.Submit(std::move(AddButtonCommand));
@@ -167,6 +175,57 @@ namespace
 			RunUtils::SpawnBall(Context, std::move(StageData.BallData));
 		}
 	}
+
+	namespace Summary
+	{
+		void AddSummaryText(SystemContext& Context, const std::string& Message)
+		{
+			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+			const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
+
+			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> AddSummaryTextCommand(1);
+			AddSummaryTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.25f} },
+				RectComponent{ SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y } },
+				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
+				TextComponent{ Message, GlobalConstants::FontFilePath, 72.f });
+
+			Context.Commands.Submit(std::move(AddSummaryTextCommand));
+		}
+
+		void AddSummaryControls(SystemContext& Context)
+		{
+			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+			const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
+
+			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent, ClickableComponent> AddButtonCommand(1);
+			AddButtonCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.75f} },
+				RectComponent{ SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y } },
+				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
+				TextComponent{ TransitionConstants::MainMenuButtonText, GlobalConstants::FontFilePath, 24.f },
+				ClickableComponent{ ClickableTag::MainMenuButton });
+
+			Context.Commands.Submit(std::move(AddButtonCommand));
+		}
+	}
+
+	namespace Upgrades
+	{
+		namespace Constants
+		{
+			constexpr const char* UpgradeTitleText = "Pick an Upgrade";
+		}
+		void AddUpgradesText(SystemContext& Context)
+		{
+			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+			const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
+			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> AddUpgradesTextCommand(1);
+			AddUpgradesTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.25f} },
+				RectComponent{ SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y } },
+				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
+				TextComponent{ Constants::UpgradeTitleText, GlobalConstants::FontFilePath, 60.f });
+			Context.Commands.Submit(std::move(AddUpgradesTextCommand));
+		}
+	}
 }
 
 void TransitionUtils::TravelToMainMenu(SystemContext& Context)
@@ -189,4 +248,29 @@ void TransitionUtils::TravelToRun(SystemContext& Context)
 	Run::InitializeStageEntities(Context);
 	// Initialize wait for player to press space to start flow
 	// Initialize health indicator
+}
+
+void TransitionUtils::TravelToSummary(SystemContext& Context, const std::string& Message)
+{
+	Summary::AddSummaryText(Context, Message);
+	Summary::AddSummaryControls(Context);
+}
+
+void TransitionUtils::TravelToUpgrades(SystemContext& Context)
+{
+	Upgrades::AddUpgradesText(Context);
+}
+
+void TransitionUtils::CleanupRunStage(SystemContext& Context)
+{
+	ComponentUtils::RemoveAllEntitiesWithComponent<GameRenderComponent>(Context);
+
+	const TriggerQuery TriggerQuery(Context.QueryContext);
+	RemoveEntitiesCommand RemoveTriggerCommand(TriggerQuery.Size());
+	TriggerQuery.ForEach([&RemoveTriggerCommand](Entity E, const PositionComponent&, const RectComponent&, const HealthComponent&)
+	{
+		RemoveTriggerCommand.WithEntry(E);
+	});
+	
+	Context.Commands.Submit(std::move(RemoveTriggerCommand));
 }

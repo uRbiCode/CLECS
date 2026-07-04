@@ -7,6 +7,8 @@ struct SystemContext;
  */
 namespace HealthSystem
 {
+	void RemoveDeadEntities(SystemContext& Context, float DeltaTime);
 	void CleanupHealthDeltaComponents(SystemContext& Context, float DeltaTime);
 	void ApplyHealthChanges(SystemContext& Context, float DeltaTime);
+	void UpdatePersistentHealth(SystemContext& Context, float DeltaTime);
 }

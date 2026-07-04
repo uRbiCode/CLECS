@@ -95,18 +95,18 @@ namespace
 	{
 		const TriggerQuery TriggerQuery(Context.QueryContext);
 		AddComponentsCommand<HealthDeltaComponent> AddHealthDeltaCommand(0);
-		BallQuery.ForEach([&](Entity BallEntity, const PositionComponent& BallPosition, const CircleComponent& BallCircle, const DamageComponent& BallDamage)
+		TriggerQuery.ForEach([&](Entity TriggerEntity, const PositionComponent& TriggerPosition, const RectComponent& TriggerRect, const HealthComponent& TriggerHealth)
 		{
 			int TotalHealthDelta = 0;
-			TriggerQuery.ForEach([&](Entity TriggerEntity, const PositionComponent& TriggerPosition, const RectComponent& TriggerRect, const DamageComponent& TriggerDamage)
+			BallQuery.ForEach([&](Entity BallEntity, const PositionComponent& BallPosition, const CircleComponent& BallCircle, const DamageComponent& BallDamage)
 			{
 				if (!CollisionUtils::CheckCircleRect(BallPosition, BallCircle, TriggerPosition, TriggerRect))
 					return;
 
-				TotalHealthDelta -= TriggerDamage.Damage;
+				TotalHealthDelta -= BallDamage.Damage;
 			});
 
-			AddHealthDeltaCommand.WithEntry(BallEntity, HealthDeltaComponent{ TotalHealthDelta });
+			AddHealthDeltaCommand.WithEntry(TriggerEntity, HealthDeltaComponent{ TotalHealthDelta });
 		});
 
 		if (!AddHealthDeltaCommand.AccessEntries().empty())
