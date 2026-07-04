@@ -174,7 +174,7 @@ namespace
 
 			constexpr const char* HealthIndicatorTexturePath = "../Assets/Textures/Hearts.png";
 			constexpr const SDL_FRect HealthIndicatorTextureRect = {115.f, 3.f, 11.f, 10.f};
-			constexpr float HealthIndicatorSpacing = 20.f;
+			constexpr float HealthIndicatorSpacing = 10.f;
 		}
 
 		std::string BuildStageText(SystemContext& Context)
@@ -200,9 +200,8 @@ namespace
 			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 			const Vector2D<float> RectSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
 
-			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> AddStageInfoCommand(1);
-			AddStageInfoCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.8f, LogicalPresentation.Y * 0.95f} },
-				RectComponent{ SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y } },
+			AddEntitiesCommand<PositionComponent, UIRenderComponent, TextComponent> AddStageInfoCommand(1);
+			AddStageInfoCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.75f, LogicalPresentation.Y * 0.92f} },
 				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 				TextComponent{ Run::BuildStageText(Context), GlobalConstants::FontFilePath, 24.f });
 
@@ -235,7 +234,7 @@ namespace
 			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextureComponent> AddHealthIndicatorsCommand(GlobalConstants::InitialPlayerHealth);
 			for (int i = 0; i < PlayerHealth; ++i)
 			{
-				const float PositionX = LogicalPresentation.X * 0.07f + i * (RectSize.X + Run::Constants::HealthIndicatorSpacing);
+				const float PositionX = LogicalPresentation.X * 0.1f + i * (RectSize.X + Run::Constants::HealthIndicatorSpacing);
 				AddHealthIndicatorsCommand.WithEntry(PositionComponent{ {PositionX, PositionY} },
 					RectComponent{ SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y } },
 					UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
@@ -351,9 +350,8 @@ void TransitionUtils::InitializeBlinkingMessage(SystemContext& Context)
 	const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 	const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
 
-	AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent, UIBlinkComponent> AddBlinkingMessageCommand(1);
-	AddBlinkingMessageCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.75f} },
-		RectComponent{ SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y } },
+	AddEntitiesCommand<PositionComponent, UIRenderComponent, TextComponent, UIBlinkComponent> AddBlinkingMessageCommand(1);
+	AddBlinkingMessageCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.06f, LogicalPresentation.Y * 0.75f} },
 		UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 		TextComponent{ TransitionConstants::PrepareMessageText, GlobalConstants::FontFilePath, 50.f },
 		UIBlinkComponent{ TransitionConstants::PrepareMessageDisplayDuration, TransitionConstants::PrepareMessageDisplayDuration });

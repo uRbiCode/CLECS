@@ -77,11 +77,12 @@ int RunUtils::GetCurrentStageNumber(SystemContext& Context)
 
 void RunUtils::SpawnWalls(SystemContext& Context, std::vector<WallData>&& Data)
 {
-	AddEntitiesCommand<PositionComponent, RectComponent, GameRenderComponent> AddWallsCommand(Data.size());
+	AddEntitiesCommand<PositionComponent, RectComponent, ShapeFillComponent, GameRenderComponent> AddWallsCommand(Data.size());
 	for (const WallData& WallData : Data)
 	{
 		AddWallsCommand.WithEntry(PositionComponent{ WallData.PositionSize.Position },
 			RectComponent{ SDL_FRect{ -WallData.PositionSize.Size.X * 0.5f, -WallData.PositionSize.Size.Y * 0.5f, WallData.PositionSize.Size.X, WallData.PositionSize.Size.Y } },
+			ShapeFillComponent{},
 			GameRenderComponent{ SDL_FColor{ 0.3f, 0.3f, 0.3f, 1.f } });
 	}
 	Context.Commands.Submit(std::move(AddWallsCommand));

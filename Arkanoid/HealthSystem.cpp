@@ -34,7 +34,7 @@ void HealthSystem::UpdateDisplayedHealth(SystemContext& Context, float DeltaTime
 		HealthIndicatorsToRemove.push_back(Entity);
 	});
 
-	std::ranges::sort(HealthIndicatorsToRemove, [](Entity A, Entity B) { return A.GetId() < B.GetId(); });
+	std::ranges::sort(HealthIndicatorsToRemove, [](Entity A, Entity B) { return A.GetId() > B.GetId(); });
 
 	TotalHealthChange = std::abs(TotalHealthChange);
 	RemoveEntitiesCommand RemoveHealthIndicatorsCommand(TotalHealthChange);
