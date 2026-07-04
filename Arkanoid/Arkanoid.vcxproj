@@ -149,6 +149,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ArkanoidAudioModule.cpp" />
     <ClCompile Include="ArkanoidCollisionModule.cpp" />
     <ClCompile Include="ArkanoidHealthModule.cpp" />
     <ClCompile Include="ArkanoidInputModule.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="ArkanoidMovementModule.cpp" />
     <ClCompile Include="ArkanoidUIBlinkModule.cpp" />
     <ClCompile Include="ArkanoidUpgradeModule.cpp" />
+    <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="CollisionSystem.cpp" />
     <ClCompile Include="Arkanoid.cpp" />
     <ClCompile Include="CollisionUtils.cpp" />
@@ -174,6 +176,7 @@
     <ClCompile Include="UpgradeSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArkanoidAudioModule.h" />
     <ClInclude Include="ArkanoidCollisionModule.h" />
     <ClInclude Include="ArkanoidHealthModule.h" />
     <ClInclude Include="ArkanoidInputModule.h" />
@@ -181,6 +184,7 @@
     <ClInclude Include="ArkanoidMovementModule.h" />
     <ClInclude Include="ArkanoidUIBlinkModule.h" />
     <ClInclude Include="ArkanoidUpgradeModule.h" />
+    <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="BeginStageComponent.h" />
     <ClInclude Include="CollisionUtils.h" />
     <ClInclude Include="ComponentUtils.h" />

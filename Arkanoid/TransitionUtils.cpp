@@ -27,6 +27,26 @@ namespace
 
 		constexpr const char* PrepareMessageText = "PRESS SPACE TO START";
 		constexpr float PrepareMessageDisplayDuration = 0.75f;
+
+		constexpr float TitleFontSize = 72.f;
+	}
+
+	namespace Common
+	{
+		void AddMainMenuButton(SystemContext& Context)
+		{
+			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+			const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
+
+			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent, ClickableComponent> AddButtonCommand(1);
+			AddButtonCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.85f} },
+				RectComponent{ SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y } },
+				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
+				TextComponent{ TransitionConstants::MainMenuButtonText, GlobalConstants::FontFilePath, 24.f },
+				ClickableComponent{ ClickableTag::MainMenuButton });
+
+			Context.Commands.Submit(std::move(AddButtonCommand));
+		}
 	}
 
 	namespace Tutorial
@@ -41,7 +61,6 @@ namespace
 				"Have fun!"
 			};
 			constexpr float ButtonFontSize = 24.f;
-			constexpr float TitleFontSize = 72.f;
 		}
 
 		void AddTutorialText(SystemContext& Context)
@@ -52,7 +71,7 @@ namespace
 			AddEntitiesCommand<PositionComponent, UIRenderComponent, TextComponent> AddTextCommand(5);
 			AddTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.15f, LogicalPresentation.Y * 0.15f} },
 				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-				TextComponent{ Constants::Title, GlobalConstants::FontFilePath, Constants::TitleFontSize });
+				TextComponent{ Constants::Title, GlobalConstants::FontFilePath, TransitionConstants::TitleFontSize });
 			Context.Commands.Submit(std::move(AddTextCommand));
 
 			const auto IndexToXOffset = [](size_t Index) -> float
@@ -81,21 +100,6 @@ namespace
 
 			Context.Commands.Submit(std::move(AddTextCommand));
 		}
-
-		void AddTutorialControls(SystemContext& Context)
-		{
-			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-			const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
-
-			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent, ClickableComponent> AddButtonCommand(1);
-			AddButtonCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.85f} },
-				RectComponent{ SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y } },
-				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-				TextComponent{ TransitionConstants::MainMenuButtonText, GlobalConstants::FontFilePath, Constants::ButtonFontSize },
-				ClickableComponent{ ClickableTag::MainMenuButton });
-
-			Context.Commands.Submit(std::move(AddButtonCommand));
-		}
 	}
 
 	namespace MainMenu
@@ -108,8 +112,6 @@ namespace
 				"How to Play",
 				"Quit"
 			};
-			constexpr float TitleFontSize = 72.f;
-
 			constexpr const char* MainMenuMusicName = "main_menu_loop";
 		}
 
@@ -127,7 +129,7 @@ namespace
 			AddEntitiesCommand<PositionComponent, UIRenderComponent, TextComponent> AddTitleTextCommand(1);
 			AddTitleTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.2f, LogicalPresentation.Y * 0.15f} },
 				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-				TextComponent{ MainMenu::Constants::TitleText, GlobalConstants::FontFilePath, MainMenu::Constants::TitleFontSize });
+				TextComponent{ MainMenu::Constants::TitleText, GlobalConstants::FontFilePath, TransitionConstants::TitleFontSize });
 
 			Context.Commands.Submit(std::move(AddTitleTextCommand));
 		}
@@ -252,28 +254,12 @@ namespace
 			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 			const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
 
-			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> AddSummaryTextCommand(1);
-			AddSummaryTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.25f} },
-				RectComponent{ SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y } },
+			AddEntitiesCommand<PositionComponent, UIRenderComponent, TextComponent> AddSummaryTextCommand(1);
+			AddSummaryTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.31f, LogicalPresentation.Y * 0.15f} },
 				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-				TextComponent{ Message, GlobalConstants::FontFilePath, 72.f });
+				TextComponent{ Message, GlobalConstants::FontFilePath, TransitionConstants::TitleFontSize });
 
 			Context.Commands.Submit(std::move(AddSummaryTextCommand));
-		}
-
-		void AddSummaryControls(SystemContext& Context)
-		{
-			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-			const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
-
-			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent, ClickableComponent> AddButtonCommand(1);
-			AddButtonCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.75f} },
-				RectComponent{ SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y } },
-				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-				TextComponent{ TransitionConstants::MainMenuButtonText, GlobalConstants::FontFilePath, 24.f },
-				ClickableComponent{ ClickableTag::MainMenuButton });
-
-			Context.Commands.Submit(std::move(AddButtonCommand));
 		}
 	}
 
@@ -306,7 +292,7 @@ void TransitionUtils::TravelToMainMenu(SystemContext& Context)
 void TransitionUtils::TravelToTutorial(SystemContext& Context)
 {
 	Tutorial::AddTutorialText(Context);
-	Tutorial::AddTutorialControls(Context);
+	Common::AddMainMenuButton(Context);
 }
 
 void TransitionUtils::TravelToRun(SystemContext& Context)
@@ -321,7 +307,7 @@ void TransitionUtils::TravelToRun(SystemContext& Context)
 void TransitionUtils::TravelToSummary(SystemContext& Context, const std::string& Message)
 {
 	Summary::AddSummaryText(Context, Message);
-	Summary::AddSummaryControls(Context);
+	Common::AddMainMenuButton(Context);
 }
 
 void TransitionUtils::TravelToUpgrades(SystemContext& Context)

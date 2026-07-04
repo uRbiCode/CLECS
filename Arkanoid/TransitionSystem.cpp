@@ -16,15 +16,10 @@
 #include "BeginStageComponent.h"
 #include "VelocityComponent.h"
 #include "ResetComponents.h"
+#include "GlobalConstants.h"
 
 namespace
 {
-	namespace Constants
-	{
-		constexpr const char* VictoryText = "VICTORY";
-		constexpr const char* DefeatText = "DEFEAT";
-	}
-
 	bool IsStageCleared(SystemContext& Context)
 	{
 		const PaddleQuery Paddle(Context.QueryContext);
@@ -177,13 +172,13 @@ void TransitionSystem::UpdateTransitionsFromRun(SystemContext& Context, float De
 		}
 		else
 		{
-			SignalSummaryTransition(Context, Constants::VictoryText);
+			SignalSummaryTransition(Context, GlobalConstants::Summary::VictoryText);
 		}
 	}
 
 	else if (IsRunLost(Context))
 	{
-		SignalSummaryTransition(Context, Constants::DefeatText);
+		SignalSummaryTransition(Context, GlobalConstants::Summary::DefeatText);
 	}
 
 	else if (ShouldResetStage(Context))

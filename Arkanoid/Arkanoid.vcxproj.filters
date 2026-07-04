@@ -86,6 +86,12 @@
     <Filter Include="Source\Systems\CollisionSystem">
       <UniqueIdentifier>{abdff57a-6b04-43eb-9f7d-f60b98384039}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Systems\AudioSystem">
+      <UniqueIdentifier>{0c6284ee-f81b-4c23-ad8a-18bc39e1e052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Modules\AudioModule">
+      <UniqueIdentifier>{1a763476-450f-40bf-b196-d4e3831c0e02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkanoid.cpp">
@@ -156,6 +162,12 @@
     </ClCompile>
     <ClCompile Include="ArkanoidUIBlinkModule.cpp">
       <Filter>Source\Modules\UIBlinkModule</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSystem.cpp">
+      <Filter>Source\Systems\AudioSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidAudioModule.cpp">
+      <Filter>Source\Modules\AudioModule</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -266,6 +278,12 @@
     </ClInclude>
     <ClInclude Include="BeginStageComponent.h">
       <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSystem.h">
+      <Filter>Source\Systems\AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidAudioModule.h">
+      <Filter>Source\Modules\AudioModule</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
