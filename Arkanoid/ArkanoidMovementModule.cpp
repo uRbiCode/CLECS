@@ -5,6 +5,7 @@
 #include "SystemsInitializationData.h"
 #include "MovementSystem.h"
 #include "CollisionComponents.h"
+#include "ResetComponents.h"
 
 void ArkanoidMovementModule::RegisterComponentTypes(ComponentsInitializationData& Data)
 {
@@ -12,6 +13,8 @@ void ArkanoidMovementModule::RegisterComponentTypes(ComponentsInitializationData
 	Data.RegisterComponent<PlayerMoveSpeedComponent>();
 	Data.RegisterComponent<CollisionComponent>();
 	Data.RegisterComponent<DirectionCollisionComponent>();
+	Data.RegisterComponent<VelocityResetComponent>();
+	Data.RegisterComponent<PositionResetComponent>();
 }
 
 void ArkanoidMovementModule::RegisterSystems(SystemsInitializationData& Data)

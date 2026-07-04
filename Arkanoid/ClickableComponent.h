@@ -11,9 +11,15 @@ enum class ClickableTag : uint8_t
 	Invalid
 };
 
-/* Used by PlayerInputSystem to recognize which button was clicked.
+/* Used by InputSystem to recognize which button was clicked.
  */
 struct ClickableComponent
 {
 	ClickableTag Tag = ClickableTag::Invalid;
+};
+
+/* Propagated when clicking an associated button occurs.
+ */
+struct ClickableUsedComponent
+{
 };

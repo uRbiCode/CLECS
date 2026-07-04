@@ -5,6 +5,8 @@
 #include "ArkanoidInputModule.h"
 #include "ArkanoidCollisionModule.h"
 #include "ArkanoidHealthModule.h"
+#include "ArkanoidUpgradeModule.h"
+#include "ArkanoidTransitionModule.h"
 
 namespace
 {
@@ -25,7 +27,9 @@ void Arkanoid::RegisterGameModules(ModulesInitializationData& Data) const
 {
 	Data.RegisterModule<ArkanoidCoreModule>();
 	Data.RegisterModule<ArkanoidInputModule>();
+	Data.RegisterModule<ArkanoidUpgradeModule>();
 	Data.RegisterModule<ArkanoidCollisionModule>();
 	Data.RegisterModule<ArkanoidMovementModule>();
 	Data.RegisterModule<ArkanoidHealthModule>();
+	Data.RegisterModule<ArkanoidTransitionModule>();
 }

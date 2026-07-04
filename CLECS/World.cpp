@@ -49,6 +49,13 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
 
 	FlushCommands();
 
+	for (const StartupSystemDescriptor& LateSystem : Data.StartupSystemsData.GetRegisteredLateSystems())
+	{
+		LateSystem.Initialize(Context);
+	}
+
+	FlushCommands();
+
 	return CLECS::ResultType::Success;
 }
 

@@ -1,4 +1,4 @@
-#include "TransisitonUtils.h"
+#include "TransitionUtils.h"
 #include "SystemContext.h"
 #include "SDLUtils.h"
 #include "AddEntitiesCommand.h"
@@ -10,6 +10,8 @@
 #include "AudioRequestComponents.h"
 #include "ClickableComponent.h"
 #include "GlobalConstants.h"
+#include "RunUtils.h"
+#include "StageDataLoader.h"
 
 namespace
 {
@@ -81,10 +83,17 @@ namespace
 
 			constexpr const char* MainMenuMusicName = "main_menu_loop";
 		}
+
+		void PlayBackgroundMusic(SystemContext& Context)
+		{
+			AddEntitiesCommand<MusicRequestComponent> AddMusicRequestCommand(1);
+			AddMusicRequestCommand.WithEntry(MusicRequestComponent{ MainMenu::Constants::MainMenuMusicName, 0.5f });
+		}
+
 		void AddTitleText(SystemContext& Context)
 		{
 
-			const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 			const Vector2D<float> RectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
 
 			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> AddTitleTextCommand(1);
@@ -98,7 +107,7 @@ namespace
 
 		void AddMainMenuControls(SystemContext& Context)
 		{
-			const auto LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 			const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.4f, LogicalPresentation.Y * 0.1f };
 			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> AddButtonsCommand(3);
 
@@ -113,22 +122,71 @@ namespace
 			Context.Commands.Submit(std::move(AddButtonsCommand));
 		}
 	}
+
+	namespace Run
+	{
+		namespace Constants
+		{
+			constexpr const char* StageText = "STAGE ";
+		}
+
+		std::string BuildStageText(SystemContext& Context)
+		{
+			const int StageNumber = RunUtils::GetCurrentStageNumber(Context);
+			return Constants::StageText + std::to_string(StageNumber);
+		}
+
+		void StopBackgroundMusic(SystemContext& Context)
+		{
+			AddEntitiesCommand<StopMusicComponent> AddStopMusicCommand(1);
+			AddStopMusicCommand.WithEntry(StopMusicComponent{});
+			Context.Commands.Submit(std::move(AddStopMusicCommand));
+		}
+
+		void InitializeStageInfo(SystemContext& Context)
+		{
+			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+			const Vector2D<float> RectSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
+
+			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> AddStageInfoCommand(1);
+			AddStageInfoCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.8f, LogicalPresentation.Y * 0.95f} },
+				RectComponent{ SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y } },
+				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
+				TextComponent{ Run::BuildStageText(Context), GlobalConstants::FontFilePath, 24.f });
+
+			Context.Commands.Submit(std::move(AddStageInfoCommand));
+		}
+
+		void InitializeStageEntities(SystemContext& Context)
+		{
+			StageData StageData = StageDataLoader::LoadStageDataByNumber(RunUtils::GetCurrentStageNumber(Context));
+			RunUtils::SpawnWalls(Context, std::move(StageData.Walls));
+			RunUtils::SpawnBricks(Context, std::move(StageData.Bricks));
+			RunUtils::SpawnTrigger(Context, std::move(StageData.Trigger));
+			RunUtils::SpawnPlayer(Context, std::move(StageData.PlayerData));
+			RunUtils::SpawnBall(Context, std::move(StageData.BallData));
+		}
+	}
 }
 
-void TransitionUtils::InitializeMainMenu(SystemContext& Context)
+void TransitionUtils::TravelToMainMenu(SystemContext& Context)
 {
 	MainMenu::AddTitleText(Context);
 	MainMenu::AddMainMenuControls(Context);
+	MainMenu::PlayBackgroundMusic(Context);
 }
 
-void TransitionUtils::PlayBackgroundMusic(SystemContext& Context)
-{
-	AddEntitiesCommand<MusicRequestComponent> AddMusicRequestCommand(1);
-	AddMusicRequestCommand.WithEntry(MusicRequestComponent{ MainMenu::Constants::MainMenuMusicName, 0.5f });
-}
-
-void TransitionUtils::InitializeTutorial(SystemContext& Context)
+void TransitionUtils::TravelToTutorial(SystemContext& Context)
 {
 	Tutorial::AddTutorialText(Context);
 	Tutorial::AddTutorialControls(Context);
+}
+
+void TransitionUtils::TravelToRun(SystemContext& Context)
+{
+	Run::StopBackgroundMusic(Context);
+	Run::InitializeStageInfo(Context);
+	Run::InitializeStageEntities(Context);
+	// Initialize wait for player to press space to start flow
+	// Initialize health indicator
 }
