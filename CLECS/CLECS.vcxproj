@@ -190,7 +190,6 @@
     <ClInclude Include="ComponentTypesCollection.h" />
     <ClInclude Include="CoreModule.h" />
     <ClInclude Include="EntitySpawner.h" />
-    <ClInclude Include="EventBus.h" />
     <ClInclude Include="CoreTypes.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="FontManager.h" />
@@ -200,7 +199,6 @@
     <ClInclude Include="MathTypes.h" />
     <ClInclude Include="ModuleBase.h" />
     <ClInclude Include="ModulesInitializationData.h" />
-    <ClInclude Include="MouseClickEvent.h" />
     <ClInclude Include="Query.h" />
     <ClInclude Include="QueryContext.h" />
     <ClInclude Include="RemoveComponentsCommand.h" />

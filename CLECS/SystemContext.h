@@ -5,7 +5,6 @@ class QueryContext;
 class CommandRunner;
 
 class InputState;
-class EventBus;
 struct SDL_Window;
 struct SDL_Renderer;
 class TextureManager;
@@ -30,6 +29,5 @@ struct SystemContext
 	SDL_Window& Window;
 	SDL_Renderer& Renderer;
 	const InputState& Input;
-	EventBus& EventBus;
 	Managers Managers;
 };

@@ -29,9 +29,6 @@
     <Filter Include="Source\Core\World\InputState">
       <UniqueIdentifier>{5d0bc376-5b17-4e3a-9fc1-d6ce94603068}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Core\World\EventBus">
-      <UniqueIdentifier>{c4632161-5607-48b3-8dfb-8232a51ee304}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Core\Component\Components">
       <UniqueIdentifier>{23d54fd1-235e-4ad3-99e6-303dddd1ad0b}</UniqueIdentifier>
     </Filter>
@@ -43,9 +40,6 @@
     </Filter>
     <Filter Include="Source\Core\World\TextureManager">
       <UniqueIdentifier>{4b3d7598-da4d-419a-a9c3-3b35b9f49414}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Core\World\EventBus\Events">
-      <UniqueIdentifier>{e5579a31-ac92-4828-a7d7-a878202d9a42}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Core\World\AudioManager">
       <UniqueIdentifier>{5c648224-606f-43b0-a22e-43789ff36ae5}</UniqueIdentifier>
@@ -177,9 +171,6 @@
     <ClInclude Include="InputState.h">
       <Filter>Source\Core\World\InputState</Filter>
     </ClInclude>
-    <ClInclude Include="EventBus.h">
-      <Filter>Source\Core\World\EventBus</Filter>
-    </ClInclude>
     <ClInclude Include="ShapeComponents.h">
       <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
@@ -197,9 +188,6 @@
     </ClInclude>
     <ClInclude Include="RenderConstants.h">
       <Filter>Source\Core\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="MouseClickEvent.h">
-      <Filter>Source\Core\World\EventBus\Events</Filter>
     </ClInclude>
     <ClInclude Include="AudioManager.h">
       <Filter>Source\Core\World\AudioManager</Filter>

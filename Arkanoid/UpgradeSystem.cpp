@@ -1,27 +1,25 @@
 #include "UpgradeSystem.h"
 #include "SystemContext.h"
-#include "EventBus.h"
 #include "ClickableComponent.h"
 #include "SDLUtils.h"
 #include "ShapeComponents.h"
 #include "RenderConstants.h"
 #include "TextComponent.h"
+#include "UpgradeLoader.h"
+#include "AddEntitiesCommand.h"
+#include "CommandRunner.h"
+#include "Query.h"
+#include "HealthComponent.h"
+#include "RenderComponents.h"
+#include "TransitionComponents.h"
+#include "PositionComponent.h"
+#include "GlobalConstants.h"
+#include <SDL3/SDL_log.h>
 #include <numeric>
 #include <random>
 #include <algorithm>
 #include <cassert>
 #include <vector>
-
-#include "UpgradeLoader.h"
-#include <SDL3/SDL_log.h>
-#include "AddEntitiesCommand.h"
-#include "CommandRunner.h"
-#include <Query.h>
-#include "HealthComponent.h"
-#include <RenderComponents.h>
-#include "TransitionComponents.h"
-#include <PositionComponent.h>
-#include "GlobalConstants.h"
 
 namespace
 {

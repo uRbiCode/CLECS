@@ -21,8 +21,8 @@ namespace
 
 	void AddBackgroundRenderEntity(SystemContext& Context)
 	{
-		const auto RendererLogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-		const auto Texture = Context.Managers.TextureManager.GetTexture(Constants::BackgroundTexturePath);
+		const Vector2D<int> RendererLogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+		SDL_Texture* Texture = Context.Managers.TextureManager.GetTexture(Constants::BackgroundTexturePath);
 
 		AddEntitiesCommand<PositionComponent, RectComponent, BackgroundRenderComponent, TextureComponent, HealthComponent> AddBackgroundCommand(1);
 		AddBackgroundCommand.WithEntry(PositionComponent{ {0.f, 0.f} },

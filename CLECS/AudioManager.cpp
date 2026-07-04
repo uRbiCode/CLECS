@@ -213,15 +213,15 @@ void AudioManager::LoadAllSoundsFromAssetsDirectory()
         if (!Entry.is_regular_file())
             continue;
 
-        const auto FilePath = Entry.path().string();
-        const auto SoundName = Entry.path().stem().string();
+        const std::string FilePath = Entry.path().string();
+        const std::string SoundName = Entry.path().stem().string();
         LoadSound(SoundName, FilePath);
     }
 }
 
 void SDLCALL AudioManager::MusicCallback(void* Userdata, SDL_AudioStream* Stream, int AdditionalAmount, int TotalAmount)
 {
-    auto* Manager = static_cast<AudioManager*>(Userdata);
+    AudioManager* Manager = static_cast<AudioManager*>(Userdata);
 
     const auto It = Manager->SoundCache.find(Manager->CurrentMusicName);
     if (It == Manager->SoundCache.end())

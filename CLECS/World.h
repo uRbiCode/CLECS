@@ -2,7 +2,6 @@
 #include "CoreTypes.h"
 #include "SystemsCollection.h"
 #include "InputState.h"
-#include "EventBus.h"
 #include "TextureManager.h"
 #include "AudioManager.h"
 #include "FontManager.h"
@@ -50,7 +49,6 @@ private:
 	CommandRunner Commands;
 
 	InputState Input;
-	EventBus EventBus;
 
 	std::unique_ptr<TextureManager> TextureManagerPtr;
 	std::unique_ptr<AudioManager> AudioManagerPtr;

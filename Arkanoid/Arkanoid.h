@@ -1,8 +1,6 @@
 #pragma once
 #include "Game.h"
 
-class EntityAdmin;
-
 /* Entry point to the game.
  * Responsible for registering Modules and providing initial renderer configuration.
  */
