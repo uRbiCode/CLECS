@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -84,7 +84,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -98,7 +98,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -114,7 +114,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -128,7 +128,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -154,45 +154,71 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Archetype.cpp" />
+    <ClCompile Include="ArchetypeStorage.cpp" />
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="EntityAdmin.cpp" />
+    <ClCompile Include="AudioModule.cpp" />
+    <ClCompile Include="AudioRequestConsumerSystem.cpp" />
+    <ClCompile Include="ComponentTypesCollection.cpp" />
+    <ClCompile Include="CoreModule.cpp" />
+    <ClCompile Include="EntitySpawner.cpp" />
     <ClCompile Include="FontManager.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameRunner.cpp" />
     <ClCompile Include="InputState.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="SDLUtils.cpp" />
+    <ClCompile Include="SystemsCollection.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="WorldInitializationData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddComponentsCommand.h" />
+    <ClInclude Include="AddEntitiesCommand.h" />
+    <ClInclude Include="Archetype.h" />
+    <ClInclude Include="ArchetypeHandle.h" />
+    <ClInclude Include="ArchetypeStorage.h" />
     <ClInclude Include="AudioManager.h" />
-    <ClInclude Include="ComponentPool.h" />
-    <ClInclude Include="EventBus.h" />
+    <ClInclude Include="AudioModule.h" />
+    <ClInclude Include="AudioRequestComponents.h" />
+    <ClInclude Include="AudioRequestConsumerSystem.h" />
+    <ClInclude Include="Column.h" />
+    <ClInclude Include="CommandRunner.h" />
+    <ClInclude Include="CommandTypes.h" />
+    <ClInclude Include="ComponentsInitializationData.h" />
+    <ClInclude Include="ComponentTypesCollection.h" />
+    <ClInclude Include="CoreModule.h" />
+    <ClInclude Include="EntitySpawner.h" />
     <ClInclude Include="CoreTypes.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="EntityAdmin.h" />
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameRunner.h" />
     <ClInclude Include="InputState.h" />
     <ClInclude Include="MathTypes.h" />
-    <ClInclude Include="MouseClickEvent.h" />
+    <ClInclude Include="ModuleBase.h" />
+    <ClInclude Include="ModulesInitializationData.h" />
+    <ClInclude Include="Query.h" />
+    <ClInclude Include="QueryContext.h" />
+    <ClInclude Include="RemoveComponentsCommand.h" />
+    <ClInclude Include="RemoveEntitiesCommand.h" />
+    <ClInclude Include="RenderComponents.h" />
     <ClInclude Include="RenderConstants.h" />
-    <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="RendererInitializationData.h" />
     <ClInclude Include="RenderSystem.h" />
-    <ClInclude Include="RingBuffer.h" />
     <ClInclude Include="SDLUtils.h" />
     <ClInclude Include="ShapeComponents.h" />
+    <ClInclude Include="StartupSystemsInitializationData.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemContext.h" />
-    <ClInclude Include="SystemCollection.h" />
-    <ClInclude Include="SystemQuery.h" />
+    <ClInclude Include="SystemPhases.h" />
+    <ClInclude Include="SystemsCollection.h" />
+    <ClInclude Include="SystemsInitializationData.h" />
     <ClInclude Include="TextComponent.h" />
     <ClInclude Include="TextureComponent.h" />
     <ClInclude Include="TextureManager.h" />
-    <ClInclude Include="TransformComponent.h" />
+    <ClInclude Include="PositionComponent.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="WorldInitializationData.h" />
   </ItemGroup>

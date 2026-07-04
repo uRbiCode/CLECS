@@ -24,14 +24,14 @@ SDL_Texture* TextureManager::LoadTexture(const std::string& FilePath)
     if (It != TextureCache.end())
         return It->second;
 
-    if (!Renderer)
+    if (Renderer == nullptr)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexture -> Renderer not initialized");
         return nullptr;
     }
 
     const auto NewTexture = IMG_LoadTexture(Renderer, FilePath.c_str());
-    if (!NewTexture)
+    if (NewTexture == nullptr)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexture -> Failed to load texture: %s. SDL Error: %s", FilePath.c_str(), SDL_GetError());
         return nullptr;
@@ -51,11 +51,6 @@ SDL_Texture* TextureManager::GetTexture(const std::string& FilePath) const
         return It->second;
 
     return nullptr;
-}
-
-bool TextureManager::HasTexture(const std::string& FilePath) const
-{
-    return TextureCache.find(FilePath) != TextureCache.end();
 }
 
 void TextureManager::UnloadTexture(const std::string& FilePath)
@@ -80,7 +75,7 @@ void TextureManager::UnloadAll()
 
 void TextureManager::LoadTexturesFromAssetsDirectory()
 {
-    if (!Renderer)
+    if (Renderer == nullptr)
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "TextureManager::LoadTexturesFromAssetsDirectory -> Renderer not initialized");
         return;

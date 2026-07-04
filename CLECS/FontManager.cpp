@@ -1,11 +1,12 @@
 #include "FontManager.h"
+#include "RenderConstants.h"
 #include "SDL3_ttf/SDL_ttf.h"
 #include <filesystem>
 
-namespace
+namespace FontConstants
 {
     constexpr const char* FontsDirectory = "../Assets/Fonts/";
-    constexpr int DefaultFontSize = 16;
+    constexpr const char* DefaultFont = "../Assets/Fonts/pixy_regular.ttf";
 }
 
 FontManager::~FontManager()
@@ -24,7 +25,7 @@ void FontManager::Initialize()
     LoadFontsFromAssetsDirectory();
 }
 
-TTF_Font* FontManager::LoadFont(const std::string& FilePath, int PointSize)
+TTF_Font* FontManager::LoadFont(const std::string& FilePath, float PointSize)
 {
     const std::string FontKey = MakeFontKey(FilePath, PointSize);
     
@@ -32,20 +33,20 @@ TTF_Font* FontManager::LoadFont(const std::string& FilePath, int PointSize)
     if (It != FontCache.end())
         return It->second;
 
-    const auto NewFont = TTF_OpenFont(FilePath.c_str(), static_cast<float>(PointSize));
+    TTF_Font* NewFont = TTF_OpenFont(FilePath.c_str(), PointSize);
     if (NewFont == nullptr)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFont -> Failed to load font: %s at size %d. SDL Error: %s", FilePath.c_str(), PointSize, SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFont -> Failed to load font: %s size %f. SDL Error: %s", FilePath.c_str(), PointSize, SDL_GetError());
         return nullptr;
     }
 
     FontCache[FontKey] = NewFont;
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFont -> Loaded font: %s at size %d", FilePath.c_str(), PointSize);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFont -> Loaded font: %s size %f", FilePath.c_str(), PointSize);
 
     return NewFont;
 }
 
-TTF_Font* FontManager::GetFont(const std::string& FilePath, int PointSize) const
+TTF_Font* FontManager::GetFont(const std::string& FilePath, float PointSize)
 {
     const std::string FontKey = MakeFontKey(FilePath, PointSize);
     
@@ -53,16 +54,10 @@ TTF_Font* FontManager::GetFont(const std::string& FilePath, int PointSize) const
     if (It != FontCache.end())
         return It->second;
 
-    return nullptr;
+    return LoadFont(FilePath, PointSize);
 }
 
-bool FontManager::HasFont(const std::string& FilePath, int PointSize) const
-{
-    const std::string FontKey = MakeFontKey(FilePath, PointSize);
-    return FontCache.find(FontKey) != FontCache.end();
-}
-
-void FontManager::UnloadFont(const std::string& FilePath, int PointSize)
+void FontManager::UnloadFont(const std::string& FilePath, float PointSize)
 {
     const std::string FontKey = MakeFontKey(FilePath, PointSize);
     
@@ -72,7 +67,7 @@ void FontManager::UnloadFont(const std::string& FilePath, int PointSize)
 
     TTF_CloseFont(It->second);
     FontCache.erase(It);
-    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FontManager::UnloadFont -> Unloaded font: %s at size %d", FilePath.c_str(), PointSize);
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "FontManager::UnloadFont -> Unloaded font %s size %f", FilePath.c_str(), PointSize);
 }
 
 void FontManager::UnloadAll()
@@ -85,36 +80,36 @@ void FontManager::UnloadAll()
     TTF_Quit();
 }
 
-std::string FontManager::MakeFontKey(const std::string& FilePath, int PointSize) const
+std::string FontManager::MakeFontKey(const std::string& FilePath, float PointSize) const
 {
     return FilePath + "_" + std::to_string(PointSize);
 }
 
 void FontManager::LoadFontsFromAssetsDirectory()
 {
-    if (!std::filesystem::exists(FontsDirectory))
+    if (!std::filesystem::exists(FontConstants::FontsDirectory))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFontsFromAssetsDirectory -> Directory does not exist: %s", FontsDirectory);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFontsFromAssetsDirectory -> Directory does not exist: %s", FontConstants::FontsDirectory);
         return;
     }
 
-    if (!std::filesystem::is_directory(FontsDirectory))
+    if (!std::filesystem::is_directory(FontConstants::FontsDirectory))
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFontsFromAssetsDirectory -> Path is not a directory: %s", FontsDirectory);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "FontManager::LoadFontsFromAssetsDirectory -> Path is not a directory: %s", FontConstants::FontsDirectory);
         return;
     }
 
-    for (const auto& Entry : std::filesystem::directory_iterator(FontsDirectory))
+    for (const auto& Entry : std::filesystem::directory_iterator(FontConstants::FontsDirectory))
     {
         if (!Entry.is_regular_file())
             continue;
 
-        const auto FilePath = Entry.path().string();
-        const auto Extension = Entry.path().extension().string();
+        const std::string FilePath = Entry.path().string();
+        const std::string Extension = Entry.path().extension().string();
         
-        if (Extension == ".ttf" || Extension == ".otf")
-        {
-            LoadFont(FilePath, DefaultFontSize);
-        }
+        if (Extension != ".ttf" && Extension != ".otf")
+            continue;
+
+        LoadFont(FilePath, RenderConstants::DefaultFontSize);
     }
 }

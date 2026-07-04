@@ -1,61 +1,59 @@
 #include "World.h"
 #include "SystemContext.h"
 #include "WorldInitializationData.h"
-#include "MouseClickEvent.h"
+#include "QueryContext.h"
 
 World::~World()
 {
 	Shutdown();
 }
 
-CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
+CLECS::ResultType World::InitializeRenderer(RendererInitializationData&& RendererData)
 {
-	if (!CreateWindow(Data.RendererConfig))
+	if (!CreateWindow(RendererData))
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeWorld -> Failed to create window");
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeRenderer -> Failed to create window");
 		return CLECS::ResultType::Failure;
 	}
 
 	if (!CreateRenderer())
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeWorld -> Failed to create renderer");
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeRenderer -> Failed to create renderer");
 		return CLECS::ResultType::Failure;
 	}
 
-	if (!SDL_SetRenderLogicalPresentation(
-		Renderer,
-		Data.RendererConfig.WindowWidth,
-		Data.RendererConfig.WindowHeight,
-		SDL_LOGICAL_PRESENTATION_LETTERBOX
-	))
+	if (!SDL_SetRenderLogicalPresentation(Renderer, RendererData.WindowWidth, RendererData.WindowHeight, SDL_LOGICAL_PRESENTATION_LETTERBOX))
 	{
-		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeWorld -> Failed to set logical presentation: %s", SDL_GetError());
+		SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, "World::InitializeRenderer -> Failed to set logical presentation: %s", SDL_GetError());
 		return CLECS::ResultType::Failure;
 	}
 
+	return CLECS::ResultType::Success;
+}
+
+CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
+{
 	InitializeTextureManager();
 	InitializeAudioManager();
 	InitializeFontManager();
 
-	EntityAdminPtr = std::move(Data.EntityAdminPtr);
+	Archetypes = ArchetypeStorage::Create(std::move(ComponentTypesCollection::Create(std::move(Data.ComponentsData))));
+	Systems = SystemsCollection::Create(std::move(Data.SystemsData));
 
-	// Build the stage graph from declared component access.
-	// The scheduler determines which systems can share a stage and which must be separated.
-	Systems.Initialize(std::move(Data.Descriptors));
-
-	// Initialize all systems in stage order, serially.
-	// Registration order within each stage is preserved.
-	const auto Context = MakeSystemContext();
-	for (const auto& Stage : Systems.GetStages())
+	auto Context = MakeSystemContext();
+	for (const StartupSystemDescriptor& System : Data.StartupSystemsData.GetRegisteredSystems())
 	{
-		for (const auto& Descriptor : Stage)
-		{
-			if (Descriptor.Initialize == nullptr)
-				continue;
-
-			Descriptor.Initialize(Context);
-		}
+		System.Initialize(Context);
 	}
+
+	FlushCommands();
+
+	for (const StartupSystemDescriptor& LateSystem : Data.StartupSystemsData.GetRegisteredLateSystems())
+	{
+		LateSystem.Initialize(Context);
+	}
+
+	FlushCommands();
 
 	return CLECS::ResultType::Success;
 }
@@ -73,18 +71,16 @@ CLECS::ResultType World::Update(float DeltaTime)
 		Input.ProcessEvent(Event);
 	}
 
-	const auto Context = MakeSystemContext();
-	SendInputEvents(Context);
+	SystemContext Context = MakeSystemContext();
 
-	for (const auto& Stage : Systems.GetStages())
+	for (const auto& [Phase, StagedSystems] : Systems.GetStagedSystems())
 	{
-		for (const auto& Descriptor : Stage)
+		for (const SystemDescriptor::UpdateFunction& Update : StagedSystems)
 		{
-			if (Descriptor.Update == nullptr)
-				continue;
-
-			Descriptor.Update(Context, DeltaTime);
+			Update(Context, DeltaTime);
 		}
+
+		FlushCommands();
 	}
 
 	return CLECS::ResultType::Success;
@@ -122,12 +118,7 @@ void World::Shutdown()
 
 bool World::CreateWindow(const RendererInitializationData& Data)
 {
-	Window = SDL_CreateWindow(
-		Data.WindowTitle,
-		Data.WindowWidth,
-		Data.WindowHeight,
-		SDL_WINDOW_FULLSCREEN
-	);
+	Window = SDL_CreateWindow(Data.WindowTitle,	Data.WindowWidth, Data.WindowHeight, SDL_WINDOW_FULLSCREEN);
 
 	if (Window == nullptr)
 	{
@@ -169,17 +160,13 @@ void World::InitializeFontManager()
 	FontManagerPtr->Initialize();
 }
 
-void World::SendInputEvents(const SystemContext& Context)
-{
-	const auto& MousePosition = Input.GetMousePosition();
-	for (const auto& MouseButtonClicked : Input.JustPressedMouseButtons)
-	{
-		EventBus.Notify(Context, MouseClickEvent{ MousePosition, MouseButtonClicked });
-	}
-}
-
 SystemContext World::MakeSystemContext()
 {
 	const Managers Managers{ *TextureManagerPtr, *AudioManagerPtr, *FontManagerPtr };
-	return SystemContext{ *EntityAdminPtr, *Window, *Renderer, Input, EventBus, Managers };
+	return SystemContext{ QueryContext::Create(&Archetypes), Commands, *Window, *Renderer, Input, Managers };
+}
+
+void World::FlushCommands()
+{
+	Commands.Flush(Archetypes);
 }

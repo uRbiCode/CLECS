@@ -32,38 +32,73 @@ std::vector<UpgradeDefinition> UpgradeLoader::LoadUpgradeDefinitions()
 	return Upgrades;
 }
 
+size_t UpgradeLoader::GetUpgradeCount()
+{
+	std::ifstream File(UpgradesFilePath);
+	if (!File.is_open())
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "UpgradeLoader::GetUpgradeCount -> Upgrades file not found: %s", UpgradesFilePath);
+		return 0;
+	}
+
+	Json JsonData;
+	File >> JsonData;
+
+	if (JsonData.contains("upgrades") && JsonData["upgrades"].is_array())
+		return JsonData["upgrades"].size();
+
+	return 0;
+}
+
 UpgradeDefinition UpgradeLoader::ParseUpgradeDefinition(const Json& Json)
 {
 	UpgradeDefinition Definition;
-	Definition.Name = Json.value("name", "");
-	Definition.Description = Json.value("description", "");
-	Definition.Upgrade = ParseUpgrade(Json["upgrade"]);
+	Definition.UpgradeDescription.Name = Json.value("name", "");
+	Definition.UpgradeDescription.Description = Json.value("description", "");
+
+	Definition.PaddleWidthMultiplierUpgrade = ParsePaddleWidthMultiplierUpgrade(Json["upgrade"]);
+	Definition.BallSpeedMultiplierUpgrade = ParseBallSpeedMultiplierUpgrade(Json["upgrade"]);
+	Definition.BallSizeMultiplierUpgrade = ParseBallSizeMultiplierUpgrade(Json["upgrade"]);
+	Definition.HealUpgrade = ParseHealUpgrade(Json["upgrade"]);
 	return Definition;
 }
 
-Upgrade UpgradeLoader::ParseUpgrade(const Json& Json)
+std::optional<PaddleWidthMultiplierUpgradeComponent> UpgradeLoader::ParsePaddleWidthMultiplierUpgrade(const Json& Json)
 {
-	Upgrade UpgradeData;
-	
-	if (Json.contains("paddleWidthMultiplier"))
-	{
-		UpgradeData.PaddleWidthMultiplier = Json["paddleWidthMultiplier"].get<float>();
-	}
+	if (!Json.contains("paddleWidthMultiplier"))
+		return std::nullopt;
 
-	if (Json.contains("ballSpeedMultiplier"))
-	{
-		UpgradeData.BallSpeedMultiplier = Json["ballSpeedMultiplier"].get<float>();
-	}
-	
-	if (Json.contains("ballSizeMultiplier"))
-	{
-		UpgradeData.BallSizeMultiplier = Json["ballSizeMultiplier"].get<float>();
-	}
+	PaddleWidthMultiplierUpgradeComponent Component;
+	Component.Multiplier = Json["paddleWidthMultiplier"].get<float>();
+	return Component;
+}
 
-	if (Json.contains("heal"))
-	{
-		UpgradeData.Heal = Json["heal"].get<int>();
-	}
+std::optional<BallSpeedMultiplierUpgradeComponent> UpgradeLoader::ParseBallSpeedMultiplierUpgrade(const Json& Json)
+{
+	if (!Json.contains("ballSpeedMultiplier"))
+		return std::nullopt;
 
-	return UpgradeData;
+	BallSpeedMultiplierUpgradeComponent Component;
+	Component.Multiplier = Json["ballSpeedMultiplier"].get<float>();
+	return Component;
+}
+
+std::optional<BallSizeMultiplierUpgradeComponent> UpgradeLoader::ParseBallSizeMultiplierUpgrade(const Json& Json)
+{
+	if (!Json.contains("ballSizeMultiplier"))
+		return std::nullopt;
+
+	BallSizeMultiplierUpgradeComponent Component;
+	Component.Multiplier = Json["ballSizeMultiplier"].get<float>();
+	return Component;
+}
+
+std::optional<HealUpgradeComponent> UpgradeLoader::ParseHealUpgrade(const Json& Json)
+{
+	if (!Json.contains("heal"))
+		return std::nullopt;
+
+	HealUpgradeComponent Component;
+	Component.Heal = Json["heal"].get<int>();
+	return Component;
 }

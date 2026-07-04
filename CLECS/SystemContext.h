@@ -1,13 +1,15 @@
 #pragma once
-#include "FontManager.h"
+#include "QueryContext.h"
 
-class EntityAdmin;
+class QueryContext;
+class CommandRunner;
+
 class InputState;
-class EventBus;
 struct SDL_Window;
 struct SDL_Renderer;
 class TextureManager;
 class AudioManager;
+class FontManager;
 
 struct Managers
 {
@@ -21,10 +23,11 @@ struct Managers
  */
 struct SystemContext
 {
-	EntityAdmin& EntityAdmin;
+	QueryContext QueryContext;
+	CommandRunner& Commands;
+
 	SDL_Window& Window;
 	SDL_Renderer& Renderer;
 	const InputState& Input;
-	EventBus& EventBus;
 	Managers Managers;
 };

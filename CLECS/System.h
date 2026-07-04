@@ -1,21 +1,8 @@
 #pragma once
+#include "SystemPhases.h"
 #include <functional>
-#include <typeindex>
-#include <vector>
 
 struct SystemContext;
-
-enum class ComponentAccessMode 
-{ 
-	Read,
-	Write 
-};
-
-struct ComponentAccess
-{
-	std::type_index ComponentType;
-	ComponentAccessMode AccessMode;
-};
 
 /* System is a fundamental concept in CLECS architecture.
  * It represents a piece of logic that operates on entities that have specific components attached to them.
@@ -23,10 +10,15 @@ struct ComponentAccess
  */
 struct SystemDescriptor
 {
-	using UpdateFunction = std::function<void(const SystemContext&, float)>;
-	using InitializeFunction = std::function<void(const SystemContext&)>;
+	using UpdateFunction = std::function<void(SystemContext&, float)>;
+
+	UpdateFunction Update;
+	SystemPhase Phase = SystemPhase::Update;
+};
+
+struct StartupSystemDescriptor
+{
+	using InitializeFunction = std::function<void(SystemContext&)>;
 
 	InitializeFunction Initialize;
-	UpdateFunction Update;
-	std::vector<ComponentAccess> ComponentAccesses;
 };

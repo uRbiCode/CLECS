@@ -1,12 +1,14 @@
 #pragma once
-#include "SystemQuery.h"
-#include "HealthComponent.h"
+
+struct SystemContext;
 
 /* Responsible for performing health changes.
- * It's update method is the place where entities with <= 0 health are destroyed.
  */
 namespace HealthSystem
 {
-	void Initialize(const SystemContext& Context);
-	void Update(SystemQuery<Writes<HealthComponent>, Reads<HealthComponent>>&, const SystemContext& Context, float DeltaTime);
+	void UpdateDisplayedHealth(SystemContext& Context, float DeltaTime);
+	void RemoveDeadEntities(SystemContext& Context, float DeltaTime);
+	void CleanupHealthDeltaComponents(SystemContext& Context, float DeltaTime);
+	void ApplyHealthChanges(SystemContext& Context, float DeltaTime);
+	void UpdatePersistentHealth(SystemContext& Context, float DeltaTime);
 }

@@ -1,9 +1,13 @@
 #include "WorldInitializationData.h"
-#include "EntityAdmin.h"
 
-WorldInitializationData WorldInitializationData::Create()
+WorldInitializationData WorldInitializationData::InitializeWithModules(ModulesInitializationData&& ModulesData)
 {
 	WorldInitializationData Data;
-	Data.EntityAdminPtr = std::make_unique<EntityAdmin>();
+	for (const auto& ModulePtr : ModulesData.GetRegisteredModules())
+	{
+		ModulePtr->RegisterComponentTypes(Data.ComponentsData);
+		ModulePtr->RegisterStartupSystems(Data.StartupSystemsData);
+		ModulePtr->RegisterSystems(Data.SystemsData);
+	}
 	return Data;
 }

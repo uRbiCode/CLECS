@@ -1,75 +1,106 @@
 #include "HealthSystem.h"
 #include "SystemContext.h"
-#include "EventBus.h"
-#include "CollisionEvent.h"
-#include "EntityAdmin.h"
-#include "CollisionComponent.h"
-#include "RunStateComponent.h"
-#include "HealthUtils.h"
-#include <cassert>
+#include "Query.h"
+#include "HealthComponent.h"
+#include "CommandRunner.h"
+#include "ComponentUtils.h"
+#include "TransitionComponents.h"
+#include "RenderComponents.h"
+#include "GlobalConstants.h"
+#include "CollisionUtils.h"
+#include "RenderComponents.h"
+#include "ShapeComponents.h"
+#include "PositionComponent.h"
+#include "TextureComponent.h"
 
-namespace
+void HealthSystem::UpdateDisplayedHealth(SystemContext& Context, float DeltaTime)
 {
-	constexpr int DamageOnCollision = 1;
+	int TotalHealthChange = 0;
 
-	void DealDamage(const SystemContext& Context, const Entity& Entity, int Damage)
+	const Query<WritesList<>, ReadsList<HealthDeltaComponent>, ExcludeList<BackgroundRenderComponent, GameRenderComponent>> HealthQuery(Context.QueryContext);
+	HealthQuery.ForEach([&](Entity Entity, const HealthDeltaComponent& HealthDelta)
 	{
-		HealthUtils::ApplyHealthChange(Context, Entity, -Damage);
-	}
-
-	void ResolveTriggerHit(const SystemContext& Context)
-	{
-		const auto RunStateGroup = Context.EntityAdmin.GetGroup<RunStateComponent, HealthComponent>();
-		assert(RunStateGroup.Size() == 1 && "Expected exactly one RunStateComponent with HealthComponent in the world");
-		if (RunStateGroup.Empty())
-			return;
-
-		DealDamage(Context, RunStateGroup[0], DamageOnCollision);
-	}
-
-	bool WasTriggerHit(const SystemContext& Context, const Entity& Entity)
-	{
-		if (!Context.EntityAdmin.HasComponent<CollisionComponent>(Entity))
-			return false;
-
-		return Context.EntityAdmin.GetComponent<CollisionComponent>(Entity).Channel == CollisionChannel::Trigger;
-	}
-
-	void HandleCollision(const SystemContext& Context, const Entity& Entity)
-	{
-		if (WasTriggerHit(Context, Entity))
-		{
-			ResolveTriggerHit(Context);
-			return;
-		}
-
-		DealDamage(Context, Entity, DamageOnCollision);
-	}
-
-	void OnCollision(const SystemContext& Context, const CollisionEvent& Event)
-	{
-		HandleCollision(Context, Event.EntityA);
-		HandleCollision(Context, Event.EntityB);
-	}
-}
-
-void HealthSystem::Initialize(const SystemContext& Context)
-{
-	const void* const Id = reinterpret_cast<const void*>(&Initialize);
-
-	Context.EventBus.Subscribe<CollisionEvent>(Id, [](const SystemContext& Context, const CollisionEvent& Event)
-	{
-		OnCollision(Context, Event);
+		TotalHealthChange += HealthDelta.Delta;
 	});
+
+	if (TotalHealthChange >= 0)
+		return;
+
+	const Query<WritesList<>, ReadsList<PositionComponent, RectComponent, UIRenderComponent, TextureComponent>, ExcludeList<BackgroundRenderComponent, GameRenderComponent>> HealthIndicatorQuery(Context.QueryContext);
+	std::vector<Entity> HealthIndicatorsToRemove;
+	HealthIndicatorsToRemove.reserve(HealthIndicatorQuery.Size());
+	HealthIndicatorQuery.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, const UIRenderComponent& Render, const TextureComponent& Texture)
+	{
+		HealthIndicatorsToRemove.push_back(Entity);
+	});
+
+	std::ranges::sort(HealthIndicatorsToRemove, [](Entity A, Entity B) { return A.GetId() > B.GetId(); });
+
+	TotalHealthChange = std::abs(TotalHealthChange);
+	RemoveEntitiesCommand RemoveHealthIndicatorsCommand(TotalHealthChange);
+	for (int i = 0; i < TotalHealthChange; ++i)
+	{
+		RemoveHealthIndicatorsCommand.WithEntry(HealthIndicatorsToRemove[i]);
+	}
+
+	Context.Commands.Submit(std::move(RemoveHealthIndicatorsCommand));
 }
 
-void HealthSystem::Update(SystemQuery<Writes<HealthComponent>, Reads<HealthComponent>>&, const SystemContext& Context, float DeltaTime)
+void HealthSystem::RemoveDeadEntities(SystemContext& Context, float DeltaTime)
 {
-	Context.EntityAdmin.GetGroup<HealthComponent>().ForEach([&Context](const Entity& Entity, const HealthComponent& Health)
+	const Query<WritesList<>, ReadsList<HealthComponent>, ExcludeList<>> HealthQuery(Context.QueryContext);
+	RemoveEntitiesCommand RemoveDeadEntitiesCommand(0);
+	HealthQuery.ForEach([&](Entity Entity, const HealthComponent& Health)
 	{
 		if (Health.CurrentHealth > 0)
 			return;
 
-		Context.EntityAdmin.DestroyEntity(Entity);
+		RemoveDeadEntitiesCommand.WithEntry(Entity);
+	});
+
+	if (!RemoveDeadEntitiesCommand.GetEntries().empty())
+	{
+		Context.Commands.Submit(std::move(RemoveDeadEntitiesCommand));
+	}
+}
+
+void HealthSystem::CleanupHealthDeltaComponents(SystemContext& Context, float DeltaTime)
+{
+	ComponentUtils::RemoveAllComponentsTyped<HealthDeltaComponent>(Context);
+}
+
+void HealthSystem::ApplyHealthChanges(SystemContext& Context, float DeltaTime)
+{
+	const Query<WritesList<HealthComponent>, ReadsList<HealthDeltaComponent>, ExcludeList<>> HealthQuery(Context.QueryContext);
+	HealthQuery.ForEach([&](Entity Entity, HealthComponent& Health, const HealthDeltaComponent& HealthDelta)
+	{
+		Health.CurrentHealth += HealthDelta.Delta;
+	});
+}
+
+void HealthSystem::UpdatePersistentHealth(SystemContext& Context, float DeltaTime)
+{
+	int NewHealth = GlobalConstants::InitialPlayerHealth;
+	const Query<WritesList<HealthComponent>, ReadsList<BackgroundRenderComponent>, ExcludeList<>> HealthQuery(Context.QueryContext);
+	HealthQuery.ForEach([&](Entity Entity, HealthComponent& Health, const BackgroundRenderComponent& BackgroundRender)
+	{
+		NewHealth = Health.CurrentHealth;
+	});
+
+	const TriggerQuery Triggers(Context.QueryContext);
+	Triggers.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, const HealthComponent& Health)
+	{
+		NewHealth = Health.CurrentHealth;
+	});
+
+	const Query<WritesList<>, ReadsList<SummaryTransitionComponent>, ExcludeList<>> SummaryQuery(Context.QueryContext);
+	if (SummaryQuery.Size() > 0)
+	{
+		NewHealth = GlobalConstants::InitialPlayerHealth;
+	}
+	
+	HealthQuery.ForEach([&](Entity Entity, HealthComponent& Health, const BackgroundRenderComponent& BackgroundRender)
+	{
+		Health.CurrentHealth = NewHealth;
 	});
 }

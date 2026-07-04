@@ -1,10 +1,9 @@
 #pragma once
-#include <string>
 #include <cstdint>
 
 enum class ClickableTag : uint8_t
 {
-	PlayButton = 0,
+	PlayButton,
 	QuitButton,
 	MainMenuButton,
 	TutorialButton,
@@ -12,10 +11,15 @@ enum class ClickableTag : uint8_t
 	Invalid
 };
 
-/* Used by PlayerInputSystem to recognize which "button" was clicked.
- * Each Tag is forwarded via Events to other systems so that they can react.
+/* Used by InputSystem to recognize which button was clicked.
  */
 struct ClickableComponent
 {
 	ClickableTag Tag = ClickableTag::Invalid;
+};
+
+/* Propagated when clicking an associated button occurs.
+ */
+struct ClickableUsedComponent
+{
 };

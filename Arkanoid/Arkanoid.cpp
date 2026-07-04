@@ -1,67 +1,39 @@
 #include "Arkanoid.h"
-#include "PlayerInputSystem.h"
-#include "MovementSystem.h"
-#include "RenderSystem.h"
-#include "WorldInitializationData.h"
-#include "EntityAdmin.h"
-#include "CollisionDetectionSystem.h"
-#include "CollisionKinematicResolverSystem.h"
-#include "HealthSystem.h"
-#include "CurrentStageSystem.h"
-#include "RunControllerSystem.h"
-#include "HealthIndicatorSystem.h"
-#include "GameStateSystem.h"
-#include "GameStateComponent.h"
-#include "MainMenuControllerSystem.h"
-#include "AudioSystem.h"
-#include "SummaryControllerSystem.h"
-#include "StageInfoSystem.h"
-#include "UpgradeControllerSystem.h"
-#include "TutorialControllerSystem.h"
-#include "PlayerPrepareSystem.h"
+#include "ArkanoidCoreModule.h"
+#include "ModulesInitializationData.h"
+#include "ArkanoidMovementModule.h"
+#include "ArkanoidInputModule.h"
+#include "ArkanoidCollisionModule.h"
+#include "ArkanoidHealthModule.h"
+#include "ArkanoidUpgradeModule.h"
+#include "ArkanoidTransitionModule.h"
+#include "ArkanoidUIBlinkModule.h"
+#include "ArkanoidAudioModule.h"
 
 namespace
 {
-	constexpr float ScreenWidth = 640.f;
-	constexpr float ScreenHeight = 480.f;
-}
-
-bool Arkanoid::Initialize(WorldInitializationData& Data)
-{
-	AddGameStateComponent(Data.AccessEntityAdmin());
-
-	Data.AddSystem(AudioSystem::Initialize, AudioSystem::Update);
-	Data.AddSystem(PlayerInputSystem::Initialize, PlayerInputSystem::Update);
-	Data.AddSystem(nullptr, CollisionDetectionSystem::Update);
-	Data.AddSystem(CollisionKinematicResolverSystem::Initialize);
-	Data.AddSystem(HealthSystem::Initialize, HealthSystem::Update);
-	Data.AddSystem(nullptr, MovementSystem::Update);
-	Data.AddSystem(CurrentStageSystem::Initialize);
-	Data.AddSystem(UpgradeControllerSystem::Initialize);
-	Data.AddSystem(PlayerPrepareSystem::Initialize, PlayerPrepareSystem::Update);
-	Data.AddSystem(MainMenuControllerSystem::Initialize);
-	Data.AddSystem(RunControllerSystem::Initialize);
-	Data.AddSystem(TutorialControllerSystem::Initialize);
-	Data.AddSystem(SummaryControllerSystem::Initialize);
-	Data.AddSystem(GameStateSystem::Initialize);
-	Data.AddSystem(HealthIndicatorSystem::Initialize);
-	Data.AddSystem(StageInfoSystem::Initialize);
-	Data.AddSystem(nullptr, RenderSystem::Update);
-
-	return true;
+	constexpr int ScreenWidth = 640;
+	constexpr int ScreenHeight = 480;
 }
 
 RendererInitializationData Arkanoid::GetRendererConfig() const
 {
 	RendererInitializationData RendererConfig;
 	RendererConfig.WindowTitle = "Arkanoid";
-	RendererConfig.WindowWidth = static_cast<int>(ScreenWidth);
-	RendererConfig.WindowHeight = static_cast<int>(ScreenHeight);
+	RendererConfig.WindowWidth = ScreenWidth;
+	RendererConfig.WindowHeight = ScreenHeight;
 	return RendererConfig;
 }
 
-void Arkanoid::AddGameStateComponent(EntityAdmin& Admin) const
+void Arkanoid::RegisterGameModules(ModulesInitializationData& Data) const
 {
-	const auto GameStateEntity = Admin.CreateEntity();
-	Admin.AddComponent<GameStateComponent>(GameStateEntity, GameState::MainMenu);
+	Data.RegisterModule<ArkanoidCoreModule>();
+	Data.RegisterModule<ArkanoidInputModule>();
+	Data.RegisterModule<ArkanoidUpgradeModule>();
+	Data.RegisterModule<ArkanoidCollisionModule>();
+	Data.RegisterModule<ArkanoidMovementModule>();
+	Data.RegisterModule<ArkanoidHealthModule>();
+	Data.RegisterModule<ArkanoidUIBlinkModule>();
+	Data.RegisterModule<ArkanoidAudioModule>();
+	Data.RegisterModule<ArkanoidTransitionModule>();
 }

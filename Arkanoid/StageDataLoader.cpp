@@ -1,12 +1,13 @@
 #include "StageDataLoader.h"
 #include <fstream>
+#include <SDL3/SDL_log.h>
 
 namespace
 {
 	constexpr const char* StagesDirectory = "../Assets/Stages/";
 }
 
-std::optional<StageData> StageDataLoader::LoadStageDataByNumber(int StageNumber)
+StageData StageDataLoader::LoadStageDataByNumber(int StageNumber)
 {
 	const std::string StagesDirectoryString = StagesDirectory;
 	const std::string FilePath = StagesDirectoryString + "stage" + std::to_string(StageNumber) + ".json";
@@ -15,7 +16,7 @@ std::optional<StageData> StageDataLoader::LoadStageDataByNumber(int StageNumber)
 	if (!File.is_open())
 	{
 		SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "StageDataLoader::LoadStageByNumber -> Stage file not found: %s", FilePath.c_str());
-		return std::nullopt;
+		return StageData{};
 	}
 
 	Json JsonData;
@@ -59,14 +60,8 @@ TextureData StageDataLoader::ParseTextureData(const Json& Json)
 WallData StageDataLoader::ParseWallData(const Json& Json)
 {
 	WallData Data;
-	Data.Position = ParseVector2D(Json["position"]);
-	Data.Size = ParseVector2D(Json["size"]);
-	
-	if (!Json.contains("texture"))
-		return Data;
-
-	Data.TextureData = ParseTextureData(Json["texture"]);
-	
+	Data.PositionSize.Position = ParseVector2D(Json["position"]);
+	Data.PositionSize.Size = ParseVector2D(Json["size"]);
 	return Data;
 }
 

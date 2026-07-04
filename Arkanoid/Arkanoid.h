@@ -1,24 +1,16 @@
 #pragma once
 #include "Game.h"
 
-class EntityAdmin;
-
 /* Entry point to the game.
- * Responsible for registering systems and providing initial renderer configuration.
- * Here one has to determine order of execution for systems, which may prove crucial for the synchronous framework.
+ * Responsible for registering Modules and providing initial renderer configuration.
  */
 class Arkanoid : public Game
 {
 public:
-	bool Initialize(WorldInitializationData& Data) override;
-
-	void Shutdown() override {}
+	void Shutdown() const override {}
 
 	RendererInitializationData GetRendererConfig() const override;
 
-private:
-	// Defines the initial GameState by registering the component with the specified value.
-	void AddGameStateComponent(EntityAdmin& Admin) const;
+protected:
+	void RegisterGameModules(ModulesInitializationData& Data) const override;
 };
-
-CLECS_DEFINE_GAME_ENTRY(Arkanoid)

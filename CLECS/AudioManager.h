@@ -15,31 +15,19 @@ public:
     void Initialize();
     void Shutdown();
     void LoadSound(const std::string& Name, const std::string& FilePath);
-    void PlaySound(const std::string& Name, float Volume = 1.f);
-    void SetMasterVolume(float Volume);
+    void PlaySound(const std::string& Name, float Volume);
 
-    void PlayMusic(const std::string& Name, float Volume = 1.f);
+    void PlayMusic(const std::string& Name, float Volume);
 	bool IsMusicPlaying() const;
     void StopMusic();
 
 private:
-    void LoadAllSoundsFromAssetsDirectory();
-
     struct SoundData
     {
         SDL_AudioSpec Spec;
-        Uint8* Buffer;
-        Uint32 Length;
+        Uint8* Buffer = nullptr;
+        Uint32 Length = 0;
     };
-
-    SDL_AudioDeviceID AudioDeviceId = 0;
-    float MasterVolume = 1.f;
-    std::unordered_map<std::string, SoundData> SoundCache;
-
-    SDL_AudioStream* MusicStream = nullptr;
-    std::string CurrentMusicName;
-
-    static void SDLCALL MusicCallback(void* Userdata, SDL_AudioStream* Stream, int AdditionalAmount, int TotalAmount);
 
     struct StreamConfig
     {
@@ -48,5 +36,13 @@ private:
         SDL_AudioStreamCallback Callback = nullptr;
     };
 
+    void LoadAllSoundsFromAssetsDirectory();
     SDL_AudioStream* CreateAndBindAudioStream(const std::string& Name, float Volume, const StreamConfig& Config);
+    static void SDLCALL MusicCallback(void* Userdata, SDL_AudioStream* Stream, int AdditionalAmount, int TotalAmount);
+
+    SDL_AudioDeviceID AudioDeviceId = 0;
+    std::unordered_map<std::string, SoundData> SoundCache;
+
+    SDL_AudioStream* MusicStream = nullptr;
+    std::string CurrentMusicName;
 };

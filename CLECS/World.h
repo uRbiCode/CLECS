@@ -1,12 +1,12 @@
 #pragma once
 #include "CoreTypes.h"
-#include "SystemCollection.h"
-#include "EntityAdmin.h"
+#include "SystemsCollection.h"
 #include "InputState.h"
-#include "EventBus.h"
 #include "TextureManager.h"
 #include "AudioManager.h"
 #include "FontManager.h"
+#include "ArchetypeStorage.h"
+#include "CommandRunner.h"
 #include <memory>
 
 class WorldInitializationData;
@@ -28,8 +28,10 @@ public:
 	World(const World&) = delete;
 	World& operator=(const World&) = delete;
 
+	CLECS::ResultType InitializeRenderer(RendererInitializationData&& RendererData);
 	CLECS::ResultType InitializeWorld(WorldInitializationData&& Data);
 	CLECS::ResultType Update(float DeltaTime);
+
 	void Shutdown();
 
 private:
@@ -38,13 +40,15 @@ private:
 	void InitializeTextureManager();
 	void InitializeAudioManager();
 	void InitializeFontManager();
-	void SendInputEvents(const SystemContext& Context);
 	SystemContext MakeSystemContext();
 
-	std::unique_ptr<EntityAdmin> EntityAdminPtr;
-	SystemCollection Systems;
+	void FlushCommands();
+
+	SystemsCollection Systems;
+	ArchetypeStorage Archetypes;
+	CommandRunner Commands;
+
 	InputState Input;
-	EventBus EventBus;
 
 	std::unique_ptr<TextureManager> TextureManagerPtr;
 	std::unique_ptr<AudioManager> AudioManagerPtr;

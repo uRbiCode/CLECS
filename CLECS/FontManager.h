@@ -2,7 +2,6 @@
 #include <string>
 #include <unordered_map>
 
-struct SDL_Renderer;
 struct TTF_Font;
 
 /* Responsible for managing fonts in the game.
@@ -22,19 +21,16 @@ public:
 
     void Initialize();
     
-    TTF_Font* LoadFont(const std::string& FilePath, int PointSize);
-    
-    TTF_Font* GetFont(const std::string& FilePath, int PointSize) const;
-    
-    bool HasFont(const std::string& FilePath, int PointSize) const;
-    
-    void UnloadFont(const std::string& FilePath, int PointSize);
+    // Will try to LoadFont if not present
+    TTF_Font* GetFont(const std::string& FilePath, float PointSize);
     
     void UnloadAll();
 
 private:
-    std::string MakeFontKey(const std::string& FilePath, int PointSize) const;
+    std::string MakeFontKey(const std::string& FilePath, float PointSize) const;
+    TTF_Font* LoadFont(const std::string& FilePath, float PointSize);
     void LoadFontsFromAssetsDirectory();
+    void UnloadFont(const std::string& FilePath, float PointSize);
 
     std::unordered_map<std::string, TTF_Font*> FontCache;
 };

@@ -17,74 +17,80 @@
     <Filter Include="Source\Systems\MovementSystem">
       <UniqueIdentifier>{59b0305b-6b0d-4df5-9b22-804a500a68c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\PlayerInputSystem">
-      <UniqueIdentifier>{12e763f4-8188-424f-b635-31a16fee4479}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Systems\CollisionDetectionSystem">
-      <UniqueIdentifier>{abdff57a-6b04-43eb-9f7d-f60b98384039}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Events">
-      <UniqueIdentifier>{07925d12-fe8e-45f6-8e56-4e1b81495f42}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Systems\HealthSystem">
       <UniqueIdentifier>{2dcc9ca3-0eb4-4e43-949e-def6b4720387}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Systems\CollisionKinematicResolverSystem">
-      <UniqueIdentifier>{2e950d7b-bdc5-48cf-9b4e-4f68adc9c8d9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Systems\CurrentStageSystem">
-      <UniqueIdentifier>{fcc0e7ff-15e9-4484-88b1-ca1b9ee4a79a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Systems\RunControllerSystem">
-      <UniqueIdentifier>{a1afb117-2c85-4835-b63c-60e604f72d2b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Utils">
       <UniqueIdentifier>{3469ba66-4a8c-4a48-940f-c94ef57ba53a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\HealthIndicatorSystem">
-      <UniqueIdentifier>{e4ea1060-ced9-449a-9f59-8c8624ae51ce}</UniqueIdentifier>
+    <Filter Include="Source\Modules">
+      <UniqueIdentifier>{f9f5f13b-2504-4777-9976-35b7491f934e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\GameStateSystem">
-      <UniqueIdentifier>{4a6eddd6-fb9a-4929-8ba9-4977280821db}</UniqueIdentifier>
+    <Filter Include="Source\Modules\InputModule">
+      <UniqueIdentifier>{31717a54-a116-4b21-b7d1-1db04d317cbe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\MainMenuControllerSystem">
-      <UniqueIdentifier>{4126f583-8c30-4ee1-aa23-6ae19a087d39}</UniqueIdentifier>
+    <Filter Include="Source\Modules\MovementModule">
+      <UniqueIdentifier>{19a7b8cb-d8e7-43fe-9b71-42be16d9d0d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\RunControllerSystem\StageDataLoader">
-      <UniqueIdentifier>{5596190a-9ab9-4b5f-bf5f-d805b2cc4d10}</UniqueIdentifier>
+    <Filter Include="Source\Systems\InputSystem">
+      <UniqueIdentifier>{12e763f4-8188-424f-b635-31a16fee4479}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\AudioSystem">
-      <UniqueIdentifier>{70f73783-be21-407f-9017-09ea3f6d7c98}</UniqueIdentifier>
+    <Filter Include="Source\Utils\CollisionUtils">
+      <UniqueIdentifier>{a710ab33-c779-45f6-bf56-000ef65cee50}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\SummaryControllerSystem">
-      <UniqueIdentifier>{157a2de6-4e54-4a43-80bf-891c91174303}</UniqueIdentifier>
+    <Filter Include="Source\Modules\HealthModule">
+      <UniqueIdentifier>{a578a0c1-1f8f-4a80-a99b-90fff174ef8c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\StageInfoSystem">
-      <UniqueIdentifier>{98a8cdc9-76db-4f0c-bda0-a8dd20310d92}</UniqueIdentifier>
+    <Filter Include="Source\Utils\ComponentUtils">
+      <UniqueIdentifier>{2419b9c0-b768-4a35-b096-563cf9c09d5d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\RunControllerSystem\UpgradeLoader">
-      <UniqueIdentifier>{59f45407-d726-4ce1-8fec-04e56394af87}</UniqueIdentifier>
+    <Filter Include="Source\Modules\CollisionModule">
+      <UniqueIdentifier>{ca079ef7-d4b2-42b4-9215-7ffd2bddfdd2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\UpgradeControllerSystem">
+    <Filter Include="Source\Modules\CoreModule">
+      <UniqueIdentifier>{9fd5e45a-80da-4219-ba55-e08c39857f07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\GameStartSystem">
+      <UniqueIdentifier>{9ec68328-be8c-4c22-ac71-9efa78f4bc60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils\TransitionUtils">
+      <UniqueIdentifier>{ea9770e6-db93-4f8e-a078-295cbe8829ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils\RunUtils">
+      <UniqueIdentifier>{096816db-77ef-45cf-a558-922290e9cb13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\UpgradeSystem">
       <UniqueIdentifier>{fe1634c8-13ba-4c4e-96e9-58804d998407}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Utils\StageUtils">
-      <UniqueIdentifier>{7a8f9024-ba71-4acf-a560-523eddea69b7}</UniqueIdentifier>
+    <Filter Include="Source\Systems\UpgradeSystem\UpgradeLoader">
+      <UniqueIdentifier>{59f45407-d726-4ce1-8fec-04e56394af87}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Utils\GameStateUtils">
-      <UniqueIdentifier>{df3f6f8f-11b3-4482-9369-8c98ecdac64c}</UniqueIdentifier>
+    <Filter Include="Source\Modules\UpgradeModule">
+      <UniqueIdentifier>{a3a77740-f5c7-4996-a9ef-f98d9401f759}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Utils\UpgradeUtils">
-      <UniqueIdentifier>{701c7de7-25f7-4482-b54a-ac82fd502a4a}</UniqueIdentifier>
+    <Filter Include="Source\Systems\TransitionSystem">
+      <UniqueIdentifier>{36dcf8fc-bd82-41eb-a01f-69da3ce95e5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\TutorialControllerSystem">
-      <UniqueIdentifier>{8f97e8da-d337-4867-890e-c3ce06b0849d}</UniqueIdentifier>
+    <Filter Include="Source\Modules\TransitionModule">
+      <UniqueIdentifier>{9aca47fc-51eb-4c70-a2d7-3333410e2e39}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Utils\HealthUtils">
-      <UniqueIdentifier>{fa0eb49c-ad83-42fe-8f79-ff5988e0096d}</UniqueIdentifier>
+    <Filter Include="Source\Utils\StageDataLoader">
+      <UniqueIdentifier>{5596190a-9ab9-4b5f-bf5f-d805b2cc4d10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Systems\PlayerPrepareSystem">
-      <UniqueIdentifier>{0a9978bb-2dbb-4759-be79-a5ae8df1cfe0}</UniqueIdentifier>
+    <Filter Include="Source\Systems\UIBlinkSystem">
+      <UniqueIdentifier>{53003363-86db-4ad3-a524-2fe5e1a5c248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Modules\UIBlinkModule">
+      <UniqueIdentifier>{9f12188a-56cd-4e4a-9d4d-11c0075e81a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\CollisionSystem">
+      <UniqueIdentifier>{abdff57a-6b04-43eb-9f7d-f60b98384039}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Systems\AudioSystem">
+      <UniqueIdentifier>{0c6284ee-f81b-4c23-ad8a-18bc39e1e052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Modules\AudioModule">
+      <UniqueIdentifier>{1a763476-450f-40bf-b196-d4e3831c0e02}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -94,81 +100,84 @@
     <ClCompile Include="MovementSystem.cpp">
       <Filter>Source\Systems\MovementSystem</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerInputSystem.cpp">
-      <Filter>Source\Systems\PlayerInputSystem</Filter>
+    <ClCompile Include="InputSystem.cpp">
+      <Filter>Source\Systems\InputSystem</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionDetectionSystem.cpp">
-      <Filter>Source\Systems\CollisionDetectionSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionKinematicResolverSystem.cpp">
-      <Filter>Source\Systems\CollisionKinematicResolverSystem</Filter>
+    <ClCompile Include="CollisionSystem.cpp">
+      <Filter>Source\Systems\CollisionSystem</Filter>
     </ClCompile>
     <ClCompile Include="HealthSystem.cpp">
       <Filter>Source\Systems\HealthSystem</Filter>
     </ClCompile>
-    <ClCompile Include="CurrentStageSystem.cpp">
-      <Filter>Source\Systems\CurrentStageSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="RunControllerSystem.cpp">
-      <Filter>Source\Systems\RunControllerSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="HealthIndicatorSystem.cpp">
-      <Filter>Source\Systems\HealthIndicatorSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="GameStateSystem.cpp">
-      <Filter>Source\Systems\GameStateSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="MainMenuControllerSystem.cpp">
-      <Filter>Source\Systems\MainMenuControllerSystem</Filter>
-    </ClCompile>
     <ClCompile Include="StageDataLoader.cpp">
-      <Filter>Source\Systems\RunControllerSystem\StageDataLoader</Filter>
+      <Filter>Source\Utils\StageDataLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="UpgradeSystem.cpp">
+      <Filter>Source\Systems\UpgradeSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="UpgradeLoader.cpp">
+      <Filter>Source\Systems\UpgradeSystem\UpgradeLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidInputModule.cpp">
+      <Filter>Source\Modules\InputModule</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidMovementModule.cpp">
+      <Filter>Source\Modules\MovementModule</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionUtils.cpp">
+      <Filter>Source\Utils\CollisionUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidHealthModule.cpp">
+      <Filter>Source\Modules\HealthModule</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidCoreModule.cpp">
+      <Filter>Source\Modules\CoreModule</Filter>
+    </ClCompile>
+    <ClCompile Include="TransitionUtils.cpp">
+      <Filter>Source\Utils\TransitionUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStartSystem.cpp">
+      <Filter>Source\Systems\GameStartSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidCollisionModule.cpp">
+      <Filter>Source\Modules\CollisionModule</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidUpgradeModule.cpp">
+      <Filter>Source\Modules\UpgradeModule</Filter>
+    </ClCompile>
+    <ClCompile Include="RunUtils.cpp">
+      <Filter>Source\Utils\RunUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="TransitionSystem.cpp">
+      <Filter>Source\Systems\TransitionSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidTransitionModule.cpp">
+      <Filter>Source\Modules\TransitionModule</Filter>
+    </ClCompile>
+    <ClCompile Include="UIBlinkSystem.cpp">
+      <Filter>Source\Systems\UIBlinkSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="ArkanoidUIBlinkModule.cpp">
+      <Filter>Source\Modules\UIBlinkModule</Filter>
     </ClCompile>
     <ClCompile Include="AudioSystem.cpp">
       <Filter>Source\Systems\AudioSystem</Filter>
     </ClCompile>
-    <ClCompile Include="SummaryControllerSystem.cpp">
-      <Filter>Source\Systems\SummaryControllerSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="StageInfoSystem.cpp">
-      <Filter>Source\Systems\StageInfoSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="UpgradeControllerSystem.cpp">
-      <Filter>Source\Systems\UpgradeControllerSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="UpgradeLoader.cpp">
-      <Filter>Source\Systems\RunControllerSystem\UpgradeLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="StageUtils.cpp">
-      <Filter>Source\Utils\StageUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="GameStateUtils.cpp">
-      <Filter>Source\Utils\GameStateUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="TutorialControllerSystem.cpp">
-      <Filter>Source\Systems\TutorialControllerSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="UpgradeUtils.cpp">
-      <Filter>Source\Utils\UpgradeUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="HealthUtils.cpp">
-      <Filter>Source\Utils\HealthUtils</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerPrepareSystem.cpp">
-      <Filter>Source\Systems\PlayerPrepareSystem</Filter>
+    <ClCompile Include="ArkanoidAudioModule.cpp">
+      <Filter>Source\Modules\AudioModule</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arkanoid.h">
       <Filter>Source\GameEntry</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionComponent.h">
+    <ClInclude Include="CollisionComponents.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerControllerComponent.h">
+    <ClInclude Include="PlayerMoveSpeedComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
     <ClInclude Include="VelocityComponent.h">
@@ -177,17 +186,11 @@
     <ClInclude Include="MovementSystem.h">
       <Filter>Source\Systems\MovementSystem</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerInputSystem.h">
-      <Filter>Source\Systems\PlayerInputSystem</Filter>
+    <ClInclude Include="InputSystem.h">
+      <Filter>Source\Systems\InputSystem</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionDetectionSystem.h">
-      <Filter>Source\Systems\CollisionDetectionSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionEvent.h">
-      <Filter>Source\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionKinematicResolverSystem.h">
-      <Filter>Source\Systems\CollisionKinematicResolverSystem</Filter>
+    <ClInclude Include="CollisionSystem.h">
+      <Filter>Source\Systems\CollisionSystem</Filter>
     </ClInclude>
     <ClInclude Include="HealthComponent.h">
       <Filter>Source\Components</Filter>
@@ -195,101 +198,92 @@
     <ClInclude Include="HealthSystem.h">
       <Filter>Source\Systems\HealthSystem</Filter>
     </ClInclude>
-    <ClInclude Include="CurrentStageSystem.h">
-      <Filter>Source\Systems\CurrentStageSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="HealthChangedEvent.h">
-      <Filter>Source\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="RunControllerSystem.h">
-      <Filter>Source\Systems\RunControllerSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="RunStateComponent.h">
-      <Filter>Source\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="StageDataComponent.h">
-      <Filter>Source\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="HealthIndicatorSystem.h">
-      <Filter>Source\Systems\HealthIndicatorSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="GameStateComponent.h">
-      <Filter>Source\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="GameStateSystem.h">
-      <Filter>Source\Systems\GameStateSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="GameStateEvents.h">
-      <Filter>Source\Events</Filter>
-    </ClInclude>
     <ClInclude Include="ClickableComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="MainMenuControllerSystem.h">
-      <Filter>Source\Systems\MainMenuControllerSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="ClickableUsedEvent.h">
-      <Filter>Source\Events</Filter>
-    </ClInclude>
     <ClInclude Include="StageDataLoader.h">
-      <Filter>Source\Systems\RunControllerSystem\StageDataLoader</Filter>
+      <Filter>Source\Utils\StageDataLoader</Filter>
     </ClInclude>
-    <ClInclude Include="AudioSystem.h">
-      <Filter>Source\Systems\AudioSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Constants.h">
+    <ClInclude Include="GlobalConstants.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="SummaryControllerSystem.h">
-      <Filter>Source\Systems\SummaryControllerSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="StageEndEvent.h">
-      <Filter>Source\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="StageInfoSystem.h">
-      <Filter>Source\Systems\StageInfoSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="UpgradeComponent.h">
+    <ClInclude Include="UpgradeComponents.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="ChangeRunStateEvent.h">
-      <Filter>Source\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="UpgradeControllerSystem.h">
-      <Filter>Source\Systems\UpgradeControllerSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="UpgradeEvent.h">
-      <Filter>Source\Events</Filter>
+    <ClInclude Include="UpgradeSystem.h">
+      <Filter>Source\Systems\UpgradeSystem</Filter>
     </ClInclude>
     <ClInclude Include="UpgradeLoader.h">
-      <Filter>Source\Systems\RunControllerSystem\UpgradeLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="StageUtils.h">
-      <Filter>Source\Utils\StageUtils</Filter>
-    </ClInclude>
-    <ClInclude Include="GameStateUtils.h">
-      <Filter>Source\Utils\GameStateUtils</Filter>
-    </ClInclude>
-    <ClInclude Include="TutorialControllerSystem.h">
-      <Filter>Source\Systems\TutorialControllerSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="UpgradeUtils.h">
-      <Filter>Source\Utils\UpgradeUtils</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioRequestsComponent.h">
-      <Filter>Source\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="HealthUtils.h">
-      <Filter>Source\Utils\HealthUtils</Filter>
+      <Filter>Source\Systems\UpgradeSystem\UpgradeLoader</Filter>
     </ClInclude>
     <ClInclude Include="PlayerPrepareComponent.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerPrepareSystem.h">
-      <Filter>Source\Systems\PlayerPrepareSystem</Filter>
+    <ClInclude Include="ArkanoidInputModule.h">
+      <Filter>Source\Modules\InputModule</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerReadyEvent.h">
-      <Filter>Source\Events</Filter>
+    <ClInclude Include="ArkanoidMovementModule.h">
+      <Filter>Source\Modules\MovementModule</Filter>
+    </ClInclude>
+    <ClInclude Include="DamageComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionUtils.h">
+      <Filter>Source\Utils\CollisionUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidHealthModule.h">
+      <Filter>Source\Modules\HealthModule</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentUtils.h">
+      <Filter>Source\Utils\ComponentUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidCoreModule.h">
+      <Filter>Source\Modules\CoreModule</Filter>
+    </ClInclude>
+    <ClInclude Include="TransitionUtils.h">
+      <Filter>Source\Utils\TransitionUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStartSystem.h">
+      <Filter>Source\Systems\GameStartSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidCollisionModule.h">
+      <Filter>Source\Modules\CollisionModule</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidUpgradeModule.h">
+      <Filter>Source\Modules\UpgradeModule</Filter>
+    </ClInclude>
+    <ClInclude Include="RunUtils.h">
+      <Filter>Source\Utils\RunUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="ResetComponents.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TransitionSystem.h">
+      <Filter>Source\Systems\TransitionSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidTransitionModule.h">
+      <Filter>Source\Modules\TransitionModule</Filter>
+    </ClInclude>
+    <ClInclude Include="TransitionComponents.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UIBlinkComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UIBlinkSystem.h">
+      <Filter>Source\Systems\UIBlinkSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidUIBlinkModule.h">
+      <Filter>Source\Modules\UIBlinkModule</Filter>
+    </ClInclude>
+    <ClInclude Include="BeginStageComponent.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSystem.h">
+      <Filter>Source\Systems\AudioSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ArkanoidAudioModule.h">
+      <Filter>Source\Modules\AudioModule</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

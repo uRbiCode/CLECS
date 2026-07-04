@@ -29,9 +29,6 @@
     <Filter Include="Source\Core\World\InputState">
       <UniqueIdentifier>{5d0bc376-5b17-4e3a-9fc1-d6ce94603068}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Core\World\EventBus">
-      <UniqueIdentifier>{c4632161-5607-48b3-8dfb-8232a51ee304}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Core\Component\Components">
       <UniqueIdentifier>{23d54fd1-235e-4ad3-99e6-303dddd1ad0b}</UniqueIdentifier>
     </Filter>
@@ -44,9 +41,6 @@
     <Filter Include="Source\Core\World\TextureManager">
       <UniqueIdentifier>{4b3d7598-da4d-419a-a9c3-3b35b9f49414}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Core\World\EventBus\Events">
-      <UniqueIdentifier>{e5579a31-ac92-4828-a7d7-a878202d9a42}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Core\World\AudioManager">
       <UniqueIdentifier>{5c648224-606f-43b0-a22e-43789ff36ae5}</UniqueIdentifier>
     </Filter>
@@ -56,19 +50,46 @@
     <Filter Include="Source\Core\Utils\SDLUtils">
       <UniqueIdentifier>{45a5158f-64cb-4955-b7e7-9a9b6e7acf9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\Archetype">
+      <UniqueIdentifier>{8545b04a-a761-4260-a1dd-67a616d4cce9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Module">
+      <UniqueIdentifier>{ece7377f-5d95-49ca-b876-f9e90408243e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\World\InitializationData">
+      <UniqueIdentifier>{6557ca33-3b2a-4d7b-b104-c504c4dd6e2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Module\Modules">
+      <UniqueIdentifier>{a8a234f9-0677-45cc-8703-678d3e73bf31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\Archetype\Commands">
+      <UniqueIdentifier>{0f8a81c6-c2ea-4b4a-9dd8-3d1c2385b7c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\Archetype\Commands\Utils">
+      <UniqueIdentifier>{59d69404-bdc7-415a-ad49-36fb3890ceca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\Query">
+      <UniqueIdentifier>{07412d86-3471-4155-98b2-b9f48c9a717f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\Archetype\Commands\Commands">
+      <UniqueIdentifier>{ebf02839-0a74-4120-a39b-d6569f773e69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\System\Systems\AudioSystems">
+      <UniqueIdentifier>{41433b68-b243-4838-923c-7da29a0789ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Module\Modules\AudioModule">
+      <UniqueIdentifier>{fda56248-db40-4d74-9c74-b423ca29f9ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Module\Modules\CoreModule">
+      <UniqueIdentifier>{91e8926e-fd21-4178-830e-001fe9bca948}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
       <Filter>Source\Core\World</Filter>
     </ClCompile>
-    <ClCompile Include="EntityAdmin.cpp">
-      <Filter>Source\Core\Entity</Filter>
-    </ClCompile>
     <ClCompile Include="GameRunner.cpp">
       <Filter>Source\GameEntry</Filter>
-    </ClCompile>
-    <ClCompile Include="WorldInitializationData.cpp">
-      <Filter>Source\Core\World</Filter>
     </ClCompile>
     <ClCompile Include="InputState.cpp">
       <Filter>Source\Core\World\InputState</Filter>
@@ -88,6 +109,36 @@
     <ClCompile Include="SDLUtils.cpp">
       <Filter>Source\Core\Utils\SDLUtils</Filter>
     </ClCompile>
+    <ClCompile Include="SystemsCollection.cpp">
+      <Filter>Source\Core\System</Filter>
+    </ClCompile>
+    <ClCompile Include="ArchetypeStorage.cpp">
+      <Filter>Source\Core\Archetype</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldInitializationData.cpp">
+      <Filter>Source\Core\World\InitializationData</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source\GameEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentTypesCollection.cpp">
+      <Filter>Source\Core\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="EntitySpawner.cpp">
+      <Filter>Source\Core\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Archetype.cpp">
+      <Filter>Source\Core\Archetype</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioRequestConsumerSystem.cpp">
+      <Filter>Source\Core\System\Systems\AudioSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioModule.cpp">
+      <Filter>Source\Module\Modules\AudioModule</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreModule.cpp">
+      <Filter>Source\Module\Modules\CoreModule</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="World.h">
@@ -102,12 +153,6 @@
     <ClInclude Include="CoreTypes.h">
       <Filter>Source\Core</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentPool.h">
-      <Filter>Source\Core\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="EntityAdmin.h">
-      <Filter>Source\Core\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="SystemContext.h">
       <Filter>Source\Core\System</Filter>
     </ClInclude>
@@ -116,9 +161,6 @@
     </ClInclude>
     <ClInclude Include="GameRunner.h">
       <Filter>Source\GameEntry</Filter>
-    </ClInclude>
-    <ClInclude Include="WorldInitializationData.h">
-      <Filter>Source\Core\World</Filter>
     </ClInclude>
     <ClInclude Include="RendererInitializationData.h">
       <Filter>Source\GameEntry</Filter>
@@ -129,20 +171,14 @@
     <ClInclude Include="InputState.h">
       <Filter>Source\Core\World\InputState</Filter>
     </ClInclude>
-    <ClInclude Include="EventBus.h">
-      <Filter>Source\Core\World\EventBus</Filter>
-    </ClInclude>
     <ClInclude Include="ShapeComponents.h">
       <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
-    <ClInclude Include="TransformComponent.h">
+    <ClInclude Include="PositionComponent.h">
       <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
     <ClInclude Include="RenderSystem.h">
       <Filter>Source\Core\System\Systems\RenderSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderComponent.h">
-      <Filter>Source\Core\Component\Components</Filter>
     </ClInclude>
     <ClInclude Include="TextureComponent.h">
       <Filter>Source\Core\Component\Components</Filter>
@@ -152,9 +188,6 @@
     </ClInclude>
     <ClInclude Include="RenderConstants.h">
       <Filter>Source\Core\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="MouseClickEvent.h">
-      <Filter>Source\Core\World\EventBus\Events</Filter>
     </ClInclude>
     <ClInclude Include="AudioManager.h">
       <Filter>Source\Core\World\AudioManager</Filter>
@@ -168,14 +201,86 @@
     <ClInclude Include="SDLUtils.h">
       <Filter>Source\Core\Utils\SDLUtils</Filter>
     </ClInclude>
-    <ClInclude Include="RingBuffer.h">
-      <Filter>Source\Core\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="SystemCollection.h">
+    <ClInclude Include="SystemsCollection.h">
       <Filter>Source\Core\System</Filter>
     </ClInclude>
-    <ClInclude Include="SystemQuery.h">
+    <ClInclude Include="Archetype.h">
+      <Filter>Source\Core\Archetype</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleBase.h">
+      <Filter>Source\Module</Filter>
+    </ClInclude>
+    <ClInclude Include="ArchetypeStorage.h">
+      <Filter>Source\Core\Archetype</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldInitializationData.h">
+      <Filter>Source\Core\World\InitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentsInitializationData.h">
+      <Filter>Source\Core\World\InitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemsInitializationData.h">
+      <Filter>Source\Core\World\InitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="StartupSystemsInitializationData.h">
+      <Filter>Source\Core\World\InitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="ModulesInitializationData.h">
+      <Filter>Source\Core\World\InitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentTypesCollection.h">
+      <Filter>Source\Core\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="EntitySpawner.h">
+      <Filter>Source\Core\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandTypes.h">
+      <Filter>Source\Core\Archetype\Commands\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Query.h">
+      <Filter>Source\Core\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="ArchetypeHandle.h">
+      <Filter>Source\Core\Archetype</Filter>
+    </ClInclude>
+    <ClInclude Include="QueryContext.h">
+      <Filter>Source\Core\Query</Filter>
+    </ClInclude>
+    <ClInclude Include="AddComponentsCommand.h">
+      <Filter>Source\Core\Archetype\Commands\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="AddEntitiesCommand.h">
+      <Filter>Source\Core\Archetype\Commands\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoveEntitiesCommand.h">
+      <Filter>Source\Core\Archetype\Commands\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandRunner.h">
+      <Filter>Source\Core\Archetype\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoveComponentsCommand.h">
+      <Filter>Source\Core\Archetype\Commands\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Column.h">
+      <Filter>Source\Core\Archetype</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemPhases.h">
       <Filter>Source\Core\System</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderComponents.h">
+      <Filter>Source\Core\Component\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioRequestConsumerSystem.h">
+      <Filter>Source\Core\System\Systems\AudioSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioRequestComponents.h">
+      <Filter>Source\Core\Component\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioModule.h">
+      <Filter>Source\Module\Modules\AudioModule</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreModule.h">
+      <Filter>Source\Module\Modules\CoreModule</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

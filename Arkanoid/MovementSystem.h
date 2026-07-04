@@ -1,12 +1,12 @@
 #pragma once
-#include "SystemQuery.h"
-#include "VelocityComponent.h"
-#include "TransformComponent.h"
+
+struct SystemContext;
 
 /* Responsible for updating the movement of entities.
- * So basically applies velocity to transform.
+ * So basically applies velocity to position.
  */
 namespace MovementSystem
 {
-	void Update(SystemQuery<Writes<TransformComponent>, Reads<VelocityComponent>>& Query, const SystemContext& Context, float DeltaTime);
+	void ResolveMovementChanges(SystemContext& Context, float DeltaTime);
+	void ResolveMovement(SystemContext& Context, float DeltaTime);
 }
