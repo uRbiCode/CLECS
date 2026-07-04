@@ -49,22 +49,37 @@ namespace
 			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 			const Vector2D<float> TitleRectSize = { LogicalPresentation.X * 1.f, LogicalPresentation.Y * 0.1f };
 
-			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> AddTitleTextCommand(5);
-			AddTitleTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * 0.25f} },
-				RectComponent{ SDL_FRect{ -TitleRectSize.X * 0.5f, -TitleRectSize.Y * 0.5f, TitleRectSize.X, TitleRectSize.Y } },
+			AddEntitiesCommand<PositionComponent, UIRenderComponent, TextComponent> AddTextCommand(5);
+			AddTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.15f, LogicalPresentation.Y * 0.15f} },
 				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 				TextComponent{ Constants::Title, GlobalConstants::FontFilePath, Constants::TitleFontSize });
-			Context.Commands.Submit(std::move(AddTitleTextCommand));
+			Context.Commands.Submit(std::move(AddTextCommand));
+
+			const auto IndexToXOffset = [](size_t Index) -> float
+			{
+				switch (Index)
+				{
+					case 0:
+						return 0.09f;
+					case 1:
+						return 0.06f;
+					case 2:
+						return 0.16f;
+					case 3:
+						return 0.41f;
+					default:
+						return 0.f;
+				}
+			};
 
 			for (size_t i = 0; i < std::size(Constants::TextLines); ++i)
 			{
-				AddTitleTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * (0.42f + i * 0.1f)} },
-					RectComponent{ SDL_FRect{ -TitleRectSize.X * 0.5f, -TitleRectSize.Y * 0.5f, TitleRectSize.X, TitleRectSize.Y } },
+				AddTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * IndexToXOffset(i), LogicalPresentation.Y * (0.42f + i * 0.07f)} },
 					UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 					TextComponent{ Constants::TextLines[i], GlobalConstants::FontFilePath, Constants::ButtonFontSize });
 			}
 
-			Context.Commands.Submit(std::move(AddTitleTextCommand));
+			Context.Commands.Submit(std::move(AddTextCommand));
 		}
 
 		void AddTutorialControls(SystemContext& Context)
@@ -110,7 +125,7 @@ namespace
 			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 
 			AddEntitiesCommand<PositionComponent, UIRenderComponent, TextComponent> AddTitleTextCommand(1);
-			AddTitleTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.20f, LogicalPresentation.Y * 0.15f} },
+			AddTitleTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.2f, LogicalPresentation.Y * 0.15f} },
 				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 				TextComponent{ MainMenu::Constants::TitleText, GlobalConstants::FontFilePath, MainMenu::Constants::TitleFontSize });
 
