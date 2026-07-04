@@ -10,11 +10,11 @@ struct ModulesInitializationData
 	requires std::derived_from<Module, ModuleBase>
 	void RegisterModule()
 	{
-		Modules.insert_or_assign(typeid(Module), std::make_unique<Module>());
+		Modules.push_back(std::make_unique<Module>());
 	}
 
-	const std::unordered_map<std::type_index, std::unique_ptr<ModuleBase>>& GetRegisteredModules() const { return Modules; }
+	const std::vector<std::unique_ptr<ModuleBase>>& GetRegisteredModules() const { return Modules; }
 
 private:
-	std::unordered_map<std::type_index, std::unique_ptr<ModuleBase>> Modules;
+	std::vector<std::unique_ptr<ModuleBase>> Modules;
 };

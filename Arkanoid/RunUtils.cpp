@@ -108,6 +108,7 @@ void RunUtils::SpawnTrigger(SystemContext& Context, TriggerData&& Data)
 	AddTriggerCommand.WithEntry(PositionComponent{ Data.PositionSize.Position },
 		RectComponent{ SDL_FRect{ -Data.PositionSize.Size.X * 0.5f, -Data.PositionSize.Size.Y * 0.5f, Data.PositionSize.Size.X, Data.PositionSize.Size.Y } },
 		HealthComponent{ GetPersistentPlayerHealth(Context)});
+
 	Context.Commands.Submit(std::move(AddTriggerCommand));
 }
 
@@ -123,6 +124,7 @@ void RunUtils::SpawnPlayer(SystemContext& Context, PlayerData&& Data)
 		PlayerMoveSpeedComponent{ Constants::PlayerMoveSpeed, 0.f },
 		GameRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 		TextureComponent{ Context.Managers.TextureManager.GetTexture(Data.TextureData.Path), Data.TextureData.SourceRect });
+
 	Context.Commands.Submit(std::move(AddPlayerCommand));
 }
 
@@ -138,6 +140,7 @@ void RunUtils::SpawnBall(SystemContext& Context, BallData&& Data)
 		GameRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 		TextureComponent{ Context.Managers.TextureManager.GetTexture(Data.TextureData.Path), Data.TextureData.SourceRect },
 		DamageComponent{ Constants::Damage });
+
 	Context.Commands.Submit(std::move(AddBallCommand));
 }
 

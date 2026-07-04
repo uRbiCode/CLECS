@@ -201,7 +201,7 @@ namespace
 			const Vector2D<float> RectSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.1f };
 
 			AddEntitiesCommand<PositionComponent, UIRenderComponent, TextComponent> AddStageInfoCommand(1);
-			AddStageInfoCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.75f, LogicalPresentation.Y * 0.92f} },
+			AddStageInfoCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.75f, LogicalPresentation.Y * 0.93f} },
 				UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 				TextComponent{ Run::BuildStageText(Context), GlobalConstants::FontFilePath, 24.f });
 
@@ -229,7 +229,7 @@ namespace
 
 			const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 			const Vector2D<float> RectSize = { LogicalPresentation.X * 0.05f, LogicalPresentation.Y * 0.05f };
-			const float PositionY = LogicalPresentation.Y * 0.95f;
+			const float PositionY = LogicalPresentation.Y * 0.96f;
 
 			AddEntitiesCommand<PositionComponent, RectComponent, UIRenderComponent, TextureComponent> AddHealthIndicatorsCommand(GlobalConstants::InitialPlayerHealth);
 			for (int i = 0; i < PlayerHealth; ++i)

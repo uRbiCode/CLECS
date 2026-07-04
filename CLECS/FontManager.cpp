@@ -54,7 +54,6 @@ TTF_Font* FontManager::GetFont(const std::string& FilePath, float PointSize)
     if (It != FontCache.end())
         return It->second;
 
-	SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "FontManager::GetFont -> Font %s size %f not found in cache", FilePath.c_str(), PointSize);
     return LoadFont(FilePath, PointSize);
 }
 

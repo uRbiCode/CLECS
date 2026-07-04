@@ -15,7 +15,7 @@ struct BackgroundRenderComponent;
 using BallQuery = Query<WritesList<>, ReadsList<PositionComponent, CircleComponent, DamageComponent>, ExcludeList<>>;
 using BricksQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, HealthComponent, GameRenderComponent>, ExcludeList<>>;
 using PaddleQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, PlayerMoveSpeedComponent>, ExcludeList<>>;
-using WallsQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, GameRenderComponent>, ExcludeList<HealthComponent>>;
+using WallsQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, GameRenderComponent>, ExcludeList<HealthComponent, PlayerMoveSpeedComponent>>;
 using TriggerQuery = Query<WritesList<>, ReadsList<PositionComponent, RectComponent, HealthComponent>, ExcludeList<GameRenderComponent, BackgroundRenderComponent>>;
 
 namespace CollisionUtils

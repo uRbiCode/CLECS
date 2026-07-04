@@ -166,6 +166,6 @@ void CollisionSystem::UpdateBallVelocity(SystemContext& Context, float DeltaTime
 	const Query<WritesList<VelocityComponent>, ReadsList<CircleComponent, CollisionComponent>, ExcludeList<>> VelocityQuery(Context.QueryContext);
 	VelocityQuery.ForEach([&](Entity Entity, VelocityComponent& Velocity, const CircleComponent& Circle, const CollisionComponent& Collision)
 	{
-		Velocity.Velocity *= 1.05f;
+		Velocity.Velocity *= 1.01f;
 	});
 }

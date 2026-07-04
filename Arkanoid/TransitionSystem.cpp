@@ -29,7 +29,7 @@ namespace
 	{
 		const PaddleQuery Paddle(Context.QueryContext);
 		const BricksQuery Bricks(Context.QueryContext);
-		return Paddle.Size() > 1 && Bricks.Size() < 1;
+		return Paddle.Size() > 0 && Bricks.Size() < 1;
 	}
 
 	bool IsRunLost(SystemContext& Context)
@@ -38,7 +38,7 @@ namespace
 		bool IsTriggerDead = false;
 		Trigger.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, const HealthComponent& Health)
 		{
-			IsTriggerDead &= Health.CurrentHealth < 1;
+			IsTriggerDead |= Health.CurrentHealth < 1;
 		});
 		return IsTriggerDead;
 	}
