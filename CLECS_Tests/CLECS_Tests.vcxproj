@@ -113,7 +113,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="TestsTypes.h" />
+    <ClInclude Include="TrackedComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddComponentsCommandTests.cpp" />

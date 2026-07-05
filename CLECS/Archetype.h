@@ -16,7 +16,7 @@ constexpr size_t InvalidColumnIndex = SIZE_MAX;
 class Archetype
 {
 public:
-	template<typename... Components>
+	template<ComponentType... Components>
 	static Archetype MakeArchetype(const ComponentTypesCollection& Types)
 	{
 
@@ -122,7 +122,7 @@ public:
         return Columns[ColumnIndex].AccessData<T>();
     }
 
-    template<typename... Components>
+    template<ComponentType... Components>
     void EmplaceTypedRow(const ComponentTypesCollection& TypeMap, Entity E, Components&&... Values)
     {
         Entities.push_back(E);

@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="TestsTypes.h">
+    <ClInclude Include="TrackedComponent.h">
       <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>

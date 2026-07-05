@@ -16,7 +16,7 @@ public:
 		return *this;
 	}
 
-	const std::vector<Entity>& GetEntries() { return Entries; }
+	const std::vector<Entity>& GetEntries() const { return Entries; }
 
 private:
 	std::vector<Entity> Entries;

@@ -1,58 +1,66 @@
 #include "pch.h"
 #include "RemoveEntitiesCommand.cpp"
 
+const Entity Entity1(1);
+const Entity Entity2(2);
+const Entity Entity3(3);
 TEST(RemoveEntitiesCommandTest, Construct_Empty_GetEntriesIsEmpty)
 {
-    RemoveEntitiesCommand Cmd(4);
-    EXPECT_TRUE(Cmd.GetEntries().empty());
+    const RemoveEntitiesCommand Command(4);
+    EXPECT_TRUE(Command.GetEntries().empty());
 }
 
 TEST(RemoveEntitiesCommandTest, WithEntry_SingleEntity_SizeIsOne)
 {
-    RemoveEntitiesCommand Cmd(1);
-    Cmd.WithEntry(Entity(1));
-    EXPECT_EQ(Cmd.GetEntries().size(), 1u);
+    RemoveEntitiesCommand Command(1);
+    Command.WithEntry(Entity1);
+    EXPECT_EQ(Command.GetEntries().size(), 1u);
 }
 
 TEST(RemoveEntitiesCommandTest, WithEntry_SingleEntity_CorrectEntityStored)
 {
-    RemoveEntitiesCommand Cmd(1);
-    Cmd.WithEntry(Entity(42));
-    EXPECT_EQ(Cmd.GetEntries()[0], Entity(42));
+    RemoveEntitiesCommand Command(1);
+    Command.WithEntry(Entity1);
+    EXPECT_EQ(Command.GetEntries()[0], Entity1);
 }
 
 TEST(RemoveEntitiesCommandTest, WithEntry_MultipleEntities_AllPresent)
 {
-    RemoveEntitiesCommand Cmd(3);
-    Cmd.WithEntry(Entity(1));
-    Cmd.WithEntry(Entity(2));
-    Cmd.WithEntry(Entity(3));
+    RemoveEntitiesCommand Command(3);
+    Command.WithEntry(Entity1);
+    Command.WithEntry(Entity2);
+    Command.WithEntry(Entity3);
 
-    const auto& Entries = Cmd.GetEntries();
+    const std::vector<Entity>& Entries = Command.GetEntries();
     ASSERT_EQ(Entries.size(), 3u);
-    EXPECT_EQ(Entries[0], Entity(1));
-    EXPECT_EQ(Entries[1], Entity(2));
-    EXPECT_EQ(Entries[2], Entity(3));
+    EXPECT_EQ(Entries[0], Entity1);
+    EXPECT_EQ(Entries[1], Entity2);
+    EXPECT_EQ(Entries[2], Entity3);
 }
 
 TEST(RemoveEntitiesCommandTest, WithEntry_PreservesInsertionOrder)
 {
-    RemoveEntitiesCommand Cmd(4);
-    Cmd.WithEntry(Entity(10));
-    Cmd.WithEntry(Entity(5));
-    Cmd.WithEntry(Entity(20));
+    RemoveEntitiesCommand Command(4);
+    Command.WithEntry(Entity3);
+    Command.WithEntry(Entity1);
+    Command.WithEntry(Entity2);
 
-    const auto& Entries = Cmd.GetEntries();
-    EXPECT_EQ(Entries[0], Entity(10));
-    EXPECT_EQ(Entries[1], Entity(5));
-    EXPECT_EQ(Entries[2], Entity(20));
+    const std::vector<Entity>& Entries = Command.GetEntries();
+    EXPECT_EQ(Entries[0], Entity3);
+    EXPECT_EQ(Entries[1], Entity1);
+    EXPECT_EQ(Entries[2], Entity2);
 }
 
-TEST(RemoveEntitiesCommandTest, WithEntry_Chaining_AllEntriesStored)
+TEST(RemoveEntitiesCommandTest, WithEntry_Chaining_AllEntriesStoredInOrder)
 {
-    RemoveEntitiesCommand Cmd(3);
-    Cmd.WithEntry(Entity(1))
-       .WithEntry(Entity(2))
-       .WithEntry(Entity(3));
-    EXPECT_EQ(Cmd.GetEntries().size(), 3u);
+    RemoveEntitiesCommand Command(3);
+    Command.WithEntry(Entity2)
+           .WithEntry(Entity3)
+           .WithEntry(Entity1);
+
+    const std::vector<Entity>& Entries = Command.GetEntries();
+    ASSERT_EQ(Entries.size(), 3u);
+    EXPECT_EQ(Entries[0], Entity2);
+	EXPECT_EQ(Entries[1], Entity3);
+	EXPECT_EQ(Entries[2], Entity1);
 }
