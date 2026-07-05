@@ -13,7 +13,6 @@
 #include "DamageComponent.h"
 #include "PlayerMoveSpeedComponent.h"
 #include "ResetComponents.h"
-#include "UpgradeComponents.h"
 
 namespace
 {

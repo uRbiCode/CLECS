@@ -8,7 +8,6 @@
 #include "RenderComponents.h"
 #include "GlobalConstants.h"
 #include "CollisionUtils.h"
-#include "RenderComponents.h"
 #include "ShapeComponents.h"
 #include "PositionComponent.h"
 #include "TextureComponent.h"
@@ -39,9 +38,9 @@ void HealthSystem::UpdateDisplayedHealth(SystemContext& Context, [[maybe_unused]
 		return A.second > B.second; 
 	});
 
-	TotalHealthChange = std::abs(TotalHealthChange);
-	RemoveEntitiesCommand RemoveHealthIndicatorsCommand(TotalHealthChange);
-	for (int i = 0; i < TotalHealthChange; ++i)
+	const size_t SignedHealthChange = static_cast<size_t>(std::abs(TotalHealthChange));
+	RemoveEntitiesCommand RemoveHealthIndicatorsCommand(SignedHealthChange);
+	for (size_t i = 0; i < SignedHealthChange; ++i)
 	{
 		RemoveHealthIndicatorsCommand.WithEntry(HealthIndicatorsToRemove[i].first);
 	}

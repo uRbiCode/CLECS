@@ -16,11 +16,15 @@ public:
 	template<typename... Components>
 	static Archetype MakeArchetype(const ComponentTypesCollection& Types)
 	{
+
+#pragma warning(push)
+#pragma warning(disable : 4820)
 		struct Entry
 		{
 			ComponentTypeId Id;
 			ColumnDescription Description;
 		};
+#pragma warning(pop)
 
 		std::array<Entry, sizeof...(Components)> Entries
 		{ 
@@ -52,11 +56,14 @@ public:
     template<ComponentType... NewComponents>
     static Archetype MakeExtended(const Archetype& Existing, const ComponentTypesCollection& Types)
     {
+#pragma warning(push)
+#pragma warning(disable : 4820)
         struct Entry
         {
             ComponentTypeId Id;
             ColumnDescription Description;
         };
+#pragma warning(pop)
 
         std::vector<Entry> Entries;
         Entries.reserve(Existing.ComponentTypes.size() + sizeof...(NewComponents));
@@ -90,7 +97,9 @@ public:
         }
 
         for (size_t i = 0; i < Arch.ComponentTypes.size(); ++i)
+        {
             Arch.ColumnIndexCache[Arch.ComponentTypes[i]] = i;
+        }
 
         return Arch;
     }

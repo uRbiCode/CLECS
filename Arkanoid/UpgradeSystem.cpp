@@ -54,7 +54,7 @@ namespace
 			return;
 		}
 
-		const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+		const Vector2D<float> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 		const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.4f };
 		const float UpgradeCount = static_cast<float>(Upgrades.size());
 		const float TotalWidth = LogicalPresentation.X * 0.8f;
