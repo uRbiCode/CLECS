@@ -2,73 +2,83 @@
 #include "ComponentsInitializationData.h"
 #include "CommandRunner.cpp"
 
-struct PosComp { float X = 0.f; float Y = 0.f; };
-struct VelComp { float DX = 0.f; float DY = 0.f; };
-struct TagComp { int Tag = 0; };
+struct TestComponent
+{
+    float X = 0.f;
+    float Y = 0.f;
+};
 
-class CommandRunnerTest : public ::testing::Test
+struct AnotherTestComponent
+{
+    float DX = 0.f;
+    float DY = 0.f;
+};
+
+class CommandRunnerTest : public testing::Test
 {
 protected:
     ArchetypeStorage Storage = MakeStorage();
-    CommandRunner Runner;
+    CommandRunner Runner{};
 
-    size_t CountEntitiesWithPos()
+    size_t CountEntitiesWithTestComponent()
     {
         size_t Total = 0;
-        for (const auto& H : Storage.AccessArchetypesWithComponents<PosComp>())
+        for (const ArchetypeHandle<TestComponent>& Handle : Storage.AccessArchetypesWithComponents<TestComponent>())
         {
-            Total += H.Size();
+            Total += Handle.Size();
         }
         return Total;
     }
 
-    void Flush() { Runner.Flush(Storage); }
+    void Flush() 
+    { 
+        Runner.Flush(Storage); 
+    }
 
 private:
     static ArchetypeStorage MakeStorage()
     {
         ComponentsInitializationData Data;
-        Data.RegisterComponent<PosComp>();
-        Data.RegisterComponent<VelComp>();
-        Data.RegisterComponent<TagComp>();
+        Data.RegisterComponent<TestComponent>();
+        Data.RegisterComponent<AnotherTestComponent>();
         return ArchetypeStorage::Create(ComponentTypesCollection::Create(std::move(Data)));
     }
 };
 
 TEST_F(CommandRunnerTest, Submit_AddEntities_DeferredUntilFlush)
 {
-    auto Cmd = AddEntitiesCommand<PosComp>(1);
-    Cmd.WithEntry(PosComp{1.f, 2.f});
-    Runner.Submit(std::move(Cmd));
+    AddEntitiesCommand<TestComponent> Command(1);
+    Command.WithEntry(TestComponent{1.f, 2.f});
+    Runner.Submit(std::move(Command));
 
-    EXPECT_EQ(CountEntitiesWithPos(), 0u);
+    EXPECT_EQ(CountEntitiesWithTestComponent(), 0u);
 }
 
 TEST_F(CommandRunnerTest, Submit_RemoveEntities_DeferredUntilFlush)
 {
-    auto DirectCmd = AddEntitiesCommand<PosComp>(1);
-    DirectCmd.WithEntry(PosComp{});
-    Storage.EmplaceEntities(std::move(DirectCmd));
-    ASSERT_EQ(CountEntitiesWithPos(), 1u);
+    AddEntitiesCommand<TestComponent> Command(1);
+    Command.WithEntry(TestComponent{});
+    Storage.EmplaceEntities(std::move(Command));
+    ASSERT_EQ(CountEntitiesWithTestComponent(), 1u);
 
-    const Entity E = Storage.AccessArchetypesWithComponents<PosComp>()[0].GetEntities()[0];
+    const Entity E = Storage.AccessArchetypesWithComponents<TestComponent>()[0].GetEntities()[0];
 
-    auto RemoveCmd = RemoveEntitiesCommand(1);
-    RemoveCmd.WithEntry(E);
-    Runner.Submit(std::move(RemoveCmd));
+    RemoveEntitiesCommand RemoveCommand(1);
+    RemoveCommand.WithEntry(E);
+    Runner.Submit(std::move(RemoveCommand));
 
-    EXPECT_EQ(CountEntitiesWithPos(), 1u);
+    EXPECT_EQ(CountEntitiesWithTestComponent(), 1u);
 }
 
 TEST_F(CommandRunnerTest, Submit_AddEntities_AfterFlush_EntityVisible)
 {
-    auto Cmd = AddEntitiesCommand<PosComp>(1);
-    Cmd.WithEntry(PosComp{3.f, 4.f});
-    Runner.Submit(std::move(Cmd));
+    AddEntitiesCommand<TestComponent> Command(1);
+    Command.WithEntry(TestComponent{3.f, 4.f});
+    Runner.Submit(std::move(Command));
     Flush();
 
-    ASSERT_EQ(CountEntitiesWithPos(), 1u);
-    const PosComp* Data = Storage.AccessArchetypesWithComponents<PosComp>()[0].GetComponents<PosComp>();
+    ASSERT_EQ(CountEntitiesWithTestComponent(), 1u);
+    const TestComponent* Data = Storage.AccessArchetypesWithComponents<TestComponent>()[0].GetComponents<TestComponent>();
     ASSERT_NE(Data, nullptr);
     EXPECT_FLOAT_EQ(Data[0].X, 3.f);
     EXPECT_FLOAT_EQ(Data[0].Y, 4.f);
@@ -76,137 +86,199 @@ TEST_F(CommandRunnerTest, Submit_AddEntities_AfterFlush_EntityVisible)
 
 TEST_F(CommandRunnerTest, Submit_AddEntities_MultipleEntries_AllVisible)
 {
-    auto Cmd = AddEntitiesCommand<PosComp>(3);
-    Cmd.WithEntry(PosComp{1.f, 0.f});
-    Cmd.WithEntry(PosComp{2.f, 0.f});
-    Cmd.WithEntry(PosComp{3.f, 0.f});
-    Runner.Submit(std::move(Cmd));
+    AddEntitiesCommand<TestComponent> Command(1);
+    Command.WithEntry(TestComponent{1.f, 0.f});
+    Command.WithEntry(TestComponent{2.f, 0.f});
+    Command.WithEntry(TestComponent{3.f, 0.f});
+    Runner.Submit(std::move(Command));
     Flush();
 
-    EXPECT_EQ(CountEntitiesWithPos(), 3u);
+    EXPECT_EQ(CountEntitiesWithTestComponent(), 3u);
 }
 
 TEST_F(CommandRunnerTest, Submit_AddEntities_MultipleComponents_AllColumnsCorrect)
 {
-    auto Cmd = AddEntitiesCommand<PosComp, VelComp>(1);
-    Cmd.WithEntry(PosComp{1.f, 2.f}, VelComp{5.f, 6.f});
-    Runner.Submit(std::move(Cmd));
+    AddEntitiesCommand<TestComponent, AnotherTestComponent> Command(1);
+    Command.WithEntry(TestComponent{1.f, 2.f}, AnotherTestComponent{5.f, 6.f});
+    Runner.Submit(std::move(Command));
     Flush();
 
-    auto Handles = Storage.AccessArchetypesWithComponents<PosComp, VelComp>();
+    const std::vector<ArchetypeHandle<TestComponent, AnotherTestComponent>>& Handles = Storage.AccessArchetypesWithComponents<TestComponent, AnotherTestComponent>();
     ASSERT_EQ(Handles.size(), 1u);
-    EXPECT_FLOAT_EQ(Handles[0].GetComponents<PosComp>()[0].X, 1.f);
-    EXPECT_FLOAT_EQ(Handles[0].GetComponents<VelComp>()[0].DX, 5.f);
+    EXPECT_FLOAT_EQ(Handles[0].GetComponents<TestComponent>()[0].X, 1.f);
+    EXPECT_FLOAT_EQ(Handles[0].GetComponents<TestComponent>()[0].Y, 2.f);
+    EXPECT_FLOAT_EQ(Handles[0].GetComponents<AnotherTestComponent>()[0].DX, 5.f);
+    EXPECT_FLOAT_EQ(Handles[0].GetComponents<AnotherTestComponent>()[0].DY, 6.f);
 }
 
 TEST_F(CommandRunnerTest, Submit_RemoveEntities_AfterFlush_EntityGone)
 {
-    auto AddCmd = AddEntitiesCommand<PosComp>(1);
-    AddCmd.WithEntry(PosComp{});
-    Storage.EmplaceEntities(std::move(AddCmd));
-    const Entity E = Storage.AccessArchetypesWithComponents<PosComp>()[0].GetEntities()[0];
+    AddEntitiesCommand<TestComponent> Command(1);
+    Command.WithEntry(TestComponent{});
+    Storage.EmplaceEntities(std::move(Command));
+    const Entity E = Storage.AccessArchetypesWithComponents<TestComponent>()[0].GetEntities()[0];
 
-    auto RemoveCmd = RemoveEntitiesCommand(1);
-    RemoveCmd.WithEntry(E);
-    Runner.Submit(std::move(RemoveCmd));
+    RemoveEntitiesCommand RemoveCommand(1);
+    RemoveCommand.WithEntry(E);
+    Runner.Submit(std::move(RemoveCommand));
     Flush();
 
-    EXPECT_EQ(CountEntitiesWithPos(), 0u);
+    EXPECT_EQ(CountEntitiesWithTestComponent(), 0u);
 }
 
 TEST_F(CommandRunnerTest, Submit_RemoveEntities_OneOfTwo_OtherRemains)
 {
-    auto AddCmd = AddEntitiesCommand<PosComp>(2);
-    AddCmd.WithEntry(PosComp{1.f, 0.f});
-    AddCmd.WithEntry(PosComp{2.f, 0.f});
-    Storage.EmplaceEntities(std::move(AddCmd));
-    const Entity First = Storage.AccessArchetypesWithComponents<PosComp>()[0].GetEntities()[0];
+    AddEntitiesCommand<TestComponent> Command(2);
+    Command.WithEntry(TestComponent{1.f, 0.f});
+    Command.WithEntry(TestComponent{2.f, 0.f});
+    Storage.EmplaceEntities(std::move(Command));
 
-    auto RemoveCmd = RemoveEntitiesCommand(1);
-    RemoveCmd.WithEntry(First);
-    Runner.Submit(std::move(RemoveCmd));
+    const Entity First = Storage.AccessArchetypesWithComponents<TestComponent>()[0].GetEntities()[0];
+
+    RemoveEntitiesCommand RemoveCommand(1);
+    RemoveCommand.WithEntry(First);
+    Runner.Submit(std::move(RemoveCommand));
     Flush();
 
-    EXPECT_EQ(CountEntitiesWithPos(), 1u);
+    EXPECT_EQ(CountEntitiesWithTestComponent(), 1u);
 }
 
 TEST_F(CommandRunnerTest, Submit_AddComponents_AfterFlush_EntityMigratedToExtendedArchetype)
 {
-    auto AddCmd = AddEntitiesCommand<PosComp>(1);
-    AddCmd.WithEntry(PosComp{1.f, 2.f});
-    Storage.EmplaceEntities(std::move(AddCmd));
-    const Entity E = Storage.AccessArchetypesWithComponents<PosComp>()[0].GetEntities()[0];
+    AddEntitiesCommand<TestComponent> Command(1);
+    Command.WithEntry(TestComponent{1.f, 2.f});
+    Storage.EmplaceEntities(std::move(Command));
+    const Entity E = Storage.AccessArchetypesWithComponents<TestComponent>()[0].GetEntities()[0];
 
-    auto CompCmd = AddComponentsCommand<VelComp>(1);
-    CompCmd.WithEntry(E, VelComp{5.f, 6.f});
-    Runner.Submit(std::move(CompCmd));
+	AddComponentsCommand<AnotherTestComponent> ComponentsCommand(1);
+    ComponentsCommand.WithEntry(E, AnotherTestComponent{5.f, 6.f});
+    Runner.Submit(std::move(ComponentsCommand));
     Flush();
 
-    auto Handles = Storage.AccessArchetypesWithComponents<PosComp, VelComp>();
+    const std::vector<ArchetypeHandle<TestComponent, AnotherTestComponent>>& Handles = Storage.AccessArchetypesWithComponents<TestComponent, AnotherTestComponent>();
     ASSERT_EQ(Handles.size(), 1u);
     EXPECT_EQ(Handles[0].Size(), 1u);
-    EXPECT_FLOAT_EQ(Handles[0].GetComponents<VelComp>()[0].DX, 5.f);
+    EXPECT_FLOAT_EQ(Handles[0].GetComponents<AnotherTestComponent>()[0].DX, 5.f);
+    EXPECT_FLOAT_EQ(Handles[0].GetComponents<AnotherTestComponent>()[0].DY, 6.f);
 }
 
 TEST_F(CommandRunnerTest, Submit_RemoveComponents_AfterFlush_EntityMigratedToReducedArchetype)
 {
-    auto AddCmd = AddEntitiesCommand<PosComp, VelComp>(1);
-    AddCmd.WithEntry(PosComp{1.f, 2.f}, VelComp{5.f, 6.f});
-    Storage.EmplaceEntities(std::move(AddCmd));
-    const Entity E = Storage.AccessArchetypesWithComponents<PosComp, VelComp>()[0].GetEntities()[0];
+    AddEntitiesCommand<TestComponent, AnotherTestComponent> Command(1);
+    Command.WithEntry(TestComponent{1.f, 2.f}, AnotherTestComponent{5.f, 6.f});
+    Storage.EmplaceEntities(std::move(Command));
+    const Entity E = Storage.AccessArchetypesWithComponents<TestComponent, AnotherTestComponent>()[0].GetEntities()[0];
 
-    auto RemoveCmd = RemoveComponentsCommand<VelComp>(1);
-    RemoveCmd.WithEntry(E);
-    Runner.Submit(std::move(RemoveCmd));
+    RemoveComponentsCommand<AnotherTestComponent> RemoveCommand(1);
+    RemoveCommand.WithEntry(E);
+    Runner.Submit(std::move(RemoveCommand));
     Flush();
 
-    auto PosHandles = Storage.AccessArchetypesWithComponents<PosComp>();
-    ASSERT_EQ(PosHandles.size(), 1u);
-    EXPECT_EQ(PosHandles[0].Size(), 1u);
-    EXPECT_FLOAT_EQ(PosHandles[0].GetComponents<PosComp>()[0].X, 1.f);
+    const std::vector<ArchetypeHandle<TestComponent>>& Handles = Storage.AccessArchetypesWithComponents<TestComponent>();
+    ASSERT_EQ(Handles.size(), 1u);
+    EXPECT_EQ(Handles[0].Size(), 1u);
+    EXPECT_FLOAT_EQ(Handles[0].GetComponents<TestComponent>()[0].X, 1.f);
+    EXPECT_FLOAT_EQ(Handles[0].GetComponents<TestComponent>()[0].Y, 2.f);
 }
 
 TEST_F(CommandRunnerTest, Submit_MultipleCommands_ExecutedInOrder)
 {
-    auto AddCmd = AddEntitiesCommand<PosComp>(1);
-    AddCmd.WithEntry(PosComp{});
-    Runner.Submit(std::move(AddCmd));
+    AddEntitiesCommand<TestComponent> Command(1);
+    Command.WithEntry(TestComponent{});
+    Runner.Submit(std::move(Command));
 
     Flush();
-    ASSERT_EQ(CountEntitiesWithPos(), 1u);
+    ASSERT_EQ(CountEntitiesWithTestComponent(), 1u);
+    const Entity E = Storage.AccessArchetypesWithComponents<TestComponent>()[0].GetEntities()[0];
 
-    const Entity E = Storage.AccessArchetypesWithComponents<PosComp>()[0].GetEntities()[0];
-
-    auto RemoveCmd = RemoveEntitiesCommand(1);
-    RemoveCmd.WithEntry(E);
-    Runner.Submit(std::move(RemoveCmd));
+    RemoveEntitiesCommand RemoveCommand(1);
+    RemoveCommand.WithEntry(E);
+    Runner.Submit(std::move(RemoveCommand));
     Flush();
 
-    EXPECT_EQ(CountEntitiesWithPos(), 0u);
+    EXPECT_EQ(CountEntitiesWithTestComponent(), 0u);
 }
 
 TEST_F(CommandRunnerTest, Flush_ClearsQueue_SecondFlushIsNoOp)
 {
-    auto Cmd = AddEntitiesCommand<PosComp>(1);
-    Cmd.WithEntry(PosComp{});
-    Runner.Submit(std::move(Cmd));
+    AddEntitiesCommand<TestComponent> Command(1);
+	Command.WithEntry(TestComponent{});
+    Runner.Submit(std::move(Command));
     Flush();
-    ASSERT_EQ(CountEntitiesWithPos(), 1u);
-
+    ASSERT_EQ(CountEntitiesWithTestComponent(), 1u);
     Flush();
-    EXPECT_EQ(CountEntitiesWithPos(), 1u);
+    EXPECT_EQ(CountEntitiesWithTestComponent(), 1u);
 }
 
 TEST_F(CommandRunnerTest, Submit_TwoAddCommands_BothFlushedTogether)
 {
-    auto CmdA = AddEntitiesCommand<PosComp>(1);
-    CmdA.WithEntry(PosComp{1.f, 0.f});
-    Runner.Submit(std::move(CmdA));
+    AddEntitiesCommand<TestComponent> CommandA(1);
+    CommandA.WithEntry(TestComponent{1.f, 0.f});
+    Runner.Submit(std::move(CommandA));
 
-    auto CmdB = AddEntitiesCommand<PosComp>(1);
-    CmdB.WithEntry(PosComp{2.f, 0.f});
-    Runner.Submit(std::move(CmdB));
-
+    AddEntitiesCommand<TestComponent> CommandB(1);
+    CommandB.WithEntry(TestComponent{2.f, 0.f});
+    Runner.Submit(std::move(CommandB));
     Flush();
-    EXPECT_EQ(CountEntitiesWithPos(), 2u);
+    EXPECT_EQ(CountEntitiesWithTestComponent(), 2u);
+}
+
+TEST_F(CommandRunnerTest, Submit_AddSameComponent_OldValuePersists)
+{
+    AddEntitiesCommand<TestComponent> CommandA(1);
+    CommandA.WithEntry(TestComponent{1.f, 0.f});
+    Runner.Submit(std::move(CommandA));
+    Flush();
+    ASSERT_EQ(CountEntitiesWithTestComponent(), 1u);
+
+    const Entity E = Storage.AccessArchetypesWithComponents<TestComponent>()[0].GetEntities()[0];
+
+	AddComponentsCommand<TestComponent> CommandB(1);
+    CommandB.WithEntry(E, TestComponent{2.f, 0.f});
+    Runner.Submit(std::move(CommandB));
+    Flush();
+
+    const std::vector<ArchetypeHandle<TestComponent>>& Handles = Storage.AccessArchetypesWithComponents<TestComponent>();
+    ASSERT_EQ(Handles.size(), 1u);
+	EXPECT_FLOAT_EQ(Handles[0].GetComponents<TestComponent>()[0].X, 1.f);
+}
+
+TEST_F(CommandRunnerTest, Submit_RemoveNonexistentEntity_NoEffect)
+{
+    AddEntitiesCommand<TestComponent> Command(1);
+    Command.WithEntry(TestComponent{});
+    Storage.EmplaceEntities(std::move(Command));
+    Flush();
+    ASSERT_EQ(CountEntitiesWithTestComponent(), 1u);
+
+    RemoveEntitiesCommand RemoveCommand(1);
+    RemoveCommand.WithEntry(Entity(9999u));
+    Runner.Submit(std::move(RemoveCommand));
+    Flush();
+    EXPECT_EQ(CountEntitiesWithTestComponent(), 1u);
+}
+
+TEST_F(CommandRunnerTest, Submit_AddComponentsToNonexistentEntity_NoEffect)
+{
+    AddComponentsCommand<AnotherTestComponent> AddCommand(1);
+    AddCommand.WithEntry(Entity(9999u), AnotherTestComponent{});
+    Runner.Submit(std::move(AddCommand));
+    Flush();
+    EXPECT_TRUE(Storage.AccessArchetypesWithComponents<AnotherTestComponent>().empty());
+}
+
+TEST_F(CommandRunnerTest, Submit_RemoveComponentFromEntityNotOwningIt_NoEffect)
+{
+	AddEntitiesCommand<TestComponent> Command(1);
+	Command.WithEntry(TestComponent{10.f, 10.f});
+	Runner.Submit(std::move(Command));
+    Flush();
+
+    const Entity E = Storage.AccessArchetypesWithComponents<TestComponent>()[0].GetEntities()[0];
+
+    RemoveComponentsCommand<AnotherTestComponent> RemoveCommand(1);
+    RemoveCommand.WithEntry(E);
+    Runner.Submit(std::move(RemoveCommand));
+    Flush();
+    EXPECT_TRUE(CountEntitiesWithTestComponent(), 1u);
 }

@@ -2,71 +2,88 @@
 #include "AddComponentsCommand.h"
 #include "Entity.cpp"
 
-struct PosComp { float X = 0.f; float Y = 0.f; };
-struct VelComp { float DX = 0.f; float DY = 0.f; };
+struct TestComponent 
+{ 
+    float X = 0.f; 
+    float Y = 0.f; 
+};
+
+struct AnotherTestComponent 
+{ 
+    float DX = 0.f; 
+    float DY = 0.f; 
+};
+
+const Entity Entity1(1);
+const Entity Entity2(2);
+const Entity Entity3(3);
 
 TEST(AddComponentsCommandTest, Construct_Empty_GetEntriesIsEmpty)
 {
-    AddComponentsCommand<PosComp> Cmd(4);
-    EXPECT_TRUE(Cmd.AccessEntries().empty());
+    AddComponentsCommand<TestComponent> Command(4);
+    EXPECT_TRUE(Command.AccessEntries().empty());
 }
 
 TEST(AddComponentsCommandTest, WithEntry_SingleEntry_SizeIsOne)
 {
-    AddComponentsCommand<PosComp> Cmd(1);
-    Cmd.WithEntry(Entity(1), PosComp{1.f, 2.f});
-    EXPECT_EQ(Cmd.AccessEntries().size(), 1u);
+    AddComponentsCommand<TestComponent> Command(1);
+    Command.WithEntry(Entity1, TestComponent{1.f, 2.f});
+    EXPECT_EQ(Command.AccessEntries().size(), 1u);
 }
 
 TEST(AddComponentsCommandTest, WithEntry_SingleEntry_EntityIsCorrect)
 {
-    AddComponentsCommand<PosComp> Cmd(1);
-    Cmd.WithEntry(Entity(7), PosComp{});
-
-    EXPECT_EQ(Cmd.AccessEntries()[0].first, Entity(7));
+    AddComponentsCommand<TestComponent> Command(1);
+    Command.WithEntry(Entity1, TestComponent{});
+    EXPECT_EQ(Command.AccessEntries()[0].first, Entity1);
 }
 
 TEST(AddComponentsCommandTest, WithEntry_SingleEntry_ComponentValuesCorrect)
 {
-    AddComponentsCommand<PosComp> Cmd(1);
-    Cmd.WithEntry(Entity(1), PosComp{3.f, 4.f});
+    AddComponentsCommand<TestComponent> Command(1);
+    Command.WithEntry(Entity1, TestComponent{3.f, 4.f});
 
-    const auto& Tuple = Cmd.AccessEntries()[0].second;
-    EXPECT_FLOAT_EQ(std::get<PosComp>(Tuple).X, 3.f);
-    EXPECT_FLOAT_EQ(std::get<PosComp>(Tuple).Y, 4.f);
+    const std::tuple<TestComponent>& ComponentsTuple = Command.AccessEntries()[0].second;
+    EXPECT_FLOAT_EQ(std::get<TestComponent>(ComponentsTuple).X, 3.f);
+    EXPECT_FLOAT_EQ(std::get<TestComponent>(ComponentsTuple).Y, 4.f);
 }
 
 TEST(AddComponentsCommandTest, WithEntry_MultipleEntries_AllPresent)
 {
-    AddComponentsCommand<PosComp> Cmd(3);
-    Cmd.WithEntry(Entity(1), PosComp{1.f, 0.f});
-    Cmd.WithEntry(Entity(2), PosComp{2.f, 0.f});
-    Cmd.WithEntry(Entity(3), PosComp{3.f, 0.f});
+    AddComponentsCommand<TestComponent> Command(3);
+    Command.WithEntry(Entity1, TestComponent{1.f, 0.f});
+    Command.WithEntry(Entity2, TestComponent{2.f, 0.f});
+    Command.WithEntry(Entity3, TestComponent{3.f, 0.f});
 
-    const auto& Entries = Cmd.AccessEntries();
+    const std::vector<std::pair<Entity, std::tuple<TestComponent>>>& Entries = Command.AccessEntries();
     ASSERT_EQ(Entries.size(), 3u);
-    EXPECT_EQ(Entries[0].first, Entity(1));
-    EXPECT_EQ(Entries[1].first, Entity(2));
-    EXPECT_EQ(Entries[2].first, Entity(3));
+    EXPECT_EQ(Entries[0].first, Entity1);
+    EXPECT_EQ(Entries[1].first, Entity2);
+    EXPECT_EQ(Entries[2].first, Entity3);
 }
 
 TEST(AddComponentsCommandTest, WithEntry_MultipleComponents_AllTupleValuesCorrect)
 {
-    AddComponentsCommand<PosComp, VelComp> Cmd(1);
-    Cmd.WithEntry(Entity(1), PosComp{1.f, 2.f}, VelComp{5.f, 6.f});
+    AddComponentsCommand<TestComponent, AnotherTestComponent> Command(1);
+    Command.WithEntry(Entity1, TestComponent{1.f, 2.f}, AnotherTestComponent{5.f, 6.f});
 
-    const auto& Tuple = Cmd.AccessEntries()[0].second;
-    EXPECT_FLOAT_EQ(std::get<PosComp>(Tuple).X, 1.f);
-    EXPECT_FLOAT_EQ(std::get<PosComp>(Tuple).Y, 2.f);
-    EXPECT_FLOAT_EQ(std::get<VelComp>(Tuple).DX, 5.f);
-    EXPECT_FLOAT_EQ(std::get<VelComp>(Tuple).DY, 6.f);
+    const std::tuple<TestComponent, AnotherTestComponent>& ComponentsTuple = Command.AccessEntries()[0].second;
+    EXPECT_FLOAT_EQ(std::get<TestComponent>(ComponentsTuple).X, 1.f);
+    EXPECT_FLOAT_EQ(std::get<TestComponent>(ComponentsTuple).Y, 2.f);
+    EXPECT_FLOAT_EQ(std::get<AnotherTestComponent>(ComponentsTuple).DX, 5.f);
+    EXPECT_FLOAT_EQ(std::get<AnotherTestComponent>(ComponentsTuple).DY, 6.f);
 }
 
-TEST(AddComponentsCommandTest, WithEntry_Chaining_AllEntriesStored)
+TEST(AddComponentsCommandTest, WithEntry_Chaining_AllEntriesStoredInOrder)
 {
-    AddComponentsCommand<PosComp> Cmd(3);
-    Cmd.WithEntry(Entity(1), PosComp{1.f, 0.f})
-       .WithEntry(Entity(2), PosComp{2.f, 0.f})
-       .WithEntry(Entity(3), PosComp{3.f, 0.f});
-    EXPECT_EQ(Cmd.AccessEntries().size(), 3u);
+    AddComponentsCommand<TestComponent> Command(3);
+    Command.WithEntry(Entity3, TestComponent{1.f, 0.f})
+           .WithEntry(Entity1, TestComponent{2.f, 0.f})
+           .WithEntry(Entity2, TestComponent{3.f, 0.f});
+
+	const std::vector<std::pair<Entity, std::tuple<TestComponent>>>& Entries = Command.AccessEntries();
+    ASSERT_EQ(Entries.size(), 3u);
+    EXPECT_EQ(Entries[0].first, Entity3);
+    EXPECT_EQ(Entries[1].first, Entity1);
+    EXPECT_EQ(Entries[2].first, Entity2);
 }

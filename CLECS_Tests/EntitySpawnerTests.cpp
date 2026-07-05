@@ -23,7 +23,7 @@ TEST(EntitySpawnerTest, CreateEntity_SequentialCalls_IdsAreUnique)
 {
     EntitySpawner Spawner;
     std::unordered_set<EntityId> Ids;
-    for (int i = 0; i < 100; ++i)
+    for (EntityId i = 0; i < 100; ++i)
     {
         Ids.insert(Spawner.CreateEntity().GetId());
     }

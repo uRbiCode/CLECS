@@ -1,13 +1,25 @@
 #include "pch.h"
 #include "ComponentsInitializationData.h"
 #include "Archetype.cpp"
-#include "TestsTypes.h"
+#include "TrackedComponent.h"
 
-struct PosComp  { float X = 0.f; float Y = 0.f; };
-struct VelComp  { float DX = 0.f; float DY = 0.f; };
-struct TagComp  { int Tag = 0; };
+struct ArchetypeTestComponent  
+{ 
+    float X = 0.f; 
+    float Y = 0.f; 
+};
 
-class ArchetypeTest : public ::testing::Test
+struct AnotherArchetypeTestComponent  
+{ 
+    float DX = 0.f; 
+    float DY = 0.f; 
+};
+
+struct ArchetypeTagComponent
+{
+};
+
+class ArchetypeTest : public testing::Test
 {
 protected:
     ComponentTypesCollection Types;
@@ -15,115 +27,114 @@ protected:
     void SetUp() override
     {
         ComponentsInitializationData Data;
-        Data.RegisterComponent<PosComp>();
-        Data.RegisterComponent<VelComp>();
-        Data.RegisterComponent<TagComp>();
-        Data.RegisterComponent<TrackedComp>();
+        Data.RegisterComponent<ArchetypeTestComponent>();
+        Data.RegisterComponent<AnotherArchetypeTestComponent>();
+        Data.RegisterComponent<ArchetypeTagComponent>();
+        Data.RegisterComponent<TrackedComponent>();
         Types = ComponentTypesCollection::Create(std::move(Data));
     }
 };
 
 TEST_F(ArchetypeTest, MakeArchetype_SingleComponent_SizeIsZero)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
+    const Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
     EXPECT_EQ(Arch.Size(), 0u);
 }
 
 TEST_F(ArchetypeTest, MakeArchetype_SingleComponent_HasComponentType)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
-    EXPECT_TRUE(Arch.HasComponentType(Types.GetComponentTypeId<PosComp>()));
+    const Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    EXPECT_TRUE(Arch.HasComponentType(Types.GetComponentTypeId<ArchetypeTestComponent>()));
 }
 
 TEST_F(ArchetypeTest, MakeArchetype_SingleComponent_DoesNotHaveOtherTypes)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
-    EXPECT_FALSE(Arch.HasComponentType(Types.GetComponentTypeId<VelComp>()));
-    EXPECT_FALSE(Arch.HasComponentType(Types.GetComponentTypeId<TagComp>()));
+    const Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    EXPECT_FALSE(Arch.HasComponentType(Types.GetComponentTypeId<AnotherArchetypeTestComponent>()));
+    EXPECT_FALSE(Arch.HasComponentType(Types.GetComponentTypeId<ArchetypeTagComponent>()));
 }
 
 TEST_F(ArchetypeTest, MakeArchetype_MultipleComponents_AllTypesPresent)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp, VelComp>(Types);
-    EXPECT_TRUE(Arch.HasComponentType(Types.GetComponentTypeId<PosComp>()));
-    EXPECT_TRUE(Arch.HasComponentType(Types.GetComponentTypeId<VelComp>()));
+    const Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent>(Types);
+    EXPECT_TRUE(Arch.HasComponentType(Types.GetComponentTypeId<ArchetypeTestComponent>()));
+    EXPECT_TRUE(Arch.HasComponentType(Types.GetComponentTypeId<AnotherArchetypeTestComponent>()));
 }
 
 TEST_F(ArchetypeTest, MakeArchetype_ComponentsAreSortedById)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp, VelComp, TagComp>(Types);
+    const Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent, ArchetypeTagComponent>(Types);
 
-    const size_t IdxPos = Arch.GetColumnIndex(Types.GetComponentTypeId<PosComp>());
-    const size_t IdxVel = Arch.GetColumnIndex(Types.GetComponentTypeId<VelComp>());
-    const size_t IdxTag = Arch.GetColumnIndex(Types.GetComponentTypeId<TagComp>());
-
-    EXPECT_NE(IdxPos, SIZE_MAX);
-    EXPECT_NE(IdxVel, SIZE_MAX);
-    EXPECT_NE(IdxTag, SIZE_MAX);
-    EXPECT_NE(IdxPos, IdxVel);
-    EXPECT_NE(IdxPos, IdxTag);
-    EXPECT_NE(IdxVel, IdxTag);
+    const size_t TestIndex = Arch.GetColumnIndex(Types.GetComponentTypeId<ArchetypeTestComponent>());
+    const size_t AnotherTestIndex = Arch.GetColumnIndex(Types.GetComponentTypeId<AnotherArchetypeTestComponent>());
+    const size_t TagIndex = Arch.GetColumnIndex(Types.GetComponentTypeId<ArchetypeTagComponent>());
+    EXPECT_NE(TestIndex, InvalidColumnIndex);
+    EXPECT_NE(AnotherTestIndex, InvalidColumnIndex);
+    EXPECT_NE(TagIndex, InvalidColumnIndex);
+    EXPECT_NE(TestIndex, AnotherTestIndex);
+    EXPECT_NE(TestIndex, TagIndex);
+    EXPECT_NE(AnotherTestIndex, TagIndex);
 }
 
 TEST_F(ArchetypeTest, GetColumnIndex_RegisteredType_ReturnsValidIndex)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
-    const size_t Idx = Arch.GetColumnIndex(Types.GetComponentTypeId<PosComp>());
-    EXPECT_NE(Idx, SIZE_MAX);
+    const Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    const size_t TestIndex = Arch.GetColumnIndex(Types.GetComponentTypeId<ArchetypeTestComponent>());
+    EXPECT_NE(TestIndex, InvalidColumnIndex);
 }
 
-TEST_F(ArchetypeTest, GetColumnIndex_UnregisteredType_ReturnsSizeMax)
+TEST_F(ArchetypeTest, GetColumnIndex_UnregisteredType_ReturnsInvalid)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
-    const size_t Idx = Arch.GetColumnIndex(Types.GetComponentTypeId<VelComp>());
-    EXPECT_EQ(Idx, SIZE_MAX);
+    const Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    const size_t AnotherTestIndex = Arch.GetColumnIndex(Types.GetComponentTypeId<AnotherArchetypeTestComponent>());
+    EXPECT_EQ(AnotherTestIndex, InvalidColumnIndex);
 }
 
 TEST_F(ArchetypeTest, HasComponentType_PresentType_ReturnsTrue)
 {
-    auto Arch = Archetype::MakeArchetype<VelComp>(Types);
-    EXPECT_TRUE(Arch.HasComponentType(Types.GetComponentTypeId<VelComp>()));
+    const Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    EXPECT_TRUE(Arch.HasComponentType(Types.GetComponentTypeId<ArchetypeTestComponent>()));
 }
 
 TEST_F(ArchetypeTest, HasComponentType_AbsentType_ReturnsFalse)
 {
-    auto Arch = Archetype::MakeArchetype<VelComp>(Types);
-    EXPECT_FALSE(Arch.HasComponentType(Types.GetComponentTypeId<PosComp>()));
+    const Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    EXPECT_FALSE(Arch.HasComponentType(Types.GetComponentTypeId<AnotherArchetypeTestComponent>()));
 }
 
 TEST_F(ArchetypeTest, EmplaceTypedRow_IncreasesSize)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
-    Arch.EmplaceTypedRow(Types, Entity(1), PosComp{1.f, 2.f});
+    Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    Arch.EmplaceTypedRow(Types, Entity(1), ArchetypeTestComponent{1.f, 2.f});
     EXPECT_EQ(Arch.Size(), 1u);
 }
 
 TEST_F(ArchetypeTest, EmplaceTypedRow_MultipleRows_SizeIsCorrect)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
-    Arch.EmplaceTypedRow(Types, Entity(1), PosComp{1.f, 0.f});
-    Arch.EmplaceTypedRow(Types, Entity(2), PosComp{2.f, 0.f});
-    Arch.EmplaceTypedRow(Types, Entity(3), PosComp{3.f, 0.f});
+    Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    Arch.EmplaceTypedRow(Types, Entity(1), ArchetypeTestComponent{1.f, 0.f});
+    Arch.EmplaceTypedRow(Types, Entity(2), ArchetypeTestComponent{2.f, 0.f});
+    Arch.EmplaceTypedRow(Types, Entity(3), ArchetypeTestComponent{3.f, 0.f});
     EXPECT_EQ(Arch.Size(), 3u);
 }
 
 TEST_F(ArchetypeTest, EmplaceTypedRow_EntityIsStoredInGetEntities)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
-    Arch.EmplaceTypedRow(Types, Entity(42), PosComp{});
+    Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    Arch.EmplaceTypedRow(Types, Entity(42), ArchetypeTestComponent{});
 
-    const auto& Entities = Arch.GetEntities();
+    const std::vector<Entity>& Entities = Arch.GetEntities();
     ASSERT_EQ(Entities.size(), 1u);
     EXPECT_EQ(Entities[0], Entity(42));
 }
 
 TEST_F(ArchetypeTest, AccessColumn_ReturnsCorrectValues)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
-    Arch.EmplaceTypedRow(Types, Entity(1), PosComp{3.f, 4.f});
+    Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    Arch.EmplaceTypedRow(Types, Entity(1), ArchetypeTestComponent{3.f, 4.f});
 
-    const size_t ColIdx = Arch.GetColumnIndex(Types.GetComponentTypeId<PosComp>());
-    const PosComp* Data = Arch.AccessColumn<PosComp>(ColIdx);
+    const size_t ColumnIndex = Arch.GetColumnIndex(Types.GetComponentTypeId<ArchetypeTestComponent>());
+    const ArchetypeTestComponent* Data = Arch.AccessColumn<ArchetypeTestComponent>(ColumnIndex);
     ASSERT_NE(Data, nullptr);
     EXPECT_FLOAT_EQ(Data[0].X, 3.f);
     EXPECT_FLOAT_EQ(Data[0].Y, 4.f);
@@ -131,12 +142,12 @@ TEST_F(ArchetypeTest, AccessColumn_ReturnsCorrectValues)
 
 TEST_F(ArchetypeTest, GetColumn_ConstAccess_ReturnsCorrectValues)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
-    Arch.EmplaceTypedRow(Types, Entity(1), PosComp{5.f, 6.f});
+    Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    Arch.EmplaceTypedRow(Types, Entity(1), ArchetypeTestComponent{5.f, 6.f});
 
     const Archetype& ConstArch = Arch;
-    const size_t ColIdx = ConstArch.GetColumnIndex(Types.GetComponentTypeId<PosComp>());
-    const PosComp* Data = ConstArch.GetColumn<PosComp>(ColIdx);
+    const size_t ColumnIndex = ConstArch.GetColumnIndex(Types.GetComponentTypeId<ArchetypeTestComponent>());
+    const ArchetypeTestComponent* Data = ConstArch.GetColumn<ArchetypeTestComponent>(ColumnIndex);
     ASSERT_NE(Data, nullptr);
     EXPECT_FLOAT_EQ(Data[0].X, 5.f);
     EXPECT_FLOAT_EQ(Data[0].Y, 6.f);
@@ -144,50 +155,51 @@ TEST_F(ArchetypeTest, GetColumn_ConstAccess_ReturnsCorrectValues)
 
 TEST_F(ArchetypeTest, EmplaceTypedRow_MultipleComponents_AllColumnsPopulated)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp, VelComp>(Types);
-    Arch.EmplaceTypedRow(Types, Entity(1), PosComp{1.f, 2.f}, VelComp{3.f, 4.f});
+    Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent>(Types);
+    Arch.EmplaceTypedRow(Types, Entity(1), ArchetypeTestComponent{1.f, 2.f}, AnotherArchetypeTestComponent{3.f, 4.f});
 
-    const size_t PosIdx = Arch.GetColumnIndex(Types.GetComponentTypeId<PosComp>());
-    const size_t VelIdx = Arch.GetColumnIndex(Types.GetComponentTypeId<VelComp>());
-
-    EXPECT_FLOAT_EQ(Arch.AccessColumn<PosComp>(PosIdx)[0].X, 1.f);
-    EXPECT_FLOAT_EQ(Arch.AccessColumn<VelComp>(VelIdx)[0].DX, 3.f);
+    const size_t TestIndex = Arch.GetColumnIndex(Types.GetComponentTypeId<ArchetypeTestComponent>());
+    const size_t AnotherTestIndex = Arch.GetColumnIndex(Types.GetComponentTypeId<AnotherArchetypeTestComponent>());
+    EXPECT_FLOAT_EQ(Arch.AccessColumn<ArchetypeTestComponent>(TestIndex)[0].X, 1.f);
+    EXPECT_FLOAT_EQ(Arch.AccessColumn<ArchetypeTestComponent>(TestIndex)[0].Y, 2.f);
+    EXPECT_FLOAT_EQ(Arch.AccessColumn<AnotherArchetypeTestComponent>(AnotherTestIndex)[0].DX, 3.f);
+    EXPECT_FLOAT_EQ(Arch.AccessColumn<AnotherArchetypeTestComponent>(AnotherTestIndex)[0].DY, 4.f);
 }
 
 TEST_F(ArchetypeTest, Reserve_DoesNotChangeSize)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp, VelComp>(Types);
+    Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent>(Types);
     Arch.Reserve(100);
     EXPECT_EQ(Arch.Size(), 0u);
 }
 
 TEST_F(ArchetypeTest, Reserve_AllowsSubsequentEmplace)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
+    Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
     Arch.Reserve(5);
-    for (int i = 0; i < 5; ++i)
+    for (EntityId i = 0; i < 5; ++i)
     {
-        Arch.EmplaceTypedRow(Types, Entity(i), PosComp{});
+        Arch.EmplaceTypedRow(Types, Entity(i), ArchetypeTestComponent{});
     }
     EXPECT_EQ(Arch.Size(), 5u);
 }
 
 TEST_F(ArchetypeTest, SwapRemoveRow_DecreasesSize)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
-    Arch.EmplaceTypedRow(Types, Entity(1), PosComp{});
+    Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    Arch.EmplaceTypedRow(Types, Entity(1), ArchetypeTestComponent{});
     Arch.SwapRemoveRow(Entity(1));
     EXPECT_EQ(Arch.Size(), 0u);
 }
 
 TEST_F(ArchetypeTest, SwapRemoveRow_EntityIsRemovedFromGetEntities)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
-    Arch.EmplaceTypedRow(Types, Entity(1), PosComp{});
-    Arch.EmplaceTypedRow(Types, Entity(2), PosComp{});
+    Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    Arch.EmplaceTypedRow(Types, Entity(1), ArchetypeTestComponent{});
+    Arch.EmplaceTypedRow(Types, Entity(2), ArchetypeTestComponent{});
     Arch.SwapRemoveRow(Entity(1));
 
-    const auto& Entities = Arch.GetEntities();
+    const std::vector<Entity>& Entities = Arch.GetEntities();
     EXPECT_EQ(Entities.size(), 1u);
     for (const Entity& E : Entities)
     {
@@ -197,20 +209,20 @@ TEST_F(ArchetypeTest, SwapRemoveRow_EntityIsRemovedFromGetEntities)
 
 TEST_F(ArchetypeTest, SwapRemoveRow_RemainingEntityDataIsPreserved)
 {
-    auto Arch = Archetype::MakeArchetype<PosComp>(Types);
-    Arch.EmplaceTypedRow(Types, Entity(1), PosComp{10.f, 0.f});
-    Arch.EmplaceTypedRow(Types, Entity(2), PosComp{99.f, 0.f});
+    Archetype Arch = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    Arch.EmplaceTypedRow(Types, Entity(1), ArchetypeTestComponent{10.f, 0.f});
+    Arch.EmplaceTypedRow(Types, Entity(2), ArchetypeTestComponent{99.f, 0.f});
     Arch.SwapRemoveRow(Entity(1));
 
-    const size_t ColIdx = Arch.GetColumnIndex(Types.GetComponentTypeId<PosComp>());
-    EXPECT_FLOAT_EQ(Arch.AccessColumn<PosComp>(ColIdx)[0].X, 99.f);
+    const size_t ColumnIndex = Arch.GetColumnIndex(Types.GetComponentTypeId<ArchetypeTestComponent>());
+    EXPECT_FLOAT_EQ(Arch.AccessColumn<ArchetypeTestComponent>(ColumnIndex)[0].X, 99.f);
 }
 
 TEST_F(ArchetypeTest, SwapRemoveRow_CallsDestructorOnRemovedRow)
 {
     int DestructCount = 0;
-    auto Arch = Archetype::MakeArchetype<TrackedComp>(Types);
-    Arch.EmplaceTypedRow(Types, Entity(1), TrackedComp{&DestructCount});
+    Archetype Arch = Archetype::MakeArchetype<TrackedComponent>(Types);
+    Arch.EmplaceTypedRow(Types, Entity(1), TrackedComponent{&DestructCount});
     DestructCount = 0;
 
     Arch.SwapRemoveRow(Entity(1));
@@ -220,140 +232,140 @@ TEST_F(ArchetypeTest, SwapRemoveRow_CallsDestructorOnRemovedRow)
 
 TEST_F(ArchetypeTest, MakeExtended_AddsNewComponent_HasAllTypes)
 {
-    auto Base = Archetype::MakeArchetype<PosComp>(Types);
-    auto Extended = Archetype::MakeExtended<VelComp>(Base, Types);
+    const Archetype Base = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    const Archetype Extended = Archetype::MakeExtended<AnotherArchetypeTestComponent>(Base, Types);
 
-    EXPECT_TRUE(Extended.HasComponentType(Types.GetComponentTypeId<PosComp>()));
-    EXPECT_TRUE(Extended.HasComponentType(Types.GetComponentTypeId<VelComp>()));
+    EXPECT_TRUE(Extended.HasComponentType(Types.GetComponentTypeId<ArchetypeTestComponent>()));
+    EXPECT_TRUE(Extended.HasComponentType(Types.GetComponentTypeId<AnotherArchetypeTestComponent>()));
 }
 
 TEST_F(ArchetypeTest, MakeExtended_SizeIsZero)
 {
-    auto Base = Archetype::MakeArchetype<PosComp>(Types);
-    auto Extended = Archetype::MakeExtended<VelComp>(Base, Types);
+    const Archetype Base = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    const Archetype Extended = Archetype::MakeExtended<AnotherArchetypeTestComponent>(Base, Types);
     EXPECT_EQ(Extended.Size(), 0u);
 }
 
 TEST_F(ArchetypeTest, MakeExtended_DuplicateComponent_NotAddedTwice)
 {
-    auto Base = Archetype::MakeArchetype<PosComp, VelComp>(Types);
-    auto Extended = Archetype::MakeExtended<VelComp>(Base, Types);
+    const Archetype Base = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent>(Types);
+    const Archetype Extended = Archetype::MakeExtended<AnotherArchetypeTestComponent>(Base, Types);
 
-    const size_t PosIdx = Extended.GetColumnIndex(Types.GetComponentTypeId<PosComp>());
-    const size_t VelIdx = Extended.GetColumnIndex(Types.GetComponentTypeId<VelComp>());
-    EXPECT_NE(PosIdx, SIZE_MAX);
-    EXPECT_NE(VelIdx, SIZE_MAX);
-    EXPECT_NE(PosIdx, VelIdx);
+    const size_t TestIndex = Extended.GetColumnIndex(Types.GetComponentTypeId<ArchetypeTestComponent>());
+    const size_t AnotherTestIndex = Extended.GetColumnIndex(Types.GetComponentTypeId<AnotherArchetypeTestComponent>());
+    EXPECT_NE(TestIndex, InvalidColumnIndex);
+    EXPECT_NE(AnotherTestIndex, InvalidColumnIndex);
+    EXPECT_NE(TestIndex, AnotherTestIndex);
 
-    EXPECT_FALSE(Extended.HasComponentType(Types.GetComponentTypeId<TagComp>()));
+    EXPECT_FALSE(Extended.HasComponentType(Types.GetComponentTypeId<ArchetypeTagComponent>()));
 }
 
 TEST_F(ArchetypeTest, MakeExtended_ColumnIndicesAreDistinct)
 {
-    auto Base = Archetype::MakeArchetype<PosComp>(Types);
-    auto Extended = Archetype::MakeExtended<VelComp, TagComp>(Base, Types);
+    const Archetype Base = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    const Archetype Extended = Archetype::MakeExtended<AnotherArchetypeTestComponent, ArchetypeTagComponent>(Base, Types);
 
-    const size_t IdxPos = Extended.GetColumnIndex(Types.GetComponentTypeId<PosComp>());
-    const size_t IdxVel = Extended.GetColumnIndex(Types.GetComponentTypeId<VelComp>());
-    const size_t IdxTag = Extended.GetColumnIndex(Types.GetComponentTypeId<TagComp>());
-    EXPECT_NE(IdxPos, IdxVel);
-    EXPECT_NE(IdxPos, IdxTag);
-    EXPECT_NE(IdxVel, IdxTag);
+    const size_t TestIndex = Extended.GetColumnIndex(Types.GetComponentTypeId<ArchetypeTestComponent>());
+    const size_t AnotherTestIndex = Extended.GetColumnIndex(Types.GetComponentTypeId<AnotherArchetypeTestComponent>());
+    const size_t TagIndex = Extended.GetColumnIndex(Types.GetComponentTypeId<ArchetypeTagComponent>());
+    EXPECT_NE(TestIndex, AnotherTestIndex);
+    EXPECT_NE(TestIndex, TagIndex);
+    EXPECT_NE(AnotherTestIndex, TagIndex);
 }
 
 TEST_F(ArchetypeTest, MakeNarrowed_HasOnlyRequestedTypes)
 {
-    auto Base = Archetype::MakeArchetype<PosComp, VelComp, TagComp>(Types);
-    const std::vector<ComponentTypeId> Key = { Types.GetComponentTypeId<PosComp>() };
-    auto Narrowed = Archetype::MakeNarrowed(Base, Key);
+    const Archetype Base = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent, ArchetypeTagComponent>(Types);
+    const std::vector<ComponentTypeId> Key = { Types.GetComponentTypeId<ArchetypeTestComponent>() };
+    const Archetype Narrowed = Archetype::MakeNarrowed(Base, Key);
 
-    EXPECT_TRUE(Narrowed.HasComponentType(Types.GetComponentTypeId<PosComp>()));
-    EXPECT_FALSE(Narrowed.HasComponentType(Types.GetComponentTypeId<VelComp>()));
-    EXPECT_FALSE(Narrowed.HasComponentType(Types.GetComponentTypeId<TagComp>()));
+    EXPECT_TRUE(Narrowed.HasComponentType(Types.GetComponentTypeId<ArchetypeTestComponent>()));
+    EXPECT_FALSE(Narrowed.HasComponentType(Types.GetComponentTypeId<AnotherArchetypeTestComponent>()));
+    EXPECT_FALSE(Narrowed.HasComponentType(Types.GetComponentTypeId<ArchetypeTagComponent>()));
 }
 
 TEST_F(ArchetypeTest, MakeNarrowed_SizeIsZero)
 {
-    auto Base = Archetype::MakeArchetype<PosComp, VelComp>(Types);
-    const std::vector<ComponentTypeId> Key = { Types.GetComponentTypeId<PosComp>() };
-    auto Narrowed = Archetype::MakeNarrowed(Base, Key);
+    const Archetype Base = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent>(Types);
+    const std::vector<ComponentTypeId> Key = { Types.GetComponentTypeId<ArchetypeTestComponent>() };
+    const Archetype Narrowed = Archetype::MakeNarrowed(Base, Key);
     EXPECT_EQ(Narrowed.Size(), 0u);
 }
 
 TEST_F(ArchetypeTest, MakeNarrowed_MultipleTypes_AllPresent)
 {
-    auto Base = Archetype::MakeArchetype<PosComp, VelComp, TagComp>(Types);
+    const Archetype Base = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent, ArchetypeTagComponent>(Types);
 
     std::vector<ComponentTypeId> Key =
     {
-        Types.GetComponentTypeId<PosComp>(),
-        Types.GetComponentTypeId<VelComp>()
+        Types.GetComponentTypeId<ArchetypeTestComponent>(),
+        Types.GetComponentTypeId<AnotherArchetypeTestComponent>()
     };
     std::ranges::sort(Key);
 
-    auto Narrowed = Archetype::MakeNarrowed(Base, Key);
-    EXPECT_TRUE(Narrowed.HasComponentType(Types.GetComponentTypeId<PosComp>()));
-    EXPECT_TRUE(Narrowed.HasComponentType(Types.GetComponentTypeId<VelComp>()));
-    EXPECT_FALSE(Narrowed.HasComponentType(Types.GetComponentTypeId<TagComp>()));
+    const Archetype Narrowed = Archetype::MakeNarrowed(Base, Key);
+    EXPECT_TRUE(Narrowed.HasComponentType(Types.GetComponentTypeId<ArchetypeTestComponent>()));
+    EXPECT_TRUE(Narrowed.HasComponentType(Types.GetComponentTypeId<AnotherArchetypeTestComponent>()));
+    EXPECT_FALSE(Narrowed.HasComponentType(Types.GetComponentTypeId<ArchetypeTagComponent>()));
 }
 
 TEST_F(ArchetypeTest, MigrateRowTo_SourceSizeDecreases)
 {
-    auto Src = Archetype::MakeArchetype<PosComp, VelComp>(Types);
-    auto Dst = Archetype::MakeArchetype<PosComp, VelComp>(Types);
+    Archetype Source = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent>(Types);
+    Archetype Destination = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent>(Types);
 
-    Src.EmplaceTypedRow(Types, Entity(1), PosComp{1.f, 2.f}, VelComp{3.f, 4.f});
-    Src.MigrateRowTo(Entity(1), Dst);
+    Source.EmplaceTypedRow(Types, Entity(1), ArchetypeTestComponent{1.f, 2.f}, AnotherArchetypeTestComponent{3.f, 4.f});
+    Source.MigrateRowTo(Entity(1), Destination);
 
-    EXPECT_EQ(Src.Size(), 0u);
+    EXPECT_EQ(Source.Size(), 0u);
 }
 
 TEST_F(ArchetypeTest, MigrateRowTo_DestinationSizeIncreases)
 {
-    auto Src = Archetype::MakeArchetype<PosComp, VelComp>(Types);
-    auto Dst = Archetype::MakeArchetype<PosComp, VelComp>(Types);
+    Archetype Source = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent>(Types);
+    Archetype Destination = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent>(Types);
 
-    Src.EmplaceTypedRow(Types, Entity(1), PosComp{1.f, 2.f}, VelComp{3.f, 4.f});
-    Src.MigrateRowTo(Entity(1), Dst);
+    Source.EmplaceTypedRow(Types, Entity(1), ArchetypeTestComponent{1.f, 2.f}, AnotherArchetypeTestComponent{3.f, 4.f});
+    Source.MigrateRowTo(Entity(1), Destination);
 
-    EXPECT_EQ(Dst.Size(), 1u);
+    EXPECT_EQ(Destination.Size(), 1u);
 }
 
 TEST_F(ArchetypeTest, MigrateRowTo_EntityAppearsInDestination)
 {
-    auto Src = Archetype::MakeArchetype<PosComp>(Types);
-    auto Dst = Archetype::MakeArchetype<PosComp>(Types);
+    Archetype Source = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    Archetype Destination = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
 
-    Src.EmplaceTypedRow(Types, Entity(7), PosComp{});
-    Src.MigrateRowTo(Entity(7), Dst);
+    Source.EmplaceTypedRow(Types, Entity(7), ArchetypeTestComponent{});
+    Source.MigrateRowTo(Entity(7), Destination);
 
-    const auto& Entities = Dst.GetEntities();
+    const std::vector<Entity>& Entities = Destination.GetEntities();
     ASSERT_EQ(Entities.size(), 1u);
     EXPECT_EQ(Entities[0], Entity(7));
 }
 
 TEST_F(ArchetypeTest, MigrateRowTo_ComponentDataIsPreservedInDestination)
 {
-    auto Src = Archetype::MakeArchetype<PosComp>(Types);
-    auto Dst = Archetype::MakeArchetype<PosComp>(Types);
+    Archetype Source = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
+    Archetype Destination = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
 
-    Src.EmplaceTypedRow(Types, Entity(1), PosComp{11.f, 22.f});
-    Src.MigrateRowTo(Entity(1), Dst);
+    Source.EmplaceTypedRow(Types, Entity(1), ArchetypeTestComponent{11.f, 22.f});
+    Source.MigrateRowTo(Entity(1), Destination);
 
-    const size_t ColIdx = Dst.GetColumnIndex(Types.GetComponentTypeId<PosComp>());
-    EXPECT_FLOAT_EQ(Dst.AccessColumn<PosComp>(ColIdx)[0].X, 11.f);
-    EXPECT_FLOAT_EQ(Dst.AccessColumn<PosComp>(ColIdx)[0].Y, 22.f);
+    const size_t TestIndex = Destination.GetColumnIndex(Types.GetComponentTypeId<ArchetypeTestComponent>());
+    EXPECT_FLOAT_EQ(Destination.AccessColumn<ArchetypeTestComponent>(TestIndex)[0].X, 11.f);
+    EXPECT_FLOAT_EQ(Destination.AccessColumn<ArchetypeTestComponent>(TestIndex)[0].Y, 22.f);
 }
 
 TEST_F(ArchetypeTest, MigrateRowTo_SubsetTarget_OnlySharedColumnsAreMigrated)
 {
-    auto Src = Archetype::MakeArchetype<PosComp, VelComp>(Types);
-    auto Dst = Archetype::MakeArchetype<PosComp>(Types);
+    Archetype Source = Archetype::MakeArchetype<ArchetypeTestComponent, AnotherArchetypeTestComponent>(Types);
+    Archetype Destination = Archetype::MakeArchetype<ArchetypeTestComponent>(Types);
 
-    Src.EmplaceTypedRow(Types, Entity(1), PosComp{5.f, 6.f}, VelComp{7.f, 8.f});
-    Src.MigrateRowTo(Entity(1), Dst);
+    Source.EmplaceTypedRow(Types, Entity(1), ArchetypeTestComponent{5.f, 6.f}, AnotherArchetypeTestComponent{7.f, 8.f});
+    Source.MigrateRowTo(Entity(1), Destination);
 
-    EXPECT_EQ(Dst.Size(), 1u);
-    const size_t PosIdx = Dst.GetColumnIndex(Types.GetComponentTypeId<PosComp>());
-    EXPECT_FLOAT_EQ(Dst.AccessColumn<PosComp>(PosIdx)[0].X, 5.f);
+    EXPECT_EQ(Destination.Size(), 1u);
+    const size_t TestIndex = Destination.GetColumnIndex(Types.GetComponentTypeId<ArchetypeTestComponent>());
+    EXPECT_FLOAT_EQ(Destination.AccessColumn<ArchetypeTestComponent>(TestIndex)[0].X, 5.f);
 }
