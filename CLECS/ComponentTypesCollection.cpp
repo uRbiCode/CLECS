@@ -14,3 +14,13 @@ ComponentTypesCollection ComponentTypesCollection::Create(ComponentsInitializati
 	}
 	return Collection;
 }
+
+size_t ComponentTypesCollection::GetSize() const
+{ 
+	return ComponentTypesIds.size(); 
+}
+
+const ComponentTypesMap& ComponentTypesCollection::GetRegisteredComponents() const
+{
+	return ComponentTypesIds;
+}

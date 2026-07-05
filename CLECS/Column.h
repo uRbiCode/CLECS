@@ -26,11 +26,11 @@ struct ColumnDescription
 
 struct Column
 {
-    Column(ColumnDescription&& InDescription) : Description(std::move(InDescription)) {}
+    Column(ColumnDescription&& InDescription);
 
-    size_t Size() const { return Data.size() / Description.ElementSize; }
+    size_t Size() const;
 
-    const ColumnDescription& GetDescription() const { return Description; }
+    const ColumnDescription& GetDescription() const;
 
 	template<ComponentType T>
     T* AccessData()
@@ -44,10 +44,7 @@ struct Column
         return static_cast<const T*>(GetRawData());
 	}
 
-    void Reserve(size_t Count)
-    {
-        Data.reserve(Count * Description.ElementSize);
-    }
+    void Reserve(size_t Count); 
 
     template<ComponentType T, typename... Args>
     void EmplaceBack(Args&&... Arguments)
@@ -57,31 +54,16 @@ struct Column
         new (Data.data() + Offset) T(std::forward<Args>(Arguments)...);
     }
 
-    // The caller is responsible for SwapRemoving SrcRow from Src afterward. 
-    void MoveAppendFrom(Column& Src, size_t SrcRow)
-    {
-        const size_t NewIdx = Size();
-        Data.resize(Data.size() + Description.ElementSize);
-        Description.MoveConstruct(At(NewIdx), Src.At(SrcRow));
-    }
+    // The caller is responsible for SwapRemoving SourceRow from Source afterward. 
+    void MoveAppendFrom(Column& Source, size_t SourceRow);
 
-    void SwapRemove(size_t Row)
-    {
-        const size_t LastRow = Size() - 1;
-        if (Row != LastRow)
-        {
-            Description.Destruct(At(Row));
-            Description.MoveConstruct(At(Row), At(LastRow));
-        }
-        Description.Destruct(At(LastRow));
-        Data.resize(Data.size() - Description.ElementSize);
-    }
+    void SwapRemove(size_t Row);    
 
 private:
-    void* AccessRawData() { return Data.data(); }
-    const void* GetRawData() const { return Data.data(); }
-    void* At(size_t Row) { return Data.data() + Row * Description.ElementSize; }
-    const void* At(size_t Row) const { return Data.data() + Row * Description.ElementSize; }
+    void* AccessRawData();
+    const void* GetRawData() const;
+    void* At(size_t Row);
+    const void* At(size_t Row) const;
 
     ColumnDescription Description;
     std::vector<uint8_t> Data;

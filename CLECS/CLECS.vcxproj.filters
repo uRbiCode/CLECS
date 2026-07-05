@@ -83,6 +83,21 @@
     <Filter Include="Source\Module\Modules\CoreModule">
       <UniqueIdentifier>{91e8926e-fd21-4178-830e-001fe9bca948}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Core\World\InitializationData\ModulesInitializationData">
+      <UniqueIdentifier>{38d60649-ab47-48bd-b305-33b95ced902a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\World\InitializationData\ComponentsInitializationData">
+      <UniqueIdentifier>{dba27c3f-6b2c-49a2-95b9-1500f4ec1604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\World\InitializationData\StartupSystemsInitializationData">
+      <UniqueIdentifier>{66a80416-7db4-4520-9e89-643163a0d2bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\World\InitializationData\SystemsInitializationData">
+      <UniqueIdentifier>{3b4beef4-b55f-491d-9502-efed79859b34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Core\World\InitializationData\WorldInitializationData">
+      <UniqueIdentifier>{50481e82-0284-4353-8b8b-a02563e0652a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="World.cpp">
@@ -115,9 +130,6 @@
     <ClCompile Include="ArchetypeStorage.cpp">
       <Filter>Source\Core\Archetype</Filter>
     </ClCompile>
-    <ClCompile Include="WorldInitializationData.cpp">
-      <Filter>Source\Core\World\InitializationData</Filter>
-    </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Source\GameEntry</Filter>
     </ClCompile>
@@ -138,6 +150,39 @@
     </ClCompile>
     <ClCompile Include="CoreModule.cpp">
       <Filter>Source\Module\Modules\CoreModule</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source\Core\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Column.cpp">
+      <Filter>Source\Core\Archetype</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoveEntitiesCommand.cpp">
+      <Filter>Source\Core\Archetype\Commands\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="QueryContext.cpp">
+      <Filter>Source\Core\Query</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandRunner.cpp">
+      <Filter>Source\Core\Archetype\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="ModulesInitializationData.cpp">
+      <Filter>Source\Core\World\InitializationData\ModulesInitializationData</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentsInitializationData.cpp">
+      <Filter>Source\Core\World\InitializationData\ComponentsInitializationData</Filter>
+    </ClCompile>
+    <ClCompile Include="StartupSystemsInitializationData.cpp">
+      <Filter>Source\Core\World\InitializationData\StartupSystemsInitializationData</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemsInitializationData.cpp">
+      <Filter>Source\Core\World\InitializationData\SystemsInitializationData</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldInitializationData.cpp">
+      <Filter>Source\Core\World\InitializationData\WorldInitializationData</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemContext.cpp">
+      <Filter>Source\Core\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,21 +258,6 @@
     <ClInclude Include="ArchetypeStorage.h">
       <Filter>Source\Core\Archetype</Filter>
     </ClInclude>
-    <ClInclude Include="WorldInitializationData.h">
-      <Filter>Source\Core\World\InitializationData</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentsInitializationData.h">
-      <Filter>Source\Core\World\InitializationData</Filter>
-    </ClInclude>
-    <ClInclude Include="SystemsInitializationData.h">
-      <Filter>Source\Core\World\InitializationData</Filter>
-    </ClInclude>
-    <ClInclude Include="StartupSystemsInitializationData.h">
-      <Filter>Source\Core\World\InitializationData</Filter>
-    </ClInclude>
-    <ClInclude Include="ModulesInitializationData.h">
-      <Filter>Source\Core\World\InitializationData</Filter>
-    </ClInclude>
     <ClInclude Include="ComponentTypesCollection.h">
       <Filter>Source\Core\Component</Filter>
     </ClInclude>
@@ -281,6 +311,21 @@
     </ClInclude>
     <ClInclude Include="CoreModule.h">
       <Filter>Source\Module\Modules\CoreModule</Filter>
+    </ClInclude>
+    <ClInclude Include="ModulesInitializationData.h">
+      <Filter>Source\Core\World\InitializationData\ModulesInitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentsInitializationData.h">
+      <Filter>Source\Core\World\InitializationData\ComponentsInitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="StartupSystemsInitializationData.h">
+      <Filter>Source\Core\World\InitializationData\StartupSystemsInitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemsInitializationData.h">
+      <Filter>Source\Core\World\InitializationData\SystemsInitializationData</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldInitializationData.h">
+      <Filter>Source\Core\World\InitializationData\WorldInitializationData</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

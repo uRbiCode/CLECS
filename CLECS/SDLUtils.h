@@ -9,5 +9,5 @@ namespace SDLUtils
 {
 	Vector2D<int> GetWindowSize(SDL_Window* Window);
 	Vector2D<int> GetRendererLogicalPresentation(SDL_Renderer* Renderer);
-	Vector2D<float> TranslateCoordinatesFromWindowToLogical(SDL_Renderer* Renderer, SDL_Window* Window, const Vector2D<float>& Coordinates);
+	Vector2D<float> TranslateCoordinatesFromWindowToLogical(SDL_Renderer* Renderer, const Vector2D<float>& Coordinates);
 };

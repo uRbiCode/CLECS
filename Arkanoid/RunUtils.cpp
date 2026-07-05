@@ -72,7 +72,7 @@ namespace
 int RunUtils::GetCurrentStageNumber(SystemContext& Context)
 {
 	const Query<WritesList<>, ReadsList<UpgradeDescriptionComponent>, ExcludeList<AvailableUpgradeComponent>> OwnedUpgradesQuery(Context.QueryContext);
-	return OwnedUpgradesQuery.Size() + 1;
+	return static_cast<int>(OwnedUpgradesQuery.Size()) + 1;
 }
 
 void RunUtils::SpawnWalls(SystemContext& Context, std::vector<WallData>&& Data)
@@ -97,7 +97,7 @@ void RunUtils::SpawnBricks(SystemContext& Context, std::vector<BrickData>&& Data
 			RectComponent{ SDL_FRect{ -BrickData.PositionSize.Size.X * 0.5f, -BrickData.PositionSize.Size.Y * 0.5f, BrickData.PositionSize.Size.X, BrickData.PositionSize.Size.Y } },
 			HealthComponent{ BrickData.Health },
 			GameRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-			TextureComponent{ Context.Managers.TextureManager.GetTexture(BrickData.TextureData.Path), BrickData.TextureData.SourceRect });
+			TextureComponent{ Context.TextureManager.GetTexture(BrickData.TextureData.Path), BrickData.TextureData.SourceRect });
 	}
 	Context.Commands.Submit(std::move(AddBricksCommand));
 }
@@ -123,7 +123,7 @@ void RunUtils::SpawnPlayer(SystemContext& Context, PlayerData&& Data)
 		VelocityResetComponent{ { 0.f, 0.f } },
 		PlayerMoveSpeedComponent{ Constants::PlayerMoveSpeed, 0.f },
 		GameRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-		TextureComponent{ Context.Managers.TextureManager.GetTexture(Data.TextureData.Path), Data.TextureData.SourceRect });
+		TextureComponent{ Context.TextureManager.GetTexture(Data.TextureData.Path), Data.TextureData.SourceRect });
 
 	Context.Commands.Submit(std::move(AddPlayerCommand));
 }
@@ -138,7 +138,7 @@ void RunUtils::SpawnBall(SystemContext& Context, BallData&& Data)
 		CircleComponent{ Data.Radius },
 		VelocityResetComponent{ Data.Velocity },
 		GameRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-		TextureComponent{ Context.Managers.TextureManager.GetTexture(Data.TextureData.Path), Data.TextureData.SourceRect },
+		TextureComponent{ Context.TextureManager.GetTexture(Data.TextureData.Path), Data.TextureData.SourceRect },
 		DamageComponent{ Constants::Damage });
 
 	Context.Commands.Submit(std::move(AddBallCommand));

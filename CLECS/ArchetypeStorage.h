@@ -154,16 +154,19 @@ public:
 		std::vector<ArchetypeHandle<Components...>> Result;
 		for (const ArchetypeId Candidate : *Lists[0])
 		{
+			if (Archetypes[Candidate].Archetype.Size() < 1)
+				continue;
+
 			const bool FoundInAll = std::ranges::all_of(Lists.begin() + 1, Lists.end(),
 			[Candidate](const std::vector<ArchetypeId>* List)
 			{
 				return std::ranges::binary_search(*List, Candidate);
 			});
 
-			if (FoundInAll && Archetypes[Candidate].Archetype.Size() > 0)
-			{
-				Result.emplace_back(Archetypes[Candidate].Archetype, ComponentTypes);
-			}
+			if (!FoundInAll)
+				continue;
+				
+			Result.emplace_back(Archetypes[Candidate].Archetype, ComponentTypes);
 		}
 
 		return Result;
@@ -181,17 +184,7 @@ private:
 
 	struct ArchetypeKeyHash
 	{
-		std::size_t operator()(const ArchetypeKey& Key) const noexcept
-		{
-			std::size_t Seed = 0xcbf29ce484222325ULL;
-			constexpr std::size_t GoldenRatio = sizeof(std::size_t) == 8 ? 0x9e3779b97f4a7c15ULL : 0x9e3779b9UL;
-			for (const ComponentTypeId ComponentId : Key)
-			{
-				Seed ^= static_cast<std::size_t>(ComponentId) + GoldenRatio + (Seed << 6) + (Seed >> 2);
-			}
-
-			return Seed;
-		}
+		std::size_t operator()(const ArchetypeKey& Key) const noexcept;
 	};
 
 	template<typename... Components>

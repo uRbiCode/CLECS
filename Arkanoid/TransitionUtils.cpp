@@ -240,7 +240,7 @@ namespace
 				AddHealthIndicatorsCommand.WithEntry(PositionComponent{ {PositionX, PositionY} },
 					RectComponent{ SDL_FRect{ -RectSize.X * 0.5f, -RectSize.Y * 0.5f, RectSize.X, RectSize.Y } },
 					UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-					TextureComponent{ GetHealthIndicatorTexture(Context.Managers.TextureManager), Run::Constants::HealthIndicatorTextureRect});
+					TextureComponent{ GetHealthIndicatorTexture(Context.TextureManager), Run::Constants::HealthIndicatorTextureRect});
 			}
 
 			Context.Commands.Submit(std::move(AddHealthIndicatorsCommand));

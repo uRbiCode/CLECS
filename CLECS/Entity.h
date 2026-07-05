@@ -9,19 +9,14 @@ using EntityId = uint32_t;
  */
 struct Entity
 {
-	Entity(EntityId Id) : Identifier(Id) {}
+	Entity(EntityId Id);
 
-	[[nodiscard]] EntityId GetId() const { return Identifier; }
+	[[nodiscard]] EntityId GetId() const;
 
-	bool operator==(Entity Other) const
-	{
-		return Identifier == Other.Identifier;
-	}
+	bool operator==(Entity Other) const;
 
-	bool operator!=(Entity Other) const
-	{
-		return Identifier != Other.Identifier;
-	}
+	bool operator!=(Entity Other) const;
+	
 
 private:
 	EntityId Identifier = 0;

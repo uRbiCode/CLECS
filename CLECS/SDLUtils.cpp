@@ -21,7 +21,7 @@ Vector2D<int> SDLUtils::GetRendererLogicalPresentation(SDL_Renderer* Renderer)
 	return WindowSize;
 }
 
-Vector2D<float> SDLUtils::TranslateCoordinatesFromWindowToLogical(SDL_Renderer* Renderer, SDL_Window* Window, const Vector2D<float>& Coordinates)
+Vector2D<float> SDLUtils::TranslateCoordinatesFromWindowToLogical(SDL_Renderer* Renderer, const Vector2D<float>& Coordinates)
 {
 	Vector2D<float> TranslatedCoordinates = {};
 	SDL_RenderCoordinatesFromWindow(Renderer, Coordinates.X, Coordinates.Y, &TranslatedCoordinates.X, &TranslatedCoordinates.Y);

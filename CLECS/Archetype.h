@@ -8,6 +8,8 @@
 #include <ranges>
 #include <array>
 
+constexpr size_t InvalidColumnIndex = SIZE_MAX;
+
 class Archetype
 {
 public:
@@ -134,8 +136,8 @@ public:
 
     void SwapRemoveRow(Entity E);
 
-    size_t Size() const { return Entities.size(); }
-    const std::vector<Entity>& GetEntities() const { return Entities; }
+    size_t Size() const;
+    const std::vector<Entity>& GetEntities() const;
 
 private:
     void SwapRemoveAt(size_t Row);

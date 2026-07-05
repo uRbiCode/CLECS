@@ -68,7 +68,7 @@ void InputSystem::UpdateClickables(SystemContext& Context, float DeltaTime)
 	if (!Context.Input.IsMouseButtonJustPressed(SDL_BUTTON_LEFT))
 		return;
 
-	const Vector2D<float> MousePosition = SDLUtils::TranslateCoordinatesFromWindowToLogical(&Context.Renderer, &Context.Window, Context.Input.GetMousePosition());
+	const Vector2D<float> MousePosition = SDLUtils::TranslateCoordinatesFromWindowToLogical(&Context.Renderer, Context.Input.GetMousePosition());
 	const Query<WritesList<>, ReadsList<PositionComponent, RectComponent, ClickableComponent>, ExcludeList<>> ClickableQuery(Context.QueryContext);
 	AddComponentsCommand<ClickableUsedComponent> AddClickableUsedCommand(0);
 	ClickableQuery.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, const ClickableComponent& Clickable)

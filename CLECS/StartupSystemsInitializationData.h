@@ -10,22 +10,12 @@
  */
 struct StartupSystemsInitializationData
 {
-	void RegisterSystem(void(*Initialize)(SystemContext&))
-	{
-		StartupSystemDescriptor Descriptor;
-		Descriptor.Initialize = Initialize;
-		Descriptors.emplace_back(std::move(Descriptor));
-	}
+	void RegisterSystem(void(*Initialize)(SystemContext&));
 
-	void RegisterLateSystem(void(*Initialize)(SystemContext&))
-	{
-		StartupSystemDescriptor Descriptor;
-		Descriptor.Initialize = Initialize;
-		LateDescriptors.emplace_back(std::move(Descriptor));
-	}
+	void RegisterLateSystem(void(*Initialize)(SystemContext&));
 
-	const std::vector<StartupSystemDescriptor>& GetRegisteredSystems() const { return Descriptors; }
-	const std::vector<StartupSystemDescriptor>& GetRegisteredLateSystems() const { return LateDescriptors; }
+	const std::vector<StartupSystemDescriptor>& GetRegisteredSystems() const;
+	const std::vector<StartupSystemDescriptor>& GetRegisteredLateSystems() const;
 
 private:
 	std::vector<StartupSystemDescriptor> Descriptors;

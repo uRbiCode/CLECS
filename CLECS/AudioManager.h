@@ -24,7 +24,7 @@ public:
 private:
     struct SoundData
     {
-        SDL_AudioSpec Spec;
+        SDL_AudioSpec Spec{};
         Uint8* Buffer = nullptr;
         Uint32 Length = 0;
     };

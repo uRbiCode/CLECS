@@ -1,9 +1,9 @@
 #pragma once
-#include "RendererInitializationData.h"
 #include "ComponentsInitializationData.h"
 #include "SystemsInitializationData.h"
 #include "StartupSystemsInitializationData.h"
-#include "ModulesInitializationData.h"
+
+struct ModulesInitializationData;
 
 /* Allows World to be initialized with a specified configuration and Systems.
  * Forwarded to the Game class, which can fill it with necessary Systems and configure to its need.

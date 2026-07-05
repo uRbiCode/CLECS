@@ -42,7 +42,7 @@ public:
 
             for (size_t i = 0; i < N; ++i)
             {
-                CallWithIndex(std::forward<Func>(Function), Entities[i], i, Match,
+                CallWithIndex(Function, Entities[i], i, Match,
                               std::index_sequence_for<WriteTypes...>{},
                               std::index_sequence_for<ReadTypes...>{});
             }
@@ -60,13 +60,17 @@ public:
 	}
 
 private:
+#pragma warning(push)
+#pragma warning(disable : 4820)
     struct MatchedArchetype
     {
-        const Entity* Entities = nullptr;
-        size_t EntityCount = 0;
         std::tuple<WriteTypes*...> WritePtrs;
         std::tuple<const ReadTypes*...>  ReadPtrs;
+
+        const Entity* Entities = nullptr;
+        size_t EntityCount = 0;
     };
+#pragma warning(pop)
 
     void CacheHandle(ArchetypeHandle<WriteTypes..., ReadTypes...>& Handle)
     {

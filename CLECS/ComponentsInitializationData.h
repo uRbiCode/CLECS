@@ -13,7 +13,7 @@ struct ComponentsInitializationData
 		Components.emplace(typeid(Component));
 	}
 
-	const std::unordered_set<std::type_index>& GetRegisteredComponents() const { return Components; }
+	const std::unordered_set<std::type_index>& GetRegisteredComponents() const;
 
 private:
 	std::unordered_set<std::type_index> Components;

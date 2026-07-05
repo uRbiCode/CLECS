@@ -2,6 +2,10 @@
 #include "SystemContext.h"
 #include "WorldInitializationData.h"
 #include "QueryContext.h"
+#include "RendererInitializationData.h"
+#include "TextureManager.h"
+#include "AudioManager.h"
+#include "FontManager.h"
 
 World::~World()
 {
@@ -162,8 +166,7 @@ void World::InitializeFontManager()
 
 SystemContext World::MakeSystemContext()
 {
-	const Managers Managers{ *TextureManagerPtr, *AudioManagerPtr, *FontManagerPtr };
-	return SystemContext{ QueryContext::Create(&Archetypes), Commands, *Window, *Renderer, Input, Managers };
+	return SystemContext{ QueryContext::Create(&Archetypes), Commands, *Window, *Renderer, Input, *TextureManagerPtr, *AudioManagerPtr, *FontManagerPtr };
 }
 
 void World::FlushCommands()

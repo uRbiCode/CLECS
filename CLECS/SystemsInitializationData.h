@@ -7,15 +7,9 @@
  */
 struct SystemsInitializationData
 {
-	void RegisterSystem(void(*Update)(SystemContext&, float), SystemPhase Phase)
-	{
-		SystemDescriptor Descriptor;
-		Descriptor.Update = Update;
-		Descriptor.Phase = Phase;
-		Systems.emplace_back(std::move(Descriptor));
-	}
+	void RegisterSystem(void(*Update)(SystemContext&, float), SystemPhase Phase);
 
-	std::vector<SystemDescriptor>& AccessRegisteredSystems() { return Systems; }
+	std::vector<SystemDescriptor>& AccessRegisteredSystems();
 
 private:
 	std::vector<SystemDescriptor> Systems;

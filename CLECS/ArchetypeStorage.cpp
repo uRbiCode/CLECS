@@ -43,3 +43,15 @@ ArchetypeStorage::ArchetypeId ArchetypeStorage::AccessOrCreateReducedArchetype(c
 
 	return NewId;
 }
+
+std::size_t ArchetypeStorage::ArchetypeKeyHash::operator()(const ArchetypeKey& Key) const noexcept
+{
+	std::size_t Seed = 0xcbf29ce484222325ULL;
+	constexpr std::size_t GoldenRatio = sizeof(std::size_t) == 8 ? 0x9e3779b97f4a7c15ULL : 0x9e3779b9UL;
+	for (const ComponentTypeId ComponentId : Key)
+	{
+		Seed ^= static_cast<std::size_t>(ComponentId) + GoldenRatio + (Seed << 6) + (Seed >> 2);
+	}
+
+	return Seed;
+}

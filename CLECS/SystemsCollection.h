@@ -14,7 +14,7 @@ class SystemsCollection
 public:
 	static SystemsCollection Create(SystemsInitializationData&& Data);
 
-    const StagedSystems& GetStagedSystems() const { return Systems; }
+	const StagedSystems& GetStagedSystems() const;
 
 private:
 	StagedSystems Systems;

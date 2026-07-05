@@ -123,7 +123,7 @@ SDL_AudioStream* AudioManager::CreateAndBindAudioStream(const std::string& Name,
 
     SDL_SetAudioStreamGain(Stream, Volume);
     
-    if (!SDL_PutAudioStreamData(Stream, SoundData.Buffer, SoundData.Length))
+    if (!SDL_PutAudioStreamData(Stream, SoundData.Buffer, static_cast<int>(SoundData.Length)))
     {
         SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::CreateAndBindAudioStream -> Failed to put audio data: %s", SDL_GetError());
         SDL_DestroyAudioStream(Stream);
@@ -219,7 +219,7 @@ void AudioManager::LoadAllSoundsFromAssetsDirectory()
     }
 }
 
-void SDLCALL AudioManager::MusicCallback(void* Userdata, SDL_AudioStream* Stream, int AdditionalAmount, int TotalAmount)
+void SDLCALL AudioManager::MusicCallback(void* Userdata, SDL_AudioStream* Stream, [[maybe_unused]] int AdditionalAmount, [[maybe_unused]] int TotalAmount)
 {
     AudioManager* Manager = static_cast<AudioManager*>(Userdata);
 
@@ -229,8 +229,9 @@ void SDLCALL AudioManager::MusicCallback(void* Userdata, SDL_AudioStream* Stream
 
     const SoundData& Data = It->second;
 
-    if (SDL_GetAudioStreamQueued(Stream) < (Data.Length / 2))
+	const int DataLength = static_cast<int>(Data.Length);
+    if (SDL_GetAudioStreamQueued(Stream) < (DataLength / 2))
     {
-        SDL_PutAudioStreamData(Stream, Data.Buffer, Data.Length);
+        SDL_PutAudioStreamData(Stream, Data.Buffer, DataLength);
     }
 }

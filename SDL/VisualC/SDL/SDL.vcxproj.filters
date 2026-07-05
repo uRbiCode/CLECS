@@ -528,9 +528,6 @@
     <ClInclude Include="..\..\src\audio\SDL_audioresample.h">
       <Filter>audio</Filter>
     </ClInclude>
-    <ClCompile Include="..\..\src\core\SDL_core_unsupported.h">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClInclude Include="..\..\src\core\windows\SDL_directx.h">
       <Filter>core\windows</Filter>
     </ClInclude>
@@ -1008,6 +1005,7 @@
     <ClInclude Include="..\..\include\SDL3\SDL_time.h" />
     <ClInclude Include="..\..\src\events\SDL_categories_c.h" />
     <ClInclude Include="..\..\src\events\SDL_eventwatch_c.h" />
+    <ClInclude Include="..\..\src\core\SDL_core_unsupported.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\audio\wasapi\SDL_wasapi.c" />

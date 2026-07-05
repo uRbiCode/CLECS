@@ -13,7 +13,7 @@ struct ModulesInitializationData
 		Modules.push_back(std::make_unique<Module>());
 	}
 
-	const std::vector<std::unique_ptr<ModuleBase>>& GetRegisteredModules() const { return Modules; }
+	const std::vector<std::unique_ptr<ModuleBase>>& GetRegisteredModules() const;
 
 private:
 	std::vector<std::unique_ptr<ModuleBase>> Modules;
