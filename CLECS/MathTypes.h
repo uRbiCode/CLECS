@@ -10,9 +10,6 @@ struct Vector2D
     T X = T{};
     T Y = T{};
 
-    constexpr Vector2D() = default;
-    constexpr Vector2D(T x, T y) : X(x), Y(y) {}
-
     constexpr Vector2D operator+(const Vector2D& other) const
     {
         return Vector2D(X + other.X, Y + other.Y);

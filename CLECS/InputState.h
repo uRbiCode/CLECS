@@ -1,6 +1,6 @@
 #pragma once
-#include <SDL3/SDL.h>
 #include "MathTypes.h"
+#include <SDL3/SDL.h>
 #include <unordered_set>
 
 /* Responsible for input polling.
@@ -10,8 +10,6 @@
 class InputState
 {
 public:
-	InputState() = default;
-
 	void ProcessEvent(const SDL_Event& Event);
 	void BeginFrame();
 

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "../CLECS/Column.h"
+#include "Column.h"
 #include "TestsTypes.h"
 
 struct IntComp

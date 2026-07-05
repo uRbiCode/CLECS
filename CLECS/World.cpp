@@ -44,7 +44,7 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
 	Archetypes = ArchetypeStorage::Create(std::move(ComponentTypesCollection::Create(std::move(Data.ComponentsData))));
 	Systems = SystemsCollection::Create(std::move(Data.SystemsData));
 
-	auto Context = MakeSystemContext();
+	SystemContext Context = MakeSystemContext();
 	for (const StartupSystemDescriptor& System : Data.StartupSystemsData.GetRegisteredSystems())
 	{
 		System.Initialize(Context);

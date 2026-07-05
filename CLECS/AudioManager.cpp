@@ -71,8 +71,14 @@ void AudioManager::LoadSound(const std::string& Name, const std::string& FilePat
     SDL_LogInfo(SDL_LOG_CATEGORY_AUDIO, "AudioManager::LoadSound -> Loaded sound '%s' (%u bytes, %d Hz, %d channels)", Name.c_str(), SoundData.Length, SoundData.Spec.freq, SoundData.Spec.channels);
 }
 
-SDL_AudioStream* AudioManager::CreateAndBindAudioStream(const std::string& Name, float Volume, const StreamConfig& Config)
+SDL_AudioStream* AudioManager::CreateAndBindAudioStream(const std::string& Name, float Volume, AudioType Type)
 {
+    if (Type == AudioType::Invalid)
+    {
+        SDL_LogWarn(SDL_LOG_CATEGORY_AUDIO, "AudioManager::CreateAndBindAudioStream -> Invalid audio type");
+        return nullptr;
+    }
+
     if (AudioDeviceId == 0)
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_AUDIO, "AudioManager::CreateAndBindAudioStream -> Audio device not initialized");
@@ -102,9 +108,9 @@ SDL_AudioStream* AudioManager::CreateAndBindAudioStream(const std::string& Name,
         return nullptr;
     }
 
-    if (Config.Callback != nullptr)
+    if (Type == AudioType::Music)
     {
-        if (!SDL_SetAudioStreamGetCallback(Stream, Config.Callback, this))
+        if (!SDL_SetAudioStreamGetCallback(Stream, MusicCallback, this))
         {
             SDL_LogError(SDL_LOG_CATEGORY_AUDIO, "AudioManager::CreateAndBindAudioStream -> Failed to set audio callback: %s", SDL_GetError());
             SDL_DestroyAudioStream(Stream);
@@ -112,7 +118,7 @@ SDL_AudioStream* AudioManager::CreateAndBindAudioStream(const std::string& Name,
         }
     }
 
-    if (Config.AutoCleanup)
+    if (Type == AudioType::Sfx)
     {
         SDL_PropertiesID StreamPropertiesId = SDL_GetAudioStreamProperties(Stream);
         if (StreamPropertiesId != 0)
@@ -149,12 +155,7 @@ SDL_AudioStream* AudioManager::CreateAndBindAudioStream(const std::string& Name,
 
 void AudioManager::PlaySound(const std::string& Name, float Volume)
 {
-    StreamConfig Config;
-    Config.Loop = false;
-    Config.AutoCleanup = true;
-    Config.Callback = nullptr;
-
-    CreateAndBindAudioStream(Name, Volume, Config);
+    CreateAndBindAudioStream(Name, Volume, AudioType::Sfx);
 }
 
 void AudioManager::PlayMusic(const std::string& Name, float Volume)
@@ -164,12 +165,7 @@ void AudioManager::PlayMusic(const std::string& Name, float Volume)
 
     StopMusic();
 
-    StreamConfig Config;
-    Config.Loop = true;
-    Config.AutoCleanup = false;
-    Config.Callback = MusicCallback;
-
-    MusicStream = CreateAndBindAudioStream(Name, Volume, Config);
+    MusicStream = CreateAndBindAudioStream(Name, Volume, AudioType::Music);
     
     if (MusicStream != nullptr)
     {
@@ -219,7 +215,9 @@ void AudioManager::LoadAllSoundsFromAssetsDirectory()
     }
 }
 
-void SDLCALL AudioManager::MusicCallback(void* Userdata, SDL_AudioStream* Stream, [[maybe_unused]] int AdditionalAmount, [[maybe_unused]] int TotalAmount)
+#pragma warning(push)
+#pragma warning(disable : 5045)
+void SDLCALL AudioManager::MusicCallback(void* Userdata, SDL_AudioStream* Stream, [[maybe_unused]] int AdditionalAmount, [[maybe_unused]] int TotalAmount) noexcept
 {
     AudioManager* Manager = static_cast<AudioManager*>(Userdata);
 
@@ -235,3 +233,4 @@ void SDLCALL AudioManager::MusicCallback(void* Userdata, SDL_AudioStream* Stream
         SDL_PutAudioStreamData(Stream, Data.Buffer, DataLength);
     }
 }
+#pragma warning(pop)

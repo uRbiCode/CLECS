@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "../CLECS/RemoveEntitiesCommand.h"
+#include "RemoveEntitiesCommand.cpp"
 
 TEST(RemoveEntitiesCommandTest, Construct_Empty_GetEntriesIsEmpty)
 {

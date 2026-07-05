@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "../CLECS/StartupSystemsInitializationData.h"
+#include "StartupSystemsInitializationData.cpp"
 
 static void StartupA(SystemContext&) {}
 static void StartupB(SystemContext&) {}

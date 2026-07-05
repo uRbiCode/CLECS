@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+#pragma warning(push)
+#pragma warning(disable : 4820)
 // Used by AudioRequestConsumerSystem to request a sound effect to be played
 struct SfxRequestComponent
 {
@@ -15,6 +17,7 @@ struct MusicRequestComponent
     std::string Name;
     float Volume = 1.f;
 };
+#pragma warning(pop)
 
 // Used by AudioRequestConsumerSystem to request music to be stopped
 // Entities with this component will be removed after the request is processed

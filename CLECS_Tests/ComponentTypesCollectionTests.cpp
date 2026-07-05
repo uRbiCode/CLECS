@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <stdexcept>
-#include "../CLECS/ComponentTypesCollection.cpp"
+#include "ComponentTypesCollection.cpp"
+#include "ComponentsInitializationData.cpp"
 
 struct CompA { int X = 0; };
 struct CompB { float Y = 0.f; };

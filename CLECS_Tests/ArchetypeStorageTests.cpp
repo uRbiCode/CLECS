@@ -1,7 +1,6 @@
 #include "pch.h"
-#include "../CLECS/ComponentsInitializationData.h"
-#include "../CLECS/ArchetypeStorage.cpp"
-#include "../CLECS/ArchetypeStorage.h"
+#include "ComponentsInitializationData.h"
+#include "ArchetypeStorage.cpp"
 
 struct PosComp { float X = 0.f; float Y = 0.f; };
 struct VelComp { float DX = 0.f; float DY = 0.f; };

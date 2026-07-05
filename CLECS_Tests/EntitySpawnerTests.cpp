@@ -1,7 +1,6 @@
 #include "pch.h"
 #include <unordered_set>
-#include "../CLECS/EntitySpawner.h"
-#include "../CLECS/EntitySpawner.cpp"
+#include "EntitySpawner.cpp"
 
 TEST(EntitySpawnerTest, CreateEntity_FirstCall_ReturnsIdZero)
 {

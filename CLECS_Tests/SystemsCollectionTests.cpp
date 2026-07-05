@@ -1,5 +1,6 @@
 #include "pch.h"
-#include "../CLECS/SystemsCollection.cpp"
+#include "SystemsCollection.cpp"
+#include "SystemsInitializationData.cpp"
 
 void SystemUpdate(SystemContext&, float) {}
 void SystemEarly(SystemContext&, float) {}
