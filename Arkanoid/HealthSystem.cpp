@@ -12,6 +12,8 @@
 #include "PositionComponent.h"
 #include "TextureComponent.h"
 
+#pragma warning(push)
+#pragma warning(disable : 5045)
 void HealthSystem::UpdateDisplayedHealth(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	int TotalHealthChange = 0;
@@ -47,6 +49,7 @@ void HealthSystem::UpdateDisplayedHealth(SystemContext& Context, [[maybe_unused]
 
 	Context.Commands.Submit(std::move(RemoveHealthIndicatorsCommand));
 }
+#pragma warning(pop)
 
 void HealthSystem::RemoveDeadEntities(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {

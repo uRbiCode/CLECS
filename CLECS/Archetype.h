@@ -8,6 +8,9 @@
 #include <ranges>
 #include <array>
 
+#pragma warning(push)
+#pragma warning(disable : 5045)
+
 constexpr size_t InvalidColumnIndex = SIZE_MAX;
 
 class Archetype
@@ -159,3 +162,4 @@ private:
 
     std::unordered_map<ComponentTypeId, size_t> ColumnIndexCache;
 };
+#pragma warning(pop)

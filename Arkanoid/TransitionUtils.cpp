@@ -60,9 +60,13 @@ namespace
 				"Amass infinite power with upgrades!",
 				"Have fun!"
 			};
+			constexpr size_t TextLinesCount = std::size(TextLines);
 			constexpr float ButtonFontSize = 24.f;
 		}
 
+
+#pragma warning(push)
+#pragma warning(disable : 5045)
 		void AddTutorialText(SystemContext& Context)
 		{
 			const Vector2D<float> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
@@ -91,7 +95,7 @@ namespace
 				}
 			};
 
-			for (size_t i = 0; i < std::size(Constants::TextLines); ++i)
+			for (size_t i = 0; i < Constants::TextLinesCount; ++i)
 			{
 				AddTextCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * IndexToXOffset(i), LogicalPresentation.Y * (0.42f + static_cast<float>(i) * 0.07f)} },
 					UIRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
@@ -100,6 +104,7 @@ namespace
 
 			Context.Commands.Submit(std::move(AddTextCommand));
 		}
+#pragma warning(pop)
 	}
 
 	namespace MainMenu
@@ -112,6 +117,7 @@ namespace
 				"How to Play",
 				"Quit"
 			};
+			constexpr size_t ButtonsTextsCount = std::size(ButtonsTexts);
 			constexpr const char* MainMenuMusicName = "main_menu_loop";
 		}
 
@@ -134,6 +140,8 @@ namespace
 			Context.Commands.Submit(std::move(AddTitleTextCommand));
 		}
 
+#pragma warning(push)
+#pragma warning(disable : 5045)
 		void AddMainMenuControls(SystemContext& Context)
 		{
 			const Vector2D<float> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
@@ -155,7 +163,7 @@ namespace
 				}
 			};
 
-			for (size_t i = 0; i < std::size(MainMenu::Constants::ButtonsTexts); ++i)
+			for (size_t i = 0; i < Constants::ButtonsTextsCount; ++i)
 			{
 				AddButtonsCommand.WithEntry(PositionComponent{ {LogicalPresentation.X * 0.5f, LogicalPresentation.Y * (0.5f + static_cast<float>(i) * 0.15f)} },
 					RectComponent{ SDL_FRect{ -ButtonSize.X * 0.5f, -ButtonSize.Y * 0.5f, ButtonSize.X, ButtonSize.Y } },
@@ -166,6 +174,7 @@ namespace
 
 			Context.Commands.Submit(std::move(AddButtonsCommand));
 		}
+#pragma warning(pop)
 	}
 
 	namespace Run

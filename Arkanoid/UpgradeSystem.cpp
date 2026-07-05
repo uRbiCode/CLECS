@@ -46,6 +46,8 @@ namespace
 		return SampledEntities;
 	}
 
+#pragma warning(push)
+#pragma warning(disable : 5045)
 	void PresentUpgradesChoice(SystemContext& Context, std::vector<std::pair<Entity, UpgradeDescriptionComponent>>&& Upgrades)
 	{
 		if (Upgrades.empty())
@@ -76,6 +78,7 @@ namespace
 
 		Context.Commands.Submit(std::move(AddUpgradeButtonsCommand));
 	}
+#pragma warning(pop)
 }
 
 void UpgradeSystem::SpawnUpgradeEntities(SystemContext& Context)
