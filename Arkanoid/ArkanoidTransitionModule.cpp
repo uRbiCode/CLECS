@@ -10,6 +10,10 @@ void ArkanoidTransitionModule::RegisterComponentTypes(ComponentsInitializationDa
 	Data.RegisterComponent<UpgradesTransitionComponent>();
 }
 
+void ArkanoidTransitionModule::RegisterStartupSystems([[maybe_unused]] StartupSystemsInitializationData& Data)
+{
+}
+
 void ArkanoidTransitionModule::RegisterSystems(SystemsInitializationData& Data)
 {
 	Data.RegisterSystem(TransitionSystem::UpdateDynamicTransitions, SystemPhase::EarlyUpdate);

@@ -9,6 +9,10 @@ void ArkanoidUIBlinkModule::RegisterComponentTypes(ComponentsInitializationData&
 	Data.RegisterComponent<UIBlinkComponent>();
 }
 
+void ArkanoidUIBlinkModule::RegisterStartupSystems([[maybe_unused]] StartupSystemsInitializationData& Data)
+{
+}
+
 void ArkanoidUIBlinkModule::RegisterSystems(SystemsInitializationData& Data)
 {
 	Data.RegisterSystem(UIBlinkSystem::Update, SystemPhase::Update);

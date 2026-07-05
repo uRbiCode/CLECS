@@ -12,6 +12,10 @@ void ArkanoidInputModule::RegisterComponentTypes(ComponentsInitializationData& D
 	Data.RegisterComponent<BeginStageComponent>();
 }
 
+void ArkanoidInputModule::RegisterStartupSystems([[maybe_unused]] StartupSystemsInitializationData& Data)
+{
+}
+
 void ArkanoidInputModule::RegisterSystems(SystemsInitializationData& Data)
 {
 	Data.RegisterSystem(InputSystem::TranslateRawInput, SystemPhase::Input);

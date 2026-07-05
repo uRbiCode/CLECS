@@ -6,7 +6,7 @@
 /* Invokes CLECS GameLoop using SDL macros.
  * Requires CLECS_DEFINE_GAME_ENTRY to be defined. See Arkanoid.h.
  */
-int main(int argc, char* argv[])
+int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
 {
 	return GameRunner::Run(std::make_unique<Arkanoid>());
 }

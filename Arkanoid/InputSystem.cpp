@@ -42,7 +42,7 @@ namespace
 
 		RemoveComponentsCommand<ClickableUsedComponent> RemoveCommand(CleanupClickableUsedQuery.Size());
 
-		CleanupClickableUsedQuery.ForEach([&RemoveCommand](Entity Entity, const ClickableUsedComponent& ClickableUsed)
+		CleanupClickableUsedQuery.ForEach([&RemoveCommand](Entity Entity, [[maybe_unused]] const ClickableUsedComponent& ClickableUsed)
 		{
 			RemoveCommand.WithEntry(Entity);
 		});
@@ -61,7 +61,7 @@ namespace
 	}
 }
 
-void InputSystem::UpdateClickables(SystemContext& Context, float DeltaTime)
+void InputSystem::UpdateClickables(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	CleanupClickableUsedComponents(Context);
 
@@ -71,7 +71,7 @@ void InputSystem::UpdateClickables(SystemContext& Context, float DeltaTime)
 	const Vector2D<float> MousePosition = SDLUtils::TranslateCoordinatesFromWindowToLogical(&Context.Renderer, Context.Input.GetMousePosition());
 	const Query<WritesList<>, ReadsList<PositionComponent, RectComponent, ClickableComponent>, ExcludeList<>> ClickableQuery(Context.QueryContext);
 	AddComponentsCommand<ClickableUsedComponent> AddClickableUsedCommand(0);
-	ClickableQuery.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, const ClickableComponent& Clickable)
+	ClickableQuery.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, [[maybe_unused]] const ClickableComponent& Clickable)
 	{
 		const SDL_FRect MouseRect = SDL_FRect{ MousePosition.X, MousePosition.Y, 0.f, 0.f };
 		if (!CollisionUtils::CheckAABB(MouseRect,{ CollisionUtils::GetWorldAABB(Position, Rect)}))
@@ -86,13 +86,13 @@ void InputSystem::UpdateClickables(SystemContext& Context, float DeltaTime)
 	}
 }
 
-void InputSystem::TranslateRawInput(SystemContext& Context, float DeltaTime)
+void InputSystem::TranslateRawInput(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	CleanupInput(Context);
 
 	const float PlayerMoveSpeedInputMultiplier = TranslateInputToPlayerMoveSpeedInputMultiplier(Context.Input);
 	const Query<WritesList<PlayerMoveSpeedComponent>, ReadsList<>, ExcludeList<>> PlayerMoveQuery(Context.QueryContext);
-	PlayerMoveQuery.ForEach([PlayerMoveSpeedInputMultiplier](Entity Entity, PlayerMoveSpeedComponent& MoveSpeed)
+	PlayerMoveQuery.ForEach([PlayerMoveSpeedInputMultiplier]([[maybe_unused]] Entity Entity, PlayerMoveSpeedComponent& MoveSpeed)
 	{
 		MoveSpeed.MoveSpeedInputMultiplier = PlayerMoveSpeedInputMultiplier;
 	});

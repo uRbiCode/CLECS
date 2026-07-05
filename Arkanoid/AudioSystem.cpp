@@ -18,23 +18,23 @@ namespace Constants
 	constexpr const char* PlayerHitSoundName = "player_hit_sfx";
 }
 
-void AudioSystem::Update(SystemContext& Context, float DeltaTime)
+void AudioSystem::Update(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	AddComponentsCommand<SfxRequestComponent> AddAudioRequestCommand(0);
 	const Query<WritesList<>, ReadsList<CircleComponent, CollisionComponent>, ExcludeList<>> CollisionQuery(Context.QueryContext);
-	CollisionQuery.ForEach([&](Entity Entity, const CircleComponent& Circle, const CollisionComponent& Collision)
+	CollisionQuery.ForEach([&](Entity Entity, [[maybe_unused]] const CircleComponent& Circle, [[maybe_unused]] const CollisionComponent& Collision)
 	{
 		AddAudioRequestCommand.WithEntry(Entity, SfxRequestComponent{ Constants::BallCollisionSoundName, 0.5f });
 	});
 
 	const Query<WritesList<>, ReadsList<DirectionCollisionComponent>, ExcludeList<>> DirectionCollisionQuery(Context.QueryContext);
-	DirectionCollisionQuery.ForEach([&](Entity Entity, const DirectionCollisionComponent& DirectionCollision)
+	DirectionCollisionQuery.ForEach([&](Entity Entity, [[maybe_unused]] const DirectionCollisionComponent& DirectionCollision)
 	{
 		AddAudioRequestCommand.WithEntry(Entity, SfxRequestComponent{ Constants::BallCollisionSoundName, 0.5f });
 	});
 
 	const Query<WritesList<>, ReadsList<HealthComponent, HealthDeltaComponent>, ExcludeList<GameRenderComponent>> PlayerHitQuery(Context.QueryContext);
-	PlayerHitQuery.ForEach([&](Entity Entity, const HealthComponent& Health, const HealthDeltaComponent& HealthDelta)
+	PlayerHitQuery.ForEach([&](Entity Entity, [[maybe_unused]] const HealthComponent& Health, const HealthDeltaComponent& HealthDelta)
 	{
 		if (HealthDelta.Delta < 0)
 		{
@@ -43,10 +43,10 @@ void AudioSystem::Update(SystemContext& Context, float DeltaTime)
 	});
 
 	const Query<WritesList<>, ReadsList<SummaryTransitionComponent>, ExcludeList<>> SummaryQuery(Context.QueryContext);
-	SummaryQuery.ForEach([&](Entity SummaryEntity, const SummaryTransitionComponent& Summary)
+	SummaryQuery.ForEach([&]([[maybe_unused]] Entity SummaryEntity, const SummaryTransitionComponent& Summary)
 	{
 		const Query<WritesList<>, ReadsList<BackgroundRenderComponent>, ExcludeList<>> BackgroundLayerQuery(Context.QueryContext);
-		BackgroundLayerQuery.ForEach([&](Entity BackgroundEntity, const BackgroundRenderComponent& BackgroundRender)
+		BackgroundLayerQuery.ForEach([&](Entity BackgroundEntity, [[maybe_unused]] const BackgroundRenderComponent& BackgroundRender)
 		{
 			if (Summary.Message == GlobalConstants::Summary::VictoryText)
 			{

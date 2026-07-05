@@ -2,6 +2,14 @@
 #include "SystemsInitializationData.h"
 #include "CollisionSystem.h"
 
+void ArkanoidCollisionModule::RegisterComponentTypes([[maybe_unused]] ComponentsInitializationData& Data)
+{
+}
+
+void ArkanoidCollisionModule::RegisterStartupSystems([[maybe_unused]] StartupSystemsInitializationData& Data)
+{
+}
+
 void ArkanoidCollisionModule::RegisterSystems(SystemsInitializationData& Data)
 {
 	Data.RegisterSystem(CollisionSystem::CleanupCollisionComponents, SystemPhase::EarlyUpdate);

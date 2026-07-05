@@ -13,7 +13,7 @@ namespace ComponentUtils
 			return;
 
 		RemoveComponentsCommand<T> RemoveCommand(RemoveQuery.Size());
-		RemoveQuery.ForEach([&](Entity Entity, const T& Component)
+		RemoveQuery.ForEach([&](Entity Entity, [[maybe_unused]] const T& Component)
 		{
 			RemoveCommand.WithEntry(Entity);
 		});
@@ -29,7 +29,7 @@ namespace ComponentUtils
 			return;
 
 		RemoveEntitiesCommand RemoveCommand(RemoveQuery.Size());
-		RemoveQuery.ForEach([&](Entity Entity, const T& Component)
+		RemoveQuery.ForEach([&](Entity Entity, [[maybe_unused]] const T& Component)
 		{
 			RemoveCommand.WithEntry(Entity);
 		});

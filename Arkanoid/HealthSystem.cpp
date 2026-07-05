@@ -13,12 +13,12 @@
 #include "PositionComponent.h"
 #include "TextureComponent.h"
 
-void HealthSystem::UpdateDisplayedHealth(SystemContext& Context, float DeltaTime)
+void HealthSystem::UpdateDisplayedHealth(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	int TotalHealthChange = 0;
 
 	const Query<WritesList<>, ReadsList<HealthDeltaComponent>, ExcludeList<BackgroundRenderComponent, GameRenderComponent>> HealthQuery(Context.QueryContext);
-	HealthQuery.ForEach([&](Entity Entity, const HealthDeltaComponent& HealthDelta)
+	HealthQuery.ForEach([&]([[maybe_unused]] Entity Entity, const HealthDeltaComponent& HealthDelta)
 	{
 		TotalHealthChange += HealthDelta.Delta;
 	});
@@ -27,26 +27,29 @@ void HealthSystem::UpdateDisplayedHealth(SystemContext& Context, float DeltaTime
 		return;
 
 	const Query<WritesList<>, ReadsList<PositionComponent, RectComponent, UIRenderComponent, TextureComponent>, ExcludeList<BackgroundRenderComponent, GameRenderComponent>> HealthIndicatorQuery(Context.QueryContext);
-	std::vector<Entity> HealthIndicatorsToRemove;
+	std::vector<std::pair<Entity, float>> HealthIndicatorsToRemove;
 	HealthIndicatorsToRemove.reserve(HealthIndicatorQuery.Size());
-	HealthIndicatorQuery.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, const UIRenderComponent& Render, const TextureComponent& Texture)
+	HealthIndicatorQuery.ForEach([&](Entity Entity, const PositionComponent& Position, [[maybe_unused]] const RectComponent& Rect, [[maybe_unused]] const UIRenderComponent& Render, [[maybe_unused]] const TextureComponent& Texture)
 	{
-		HealthIndicatorsToRemove.push_back(Entity);
+		HealthIndicatorsToRemove.push_back({Entity, Position.Position.X});
 	});
 
-	std::ranges::sort(HealthIndicatorsToRemove, [](Entity A, Entity B) { return A.GetId() > B.GetId(); });
+	std::ranges::sort(HealthIndicatorsToRemove, [](const std::pair<Entity, float>& A, const std::pair<Entity, float>& B) 
+	{
+		return A.second > B.second; 
+	});
 
 	TotalHealthChange = std::abs(TotalHealthChange);
 	RemoveEntitiesCommand RemoveHealthIndicatorsCommand(TotalHealthChange);
 	for (int i = 0; i < TotalHealthChange; ++i)
 	{
-		RemoveHealthIndicatorsCommand.WithEntry(HealthIndicatorsToRemove[i]);
+		RemoveHealthIndicatorsCommand.WithEntry(HealthIndicatorsToRemove[i].first);
 	}
 
 	Context.Commands.Submit(std::move(RemoveHealthIndicatorsCommand));
 }
 
-void HealthSystem::RemoveDeadEntities(SystemContext& Context, float DeltaTime)
+void HealthSystem::RemoveDeadEntities(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	const Query<WritesList<>, ReadsList<HealthComponent>, ExcludeList<>> HealthQuery(Context.QueryContext);
 	RemoveEntitiesCommand RemoveDeadEntitiesCommand(0);
@@ -64,31 +67,31 @@ void HealthSystem::RemoveDeadEntities(SystemContext& Context, float DeltaTime)
 	}
 }
 
-void HealthSystem::CleanupHealthDeltaComponents(SystemContext& Context, float DeltaTime)
+void HealthSystem::CleanupHealthDeltaComponents(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	ComponentUtils::RemoveAllComponentsTyped<HealthDeltaComponent>(Context);
 }
 
-void HealthSystem::ApplyHealthChanges(SystemContext& Context, float DeltaTime)
+void HealthSystem::ApplyHealthChanges(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	const Query<WritesList<HealthComponent>, ReadsList<HealthDeltaComponent>, ExcludeList<>> HealthQuery(Context.QueryContext);
-	HealthQuery.ForEach([&](Entity Entity, HealthComponent& Health, const HealthDeltaComponent& HealthDelta)
+	HealthQuery.ForEach([&]([[maybe_unused]] Entity Entity, HealthComponent& Health, const HealthDeltaComponent& HealthDelta)
 	{
 		Health.CurrentHealth += HealthDelta.Delta;
 	});
 }
 
-void HealthSystem::UpdatePersistentHealth(SystemContext& Context, float DeltaTime)
+void HealthSystem::UpdatePersistentHealth(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	int NewHealth = GlobalConstants::InitialPlayerHealth;
 	const Query<WritesList<HealthComponent>, ReadsList<BackgroundRenderComponent>, ExcludeList<>> HealthQuery(Context.QueryContext);
-	HealthQuery.ForEach([&](Entity Entity, HealthComponent& Health, const BackgroundRenderComponent& BackgroundRender)
+	HealthQuery.ForEach([&]([[maybe_unused]] Entity Entity, HealthComponent& Health, [[maybe_unused]] const BackgroundRenderComponent& BackgroundRender)
 	{
 		NewHealth = Health.CurrentHealth;
 	});
 
 	const TriggerQuery Triggers(Context.QueryContext);
-	Triggers.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, const HealthComponent& Health)
+	Triggers.ForEach([&]([[maybe_unused]] Entity Entity, [[maybe_unused]] const PositionComponent& Position, [[maybe_unused]] const RectComponent& Rect, const HealthComponent& Health)
 	{
 		NewHealth = Health.CurrentHealth;
 	});
@@ -99,7 +102,7 @@ void HealthSystem::UpdatePersistentHealth(SystemContext& Context, float DeltaTim
 		NewHealth = GlobalConstants::InitialPlayerHealth;
 	}
 	
-	HealthQuery.ForEach([&](Entity Entity, HealthComponent& Health, const BackgroundRenderComponent& BackgroundRender)
+	HealthQuery.ForEach([&]([[maybe_unused]] Entity Entity, HealthComponent& Health, [[maybe_unused]] const BackgroundRenderComponent& BackgroundRender)
 	{
 		Health.CurrentHealth = NewHealth;
 	});

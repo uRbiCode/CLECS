@@ -27,7 +27,7 @@ namespace
 		BallQuery.ForEach([&](Entity BallEntity, const PositionComponent& BallPosition, const CircleComponent& BallCircle, const DamageComponent& BallDamage)
 		{
 			Vector2D<float> TotalSeparation{ 0.f, 0.f };
-			BricksQuery.ForEach([&](Entity BrickEntity, const PositionComponent& BrickPosition, const RectComponent& BrickRect, const HealthComponent& BrickHealth, const GameRenderComponent& BrickRender)
+			BricksQuery.ForEach([&](Entity BrickEntity, const PositionComponent& BrickPosition, const RectComponent& BrickRect, [[maybe_unused]] const HealthComponent& BrickHealth, [[maybe_unused]] const GameRenderComponent& BrickRender)
 			{
 				if (!CollisionUtils::CheckCircleRect(BallPosition, BallCircle, BrickPosition, BrickRect))
 					return;
@@ -36,7 +36,7 @@ namespace
 				TotalSeparation += CollisionUtils::GetSeparationCircleRect(BallPosition, BallCircle, BrickPosition, BrickRect);
 			});
 
-			WallsQuery.ForEach([&](Entity WallEntity, const PositionComponent& WallPosition, const RectComponent& WallRect, const GameRenderComponent& WallRender)
+			WallsQuery.ForEach([&]([[maybe_unused]] Entity WallEntity, const PositionComponent& WallPosition, const RectComponent& WallRect, [[maybe_unused]] const GameRenderComponent& WallRender)
 			{
 				if (!CollisionUtils::CheckCircleRect(BallPosition, BallCircle, WallPosition, WallRect))
 					return;
@@ -65,11 +65,11 @@ namespace
 	{
 		const PaddleQuery PaddleQuery(Context.QueryContext);
 		AddComponentsCommand<DirectionCollisionComponent> AddDirectionCollisionCommand(0);
-		BallQuery.ForEach([&](Entity BallEntity, const PositionComponent& BallPosition, const CircleComponent& BallCircle, const DamageComponent& BallDamage)
+		BallQuery.ForEach([&](Entity BallEntity, const PositionComponent& BallPosition, const CircleComponent& BallCircle, [[maybe_unused]] const DamageComponent& BallDamage)
 		{
 			Vector2D<float> PaddleCenter{ 0.f, 0.f };
 			Vector2D<float> Separation{ 0.f, 0.f };
-			PaddleQuery.ForEach([&](Entity PaddleEntity, const PositionComponent& PaddlePosition, const RectComponent& PaddleRect, const PlayerMoveSpeedComponent& PaddleMoveSpeed)
+			PaddleQuery.ForEach([&]([[maybe_unused]] Entity PaddleEntity, const PositionComponent& PaddlePosition, const RectComponent& PaddleRect, [[maybe_unused]] const PlayerMoveSpeedComponent& PaddleMoveSpeed)
 			{
 				if (!CollisionUtils::CheckCircleRect(BallPosition, BallCircle, PaddlePosition, PaddleRect))
 					return;
@@ -95,10 +95,10 @@ namespace
 	{
 		const TriggerQuery TriggerQuery(Context.QueryContext);
 		AddComponentsCommand<HealthDeltaComponent> AddHealthDeltaCommand(0);
-		TriggerQuery.ForEach([&](Entity TriggerEntity, const PositionComponent& TriggerPosition, const RectComponent& TriggerRect, const HealthComponent& TriggerHealth)
+		TriggerQuery.ForEach([&](Entity TriggerEntity, const PositionComponent& TriggerPosition, const RectComponent& TriggerRect, [[maybe_unused]] const HealthComponent& TriggerHealth)
 		{
 			int TotalHealthDelta = 0;
-			BallQuery.ForEach([&](Entity BallEntity, const PositionComponent& BallPosition, const CircleComponent& BallCircle, const DamageComponent& BallDamage)
+			BallQuery.ForEach([&]([[maybe_unused]] Entity BallEntity, const PositionComponent& BallPosition, const CircleComponent& BallCircle, const DamageComponent& BallDamage)
 			{
 				if (!CollisionUtils::CheckCircleRect(BallPosition, BallCircle, TriggerPosition, TriggerRect))
 					return;
@@ -116,13 +116,13 @@ namespace
 	}
 }
 
-void CollisionSystem::CleanupCollisionComponents(SystemContext& Context, float DeltaTime)
+void CollisionSystem::CleanupCollisionComponents(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	ComponentUtils::RemoveAllComponentsTyped<CollisionComponent>(Context);
 	ComponentUtils::RemoveAllComponentsTyped<DirectionCollisionComponent>(Context);
 }
 
-void CollisionSystem::UpdateBallCollision(SystemContext& Context, float DeltaTime)
+void CollisionSystem::UpdateBallCollision(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	const BallQuery BallQuery(Context.QueryContext);
 
@@ -131,15 +131,15 @@ void CollisionSystem::UpdateBallCollision(SystemContext& Context, float DeltaTim
 	UpdateBallTriggersCollision(Context, BallQuery);
 }
 
-void CollisionSystem::UpdatePaddleCollision(SystemContext& Context, float DeltaTime)
+void CollisionSystem::UpdatePaddleCollision(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	const PaddleQuery PaddleQuery(Context.QueryContext);
 	const WallsQuery WallsQuery(Context.QueryContext);
 	AddComponentsCommand<CollisionComponent> AddCollisionCommand(0);
-	PaddleQuery.ForEach([&](Entity PaddleEntity, const PositionComponent& PaddlePosition, const RectComponent& PaddleRect, const PlayerMoveSpeedComponent& PaddleMoveSpeed)
+	PaddleQuery.ForEach([&](Entity PaddleEntity, const PositionComponent& PaddlePosition, const RectComponent& PaddleRect, [[maybe_unused]] const PlayerMoveSpeedComponent& PaddleMoveSpeed)
 	{
 		Vector2D<float> TotalSeparation{ 0.f, 0.f };
-		WallsQuery.ForEach([&](Entity WallEntity, const PositionComponent& WallPosition, const RectComponent& WallRect, const GameRenderComponent& WallRender)
+		WallsQuery.ForEach([&]([[maybe_unused]] Entity WallEntity, const PositionComponent& WallPosition, const RectComponent& WallRect, [[maybe_unused]] const GameRenderComponent& WallRender)
 		{
 			if (!CollisionUtils::CheckAABB(CollisionUtils::GetWorldAABB(PaddlePosition, PaddleRect), CollisionUtils::GetWorldAABB(WallPosition, WallRect)))
 				return;
@@ -161,10 +161,10 @@ void CollisionSystem::UpdatePaddleCollision(SystemContext& Context, float DeltaT
 	}
 }
 
-void CollisionSystem::UpdateBallVelocity(SystemContext& Context, float DeltaTime)
+void CollisionSystem::UpdateBallVelocity(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	const Query<WritesList<VelocityComponent>, ReadsList<CircleComponent, CollisionComponent>, ExcludeList<>> VelocityQuery(Context.QueryContext);
-	VelocityQuery.ForEach([&](Entity Entity, VelocityComponent& Velocity, const CircleComponent& Circle, const CollisionComponent& Collision)
+	VelocityQuery.ForEach([&]([[maybe_unused]] Entity Entity, VelocityComponent& Velocity, [[maybe_unused]] const CircleComponent& Circle, [[maybe_unused]] const CollisionComponent& Collision)
 	{
 		Velocity.Velocity *= 1.01f;
 	});

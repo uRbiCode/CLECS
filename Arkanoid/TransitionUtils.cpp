@@ -224,7 +224,7 @@ namespace
 		{
 			int PlayerHealth = GlobalConstants::InitialPlayerHealth;
 			const Query<WritesList<>, ReadsList<HealthComponent, BackgroundRenderComponent>, ExcludeList<>> HealthQuery(Context.QueryContext);
-			HealthQuery.ForEach([&](Entity Entity, const HealthComponent& Health, const BackgroundRenderComponent& BackgroundRender)
+			HealthQuery.ForEach([&]([[maybe_unused]] Entity Entity, const HealthComponent& Health, [[maybe_unused]] const BackgroundRenderComponent& BackgroundRender)
 			{
 				PlayerHealth = Health.CurrentHealth;
 			});

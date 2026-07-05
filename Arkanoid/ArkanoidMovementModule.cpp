@@ -17,6 +17,10 @@ void ArkanoidMovementModule::RegisterComponentTypes(ComponentsInitializationData
 	Data.RegisterComponent<PositionResetComponent>();
 }
 
+void ArkanoidMovementModule::RegisterStartupSystems([[maybe_unused]] StartupSystemsInitializationData& Data)
+{
+}
+
 void ArkanoidMovementModule::RegisterSystems(SystemsInitializationData& Data)
 {
 	Data.RegisterSystem(MovementSystem::ResolveMovementChanges, SystemPhase::LateUpdate);

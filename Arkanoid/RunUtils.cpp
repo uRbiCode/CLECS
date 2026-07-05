@@ -27,7 +27,7 @@ namespace
 	{
 		int PersistentHealth = 0;
 		const Query<WritesList<>, ReadsList<BackgroundRenderComponent, HealthComponent>, ExcludeList<>> HealthQuery(Context.QueryContext);
-		HealthQuery.ForEach([&](Entity Entity, const BackgroundRenderComponent& BackgroundRender, const HealthComponent& Health)
+		HealthQuery.ForEach([&]([[maybe_unused]] Entity Entity, [[maybe_unused]] const BackgroundRenderComponent& BackgroundRender, const HealthComponent& Health)
 		{
 			PersistentHealth = Health.CurrentHealth;
 		});
@@ -38,7 +38,7 @@ namespace
 	{
 		float PaddleWidthMultiplier = 1.f;
 		const Query<WritesList<>, ReadsList<PaddleWidthMultiplierUpgradeComponent>, ExcludeList<AvailableUpgradeComponent>> PaddleWidthQuery(Context.QueryContext);
-		PaddleWidthQuery.ForEach([&](Entity Entity, const PaddleWidthMultiplierUpgradeComponent& PaddleWidthUpgrade)
+		PaddleWidthQuery.ForEach([&]([[maybe_unused]] Entity Entity, const PaddleWidthMultiplierUpgradeComponent& PaddleWidthUpgrade)
 		{
 			PaddleWidthMultiplier *= PaddleWidthUpgrade.Multiplier;
 		});
@@ -49,7 +49,7 @@ namespace
 	{
 		float BallSpeedMultiplier = 1.f;
 		const Query<WritesList<>, ReadsList<BallSpeedMultiplierUpgradeComponent>, ExcludeList<AvailableUpgradeComponent>> BallSpeedQuery(Context.QueryContext);
-		BallSpeedQuery.ForEach([&](Entity Entity, const BallSpeedMultiplierUpgradeComponent& BallSpeedUpgrade)
+		BallSpeedQuery.ForEach([&]([[maybe_unused]] Entity Entity, const BallSpeedMultiplierUpgradeComponent& BallSpeedUpgrade)
 		{
 			BallSpeedMultiplier *= BallSpeedUpgrade.Multiplier;
 		});
@@ -60,7 +60,7 @@ namespace
 	{
 		float BallSizeMultiplier = 1.f;
 		const Query<WritesList<>, ReadsList<BallSizeMultiplierUpgradeComponent>, ExcludeList<AvailableUpgradeComponent>> BallSizeQuery(Context.QueryContext);
-		BallSizeQuery.ForEach([&](Entity Entity, const BallSizeMultiplierUpgradeComponent& BallSizeUpgrade)
+		BallSizeQuery.ForEach([&]([[maybe_unused]] Entity Entity, const BallSizeMultiplierUpgradeComponent& BallSizeUpgrade)
 		{
 			BallSizeMultiplier *= BallSizeUpgrade.Multiplier;
 		});
@@ -147,7 +147,7 @@ void RunUtils::SpawnBall(SystemContext& Context, BallData&& Data)
 void RunUtils::ResetStage(SystemContext& Context)
 {
 	const Query<WritesList<PositionComponent>, ReadsList<PositionResetComponent>, ExcludeList<>> ResetQuery(Context.QueryContext);
-	ResetQuery.ForEach([&](Entity Entity, PositionComponent& Position, const PositionResetComponent& PositionReset)
+	ResetQuery.ForEach([&]([[maybe_unused]] Entity Entity, PositionComponent& Position, const PositionResetComponent& PositionReset)
 	{
 		Position.Position = PositionReset.ResetPosition;
 	});
