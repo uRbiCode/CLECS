@@ -1,5 +1,6 @@
 #include "pch.h"
-#include "../CLECS/AddComponentsCommand.h"
+#include "AddComponentsCommand.h"
+#include "Entity.cpp"
 
 struct PosComp { float X = 0.f; float Y = 0.f; };
 struct VelComp { float DX = 0.f; float DY = 0.f; };

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "../CLECS/AddEntitiesCommand.h"
+#include "AddEntitiesCommand.h"
 
 struct PosComp { float X = 0.f; float Y = 0.f; };
 struct VelComp { float DX = 0.f; float DY = 0.f; };

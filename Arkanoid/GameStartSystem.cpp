@@ -21,12 +21,12 @@ namespace
 
 	void AddBackgroundRenderEntity(SystemContext& Context)
 	{
-		const Vector2D<int> RendererLogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
-		SDL_Texture* Texture = Context.Managers.TextureManager.GetTexture(Constants::BackgroundTexturePath);
+		const Vector2D<float> RendererLogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+		SDL_Texture* Texture = Context.TextureManager.GetTexture(Constants::BackgroundTexturePath);
 
 		AddEntitiesCommand<PositionComponent, RectComponent, BackgroundRenderComponent, TextureComponent, HealthComponent> AddBackgroundCommand(1);
 		AddBackgroundCommand.WithEntry(PositionComponent{ {0.f, 0.f} },
-			RectComponent{ SDL_FRect{ 0.f, 0.f, static_cast<float>(RendererLogicalPresentation.X), static_cast<float>(RendererLogicalPresentation.Y) } },
+			RectComponent{ SDL_FRect{ 0.f, 0.f, RendererLogicalPresentation.X, RendererLogicalPresentation.Y } },
 			BackgroundRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
 			TextureComponent{ Texture, SDL_FRect{ 33.f, 23.f, 25.f, 20.f } },
 			HealthComponent{ GlobalConstants::InitialPlayerHealth });

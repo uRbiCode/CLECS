@@ -3,6 +3,10 @@
 #include "World.h"
 #include "SDL3/SDL.h"
 #include "WorldInitializationData.h"
+#include "ModulesInitializationData.h"
+#include "TextureManager.h"
+#include "AudioManager.h"
+#include "FontManager.h"
 
 namespace
 {
@@ -11,7 +15,7 @@ namespace
 	float CalculateDeltaTime(Uint64& LastTime)
 	{
 		const Uint64 CurrentTime = SDL_GetTicks();
-		const float DeltaTime = (CurrentTime - LastTime) / MILLISECONDS_TO_SECONDS;
+		const float DeltaTime = (static_cast<float>(CurrentTime) - static_cast<float>(LastTime)) / MILLISECONDS_TO_SECONDS;
 		LastTime = CurrentTime;
 		return DeltaTime;
 	}

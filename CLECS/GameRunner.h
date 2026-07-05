@@ -4,7 +4,7 @@
 class Game;
 class World;
 class WorldInitializationData;
-class RendererInitializationData;
+struct RendererInitializationData;
 
 /* GameRunner manages the lifecycle of a CLECS game.
  * It handles SDL initialization and the main game loop.

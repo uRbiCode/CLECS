@@ -6,7 +6,7 @@
  */
 struct CollisionComponent
 {
-	const Vector2D<float> Separation = { 0.f, 0.f };
+	Vector2D<float> Separation = { 0.f, 0.f };
 };
 
 /* Stores direction collision information.
@@ -14,6 +14,6 @@ struct CollisionComponent
  */
 struct DirectionCollisionComponent
 {
-	const Vector2D<float> Direction = { 0.f, 0.f };
-	const Vector2D<float> Source = { 0.f, 0.f };
+	Vector2D<float> Direction = { 0.f, 0.f };
+	Vector2D<float> Source = { 0.f, 0.f };
 };

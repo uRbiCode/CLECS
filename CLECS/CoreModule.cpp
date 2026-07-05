@@ -21,6 +21,10 @@ void CoreModule::RegisterComponentTypes(ComponentsInitializationData& Data)
 	Data.RegisterComponent<UIRenderComponent>();
 }
 
+void CoreModule::RegisterStartupSystems([[maybe_unused]] StartupSystemsInitializationData& Data)
+{
+}
+
 void CoreModule::RegisterSystems(SystemsInitializationData& Data)
 {
 	Data.RegisterSystem(RenderSystem::Update, SystemPhase::Render);

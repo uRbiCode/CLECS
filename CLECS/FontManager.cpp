@@ -6,7 +6,6 @@
 namespace FontConstants
 {
     constexpr const char* FontsDirectory = "../Assets/Fonts/";
-    constexpr const char* DefaultFont = "../Assets/Fonts/pixy_regular.ttf";
 }
 
 FontManager::~FontManager()

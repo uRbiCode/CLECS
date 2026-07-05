@@ -1,6 +1,8 @@
 #include "pch.h"
-#include "../CLECS/ComponentsInitializationData.h"
-#include "../CLECS/Query.h"
+#include "ComponentsInitializationData.h"
+#include "Query.h"
+#include "Column.cpp"
+#include "QueryContext.cpp"
 
 struct PosComp { float X = 0.f; float Y = 0.f; };
 struct VelComp { float DX = 0.f; float DY = 0.f; };

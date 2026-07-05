@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "../CLECS/ComponentsInitializationData.h"
-#include "../CLECS/Archetype.cpp"
+#include "ComponentsInitializationData.h"
+#include "Archetype.cpp"
 #include "TestsTypes.h"
 
 struct PosComp  { float X = 0.f; float Y = 0.f; };

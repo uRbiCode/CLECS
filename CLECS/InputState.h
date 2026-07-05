@@ -1,6 +1,6 @@
 #pragma once
-#include <SDL3/SDL.h>
 #include "MathTypes.h"
+#include <SDL3/SDL.h>
 #include <unordered_set>
 
 /* Responsible for input polling.
@@ -10,8 +10,6 @@
 class InputState
 {
 public:
-	InputState() = default;
-
 	void ProcessEvent(const SDL_Event& Event);
 	void BeginFrame();
 
@@ -25,8 +23,7 @@ public:
 	bool IsMouseButtonDown(Uint8 Button) const;
 	bool IsMouseButtonJustReleased(Uint8 Button) const;
 
-	Vector2D<float> GetMousePosition() const { return MousePosition; }
-	Vector2D<float> GetMouseDelta() const { return MouseDelta; }
+	Vector2D<float> GetMousePosition() const;
 
 private:
 	std::unordered_set<SDL_Keycode> HeldKeys;
@@ -40,7 +37,4 @@ private:
 	std::unordered_set<Uint8> JustReleasedMouseButtons;
 
 	Vector2D<float> MousePosition{ 0.f, 0.f };
-	Vector2D<float> MouseDelta{ 0.f, 0.f };
-
-	friend class World;
 };

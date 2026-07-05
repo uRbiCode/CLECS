@@ -2,9 +2,6 @@
 #include "CoreTypes.h"
 #include "SystemsCollection.h"
 #include "InputState.h"
-#include "TextureManager.h"
-#include "AudioManager.h"
-#include "FontManager.h"
 #include "ArchetypeStorage.h"
 #include "CommandRunner.h"
 #include <memory>
@@ -14,6 +11,10 @@ struct SDL_Window;
 struct SDL_Renderer;
 struct RendererInitializationData;
 struct SystemContext;
+
+class TextureManager;
+class AudioManager;
+class FontManager;
 
 /* World is the heart of CLECS architecture.
  * It owns the SDL and CLECS resources and manages their lifecycle.

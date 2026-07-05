@@ -127,6 +127,8 @@ namespace
 		SDL_RenderFillRect(&Renderer, &RenderRect);
 	}
 
+#pragma warning(push)
+#pragma warning(disable : 5045)
 	template<ComponentType T>
 	void RenderCircle(const T& RenderLayerComponent, const PositionComponent& Position, const CircleComponent& Circle, SDL_Renderer& Renderer)
 	{
@@ -136,8 +138,8 @@ namespace
 		// Draw filled circle using triangles from center
 		for (int i = 0; i < RenderConstants::CircleSegments; ++i)
 		{
-			const float Angle = i * RenderConstants::CircleAngleStep;
-			const float NextAngle = (i + 1) * RenderConstants::CircleAngleStep;
+			const float Angle = static_cast<float>(i) * RenderConstants::CircleAngleStep;
+			const float NextAngle = static_cast<float>(i + 1) * RenderConstants::CircleAngleStep;
 
 			const SDL_Vertex Vertices[VerticesCount] = {
 				{ { Center.X, Center.Y }, { RenderLayerComponent.Color.r, RenderLayerComponent.Color.g, RenderLayerComponent.Color.b, RenderLayerComponent.Color.a }, { 0, 0 } },
@@ -148,7 +150,10 @@ namespace
 			SDL_RenderGeometry(&Renderer, nullptr, Vertices, VerticesCount, nullptr, 0);
 		}
 	}
+#pragma warning(pop)
 
+#pragma warning(push)
+#pragma warning(disable : 5045)
 	void RenderFilledCircle(const PositionComponent& Position, const CircleComponent& Circle, SDL_Renderer& Renderer)
 	{
 		const Vector2D<float> Center = { Position.Position.X, Position.Position.Y };
@@ -156,8 +161,8 @@ namespace
 		// Draw circle outline using line segments
 		for (int i = 0; i <= RenderConstants::CircleSegments; ++i)
 		{
-			const float Angle = i * RenderConstants::CircleAngleStep;
-			const float NextAngle = (i + 1) * RenderConstants::CircleAngleStep;
+			const float Angle = static_cast<float>(i) * RenderConstants::CircleAngleStep;
+			const float NextAngle = static_cast<float>(i + 1) * RenderConstants::CircleAngleStep;
 
 			const float X1 = Center.X + std::cosf(Angle) * Circle.Radius;
 			const float Y1 = Center.Y + std::sinf(Angle) * Circle.Radius;
@@ -167,6 +172,7 @@ namespace
 			SDL_RenderLine(&Renderer, X1, Y1, X2, Y2);
 		}
 	}
+#pragma warning(pop)
 
 	template<ComponentType T>
 	void RenderTexture(const T& RenderLayerComponent, const TextureComponent& Texture, const SDL_FRect& RenderRect, SDL_Renderer& Renderer)
@@ -234,7 +240,7 @@ namespace
 	{
 		{
 			const RegularRectsQuery<T> RenderRegularRectsQuery(Context.QueryContext);
-			RenderRegularRectsQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const RectComponent& Rect)
+			RenderRegularRectsQuery.ForEach([&]([[maybe_unused]] Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const RectComponent& Rect)
 			{
 				RenderUtils::SetRendererColor(Context.Renderer, RenderLayerComponent);
 				RenderRect(Position, Rect, Context.Renderer);
@@ -243,7 +249,7 @@ namespace
 
 		{
 			const FilledRectsQuery<T> RenderFilledRectsQuery(Context.QueryContext);
-			RenderFilledRectsQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const RectComponent& Rect, const ShapeFillComponent& ShapeFillComponent)
+			RenderFilledRectsQuery.ForEach([&]([[maybe_unused]] Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const RectComponent& Rect, [[maybe_unused]] const ShapeFillComponent& ShapeFillComponent)
 			{
 				RenderUtils::SetRendererColor(Context.Renderer, RenderLayerComponent);
 				RenderFilledRect(Position, Rect, Context.Renderer);
@@ -252,7 +258,7 @@ namespace
 
 		{
 			const RegularCirclesQuery<T> RenderRegularCirclesQuery(Context.QueryContext);
-			RenderRegularCirclesQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const CircleComponent& Circle)
+			RenderRegularCirclesQuery.ForEach([&]([[maybe_unused]] Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const CircleComponent& Circle)
 			{
 				RenderCircle(RenderLayerComponent, Position, Circle, Context.Renderer);
 			});
@@ -260,7 +266,7 @@ namespace
 
 		{
 			const FilledCirclesQuery<T> RenderFilledCirclesQuery(Context.QueryContext);
-			RenderFilledCirclesQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const CircleComponent& Circle, const ShapeFillComponent& ShapeFillComponent)
+			RenderFilledCirclesQuery.ForEach([&]([[maybe_unused]] Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const CircleComponent& Circle, [[maybe_unused]] const ShapeFillComponent& ShapeFillComponent)
 			{
 				RenderUtils::SetRendererColor(Context.Renderer, RenderLayerComponent);
 				RenderFilledCircle(Position, Circle, Context.Renderer);
@@ -269,7 +275,7 @@ namespace
 
 		{
 			const RectsTextureQuery<T> RenderRectsTextureQuery(Context.QueryContext);
-			RenderRectsTextureQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextureComponent& Texture, const RectComponent& Rect)
+			RenderRectsTextureQuery.ForEach([&]([[maybe_unused]] Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextureComponent& Texture, const RectComponent& Rect)
 			{
 				RenderTexture(RenderLayerComponent, Texture, RenderUtils::CalcRenderRect(Position, Rect), Context.Renderer);
 			});
@@ -277,7 +283,7 @@ namespace
 
 		{
 			const CirclesTextureQuery<T> RenderCirclesTextureQuery(Context.QueryContext);
-			RenderCirclesTextureQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextureComponent& Texture, const CircleComponent& Circle)
+			RenderCirclesTextureQuery.ForEach([&]([[maybe_unused]] Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextureComponent& Texture, const CircleComponent& Circle)
 			{
 				RenderTexture(RenderLayerComponent, Texture, RenderUtils::CalcRenderRectFromCircle(Position, Circle), Context.Renderer);
 			});
@@ -285,31 +291,31 @@ namespace
 
 		{
 			const RectsTextQuery<T> RenderRectsTextQuery(Context.QueryContext);
-			RenderRectsTextQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const RectComponent& Rect)
+			RenderRectsTextQuery.ForEach([&]([[maybe_unused]] Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const RectComponent& Rect)
 			{
-				RenderWrappedText(RenderLayerComponent, Position, Text, RenderUtils::CalcRenderRect(Position, Rect), RenderUtils::CalcWrapWidth(Rect), Context.Managers.FontManager, Context.Renderer);
+				RenderWrappedText(RenderLayerComponent, Position, Text, RenderUtils::CalcRenderRect(Position, Rect), RenderUtils::CalcWrapWidth(Rect), Context.FontManager, Context.Renderer);
 			});
 		}
 
 		{
 			const CirclesTextQuery<T> RenderCirclesTextQuery(Context.QueryContext);
-			RenderCirclesTextQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const CircleComponent& Circle)
+			RenderCirclesTextQuery.ForEach([&]([[maybe_unused]] Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text, const CircleComponent& Circle)
 			{
-				RenderWrappedText(RenderLayerComponent, Position, Text, RenderUtils::CalcRenderRectFromCircle(Position, Circle), RenderUtils::CalcWrapWidthFromCircle(Circle), Context.Managers.FontManager, Context.Renderer);
+				RenderWrappedText(RenderLayerComponent, Position, Text, RenderUtils::CalcRenderRectFromCircle(Position, Circle), RenderUtils::CalcWrapWidthFromCircle(Circle), Context.FontManager, Context.Renderer);
 			});
 		}
 
 		{
 			const UnwrappedTextQuery<T> RenderUnwrappedTextQuery(Context.QueryContext);
-			RenderUnwrappedTextQuery.ForEach([&](Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text)
+			RenderUnwrappedTextQuery.ForEach([&]([[maybe_unused]] Entity Entity, const T& RenderLayerComponent, const PositionComponent& Position, const TextComponent& Text)
 			{
-				RenderText(RenderLayerComponent, Position, Text, Context.Managers.FontManager, Context.Renderer);
+				RenderText(RenderLayerComponent, Position, Text, Context.FontManager, Context.Renderer);
 			});
 		}
 	}
 }
 
-void RenderSystem::Update(SystemContext& Context, float DeltaTime)
+void RenderSystem::Update(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	SDL_Renderer& Renderer = Context.Renderer;
 	SDL_SetRenderDrawColor(&Renderer, 0, 0, 0, 0);

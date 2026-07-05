@@ -1,4 +1,5 @@
 #include "WorldInitializationData.h"
+#include "ModulesInitializationData.h"
 
 WorldInitializationData WorldInitializationData::InitializeWithModules(ModulesInitializationData&& ModulesData)
 {

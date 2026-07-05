@@ -17,13 +17,7 @@ public:
 		});
 	}
 
-	void Submit(RemoveEntitiesCommand&& Command)
-	{
-		PendingCommands.emplace_back([Cmd = std::move(Command)](ArchetypeStorage& Archetypes) mutable
-		{
-			Archetypes.RemoveEntities(std::move(Cmd));
-		});
-	}
+	void Submit(RemoveEntitiesCommand&& Command);	
 
 	template<typename... Components>
 	void Submit(AddComponentsCommand<Components...>&& Command)
@@ -43,14 +37,7 @@ public:
 		});
 	}
 
-	void Flush(ArchetypeStorage& Archetypes)
-	{
-		for (auto& Command : PendingCommands)
-		{
-			Command(Archetypes);
-		}
-		PendingCommands.clear();
-	}
+	void Flush(ArchetypeStorage& Archetypes);	
 
 private:
 	std::vector<std::function<void(ArchetypeStorage&)>> PendingCommands;

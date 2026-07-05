@@ -9,7 +9,7 @@
 
 namespace
 {
-	void UpdateInput(SystemContext& Context, float DeltaTime)
+	void UpdateInput(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 	{
 		const Query<WritesList<>, ReadsList<BeginStageComponent>, ExcludeList<>> InputQuery(Context.QueryContext);
 		if (InputQuery.Size() < 1)
@@ -21,7 +21,7 @@ namespace
 	void RegularUpdate(SystemContext& Context, float DeltaTime)
 	{
 		const Query<WritesList<UIBlinkComponent>, ReadsList<>, ExcludeList<>> BlinkQuery(Context.QueryContext);
-		BlinkQuery.ForEach([&](Entity Entity, UIBlinkComponent& Blink)
+		BlinkQuery.ForEach([&]([[maybe_unused]] Entity Entity, UIBlinkComponent& Blink)
 		{
 			Blink.Timer -= DeltaTime;
 		});
@@ -30,7 +30,7 @@ namespace
 		if (RemoveBlinkQuery.Size() > 0)
 		{
 			RemoveComponentsCommand<UIRenderComponent> RemoveBlinkCommand(RemoveBlinkQuery.Size());
-			RemoveBlinkQuery.ForEach([&](Entity Entity, UIBlinkComponent& Blink, const UIRenderComponent& Render)
+			RemoveBlinkQuery.ForEach([&](Entity Entity, UIBlinkComponent& Blink, [[maybe_unused]] const UIRenderComponent& Render)
 			{
 				if (Blink.Timer > 0.f)
 					return;

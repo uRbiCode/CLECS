@@ -30,8 +30,6 @@ void InputState::ProcessEvent(const SDL_Event& Event)
 	case SDL_EVENT_MOUSE_MOTION:
 		MousePosition.X = Event.motion.x;
 		MousePosition.Y = Event.motion.y;
-		MouseDelta.X = Event.motion.xrel;
-		MouseDelta.Y = Event.motion.yrel;
 		break;
 
 	case SDL_EVENT_WINDOW_FOCUS_LOST:
@@ -50,8 +48,6 @@ void InputState::BeginFrame()
 	JustReleasedKeys.clear();
 	JustPressedMouseButtons.clear();
 	JustReleasedMouseButtons.clear();
-	MouseDelta.X = 0.f;
-	MouseDelta.Y = 0.f;
 }
 
 bool InputState::IsKeyHeld(SDL_Keycode Key) const
@@ -92,4 +88,9 @@ bool InputState::IsMouseButtonDown(Uint8 Button) const
 bool InputState::IsMouseButtonJustReleased(Uint8 Button) const
 {
 	return JustReleasedMouseButtons.contains(Button);
+}
+
+Vector2D<float> InputState::GetMousePosition() const
+{
+	return MousePosition;
 }

@@ -12,6 +12,8 @@ struct SystemsInitializationData;
 class ModuleBase
 {
 public:
+	virtual ~ModuleBase() = default;
+
 	virtual void RegisterComponentTypes(ComponentsInitializationData& Data) = 0;
 	virtual void RegisterStartupSystems(StartupSystemsInitializationData& Data) = 0;
 	virtual void RegisterSystems(SystemsInitializationData& Data) = 0;

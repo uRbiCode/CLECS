@@ -22,27 +22,29 @@ public:
     void StopMusic();
 
 private:
+    enum class AudioType : uint8_t
+    {
+        Sfx,
+        Music,
+        Invalid
+	};
+
     struct SoundData
     {
-        SDL_AudioSpec Spec;
         Uint8* Buffer = nullptr;
         Uint32 Length = 0;
-    };
-
-    struct StreamConfig
-    {
-        bool Loop = false;
-        bool AutoCleanup = true;
-        SDL_AudioStreamCallback Callback = nullptr;
+        SDL_AudioSpec Spec{};
     };
 
     void LoadAllSoundsFromAssetsDirectory();
-    SDL_AudioStream* CreateAndBindAudioStream(const std::string& Name, float Volume, const StreamConfig& Config);
-    static void SDLCALL MusicCallback(void* Userdata, SDL_AudioStream* Stream, int AdditionalAmount, int TotalAmount);
+    SDL_AudioStream* CreateAndBindAudioStream(const std::string& Name, float Volume, AudioType Type);
+    static void SDLCALL MusicCallback(void* Userdata, SDL_AudioStream* Stream, int AdditionalAmount, int TotalAmount) noexcept;
 
-    SDL_AudioDeviceID AudioDeviceId = 0;
+#pragma warning(push)
+#pragma warning(disable : 4820)
     std::unordered_map<std::string, SoundData> SoundCache;
-
-    SDL_AudioStream* MusicStream = nullptr;
     std::string CurrentMusicName;
+    SDL_AudioStream* MusicStream = nullptr;
+    SDL_AudioDeviceID AudioDeviceId = 0;
+#pragma warning(pop)
 };

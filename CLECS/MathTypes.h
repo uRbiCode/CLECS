@@ -7,11 +7,8 @@ template<typename T>
 requires std::is_arithmetic_v<T>
 struct Vector2D
 {
-    T X;
-    T Y;
-
-    constexpr Vector2D() : X(T{}), Y(T{}) {}
-    constexpr Vector2D(T x, T y) : X(x), Y(y) {}
+    T X = T{};
+    T Y = T{};
 
     constexpr Vector2D operator+(const Vector2D& other) const
     {

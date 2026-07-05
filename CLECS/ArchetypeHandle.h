@@ -17,8 +17,7 @@ class ArchetypeHandle
 public:
 	ArchetypeHandle(Archetype& InArchetype, const ComponentTypesCollection& Types) : CachedArchetype(&InArchetype), ComponentTypes(&Types)
     {
-        size_t i = 0;
-        (( ResolvedIndices[i++] = InArchetype.GetColumnIndex(Types.GetComponentTypeId<Components>()) ), ...);
+        FillIndices(std::index_sequence_for<Components...>{});
     }
 
     template<ComponentType T>
@@ -45,6 +44,12 @@ public:
 	}
 
 private:
+    template<size_t... Index>
+    void FillIndices(std::index_sequence<Index...>)
+    {
+        ((ResolvedIndices[Index] = CachedArchetype->GetColumnIndex(ComponentTypes->GetComponentTypeId<Components>())), ...);
+    }
+
     // Compile-time index of T within Components...
     template<ComponentType T>
     static consteval size_t SlotOf()
@@ -55,7 +60,7 @@ private:
         return Slot;
     }
 
-	const ComponentTypesCollection* ComponentTypes = nullptr;
     Archetype* CachedArchetype = nullptr;
+	const ComponentTypesCollection* ComponentTypes = nullptr;
     std::array<size_t, sizeof...(Components)> ResolvedIndices;
 };

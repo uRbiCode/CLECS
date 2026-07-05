@@ -31,7 +31,7 @@ namespace
 	{
 		const TriggerQuery Trigger(Context.QueryContext);
 		bool IsTriggerDead = false;
-		Trigger.ForEach([&](Entity Entity, const PositionComponent& Position, const RectComponent& Rect, const HealthComponent& Health)
+		Trigger.ForEach([&]([[maybe_unused]] Entity Entity, [[maybe_unused]] const PositionComponent& Position, [[maybe_unused]] const RectComponent& Rect, const HealthComponent& Health)
 		{
 			IsTriggerDead |= Health.CurrentHealth < 1;
 		});
@@ -42,7 +42,7 @@ namespace
 	{
 		int TotalHealthDelta = 0;
 		const Query<WritesList<>, ReadsList<HealthDeltaComponent>, ExcludeList<GameRenderComponent>> TriggerHealthDeltaQuery(Context.QueryContext);
-		TriggerHealthDeltaQuery.ForEach([&](Entity Entity, const HealthDeltaComponent& HealthDelta)
+		TriggerHealthDeltaQuery.ForEach([&]([[maybe_unused]] Entity Entity, const HealthDeltaComponent& HealthDelta)
 		{
 			TotalHealthDelta += HealthDelta.Delta;
 		});
@@ -75,7 +75,7 @@ namespace
 	}
 }
 
-void TransitionSystem::UpdateDynamicTransitions(SystemContext& Context, float DeltaTime)
+void TransitionSystem::UpdateDynamicTransitions(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	const Query<WritesList<>, ReadsList<SummaryTransitionComponent>, ExcludeList<>> SummaryTransitionQuery(Context.QueryContext);
 	if (SummaryTransitionQuery.Size() > 0)
@@ -97,7 +97,7 @@ void TransitionSystem::UpdateDynamicTransitions(SystemContext& Context, float De
 	if (UpgradesTransitionQuery.Size() > 0)
 	{
 		RemoveEntitiesCommand RemoveUpgradesTransitionCommand(UpgradesTransitionQuery.Size());
-		UpgradesTransitionQuery.ForEach([&](Entity Entity, const UpgradesTransitionComponent& UpgradesTransition)
+		UpgradesTransitionQuery.ForEach([&](Entity Entity, [[maybe_unused]] const UpgradesTransitionComponent& UpgradesTransition)
 		{
 			TransitionUtils::CleanupRunStage(Context);
 			TransitionUtils::TravelToUpgrades(Context);
@@ -123,10 +123,10 @@ void TransitionSystem::UpdateDynamicTransitions(SystemContext& Context, float De
 	}
 }
 
-void TransitionSystem::UpdateClickableTransitions(SystemContext& Context, float DeltaTime)
+void TransitionSystem::UpdateClickableTransitions(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	const Query<WritesList<>, ReadsList<ClickableUsedComponent, ClickableComponent>, ExcludeList<>> TransitionQuery(Context.QueryContext);
-	TransitionQuery.ForEach([&](Entity Entity, const ClickableUsedComponent& ClickableUsed, const ClickableComponent& Clickable)
+	TransitionQuery.ForEach([&]([[maybe_unused]] Entity Entity, [[maybe_unused]] const ClickableUsedComponent& ClickableUsed, const ClickableComponent& Clickable)
 	{
 		switch (Clickable.Tag)
 		{
@@ -153,7 +153,7 @@ void TransitionSystem::UpdateClickableTransitions(SystemContext& Context, float 
 	});
 }
 
-void TransitionSystem::UpdateTransitionsFromRun(SystemContext& Context, float DeltaTime)
+void TransitionSystem::UpdateTransitionsFromRun(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	const auto SignalSummaryTransition = [](SystemContext& Context, const char* SummaryText)
 	{

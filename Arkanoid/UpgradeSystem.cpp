@@ -35,7 +35,7 @@ namespace
 		std::vector<std::pair<Entity, UpgradeDescriptionComponent>> AvailableUpgradeEntitites;
 		const Query<WritesList<>, ReadsList<AvailableUpgradeComponent, UpgradeDescriptionComponent>, ExcludeList<>> AvailableUpgradesQuery(Context.QueryContext);
 		AvailableUpgradeEntitites.reserve(AvailableUpgradesQuery.Size());
-		AvailableUpgradesQuery.ForEach([&](Entity Entity, const AvailableUpgradeComponent& AvailableUpgrade, const UpgradeDescriptionComponent& UpgradeDescription)
+		AvailableUpgradesQuery.ForEach([&](Entity Entity, [[maybe_unused]] const AvailableUpgradeComponent& AvailableUpgrade, const UpgradeDescriptionComponent& UpgradeDescription)
 		{
 			AvailableUpgradeEntitites.push_back({ Entity, UpgradeDescription });
 		});
@@ -46,6 +46,8 @@ namespace
 		return SampledEntities;
 	}
 
+#pragma warning(push)
+#pragma warning(disable : 5045)
 	void PresentUpgradesChoice(SystemContext& Context, std::vector<std::pair<Entity, UpgradeDescriptionComponent>>&& Upgrades)
 	{
 		if (Upgrades.empty())
@@ -54,7 +56,7 @@ namespace
 			return;
 		}
 
-		const Vector2D<int> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
+		const Vector2D<float> LogicalPresentation = SDLUtils::GetRendererLogicalPresentation(&Context.Renderer);
 		const Vector2D<float> ButtonSize = { LogicalPresentation.X * 0.25f, LogicalPresentation.Y * 0.4f };
 		const float UpgradeCount = static_cast<float>(Upgrades.size());
 		const float TotalWidth = LogicalPresentation.X * 0.8f;
@@ -76,6 +78,7 @@ namespace
 
 		Context.Commands.Submit(std::move(AddUpgradeButtonsCommand));
 	}
+#pragma warning(pop)
 }
 
 void UpgradeSystem::SpawnUpgradeEntities(SystemContext& Context)
@@ -103,7 +106,7 @@ void UpgradeSystem::InitializeUpgrades(SystemContext& Context)
 	const std::vector<UpgradeDefinition> AllUpgrades = UpgradeLoader::LoadUpgradeDefinitions();
 	size_t UpgradeIndex = 0;
 
-	UpgradesQuery.ForEach([&](Entity Entity, UpgradeDescriptionComponent& UpgradeDescription, const AvailableUpgradeComponent& AvailableUpgrade)
+	UpgradesQuery.ForEach([&](Entity Entity, UpgradeDescriptionComponent& UpgradeDescription, [[maybe_unused]] const AvailableUpgradeComponent& AvailableUpgrade)
 	{
 		const UpgradeDefinition& UpgradeToSpawn = AllUpgrades[UpgradeIndex];
 
@@ -147,14 +150,14 @@ void UpgradeSystem::InitializeUpgrades(SystemContext& Context)
 	}
 }
 
-void UpgradeSystem::UpdateOwnedUpgrades(SystemContext& Context, float DeltaTime)
+void UpgradeSystem::UpdateOwnedUpgrades(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	const Query<WritesList<>, ReadsList<ClickableUsedComponent, AvailableUpgradeComponent>, ExcludeList<>> UpgradeSelectionQuery(Context.QueryContext);
 	if (UpgradeSelectionQuery.Size() < 1)
 		return;
 
 	RemoveComponentsCommand<AvailableUpgradeComponent> RemoveAvailableUpgradeCommand(UpgradeSelectionQuery.Size());
-	UpgradeSelectionQuery.ForEach([&](Entity Entity, const ClickableUsedComponent& ClickableUsed, const AvailableUpgradeComponent& AvailableUpgrade)
+	UpgradeSelectionQuery.ForEach([&](Entity Entity, [[maybe_unused]] const ClickableUsedComponent& ClickableUsed, [[maybe_unused]] const AvailableUpgradeComponent& AvailableUpgrade)
 	{
 		RemoveAvailableUpgradeCommand.WithEntry(Entity);
 	});
@@ -163,31 +166,31 @@ void UpgradeSystem::UpdateOwnedUpgrades(SystemContext& Context, float DeltaTime)
 
 	const Query<WritesList<>, ReadsList<UIRenderComponent, UpgradeDescriptionComponent>, ExcludeList<>> VisibleUpgrades(Context.QueryContext);
 	RemoveComponentsCommand<PositionComponent, RectComponent, UIRenderComponent, TextComponent> RemoveUpgradeComponentsCommand(VisibleUpgrades.Size());
-	VisibleUpgrades.ForEach([&](Entity Entity, const UIRenderComponent& UIRender, const UpgradeDescriptionComponent& UpgradeDescription)
+	VisibleUpgrades.ForEach([&](Entity Entity, [[maybe_unused]] const UIRenderComponent& UIRender, [[maybe_unused]] const UpgradeDescriptionComponent& UpgradeDescription)
 	{
 		RemoveUpgradeComponentsCommand.WithEntry(Entity);
 	});
 	Context.Commands.Submit(std::move(RemoveUpgradeComponentsCommand));
 }
 
-void UpgradeSystem::UpdateImmediateUpgrades(SystemContext& Context, float DeltaTime)
+void UpgradeSystem::UpdateImmediateUpgrades(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	int TotalHealAmount = 0;
 
 	const Query<WritesList<>, ReadsList<ClickableUsedComponent, HealUpgradeComponent>, ExcludeList<>> HealQuery(Context.QueryContext);
-	HealQuery.ForEach([&](Entity Entity, const ClickableUsedComponent& ClickableUsed, const HealUpgradeComponent& HealUpgrade)
+	HealQuery.ForEach([&]([[maybe_unused]] Entity Entity, [[maybe_unused]] const ClickableUsedComponent& ClickableUsed, const HealUpgradeComponent& HealUpgrade)
 	{
 		TotalHealAmount += HealUpgrade.Heal;
 	});
 
 	const Query<WritesList<HealthComponent>, ReadsList<BackgroundRenderComponent>, ExcludeList<>> PersistentHealthQuery(Context.QueryContext);
-	PersistentHealthQuery.ForEach([&](Entity Entity, HealthComponent& Health, const BackgroundRenderComponent& BackgroundRender)
+	PersistentHealthQuery.ForEach([&]([[maybe_unused]] Entity Entity, HealthComponent& Health, [[maybe_unused]] const BackgroundRenderComponent& BackgroundRender)
 	{
 		Health.CurrentHealth += TotalHealAmount;
 	});
 }
 
-void UpgradeSystem::ResetUpgrades(SystemContext& Context, float DeltaTime)
+void UpgradeSystem::ResetUpgrades(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	const Query<WritesList<>, ReadsList<SummaryTransitionComponent>, ExcludeList<>> SummaryTransitionQuery(Context.QueryContext);
 	if (SummaryTransitionQuery.Size() < 1)
@@ -198,7 +201,7 @@ void UpgradeSystem::ResetUpgrades(SystemContext& Context, float DeltaTime)
 		return;
 
 	AddComponentsCommand<AvailableUpgradeComponent> AddAvailableUpgradeCommand(OwnedUpgradesQuery.Size());
-	OwnedUpgradesQuery.ForEach([&](Entity Entity, const UpgradeDescriptionComponent& UpgradeDescription)
+	OwnedUpgradesQuery.ForEach([&](Entity Entity, [[maybe_unused]] const UpgradeDescriptionComponent& UpgradeDescription)
 	{
 		AddAvailableUpgradeCommand.WithEntry(Entity, AvailableUpgradeComponent{});
 	});
@@ -206,10 +209,10 @@ void UpgradeSystem::ResetUpgrades(SystemContext& Context, float DeltaTime)
 	Context.Commands.Submit(std::move(AddAvailableUpgradeCommand));
 }
 
-void UpgradeSystem::UpdateUpgradesChoice(SystemContext& Context, float DeltaTime)
+void UpgradeSystem::UpdateUpgradesChoice(SystemContext& Context, [[maybe_unused]] float DeltaTime)
 {
 	const Query<WritesList<>, ReadsList<UpgradesTransitionComponent>, ExcludeList<>> UpgradesTransitionQuery(Context.QueryContext);
-	UpgradesTransitionQuery.ForEach([&](Entity Entity, const UpgradesTransitionComponent& UpgradesTransition)
+	UpgradesTransitionQuery.ForEach([&]([[maybe_unused]] Entity Entity, [[maybe_unused]] const UpgradesTransitionComponent& UpgradesTransition)
 	{
 		PresentUpgradesChoice(Context, SampleAvailableUpgradeEntities(Context));
 	});

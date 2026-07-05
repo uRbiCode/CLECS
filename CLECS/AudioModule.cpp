@@ -11,6 +11,10 @@ void AudioModule::RegisterComponentTypes(ComponentsInitializationData& Data)
 	Data.RegisterComponent<StopMusicComponent>();
 }
 
+void AudioModule::RegisterStartupSystems([[maybe_unused]] StartupSystemsInitializationData& Data)
+{
+}
+
 void AudioModule::RegisterSystems(SystemsInitializationData& Data)
 {
 	Data.RegisterSystem(AudioRequestConsumerSystem::Update, SystemPhase::EarlyUpdate);

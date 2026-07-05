@@ -7,15 +7,11 @@
 class RemoveEntitiesCommand
 {
 public:
-	RemoveEntitiesCommand(size_t EntityCount) { Entries.reserve(EntityCount); }
+	RemoveEntitiesCommand(size_t EntityCount);
 
-	RemoveEntitiesCommand& WithEntry(Entity EntityToRemove)
-	{
-		Entries.push_back(EntityToRemove);
-		return *this;
-	}
+	RemoveEntitiesCommand& WithEntry(Entity EntityToRemove);
 
-	const std::vector<Entity>& GetEntries() const { return Entries; }
+	const std::vector<Entity>& GetEntries() const;
 
 private:
 	std::vector<Entity> Entries;

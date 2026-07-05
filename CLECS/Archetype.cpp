@@ -15,9 +15,10 @@ Archetype Archetype::MakeNarrowed(const Archetype& Existing, const std::vector<C
 		Arch.Columns.emplace_back(Column(std::move(Desc)));
 	}
 
-	for (size_t i = 0; i < Arch.ComponentTypes.size(); ++i)
+	size_t i = 0;
+	for (const ComponentTypeId Id : Arch.ComponentTypes)
 	{
-		Arch.ColumnIndexCache[Arch.ComponentTypes[i]] = i;
+		Arch.ColumnIndexCache[Id] = i++;
 	}
 
 	return Arch;
@@ -26,7 +27,7 @@ Archetype Archetype::MakeNarrowed(const Archetype& Existing, const std::vector<C
 size_t Archetype::GetColumnIndex(ComponentTypeId CompId) const
 {
 	const auto It = ColumnIndexCache.find(CompId);
-	return It != ColumnIndexCache.end() ? It->second : SIZE_MAX;
+	return It != ColumnIndexCache.end() ? It->second : InvalidColumnIndex;
 }
 
 bool Archetype::HasComponentType(ComponentTypeId CompId) const
@@ -49,13 +50,15 @@ void Archetype::MigrateRowTo(Entity E, Archetype& Target)
 
 	Target.Entities.push_back(E);
 
-	for (size_t i = 0; i < ComponentTypes.size(); ++i)
+	std::vector<Column>::iterator ColIt = Columns.begin();
+	for (const ComponentTypeId CompId : ComponentTypes)
 	{
-		if (!Target.HasComponentType(ComponentTypes[i]))
-			continue;
-
-		const size_t TargetColIdx = Target.GetColumnIndex(ComponentTypes[i]);
-		Target.Columns[TargetColIdx].MoveAppendFrom(Columns[i], Row);
+		const size_t TargetColumnIndex = Target.GetColumnIndex(CompId);
+		if (TargetColumnIndex != InvalidColumnIndex)
+		{
+			Target.Columns[TargetColumnIndex].MoveAppendFrom(*ColIt, Row);
+		}
+		++ColIt;
 	}
 
 	SwapRemoveAt(Row);
@@ -81,4 +84,14 @@ size_t Archetype::GetEntityRow(Entity E) const
 {
 	const auto It = std::find(Entities.begin(), Entities.end(), E);
 	return static_cast<size_t>(std::distance(Entities.begin(), It));
+}
+
+size_t Archetype::Size() const
+{
+	return Entities.size();
+}
+
+const std::vector<Entity>& Archetype::GetEntities() const
+{
+	return Entities;
 }

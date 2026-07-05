@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "../CLECS/SystemsInitializationData.h"
+#include "SystemsInitializationData.h"
 
 void SystemA(SystemContext&, float) {}
 void SystemB(SystemContext&, float) {}

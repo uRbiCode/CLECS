@@ -21,9 +21,9 @@ public:
 		return ComponentTypesIds.at(typeid(Component));
 	}
 
-	size_t GetSize() const { return ComponentTypesIds.size(); }
+	size_t GetSize() const;
 
-	const ComponentTypesMap& GetRegisteredComponents() const { return ComponentTypesIds; }
+	const ComponentTypesMap& GetRegisteredComponents() const;
 
 private:
 	ComponentTypesMap ComponentTypesIds;

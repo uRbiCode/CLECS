@@ -10,3 +10,8 @@ SystemsCollection SystemsCollection::Create(SystemsInitializationData&& Data)
 	}
 	return Systems;
 }
+
+const StagedSystems& SystemsCollection::GetStagedSystems() const
+{
+	return Systems;
+}

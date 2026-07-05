@@ -12,6 +12,10 @@ void ArkanoidHealthModule::RegisterComponentTypes(ComponentsInitializationData& 
 	Data.RegisterComponent<DamageComponent>();
 }
 
+void ArkanoidHealthModule::RegisterStartupSystems([[maybe_unused]] StartupSystemsInitializationData& Data)
+{
+}
+
 void ArkanoidHealthModule::RegisterSystems(SystemsInitializationData& Data)
 {
 	Data.RegisterSystem(HealthSystem::UpdateDisplayedHealth, SystemPhase::EarlyUpdate);

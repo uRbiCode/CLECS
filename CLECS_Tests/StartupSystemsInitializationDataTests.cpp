@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "../CLECS/StartupSystemsInitializationData.h"
+#include "StartupSystemsInitializationData.cpp"
 
-static void StartupA(const SystemContext&) {}
-static void StartupB(const SystemContext&) {}
+static void StartupA(SystemContext&) {}
+static void StartupB(SystemContext&) {}
 
-using StartupFunctionPtr = void(*)(const SystemContext&);
+using StartupFunctionPtr = void(*)(SystemContext&);
 
 TEST(StartupSystemsInitializationDataTest, Default_GetRegisteredSystems_IsEmpty)
 {

@@ -24,6 +24,8 @@ struct PlayerData
 	TextureData TextureData;
 };
 
+#pragma warning(push)
+#pragma warning(disable : 4820)
 // Stores data used for creating the ball entity.
 struct BallData
 {
@@ -32,6 +34,7 @@ struct BallData
     Vector2D<float> Velocity = { 0.f, 0.f };
     TextureData TextureData;
 };
+#pragma warning(pop)
 
 // Stores data used for creating wall entity.
 struct WallData
@@ -45,6 +48,8 @@ struct TriggerData
 	PositionSizeData PositionSize;
 };
 
+#pragma warning(push)
+#pragma warning(disable : 4820)
 // Stores data used for creating brick entity.
 struct BrickData
 {
@@ -52,6 +57,7 @@ struct BrickData
     int Health = 1;
     TextureData TextureData;
 };
+#pragma warning(pop)
 
 /* Combines all previous structs into description of a stage.
  * This is the data loaded from JSON files and used for creating entities for a stage.

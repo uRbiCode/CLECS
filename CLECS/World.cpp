@@ -2,6 +2,10 @@
 #include "SystemContext.h"
 #include "WorldInitializationData.h"
 #include "QueryContext.h"
+#include "RendererInitializationData.h"
+#include "TextureManager.h"
+#include "AudioManager.h"
+#include "FontManager.h"
 
 World::~World()
 {
@@ -40,7 +44,7 @@ CLECS::ResultType World::InitializeWorld(WorldInitializationData&& Data)
 	Archetypes = ArchetypeStorage::Create(std::move(ComponentTypesCollection::Create(std::move(Data.ComponentsData))));
 	Systems = SystemsCollection::Create(std::move(Data.SystemsData));
 
-	auto Context = MakeSystemContext();
+	SystemContext Context = MakeSystemContext();
 	for (const StartupSystemDescriptor& System : Data.StartupSystemsData.GetRegisteredSystems())
 	{
 		System.Initialize(Context);
@@ -162,8 +166,7 @@ void World::InitializeFontManager()
 
 SystemContext World::MakeSystemContext()
 {
-	const Managers Managers{ *TextureManagerPtr, *AudioManagerPtr, *FontManagerPtr };
-	return SystemContext{ QueryContext::Create(&Archetypes), Commands, *Window, *Renderer, Input, Managers };
+	return SystemContext{ QueryContext::Create(&Archetypes), Commands, *Window, *Renderer, Input, *TextureManagerPtr, *AudioManagerPtr, *FontManagerPtr };
 }
 
 void World::FlushCommands()

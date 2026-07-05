@@ -13,7 +13,6 @@
 #include "DamageComponent.h"
 #include "PlayerMoveSpeedComponent.h"
 #include "ResetComponents.h"
-#include "UpgradeComponents.h"
 
 namespace
 {
@@ -27,7 +26,7 @@ namespace
 	{
 		int PersistentHealth = 0;
 		const Query<WritesList<>, ReadsList<BackgroundRenderComponent, HealthComponent>, ExcludeList<>> HealthQuery(Context.QueryContext);
-		HealthQuery.ForEach([&](Entity Entity, const BackgroundRenderComponent& BackgroundRender, const HealthComponent& Health)
+		HealthQuery.ForEach([&]([[maybe_unused]] Entity Entity, [[maybe_unused]] const BackgroundRenderComponent& BackgroundRender, const HealthComponent& Health)
 		{
 			PersistentHealth = Health.CurrentHealth;
 		});
@@ -38,7 +37,7 @@ namespace
 	{
 		float PaddleWidthMultiplier = 1.f;
 		const Query<WritesList<>, ReadsList<PaddleWidthMultiplierUpgradeComponent>, ExcludeList<AvailableUpgradeComponent>> PaddleWidthQuery(Context.QueryContext);
-		PaddleWidthQuery.ForEach([&](Entity Entity, const PaddleWidthMultiplierUpgradeComponent& PaddleWidthUpgrade)
+		PaddleWidthQuery.ForEach([&]([[maybe_unused]] Entity Entity, const PaddleWidthMultiplierUpgradeComponent& PaddleWidthUpgrade)
 		{
 			PaddleWidthMultiplier *= PaddleWidthUpgrade.Multiplier;
 		});
@@ -49,7 +48,7 @@ namespace
 	{
 		float BallSpeedMultiplier = 1.f;
 		const Query<WritesList<>, ReadsList<BallSpeedMultiplierUpgradeComponent>, ExcludeList<AvailableUpgradeComponent>> BallSpeedQuery(Context.QueryContext);
-		BallSpeedQuery.ForEach([&](Entity Entity, const BallSpeedMultiplierUpgradeComponent& BallSpeedUpgrade)
+		BallSpeedQuery.ForEach([&]([[maybe_unused]] Entity Entity, const BallSpeedMultiplierUpgradeComponent& BallSpeedUpgrade)
 		{
 			BallSpeedMultiplier *= BallSpeedUpgrade.Multiplier;
 		});
@@ -60,7 +59,7 @@ namespace
 	{
 		float BallSizeMultiplier = 1.f;
 		const Query<WritesList<>, ReadsList<BallSizeMultiplierUpgradeComponent>, ExcludeList<AvailableUpgradeComponent>> BallSizeQuery(Context.QueryContext);
-		BallSizeQuery.ForEach([&](Entity Entity, const BallSizeMultiplierUpgradeComponent& BallSizeUpgrade)
+		BallSizeQuery.ForEach([&]([[maybe_unused]] Entity Entity, const BallSizeMultiplierUpgradeComponent& BallSizeUpgrade)
 		{
 			BallSizeMultiplier *= BallSizeUpgrade.Multiplier;
 		});
@@ -72,7 +71,7 @@ namespace
 int RunUtils::GetCurrentStageNumber(SystemContext& Context)
 {
 	const Query<WritesList<>, ReadsList<UpgradeDescriptionComponent>, ExcludeList<AvailableUpgradeComponent>> OwnedUpgradesQuery(Context.QueryContext);
-	return OwnedUpgradesQuery.Size() + 1;
+	return static_cast<int>(OwnedUpgradesQuery.Size()) + 1;
 }
 
 void RunUtils::SpawnWalls(SystemContext& Context, std::vector<WallData>&& Data)
@@ -97,7 +96,7 @@ void RunUtils::SpawnBricks(SystemContext& Context, std::vector<BrickData>&& Data
 			RectComponent{ SDL_FRect{ -BrickData.PositionSize.Size.X * 0.5f, -BrickData.PositionSize.Size.Y * 0.5f, BrickData.PositionSize.Size.X, BrickData.PositionSize.Size.Y } },
 			HealthComponent{ BrickData.Health },
 			GameRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-			TextureComponent{ Context.Managers.TextureManager.GetTexture(BrickData.TextureData.Path), BrickData.TextureData.SourceRect });
+			TextureComponent{ Context.TextureManager.GetTexture(BrickData.TextureData.Path), BrickData.TextureData.SourceRect });
 	}
 	Context.Commands.Submit(std::move(AddBricksCommand));
 }
@@ -123,7 +122,7 @@ void RunUtils::SpawnPlayer(SystemContext& Context, PlayerData&& Data)
 		VelocityResetComponent{ { 0.f, 0.f } },
 		PlayerMoveSpeedComponent{ Constants::PlayerMoveSpeed, 0.f },
 		GameRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-		TextureComponent{ Context.Managers.TextureManager.GetTexture(Data.TextureData.Path), Data.TextureData.SourceRect });
+		TextureComponent{ Context.TextureManager.GetTexture(Data.TextureData.Path), Data.TextureData.SourceRect });
 
 	Context.Commands.Submit(std::move(AddPlayerCommand));
 }
@@ -138,7 +137,7 @@ void RunUtils::SpawnBall(SystemContext& Context, BallData&& Data)
 		CircleComponent{ Data.Radius },
 		VelocityResetComponent{ Data.Velocity },
 		GameRenderComponent{ SDL_FColor{ 1.f, 1.f, 1.f, 1.f } },
-		TextureComponent{ Context.Managers.TextureManager.GetTexture(Data.TextureData.Path), Data.TextureData.SourceRect },
+		TextureComponent{ Context.TextureManager.GetTexture(Data.TextureData.Path), Data.TextureData.SourceRect },
 		DamageComponent{ Constants::Damage });
 
 	Context.Commands.Submit(std::move(AddBallCommand));
@@ -147,7 +146,7 @@ void RunUtils::SpawnBall(SystemContext& Context, BallData&& Data)
 void RunUtils::ResetStage(SystemContext& Context)
 {
 	const Query<WritesList<PositionComponent>, ReadsList<PositionResetComponent>, ExcludeList<>> ResetQuery(Context.QueryContext);
-	ResetQuery.ForEach([&](Entity Entity, PositionComponent& Position, const PositionResetComponent& PositionReset)
+	ResetQuery.ForEach([&]([[maybe_unused]] Entity Entity, PositionComponent& Position, const PositionResetComponent& PositionReset)
 	{
 		Position.Position = PositionReset.ResetPosition;
 	});
