@@ -15,7 +15,6 @@ template<typename... Ts> struct ExcludeList {};
 template<typename WritesTag, typename ReadsTag, typename ExcludeTag>
 class Query;
 
-// TODO: CHECK UNIQUE TYPES PER WRITE/READ TAG
 template<typename... WriteTypes, typename... ReadTypes, typename... ExcludeTypes>
 requires (!OverlapsTypes<WriteTypes, ReadTypes...> && ...) 
 class Query<WritesList<WriteTypes...>, ReadsList<ReadTypes...>, ExcludeList<ExcludeTypes...>>
