@@ -59,11 +59,13 @@ Vector2D<float> CollisionUtils::GetSeparationCircleRect(const PositionComponent&
 	
 	const float MinDist = std::min({DistLeft, DistRight, DistTop, DistBottom});
 	
-	if (MinDist == DistLeft)
+	if (MinDist - DistLeft < FLT_EPSILON)
 		return { -DistLeft - Circle.Radius, 0.f };
-	if (MinDist == DistRight)
+
+	if (MinDist - DistRight < FLT_EPSILON)
 		return { DistRight + Circle.Radius, 0.f };
-	if (MinDist == DistTop)
+
+	if (MinDist - DistTop < FLT_EPSILON)
 		return { 0.f, -DistTop - Circle.Radius };
 
 	return { 0.f, DistBottom + Circle.Radius };
