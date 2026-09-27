@@ -2,15 +2,32 @@
 #include <fstream>
 #include <SDL3/SDL_log.h>
 
-namespace
+namespace Constants
 {
 	constexpr const char* StagesDirectory = "../Assets/Stages/";
+	namespace Labels
+	{
+		constexpr const char* SourceRect = "sourceRect";
+		constexpr const char* Position = "position";
+		constexpr const char* Size = "size";
+		constexpr const char* Stage = "stage";
+		constexpr const char* Texture = "texture";
+		constexpr const char* Walls = "walls";
+		constexpr const char* Bricks = "bricks";
+		constexpr const char* Health = "health";
+		constexpr const char* Velocity = "velocity";
+		constexpr const char* Radius = "radius";
+		constexpr const char* Player = "player";
+		constexpr const char* Ball = "ball";
+		constexpr const char* Trigger = "trigger";
+		constexpr const char* Path = "path";
+	}
 }
 
 StageData StageDataLoader::LoadStageDataByNumber(int StageNumber)
 {
-	const std::string StagesDirectoryString = StagesDirectory;
-	const std::string FilePath = StagesDirectoryString + "stage" + std::to_string(StageNumber) + ".json";
+	const std::string StagesDirectoryString = Constants::StagesDirectory;
+	const std::string FilePath = StagesDirectoryString + Constants::Labels::Stage + std::to_string(StageNumber) + ".json";
 	
 	std::ifstream File(FilePath);
 	if (!File.is_open())
@@ -26,8 +43,8 @@ StageData StageDataLoader::LoadStageDataByNumber(int StageNumber)
 
 bool StageDataLoader::IsStageDataAvailable(int StageNumber)
 {
-	const std::string StagesDirectoryString = StagesDirectory;
-	const std::string FilePath = StagesDirectoryString + "stage" + std::to_string(StageNumber) + ".json";
+	const std::string StagesDirectoryString = Constants::StagesDirectory;
+	const std::string FilePath = StagesDirectoryString + Constants::Labels::Stage + std::to_string(StageNumber) + ".json";
 	
 	std::ifstream File(FilePath);
 	return File.is_open();
@@ -41,12 +58,12 @@ Vector2D<float> StageDataLoader::ParseVector2D(const Json& Json)
 TextureData StageDataLoader::ParseTextureData(const Json& Json)
 {
 	TextureData Data;
-	Data.Path = Json.value("path", "");
+	Data.Path = Json.value(Constants::Labels::Path, "");
 	
-	if (!Json.contains("sourceRect"))
+	if (!Json.contains(Constants::Labels::SourceRect))
 		return Data;
 
-	const auto& Rect = Json["sourceRect"];
+	const auto& Rect = Json[Constants::Labels::SourceRect];
 	Data.SourceRect = SDL_FRect{
 		Rect["x"].get<float>(),
 		Rect["y"].get<float>(),
@@ -60,22 +77,22 @@ TextureData StageDataLoader::ParseTextureData(const Json& Json)
 WallData StageDataLoader::ParseWallData(const Json& Json)
 {
 	WallData Data;
-	Data.PositionSize.Position = ParseVector2D(Json["position"]);
-	Data.PositionSize.Size = ParseVector2D(Json["size"]);
+	Data.PositionSize.Position = ParseVector2D(Json[Constants::Labels::Position]);
+	Data.PositionSize.Size = ParseVector2D(Json[Constants::Labels::Size]);
 	return Data;
 }
 
 BrickData StageDataLoader::ParseBrickData(const Json& Json)
 {
 	BrickData Data;
-	Data.PositionSize.Position = ParseVector2D(Json["position"]);
-	Data.PositionSize.Size = ParseVector2D(Json["size"]);
-	Data.Health = Json["health"].get<int>();
+	Data.PositionSize.Position = ParseVector2D(Json[Constants::Labels::Position]);
+	Data.PositionSize.Size = ParseVector2D(Json[Constants::Labels::Size]);
+	Data.Health = Json[Constants::Labels::Health].get<int>();
 	
-	if (!Json.contains("texture"))
+	if (!Json.contains(Constants::Labels::Texture))
 		return Data;
 
-	Data.TextureData = ParseTextureData(Json["texture"]);
+	Data.TextureData = ParseTextureData(Json[Constants::Labels::Texture]);
 	
 	return Data;
 }
@@ -83,21 +100,21 @@ BrickData StageDataLoader::ParseBrickData(const Json& Json)
 TriggerData StageDataLoader::ParseTriggerData(const Json& Json)
 {
 	TriggerData Data;
-	Data.PositionSize.Position = ParseVector2D(Json["position"]);
-	Data.PositionSize.Size = ParseVector2D(Json["size"]);
+	Data.PositionSize.Position = ParseVector2D(Json[Constants::Labels::Position]);
+	Data.PositionSize.Size = ParseVector2D(Json[Constants::Labels::Size]);
 	return Data;
 }
 
 PlayerData StageDataLoader::ParsePlayerData(const Json& Json)
 {
 	PlayerData Data;
-	Data.PositionSize.Position = ParseVector2D(Json["position"]);
-	Data.PositionSize.Size = ParseVector2D(Json["size"]);
+	Data.PositionSize.Position = ParseVector2D(Json[Constants::Labels::Position]);
+	Data.PositionSize.Size = ParseVector2D(Json[Constants::Labels::Size]);
 	
-	if (!Json.contains("texture"))
+	if (!Json.contains(Constants::Labels::Texture))
 		return Data;
 
-	Data.TextureData = ParseTextureData(Json["texture"]);
+	Data.TextureData = ParseTextureData(Json[Constants::Labels::Texture]);
 	
 	return Data;
 }
@@ -105,14 +122,14 @@ PlayerData StageDataLoader::ParsePlayerData(const Json& Json)
 BallData StageDataLoader::ParseBallData(const Json& Json)
 {
 	BallData Data;
-	Data.Position = ParseVector2D(Json["position"]);
-	Data.Velocity = ParseVector2D(Json["velocity"]);
-	Data.Radius = Json["radius"].get<float>();
+	Data.Position = ParseVector2D(Json[Constants::Labels::Position]);
+	Data.Velocity = ParseVector2D(Json[Constants::Labels::Velocity]);
+	Data.Radius = Json[Constants::Labels::Radius].get<float>();
 	
-	if (!Json.contains("texture"))
+	if (!Json.contains(Constants::Labels::Texture))
 		return Data;
 
-	Data.TextureData = ParseTextureData(Json["texture"]);
+	Data.TextureData = ParseTextureData(Json[Constants::Labels::Texture]);
 	
 	return Data;
 }
@@ -120,23 +137,23 @@ BallData StageDataLoader::ParseBallData(const Json& Json)
 StageData StageDataLoader::ParseStageData(const Json& Json)
 {
 	StageData Stage;
-	Stage.PlayerData = ParsePlayerData(Json["player"]);
-	Stage.BallData = ParseBallData(Json["ball"]);
-	Stage.Trigger = ParseTriggerData(Json["trigger"]);
+	Stage.PlayerData = ParsePlayerData(Json[Constants::Labels::Player]);
+	Stage.BallData = ParseBallData(Json[Constants::Labels::Ball]);
+	Stage.Trigger = ParseTriggerData(Json[Constants::Labels::Trigger]);
 	
-	if (Json.contains("walls") && Json["walls"].is_array())
+	if (Json.contains(Constants::Labels::Walls) && Json[Constants::Labels::Walls].is_array())
 	{
-		Stage.Walls.reserve(Json["walls"].size());
-		for (const auto& WallJson : Json["walls"])
+		Stage.Walls.reserve(Json[Constants::Labels::Walls].size());
+		for (const auto& WallJson : Json[Constants::Labels::Walls])
 		{
 			Stage.Walls.push_back(ParseWallData(WallJson));
 		}
 	}
 	
-	if (Json.contains("bricks") && Json["bricks"].is_array())
+	if (Json.contains(Constants::Labels::Bricks) && Json[Constants::Labels::Bricks].is_array())
 	{
-		Stage.Bricks.reserve(Json["bricks"].size());
-		for (const auto& BrickJson : Json["bricks"])
+		Stage.Bricks.reserve(Json[Constants::Labels::Bricks].size());
+		for (const auto& BrickJson : Json[Constants::Labels::Bricks])
 		{
 			Stage.Bricks.push_back(ParseBrickData(BrickJson));
 		}

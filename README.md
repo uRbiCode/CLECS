@@ -38,7 +38,7 @@ Query is a templated class that allows Systems to manipulate Component values. T
 Means of communication between Queries and Archetypes. Allows for proper iteration over Components.
 
 ### CommandRunner
-Stores Commands for structural aRchetype changes created by Systems. At the end of each SystemStage, they are executed and the next stage begins. Commands encourage batch operations in favour of making changes individually, as those are the most expensive operations in CLECS.
+Stores Commands for structural Archetype changes created by Systems. At the end of each SystemStage, they are executed and the next stage begins. Commands encourage batch operations in favour of making changes individually, as those are the most expensive operations in CLECS.
 
 ### ModuleBase
 Modules are building blocks for CLECS. Module is to be thought of as a package of Components and Systems that are to be included in the game. So one registers Modules, which then register Components and Systems.
