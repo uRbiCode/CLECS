@@ -72,16 +72,19 @@ public:
 
 			SrcArch.MigrateRowTo(E, DstArch);
 
-			std::apply([&](NewComponents&&... Values)
+			const auto EmplaceComponent = [&]<ComponentType NewComponent>(NewComponent&& Value)
 			{
-				([&]()
+				const ComponentTypeId Id = ComponentTypes.GetComponentTypeId<NewComponent>();
+				if (!SrcArch.HasComponentType(Id))
 				{
-					const ComponentTypeId Id = ComponentTypes.GetComponentTypeId<NewComponents>();
-					if (!SrcArch.HasComponentType(Id))
-					{
-						DstArch.EmplaceInColumn<NewComponents>(Id, std::forward<NewComponents>(Values));
-					}
-				}(), ...);
+					DstArch.EmplaceInColumn<NewComponent>(Id, std::forward<NewComponent>(Value));
+				}
+			};
+
+			std::apply(
+			[&](NewComponents&&... Values)
+			{
+				(EmplaceComponent.template operator()<NewComponents>(std::forward<NewComponents>(Values)), ...);
 			}, std::move(NewData));
 
 			EntityIt->second = DstId;
