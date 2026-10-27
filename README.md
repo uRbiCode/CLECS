@@ -66,3 +66,5 @@ List of external libraries which CLECS utilizes. Note that they have dependencie
 Rogueanoid is, you guessed it, Arkanoid with roguelike elements. In addition to classic brick-breaking, the player can choose from numerous upgrades that alter their gameplay every run. It follows CLECS principles of development, and therefore ECS too. No system knows about any other, and doesn't contain state. Also, components are PODs without any behavior of their own.
 
 Each stage and modifier is defined in a JSON file, so you can play with values to your heart's content. Well, not entirely, as there is no data validation. Yet, feel more than welcome to try!
+
+For your convenience (skipping the SDL internal dependencies configuration part), here's a [link](https://drive.google.com/file/d/1Mt0WIkMhq0GOAX8yysNiG2YrgisjOhqe/view?usp=sharing) to the plug-and-play project .zip.
